@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sample.fullname" . }}
+  labels:
+    app: {{ include "sample.fullname" . }}
+    {{- include "sample.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type | default "ClusterIP" }}
+  ports:
+    - name: {{ .Values.service.name | default "http" }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.name | default "http" }}
+      protocol: {{ .Values.service.protocol | default "TCP" }}
+  selector:
+    {{- include "sample.selectorLabels" . | nindent 4 }}

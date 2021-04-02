@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-spring
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/opspresso/argocd-env-demo"
+    path: apps
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - sample-spring/base.yaml
+        - sample-spring/values-alpha-kr.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: sample-spring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

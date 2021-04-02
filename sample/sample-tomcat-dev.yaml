@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-tomcat-dev
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/opspresso/argocd-env-demo"
+    path: apps
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - sample-tomcat/base.yaml
+        - sample-tomcat/values-demo-dev.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: demo-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

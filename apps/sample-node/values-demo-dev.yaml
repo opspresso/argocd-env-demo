@@ -1,0 +1,67 @@
+autoscaling:
+  enabled: true
+  maxReplicas: 5
+  metrics:
+  - pods:
+      metricName: container_network_receive_bytes
+      targetAverageValue: 10k
+    type: Pods
+  - resource:
+      name: cpu
+      targetAverageUtilization: 80
+    type: Resource
+  minReplicas: 4
+controller:
+  kind: Rollout
+datadog:
+  enabled: true
+  env: alpha
+env:
+- name: PROFILE
+  value: dev
+- name: ENV_HASH
+  value: 49160231675fb448a0440d4ca39d5cbc
+image:
+  repository: nalbam/sample-node
+  tag: v0.6.16
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+  enabled: true
+  hosts:
+  - host: sample-node-dev.bruce.spic.me
+    paths:
+    - /
+preview:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+  enabled: true
+  hosts:
+  - host: sample-node-dev-preview.bruce.spic.me
+    paths:
+    - /
+secret:
+  data:
+    SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+    SECRET_VERSION: djAuNi4xNg==
+  enabled: true
+strategy:
+  canary:
+    canaryService: sample-node-preview
+    steps:
+    - setWeight: 25
+    - analysis:
+        args:
+        - name: url
+          value: http://sample-node-preview:3000/success/98
+        templateName: http-benchmark
+    - setWeight: 50
+    - pause:
+        duration: 10
+    - setWeight: 75
+    - pause:
+        duration: 10

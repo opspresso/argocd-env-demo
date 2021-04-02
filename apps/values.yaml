@@ -1,0 +1,205 @@
+# Default values for sample.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+revisionHistoryLimit: 2
+
+controller:
+  kind: Deployment # Deployment or Rollout
+
+strategy: {}
+  # blueGreen:
+  #   activeService: sample
+  #   autoPromotionEnabled: true
+  #   autoPromotionSeconds: 30
+  #   previewService: sample-preview
+  # canary:
+  #   canaryService: sample-preview
+  #   steps:
+  #     - setWeight: 25
+  #     - analysis:
+  #         args:
+  #           - name: url
+  #             value: http://sample-preview:3000/success/98
+  #         templateName: http-benchmark
+  #     - setWeight: 50
+  #     - pause:
+  #         duration: 10
+  #     - setWeight: 75
+  #     - pause:
+  #         duration: 10
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: latest
+
+imagePullSecrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  annotations: {}
+    # cert-manager.io/cluster-issuer: "letsencrypt-issuer"
+    # kubernetes.io/ingress.class: "nginx"
+    # kubernetes.io/ssl-redirect: "true"
+  hosts: []
+    # - host: sample.domain.com
+    #   paths:
+    #     - /
+  tls: []
+  #  - secretName: sample-tls
+  #    hosts:
+  #      - sample.domain.com
+
+preview:
+  enabled: false
+  annotations: {}
+    # cert-manager.io/cluster-issuer: "letsencrypt-issuer"
+    # kubernetes.io/ingress.class: "nginx"
+    # kubernetes.io/ssl-redirect: "true"
+  hosts: []
+    # - host: sample.domain.com
+    #   paths:
+    #     - /
+  tls: []
+  #  - secretName: sample-tls
+  #    hosts:
+  #      - sample.domain.com
+
+livenessProbe: {}
+  # httpGet:
+  #   path: /
+  #   port: 8080
+  # initialDelaySeconds: 3
+  # periodSeconds: 10
+  # failureThreshold: 3
+
+readinessProbe: {}
+  # httpGet:
+  #   path: /
+  #   port: 8080
+  # initialDelaySeconds: 3
+  # periodSeconds: 10
+  # failureThreshold: 3
+
+resources: {}
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+  metrics: []
+    # - pods:
+    #     metricName: container_network_receive_bytes
+    #     targetAverageValue: 3k
+    #   type: Pods
+    # - resource:
+    #     name: cpu
+    #     targetAverageUtilization: 80
+    #   type: Resource
+
+dnsPolicy: ClusterFirst # ClusterFirst Default
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceMonitor:
+  enabled: false
+  selector:
+    release: prometheus-operator
+  endpoints:
+    - interval: 10s
+      path: /metrics
+      port: http
+
+datadog:
+  enabled: false
+  env: alpha
+
+env: []
+  # - name: MESSAGE
+  #   value: "hello world"
+
+configmap:
+  enabled: false
+  data: {}
+    # MESSAGE: "hello world"
+
+secret:
+  enabled: false
+  data: {}
+    # SECRET_MESSAGE: "c2VjcmV0IG1lc3NhZ2U="
+
+externalSecrets:
+  enabled: false
+  backendType: systemManager
+  data: []
+    # - key: /k8s/alpha/PASSWORD
+    #   name: PASSWORD
+
+analysis:
+  enabled: false
+
+istio:
+  gateway:
+    enabled: false
+  virtualService:
+    enabled: false
+
+sidekicks: []
+  # - name: sample-redis
+  #   replicaCount: 1
+  #   revisionHistoryLimit: 2
+  #   image:
+  #     repository: redis
+  #     tag: latest
+  #   service:
+  #     name: redis
+  #     port: 6379
+  #   livenessProbe: {}
+  #   readinessProbe: {}
+  #   resources: {}
+  #   env: []
+  #   envFrom: []
+  #   nodeSelector: {}
+  #   affinity: {}
+  #   tolerations: []

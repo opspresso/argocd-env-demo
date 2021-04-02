@@ -1,0 +1,28 @@
+fullnameOverride: sample-docs
+livenessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 1948
+  initialDelaySeconds: 3
+  periodSeconds: 10
+nameOverride: sample-docs
+podAnnotations:
+  chaos.alpha.kubernetes.io/enabled: "true"
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 1948
+  initialDelaySeconds: 3
+  periodSeconds: 10
+replicaCount: 1
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+service:
+  port: 1948

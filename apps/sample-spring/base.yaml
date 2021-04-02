@@ -1,0 +1,32 @@
+fullnameOverride: sample-spring
+
+podAnnotations:
+  chaos.alpha.kubernetes.io/enabled: "true"
+
+replicaCount: 1
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 1G
+revisionHistoryLimit: 2
+service:
+  port: 8080
+
+livenessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10

@@ -1,0 +1,39 @@
+autoscaling:
+  enabled: true
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 60
+    type: Resource
+  minReplicas: 1
+configmap:
+  data:
+    MESSAGE: hello world
+    VERSION: v0.6.16
+    DD_VERSION: v0.6.16
+  enabled: true
+datadog:
+  enabled: true
+  env: alpha
+env:
+- name: PROFILE
+  value: dev
+- name: ENV_HASH
+  value: aece22b8011f96d9a08f2d85feb809ac
+image:
+  repository: nalbam/sample-node
+  tag: v0.6.16
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  enabled: true
+  hosts:
+  - host: sample-node.alpha.jp.karrotmarket.com
+    paths:
+    - /
+secret:
+  data:
+    SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+    SECRET_VERSION: djAuNi4xNg==
+  enabled: true
