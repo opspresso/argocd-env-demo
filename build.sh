@@ -233,7 +233,7 @@ _build() {
         git merge ${NEW_BRANCH}
 
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
-        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
+        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
     fi
 }
 
