@@ -6,10 +6,10 @@ podAnnotations:
 replicaCount: 1
 resources:
   limits:
-    cpu: 500m
+    cpu: "1"
     memory: 1Gi
   requests:
-    cpu: 500m
+    cpu: "1"
     memory: 1G
 revisionHistoryLimit: 2
 service:
