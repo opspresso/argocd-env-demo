@@ -9,9 +9,9 @@ autoscaling:
   minReplicas: 1
 configmap:
   data:
-    DD_VERSION: v0.6.27
+    DD_VERSION: v0.6.29
     MESSAGE: hello world
-    VERSION: v0.6.27
+    VERSION: v0.6.29
   enabled: true
 datadog:
   enabled: true
@@ -22,10 +22,10 @@ env:
 - name: JAVA_AGENT_ENABLED
   value: 'true'
 - name: ENV_HASH
-  value: 29eeddcb9a2b20f0ec46f08603b0ea70
+  value: fc8d3ed0ff0ed07a4112c703a93b43f8
 image:
   repository: nalbam/sample-spring
-  tag: v0.6.27
+  tag: v0.6.29
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -43,7 +43,7 @@ ingress:
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNi4yNw==
+    SECRET_VERSION: djAuNi4yOQ==
   enabled: true
 serviceMonitor:
   enabled: false
