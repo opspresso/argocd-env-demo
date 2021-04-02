@@ -7,7 +7,7 @@ SHELL_DIR=$(dirname $0)
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-argocd-env-demo}
 
-BRANCH=${CIRCLE_BRANCH:-master}
+BRANCH=${CIRCLE_BRANCH:-main}
 
 TG_USERNAME="${1:-$TG_USERNAME}"
 TG_PROJECT="${2:-$TG_PROJECT}"
@@ -223,16 +223,16 @@ _build() {
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
     if [ "x${HAS_DEV}" == "x0" ]; then
-        _command "hub pull-request -f -b ${USERNAME}:master -h ${USERNAME}:${NEW_BRANCH} --no-edit"
-        hub pull-request -f -b ${USERNAME}:master -h ${USERNAME}:${NEW_BRANCH} --no-edit
+        _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
+        hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
     else
-        _command "git checkout master"
-        git checkout master
+        _command "git checkout ${BRANCH}"
+        git checkout ${BRANCH}
 
         _command "git merge ${NEW_BRANCH}"
         git merge ${NEW_BRANCH}
 
-        _command "git push github.com/${USERNAME}/${REPONAME} master"
+        _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
     fi
 }
