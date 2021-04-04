@@ -13,9 +13,9 @@ autoscaling:
   minReplicas: 2
 configmap:
   data:
-    DD_VERSION: v0.6.31
+    DD_VERSION: v0.6.32
     MESSAGE: hello world
-    VERSION: v0.6.31
+    VERSION: v0.6.32
   enabled: true
 controller:
   kind: Rollout
@@ -28,10 +28,10 @@ env:
 - name: JAVA_AGENT_ENABLED
   value: 'true'
 - name: ENV_HASH
-  value: d814eb9721d693eb337fc4a348104b29
+  value: df34fb0f2325335c21e7841e3df13c44
 image:
   repository: nalbam/sample-spring
-  tag: v0.6.31
+  tag: v0.6.32
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -53,7 +53,7 @@ preview:
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNi4zMQ==
+    SECRET_VERSION: djAuNi4zMg==
   enabled: true
 strategy:
   blueGreen:
