@@ -23,9 +23,9 @@ spec:
           address: {{ .Values.analysis.prometheus }}
           query: |
             sum(irate(
-              istio_requests_total{reporter="source",destination_service=~"{{ .Values.strategy.canary.canaryService }}",response_code!~"5.*"}[5m]
+              istio_requests_total{reporter="source",destination_service=~"{{ .Values.analysis.service-name }}",response_code!~"5.*"}[5m]
             )) /
             sum(irate(
-              istio_requests_total{reporter="source",destination_service=~"{{ .Values.strategy.canary.canaryService }}"}[5m]
+              istio_requests_total{reporter="source",destination_service=~"{{ .Values.analysis.service-name }}"}[5m]
             ))
 {{- end }}
