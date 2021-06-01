@@ -1,8 +1,8 @@
-# analysis:
-#   enabled: true
-#   url: http://sample-node-preview:3000/success/98
-#   prometheus: "http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090"
-#   service: sample-node-preview.sample.svc.cluster.local
+analysis:
+  enabled: false
+  url: http://sample-node-preview:3000/success/98
+  prometheus: "http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090"
+  service: sample-node-preview.sample.svc.cluster.local
 autoscaling:
   enabled: true
   maxReplicas: 8
