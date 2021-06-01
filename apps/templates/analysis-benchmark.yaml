@@ -14,9 +14,9 @@ metadata:
 spec:
   metrics:
     - name: http-benchmark
+      interval: 60s
       count: 5
       failureLimit: 5
-      interval: 10s
       provider:
         job:
           spec:

@@ -73,12 +73,11 @@ strategy:
           duration: 30
       - analysis:
           templates:
-            - templateName: sample-node-success-rate
+            - templateName: sample-node-http-benchmark
+            # - templateName: sample-node-success-rate
           # args:
           #   - name: service
           #     value: sample-node-preview.sample.svc.cluster.local
-      # - analysis:
-      #     templateName: sample-node-http-benchmark
       - setWeight: 50
       - pause:
           duration: 30
