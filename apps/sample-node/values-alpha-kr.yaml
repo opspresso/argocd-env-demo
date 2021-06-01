@@ -1,17 +1,17 @@
-analysis:
-  enabled: true
-  url: http://sample-node-preview:3000/success/98
-  prometheus: "http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090"
-  service: sample-node-preview.sample.svc.cluster.local
+# analysis:
+#   enabled: true
+#   url: http://sample-node-preview:3000/success/98
+#   prometheus: "http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090"
+#   service: sample-node-preview.sample.svc.cluster.local
 autoscaling:
   enabled: true
-  maxReplicas: 5
+  maxReplicas: 8
   metrics:
     - resource:
         name: cpu
         targetAverageUtilization: 60
       type: Resource
-  minReplicas: 1
+  minReplicas: 4
 configmap:
   data:
     DD_VERSION: v0.6.28
@@ -64,22 +64,22 @@ secret:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNi4yOA==
   enabled: true
-# strategy:
-#   canary:
-#     canaryService: sample-node-preview
-#     steps:
-#       - setWeight: 25
-#       - analysis:
-#           templates:
-#             - templateName: sample-node-success-rate
-#           # args:
-#           #   - name: service
-#           #     value: sample-node-preview.sample.svc.cluster.local
-#       # - analysis:
-#       #     templateName: sample-node-http-benchmark
-#       - setWeight: 50
-#       - pause:
-#           duration: 10
-#       - setWeight: 75
-#       - pause:
-#           duration: 10
+strategy:
+  canary:
+    canaryService: sample-node-preview
+    steps:
+      # - setWeight: 25
+      # - analysis:
+      #     templates:
+      #       - templateName: sample-node-success-rate
+      #     # args:
+      #     #   - name: service
+      #     #     value: sample-node-preview.sample.svc.cluster.local
+      # # - analysis:
+      # #     templateName: sample-node-http-benchmark
+      - setWeight: 50
+      - pause:
+          duration: 10
+      - setWeight: 75
+      - pause:
+          duration: 10
