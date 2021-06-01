@@ -8,7 +8,9 @@ metadata:
 spec:
   args:
     - name: prometheus
+      value: ""
     - name: service
+      value: ""
   metrics:
     - name: success-rate
       interval: 5m
