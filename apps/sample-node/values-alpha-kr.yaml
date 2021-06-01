@@ -27,7 +27,7 @@ env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 8dd2641ac3e6c39f34e0757349293ed9-2
+  value: 8dd2641ac3e6c39f34e0757349293ed9-3
 image:
   repository: nalbam/sample-node
   tag: v0.6.28
@@ -73,7 +73,7 @@ strategy:
           duration: 30
       - analysis:
           templates:
-            - templateName: http-benchmark
+            - templateName: sample-node-http-benchmark
             # - templateName: sample-node-success-rate
           # args:
           #   - name: service
