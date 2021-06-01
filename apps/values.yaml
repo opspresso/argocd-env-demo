@@ -22,7 +22,7 @@ strategy: {}
   #         args:
   #           - name: url
   #             value: http://sample-preview:3000/success/98
-  #         templateName: http-benchmark
+  #         templateName: sample-http-benchmark
   #     - setWeight: 50
   #     - pause:
   #         duration: 10

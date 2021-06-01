@@ -1,14 +1,15 @@
 analysis:
   enabled: true
   url: http://sample-node-preview:3000/success/98
+  prometheus: ""
 autoscaling:
   enabled: true
   maxReplicas: 5
   metrics:
-  - resource:
-      name: cpu
-      targetAverageUtilization: 60
-    type: Resource
+    - resource:
+        name: cpu
+        targetAverageUtilization: 60
+      type: Resource
   minReplicas: 1
 configmap:
   data:
@@ -22,10 +23,10 @@ datadog:
   enabled: true
   env: prod
 env:
-- name: PROFILE
-  value: prod
-- name: ENV_HASH
-  value: a94f1ddd5e300f33300f38a6934867ec
+  - name: PROFILE
+    value: prod
+  - name: ENV_HASH
+    value: a94f1ddd5e300f33300f38a6934867ec
 image:
   repository: nalbam/sample-node
   tag: v0.6.28
@@ -34,31 +35,31 @@ ingress:
     kubernetes.io/ingress.class: nginx
   enabled: true
   hosts:
-  - host: sample-node.prod.kr.karrotmarket.com
-    paths:
-    - /
-  - host: sample-node.prod-a.kr.karrotmarket.com
-    paths:
-    - /
-  - host: sample-node.prod-b.kr.karrotmarket.com
-    paths:
-    - /
+    - host: sample-node.prod.kr.karrotmarket.com
+      paths:
+        - /
+    - host: sample-node.prod-a.kr.karrotmarket.com
+      paths:
+        - /
+    - host: sample-node.prod-b.kr.karrotmarket.com
+      paths:
+        - /
 preview:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   enabled: true
   hosts:
-  - host: sample-node-preview.prod.kr.karrotmarket.com
-    paths:
-    - /
-  - host: sample-node-preview.prod-a.kr.karrotmarket.com
-    paths:
-    - /
-  - host: sample-node-preview.prod-b.kr.karrotmarket.com
-    paths:
-    - /
+    - host: sample-node-preview.prod.kr.karrotmarket.com
+      paths:
+        - /
+    - host: sample-node-preview.prod-a.kr.karrotmarket.com
+      paths:
+        - /
+    - host: sample-node-preview.prod-b.kr.karrotmarket.com
+      paths:
+        - /
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
@@ -68,12 +69,18 @@ strategy:
   canary:
     canaryService: sample-node-preview
     steps:
-    - setWeight: 25
-    - analysis:
-        templateName: sample-node-http-benchmark
-    - setWeight: 50
-    - pause:
-        duration: 10
-    - setWeight: 75
-    - pause:
-        duration: 10
+      - setWeight: 25
+      - analysis:
+          templates:
+            - templateName: sample-node-success-rate
+          args:
+            - name: service-name
+              value: sample-node-preview.sample.svc.cluster.local
+      # - analysis:
+      #     templateName: sample-node-http-benchmark
+      - setWeight: 50
+      - pause:
+          duration: 10
+      - setWeight: 75
+      - pause:
+          duration: 10
