@@ -1,39 +1,41 @@
-# This analysis template demonstrates the use of the job metric provider.
-# It runs wrk (https://github.com/wg/wrk), an HTTP benchmarking tool, against the supplied hostname
-# and then interprets the error rate for success or failure
-{{- if .Values.analysis.enabled }}
-apiVersion: argoproj.io/v1alpha1
-kind: AnalysisTemplate
-metadata:
-  name: {{ include "sample.fullname" . }}-http-benchmark
-  labels:
-    app: {{ include "sample.fullname" . }}
-    {{- include "sample.labels" . | nindent 4 }}
-spec:
-  metrics:
-    - name: http-benchmark
-      count: 5
-      failureLimit: 5
-      interval: 10s
-      provider:
-        job:
-          spec:
-            template:
-              metadata:
-                annotations:
-                  sidecar.istio.io/inject: "false"
-              spec:
-                containers:
-                  - name: load-tester
-                    image: argoproj/load-tester:latest
-                    command: [sh, -xec]
-                    args:
-                      - |
-                        wrk -t5 -c5 -d10 -s report.lua {{ .Values.analysis.url }}
-                        jq -e '.errors_ratio <= 0.1' report.json
-                restartPolicy: Never
-            # https://kubernetes.io/ko/docs/concepts/workloads/controllers/jobs-run-to-completion/
-            activeDeadlineSeconds: 180
-            backoffLimit: 10
-            ttlSecondsAfterFinished: 300
-{{- end }}
+# # This analysis template demonstrates the use of the job metric provider.
+# # It runs wrk (https://github.com/wg/wrk), an HTTP benchmarking tool, against the supplied hostname
+# # and then interprets the error rate for success or failure
+# {{- if .Values.analysis.enabled }}
+# apiVersion: argoproj.io/v1alpha1
+# kind: AnalysisTemplate
+# metadata:
+#   name: {{ include "sample.fullname" . }}-http-benchmark
+#   labels:
+#     app: {{ include "sample.fullname" . }}
+#     {{- include "sample.labels" . | nindent 4 }}
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "-1"
+# spec:
+#   metrics:
+#     - name: http-benchmark
+#       count: 5
+#       failureLimit: 5
+#       interval: 10s
+#       provider:
+#         job:
+#           spec:
+#             template:
+#               metadata:
+#                 annotations:
+#                   sidecar.istio.io/inject: "false"
+#               spec:
+#                 containers:
+#                   - name: load-tester
+#                     image: argoproj/load-tester:latest
+#                     command: [sh, -xec]
+#                     args:
+#                       - |
+#                         wrk -t5 -c5 -d10 -s report.lua {{ .Values.analysis.url }}
+#                         jq -e '.errors_ratio <= 0.5' report.json
+#                 restartPolicy: Never
+#             # https://kubernetes.io/ko/docs/concepts/workloads/controllers/jobs-run-to-completion/
+#             activeDeadlineSeconds: 180
+#             backoffLimit: 10
+#             ttlSecondsAfterFinished: 300
+# {{- end }}
