@@ -3,11 +3,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
   name: {{ include "sample.fullname" . }}-success-rate
-  labels:
-    app: {{ include "sample.fullname" . }}
-    {{- include "sample.labels" . | nindent 4 }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+  # labels:
+  #   app: {{ include "sample.fullname" . }}
+  #   {{- include "sample.labels" . | nindent 4 }}
+  # annotations:
+  #   argocd.argoproj.io/sync-wave: "-1"
 spec:
   # args:
   #   - name: service
