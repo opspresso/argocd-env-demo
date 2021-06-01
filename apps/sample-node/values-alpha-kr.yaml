@@ -1,5 +1,5 @@
 analysis:
-  enabled: true
+  enabled: false
   prometheus: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
   service: sample-node.sample.svc.cluster.local
   url: http://sample-node-preview:3000/success/98
@@ -15,9 +15,9 @@ analysis:
 replicaCount: 4
 configmap:
   data:
-    DD_VERSION: v0.6.27
+    DD_VERSION: v0.6.28
     MESSAGE: hello world
-    VERSION: v0.6.27
+    VERSION: v0.6.28
   enabled: true
 controller:
   kind: Rollout
@@ -31,7 +31,7 @@ env:
   value: 8dd2641ac3e6c39f34e0757349293ed9
 image:
   repository: nalbam/sample-node
-  tag: v0.6.27
+  tag: v0.6.28
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -74,13 +74,15 @@ strategy:
           duration: 30
       - analysis:
           templates:
-            - templateName: sample-node-http-benchmark
+            - templateName: http-benchmark
             # - templateName: sample-node-success-rate
-          # args:
-          #   - name: prometheus
-          #     value: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
-          #   - name: service
-          #     value: sample-node.sample.svc.cluster.local
+          args:
+            - name: url
+              value: http://sample-node-preview.sample.svc.cluster.local:3000/success/98
+            # - name: prometheus
+            #   value: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
+            # - name: service
+            #   value: sample-node.sample.svc.cluster.local
       - setWeight: 50
       - pause:
           duration: 30
