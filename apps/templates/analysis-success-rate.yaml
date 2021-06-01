@@ -10,7 +10,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
   # args:
-  #   - name: service-name
+  #   - name: service
   metrics:
     - name: success-rate
       interval: 5m
@@ -23,9 +23,9 @@ spec:
           address: {{ .Values.analysis.prometheus }}
           query: |
             sum(irate(
-              istio_requests_total{reporter="source",destination_service=~"{{ .Values.analysis.service-name }}",response_code!~"5.*"}[5m]
+              istio_requests_total{reporter="source",destination_service=~"{{ .Values.analysis.service }}",response_code!~"5.*"}[5m]
             )) /
             sum(irate(
-              istio_requests_total{reporter="source",destination_service=~"{{ .Values.analysis.service-name }}"}[5m]
+              istio_requests_total{reporter="source",destination_service=~"{{ .Values.analysis.service }}"}[5m]
             ))
 {{- end }}
