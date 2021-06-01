@@ -6,9 +6,9 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
-  # args:
-  #   - name: prometheus
-  #   - name: service
+  args:
+    - name: prometheus
+    - name: service
   metrics:
     - name: success-rate
       interval: 5m
