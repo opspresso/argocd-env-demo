@@ -68,7 +68,9 @@ strategy:
   canary:
     canaryService: sample-node-preview
     steps:
-      # - setWeight: 25
+      - setWeight: 25
+      - pause:
+          duration: 10
       # - analysis:
       #     templates:
       #       - templateName: sample-node-success-rate
