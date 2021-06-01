@@ -2,6 +2,7 @@
 # It runs wrk (https://github.com/wg/wrk), an HTTP benchmarking tool, against the supplied hostname
 # and then interprets the error rate for success or failure
 {{- if .Values.analysis.enabled }}
+---
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
