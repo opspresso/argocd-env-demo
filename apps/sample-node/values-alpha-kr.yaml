@@ -1,8 +1,8 @@
 analysis:
   enabled: true
+  prometheus: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
+  service: sample-node.sample.svc.cluster.local
   url: http://sample-node-preview:3000/success/98
-#   prometheus: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
-#   service: sample-node.sample.svc.cluster.local
 # autoscaling:
 #   enabled: true
 #   maxReplicas: 8
@@ -78,13 +78,13 @@ strategy:
             #   clusterScope: true
             - templateName: sample-node-http-benchmark
             # - templateName: sample-node-success-rate
-          args:
-            - name: url
-              value: http://sample-node-preview.sample.svc.cluster.local:3000/success/98
-            # - name: prometheus
-            #   value: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
-            # - name: service
-            #   value: sample-node.sample.svc.cluster.local
+          # args:
+          #   - name: url
+          #     value: http://sample-node-preview.sample.svc.cluster.local:3000/success/98
+          #   - name: prometheus
+          #     value: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
+          #   - name: service
+          #     value: sample-node.sample.svc.cluster.local
       - setWeight: 50
       - pause:
           duration: 30
