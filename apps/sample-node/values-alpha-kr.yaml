@@ -73,7 +73,7 @@ strategy:
           duration: 30
       - analysis:
           templates:
-            - templateName: sample-node-http-benchmark
+            - templateName: http-benchmark
             # - templateName: sample-node-success-rate
           # args:
           #   - name: service
