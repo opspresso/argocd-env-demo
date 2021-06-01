@@ -15,9 +15,9 @@ analysis:
 replicaCount: 4
 configmap:
   data:
-    DD_VERSION: v0.6.28
+    DD_VERSION: v0.6.26
     MESSAGE: hello world
-    VERSION: v0.6.28
+    VERSION: v0.6.26
   enabled: true
 controller:
   kind: Rollout
@@ -31,7 +31,7 @@ env:
   value: 8dd2641ac3e6c39f34e0757349293ed9
 image:
   repository: nalbam/sample-node
-  tag: v0.6.28
+  tag: v0.6.26
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
