@@ -1,17 +1,18 @@
-# analysis:
-#   enabled: true
-#   url: http://sample-node-preview:3000/success/98
-#   prometheus: "http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090"
-#   service: sample-node-preview.sample.svc.cluster.local
-autoscaling:
+analysis:
   enabled: true
-  maxReplicas: 8
-  metrics:
-    - resource:
-        name: cpu
-        targetAverageUtilization: 60
-      type: Resource
-  minReplicas: 4
+  prometheus: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
+  service: sample-node.sample.svc.cluster.local
+  url: http://sample-node-preview:3000/success/98
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 8
+#   metrics:
+#     - resource:
+#         name: cpu
+#         targetAverageUtilization: 60
+#       type: Resource
+#   minReplicas: 4
+replicaCount: 4
 configmap:
   data:
     DD_VERSION: v0.6.28
@@ -71,14 +72,15 @@ strategy:
       - setWeight: 25
       - pause:
           duration: 30
-      # - analysis:
-      #     templates:
-      #       - templateName: sample-node-success-rate
-      #     # args:
-      #     #   - name: service
-      #     #     value: sample-node-preview.sample.svc.cluster.local
-      # # - analysis:
-      # #     templateName: sample-node-http-benchmark
+      - analysis:
+          templates:
+            - templateName: sample-node-http-benchmark
+            # - templateName: sample-node-success-rate
+          # args:
+          #   - name: prometheus
+          #     value: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
+          #   - name: service
+          #     value: sample-node.sample.svc.cluster.local
       - setWeight: 50
       - pause:
           duration: 30

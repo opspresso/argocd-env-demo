@@ -28,7 +28,7 @@ env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 8dd2641ac3e6c39f34e0757349293ed9-v0.6.27
+  value: 8dd2641ac3e6c39f34e0757349293ed9
 image:
   repository: nalbam/sample-node
   tag: v0.6.27
@@ -77,8 +77,10 @@ strategy:
             - templateName: sample-node-http-benchmark
             # - templateName: sample-node-success-rate
           # args:
+          #   - name: prometheus
+          #     value: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
           #   - name: service
-          #     value: sample-node-preview.sample.svc.cluster.local
+          #     value: sample-node.sample.svc.cluster.local
       - setWeight: 50
       - pause:
           duration: 30
