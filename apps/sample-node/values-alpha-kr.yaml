@@ -75,6 +75,8 @@ strategy:
       - analysis:
           templates:
             - templateName: http-benchmark
+              clusterScope: true
+            # - templateName: sample-node-http-benchmark
             # - templateName: sample-node-success-rate
           args:
             - name: url
