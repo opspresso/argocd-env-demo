@@ -1,0 +1,49 @@
+autoscaling:
+  enabled: true
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 60
+    type: Resource
+  minReplicas: 1
+configmap:
+  data:
+    DD_VERSION: v0.6.37
+    MESSAGE: hello world
+    VERSION: v0.6.37
+  enabled: true
+datadog:
+  enabled: true
+  env: prod
+env:
+- name: PROFILE
+  value: prod
+- name: JAVA_AGENT_ENABLED
+  value: 'true'
+- name: ENV_HASH
+  value: a01a7c8911ea0b81cb4ebea979cd0e0d
+image:
+  repository: nalbam/sample-spring
+  tag: v0.6.37
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  enabled: true
+  hosts:
+  - host: sample-spring.prod.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-spring.prod-a.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-spring.prod-b.kr.karrotmarket.com
+    paths:
+    - /
+secret:
+  data:
+    SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+    SECRET_VERSION: djAuNi4zNw==
+  enabled: true
+serviceMonitor:
+  enabled: false
