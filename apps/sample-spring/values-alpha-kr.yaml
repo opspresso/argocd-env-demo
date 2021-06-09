@@ -27,8 +27,8 @@ image:
   repository: nalbam/sample-spring
   tag: v0.6.37
 ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
+  # annotations:
+  #   kubernetes.io/ingress.class: nginx
   enabled: false
   hosts:
   - host: sample-spring.alpha.kr.karrotmarket.com
@@ -45,6 +45,18 @@ istio:
     enabled: true
   virtualService:
     enabled: true
+preview:
+  enabled: true
+  hosts:
+  - host: sample-spring-preview.alpha.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-spring-preview.alpha-a.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-spring-preview.alpha-b.kr.karrotmarket.com
+    paths:
+    - /
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
