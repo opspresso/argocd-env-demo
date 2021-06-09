@@ -6,9 +6,9 @@ analysis:
 replicaCount: 4
 configmap:
   data:
-    DD_VERSION: v0.6.28
+    DD_VERSION: v0.6.29
     MESSAGE: hello world
-    VERSION: v0.6.28
+    VERSION: v0.6.29
   enabled: true
 controller:
   kind: Rollout
@@ -16,18 +16,18 @@ datadog:
   enabled: true
   env: prod
 env:
-  - name: PROFILE
-    value: prod
-  - name: ENV_HASH
-    value: a94f1ddd5e300f33300f38a6934867ec
+- name: PROFILE
+  value: prod
+- name: ENV_HASH
+  value: 5b4b88308f0b9efddea837afae7f70bb
 image:
   repository: nalbam/sample-node
-  tag: v0.6.28
+  tag: v0.6.29
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx-public
   enabled: false
-  hosts:
+  hosts: 
     - host: sample-node.prod.kr.karrotmarket.com
       paths:
         - /
@@ -47,19 +47,19 @@ preview:
     kubernetes.io/ingress.class: nginx-public
   enabled: true
   hosts:
-    - host: sample-node-preview.prod.kr.karrotmarket.com
-      paths:
-        - /
-    - host: sample-node-preview.prod-a.kr.karrotmarket.com
-      paths:
-        - /
-    - host: sample-node-preview.prod-b.kr.karrotmarket.com
-      paths:
-        - /
+  - host: sample-node-preview.prod.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-node-preview.prod-a.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-node-preview.prod-b.kr.karrotmarket.com
+    paths:
+    - /
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNi4yOA==
+    SECRET_VERSION: djAuNi4yOQ==
   enabled: true
 strategy:
   canary:
