@@ -11,4 +11,10 @@ spec:
     {{- range .Values.ingress.hosts }}
     - {{ .host | quote }}
     {{- end }}
+  gateways:
+    - {{ include "sample.fullname" . }}
+  http:
+    - route:
+        - destination:
+            host: {{ include "sample.fullname" . }}
 {{- end }}

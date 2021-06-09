@@ -1,4 +1,6 @@
 {{- if .Values.istio.gateway.enabled }}
+{{- $serviceName := .Values.service.name -}}
+{{- $servicePort := .Values.service.port -}}
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -12,8 +14,8 @@ spec:
     - hosts:
         - {{ .host | quote }}
       port:
-        name: {{ .name | quote }}
-        number: {{ .number }}
-        protocol: {{ .protocol | quote }}
+        name: http
+        number: {{ $servicePort }}
+        protocol: "HTTP"
     {{- end }}
 {{- end }}
