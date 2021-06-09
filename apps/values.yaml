@@ -67,6 +67,12 @@ service:
   type: ClusterIP
   port: 8080
 
+istio:
+  gateway:
+    enabled: false
+  virtualService:
+    enabled: false
+
 ingress:
   enabled: false
   annotations: {}
@@ -178,12 +184,6 @@ externalSecrets:
   data: []
     # - key: /k8s/alpha/PASSWORD
     #   name: PASSWORD
-
-istio:
-  gateway:
-    enabled: false
-  virtualService:
-    enabled: false
 
 sidekicks: []
   # - name: sample-redis

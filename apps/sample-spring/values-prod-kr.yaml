@@ -22,14 +22,14 @@ env:
 - name: JAVA_AGENT_ENABLED
   value: 'true'
 - name: ENV_HASH
-  value: a01a7c8911ea0b81cb4ebea979cd0e0d
+  value: f28e4eab66e41ee69b38000ec5fc1066
 image:
   repository: nalbam/sample-spring
   tag: v0.6.37
 ingress:
   annotations:
-    kubernetes.io/ingress.class: nginx
-  enabled: true
+    kubernetes.io/ingress.class: nginx-public
+  enabled: false
   hosts:
   - host: sample-spring.prod.kr.karrotmarket.com
     paths:
@@ -40,6 +40,11 @@ ingress:
   - host: sample-spring.prod-b.kr.karrotmarket.com
     paths:
     - /
+istio:
+  gateway:
+    enabled: true
+  virtualService:
+    enabled: true
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
