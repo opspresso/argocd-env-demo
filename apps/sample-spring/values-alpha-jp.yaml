@@ -29,7 +29,7 @@ image:
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
-  enabled: true
+  enabled: false
   hosts:
   - host: sample-spring.alpha.jp.karrotmarket.com
     paths:
