@@ -28,7 +28,7 @@ env:
 - name: JAVA_AGENT_ENABLED
   value: 'true'
 - name: ENV_HASH
-  value: 1e603505ec13cd9ec33317fdd302a3ae
+  value: 8df60832485fec157f02c544c8d290f9
 image:
   repository: nalbam/sample-spring
   tag: v0.6.37
