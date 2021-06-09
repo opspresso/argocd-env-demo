@@ -3,7 +3,6 @@ analysis:
   prometheus: http://prometheus-k8s.addon-monitoring.svc.cluster.local:9090
   service: sample-node.sample.svc.cluster.local
   url: http://sample-node-preview:3000/success/98
-replicaCount: 4
 configmap:
   data:
     DD_VERSION: v0.6.29
@@ -19,7 +18,7 @@ env:
 - name: PROFILE
   value: prod
 - name: ENV_HASH
-  value: 5b4b88308f0b9efddea837afae7f70bb
+  value: 5cdbad97d65f57ef5f9608c1a42a112d
 image:
   repository: nalbam/sample-node
   tag: v0.6.29
@@ -27,16 +26,16 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: nginx-public
   enabled: false
-  hosts: 
-    - host: sample-node.prod.kr.karrotmarket.com
-      paths:
-        - /
-    - host: sample-node.prod-a.kr.karrotmarket.com
-      paths:
-        - /
-    - host: sample-node.prod-b.kr.karrotmarket.com
-      paths:
-        - /
+  hosts:
+  - host: sample-node.prod.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-node.prod-a.kr.karrotmarket.com
+    paths:
+    - /
+  - host: sample-node.prod-b.kr.karrotmarket.com
+    paths:
+    - /
 istio:
   gateway:
     enabled: true
@@ -56,6 +55,7 @@ preview:
   - host: sample-node-preview.prod-b.kr.karrotmarket.com
     paths:
     - /
+replicaCount: 4
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
@@ -65,15 +65,15 @@ strategy:
   canary:
     canaryService: sample-node-preview
     steps:
-      - setWeight: 25
-      - pause:
-          duration: 30
-      - analysis:
-          templates:
-            - templateName: sample-node-http-benchmark
-      - setWeight: 50
-      - pause:
-          duration: 30
-      - setWeight: 75
-      - pause:
-          duration: 30
+    - setWeight: 25
+    - pause:
+        duration: 30
+    - analysis:
+        templates:
+        - templateName: sample-node-http-benchmark
+    - setWeight: 50
+    - pause:
+        duration: 30
+    - setWeight: 75
+    - pause:
+        duration: 30
