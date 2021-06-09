@@ -18,7 +18,7 @@ spec:
         - {{ .host | quote }}
         {{- end }}
       port:
-        name: {{ .Values.service.name | default "http" }}
-        number: {{ .Values.service.port }}
-        protocol: "HTTP"
+        name: http
+        number: 80
+        protocol: HTTP
 {{- end }}
