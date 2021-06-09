@@ -10,12 +10,15 @@ metadata:
     {{- include "sample.labels" . | nindent 4 }}
 spec:
   servers:
-    {{- range .Values.ingress.hosts }}
     - hosts:
+        {{- range .Values.ingress.hosts }}
         - {{ .host | quote }}
+        {{- end }}
+        {{- range .Values.preview.hosts }}
+        - {{ .host | quote }}
+        {{- end }}
       port:
-        name: http
-        number: {{ $servicePort }}
+        name: {{ .Values.service.name | default "http" }}
+        number: {{ .Values.service.port }}
         protocol: "HTTP"
-    {{- end }}
 {{- end }}

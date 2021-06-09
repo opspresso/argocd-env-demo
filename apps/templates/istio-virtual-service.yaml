@@ -17,4 +17,25 @@ spec:
     - route:
         - destination:
             host: {{ include "sample.fullname" . }}
+---
+{{- if .Values.preview.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "sample.fullname" . }}-preview
+  labels:
+    app: {{ include "sample.fullname" . }}
+    {{- include "sample.labels" . | nindent 4 }}
+spec:
+  hosts:
+    {{- range .Values.preview.hosts }}
+    - {{ .host | quote }}
+    {{- end }}
+  gateways:
+    - {{ include "sample.fullname" . }}
+  http:
+    - route:
+        - destination:
+            host: {{ include "sample.fullname" . }}-preview
+{{- end }}
 {{- end }}
