@@ -27,11 +27,16 @@ image:
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
-  enabled: true
+  enabled: false
   hosts:
   - host: sample-node.alpha.jp.karrotmarket.com
     paths:
     - /
+istio:
+  gateway:
+    enabled: true
+  virtualService:
+    enabled: true
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
