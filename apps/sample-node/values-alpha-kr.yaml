@@ -37,3 +37,8 @@ secret:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNy41
   enabled: true
+strategy:
+  rollingUpdate:
+    maxSurge: 20%
+    maxUnavailable: 0
+  type: RollingUpdate
