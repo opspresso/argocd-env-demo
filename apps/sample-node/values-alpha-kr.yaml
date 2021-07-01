@@ -39,6 +39,6 @@ secret:
   enabled: true
 strategy:
   rollingUpdate:
-    maxSurge: 20%
+    # maxSurge: 20%
     maxUnavailable: 0
   type: RollingUpdate
