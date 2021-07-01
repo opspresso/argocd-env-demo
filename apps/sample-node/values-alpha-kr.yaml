@@ -42,3 +42,12 @@ strategy:
     # maxSurge: 20%
     maxUnavailable: 0
   type: RollingUpdate
+autoscaling:
+  enabled: true
+  maxReplicas: 50
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 60
+    type: Resource
+  minReplicas: 4
