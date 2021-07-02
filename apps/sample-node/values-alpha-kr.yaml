@@ -12,10 +12,10 @@ autoscaling:
   - resource:
       name: cpu
       target:
-        averageUtilization: 60
+        averageUtilization: 10
         type: Utilization
     type: Resource
-  minReplicas: 4
+  minReplicas: 2
 configmap:
   data:
     DD_VERSION: v0.7.6
