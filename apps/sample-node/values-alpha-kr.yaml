@@ -49,14 +49,14 @@ autoscaling:
   - resource:
       name: cpu
       target:
-        averageUtilization: 60
+        averageUtilization: 10
         type: Utilization
     type: Resource
-  minReplicas: 4
+  minReplicas: 2
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 600
       policies:
       - type: Percent
-        value: 25
+        value: 10
         periodSeconds: 60
