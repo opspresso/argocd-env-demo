@@ -8,7 +8,9 @@ autoscaling:
     type: Pods
   - resource:
       name: cpu
-      targetAverageUtilization: 80
+      target:
+        averageUtilization: 60
+        type: Utilization
     type: Resource
   minReplicas: 2
 controller:

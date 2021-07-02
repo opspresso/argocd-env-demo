@@ -48,7 +48,6 @@ autoscaling:
   metrics:
   - resource:
       name: cpu
-      # targetAverageUtilization: 60
       target:
         averageUtilization: 60
         type: Utilization
