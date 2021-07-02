@@ -31,17 +31,17 @@ istio:
     enabled: true
   virtualService:
     enabled: true
-replicaCount: 20
+replicaCount: 10
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNy41
   enabled: true
-strategy:
-  rollingUpdate:
-    # maxSurge: 20%
-    maxUnavailable: 0
-  type: RollingUpdate
+# strategy:
+#   rollingUpdate:
+#     # maxSurge: 20%
+#     maxUnavailable: 0
+#   type: RollingUpdate
 autoscaling:
   enabled: true
   maxReplicas: 50
@@ -51,3 +51,10 @@ autoscaling:
       targetAverageUtilization: 60
     type: Resource
   minReplicas: 4
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 600
+      policies:
+      - type: Percent
+        value: 25
+        periodSeconds: 60
