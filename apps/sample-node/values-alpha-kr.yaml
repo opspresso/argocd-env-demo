@@ -57,7 +57,7 @@ autoscaling:
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 600
-      policies:
-      - type: Percent
-        value: 25
-        periodSeconds: 60
+      # policies:
+      # - type: Percent
+      #   value: 25
+      #   periodSeconds: 60
