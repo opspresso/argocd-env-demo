@@ -5,9 +5,9 @@ analysis:
   url: http://sample-node-preview:3000/success/98
 configmap:
   data:
-    DD_VERSION: v0.7.6
+    DD_VERSION: v0.7.7
     MESSAGE: hello world
-    VERSION: v0.7.6
+    VERSION: v0.7.7
   enabled: true
 controller:
   kind: Rollout
@@ -18,10 +18,10 @@ env:
 - name: PROFILE
   value: prod
 - name: ENV_HASH
-  value: 87bc68ff0c1784bf5ac47aa7f855fcdf
+  value: 66a50ef1497aeac541e37ef03726773d
 image:
   repository: nalbam/sample-node
-  tag: v0.7.6
+  tag: v0.7.7
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx-public
@@ -59,7 +59,7 @@ replicaCount: 4
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNy42
+    SECRET_VERSION: djAuNy43
   enabled: true
 strategy:
   canary:
