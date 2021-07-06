@@ -6,7 +6,7 @@ autoscaling:
         type: Percent
         value: 25
       stabilizationWindowSeconds: 600
-  enabled: true
+  enabled: false
   maxReplicas: 50
   metrics:
   - resource:
