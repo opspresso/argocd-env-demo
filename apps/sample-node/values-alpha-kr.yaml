@@ -7,7 +7,7 @@ autoscaling:
         value: 25
       stabilizationWindowSeconds: 600
   enabled: true
-  maxReplicas: 50
+  maxReplicas: 20
   metrics:
   - resource:
       name: cpu
