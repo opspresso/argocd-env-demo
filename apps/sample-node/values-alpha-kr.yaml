@@ -26,7 +26,7 @@ env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 70de69d02707a88f8c80af21d55c6c49
+  value: 4f6ef717294ae36b19682b3f1ae9aa65
 image:
   repository: nalbam/sample-node
   tag: v0.7.8
@@ -49,9 +49,9 @@ istio:
     enabled: true
   virtualService:
     enabled: true
+replicaCount: 4
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNy44
   enabled: true
-replicaCount: 4
