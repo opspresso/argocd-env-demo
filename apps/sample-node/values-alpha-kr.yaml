@@ -49,7 +49,7 @@ istio:
     enabled: true
   virtualService:
     enabled: true
-replicaCount: 10
+replicaCount: 2
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
