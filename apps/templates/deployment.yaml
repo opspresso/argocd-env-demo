@@ -17,7 +17,7 @@ metadata:
     tags.datadoghq.com/version: {{ .Values.image.tag | default .Chart.AppVersion }}
     {{- end }}
 spec:
-  {{- if .Values.replicaCount }}
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
