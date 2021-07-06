@@ -54,4 +54,4 @@ secret:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNy44
   enabled: true
-replicaCount: 4
+replicaCount: 5
