@@ -15,7 +15,7 @@ autoscaling:
         averageUtilization: 10
         type: Utilization
     type: Resource
-  minReplicas: 2
+  minReplicas: 10
 configmap:
   data:
     DD_VERSION: v0.7.7
