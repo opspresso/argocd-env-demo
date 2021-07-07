@@ -18,18 +18,18 @@ autoscaling:
   minReplicas: 2
 configmap:
   data:
-    DD_VERSION: v0.7.10
+    DD_VERSION: v0.7.10-87
     MESSAGE: hello world
-    VERSION: v0.7.10
+    VERSION: v0.7.10-87
   enabled: true
 env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 66bdb67bbfc46f6e8cf70a65c88c7620
+  value: 535c3b2bcdf1ec8ed14b752e760e40ee
 image:
   repository: nalbam/sample-node
-  tag: v0.7.10
+  tag: v0.7.10-87
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -53,5 +53,5 @@ replicaCount: 6
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNy4xMA==
+    SECRET_VERSION: djAuNy4xMC04Nw==
   enabled: true
