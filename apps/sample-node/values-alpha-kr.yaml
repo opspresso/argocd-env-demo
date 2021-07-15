@@ -1,11 +1,4 @@
 autoscaling:
-  behavior:
-    scaleDown:
-      policies:
-      - periodSeconds: 60
-        type: Percent
-        value: 25
-      stabilizationWindowSeconds: 600
   enabled: true
   maxReplicas: 20
   metrics:
