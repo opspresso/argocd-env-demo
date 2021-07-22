@@ -30,7 +30,7 @@ env:
 - name: JAVA_AGENT_ENABLED
   value: 'true'
 - name: ENV_HASH
-  value: d602fde3268d3a2875375b21a1a657d1
+  value: c2d3f893fd863734301e14ffaa379a33
 image:
   repository: nalbam/sample-tomcat
   tag: v0.6.22
