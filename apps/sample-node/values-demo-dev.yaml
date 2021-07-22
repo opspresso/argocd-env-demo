@@ -29,10 +29,10 @@ env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 0d66506da8892b3cf2e703a14280acc9
+  value: 808a592b5d0d3084d16edd062a2d9031
 image:
   repository: nalbam/sample-node
-  tag: v0.7.15
+  tag: v0.7.16
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -56,7 +56,7 @@ preview:
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNy4xNQ==
+    SECRET_VERSION: djAuNy4xNg==
   enabled: true
 strategy:
   canary:
