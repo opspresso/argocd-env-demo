@@ -2,10 +2,10 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "sample.fullname" . }}
+  name: {{ include "app.fullname" . }}
   labels:
-    app: {{ include "sample.fullname" . }}
-    {{- include "sample.labels" . | nindent 4 }}
+    app: {{ include "app.fullname" . }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if eq .Values.controller.kind "Rollout" }}
@@ -15,7 +15,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     {{- end }}
-    name: {{ include "sample.fullname" . }}
+    name: {{ include "app.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   {{- with .Values.autoscaling.metrics }}

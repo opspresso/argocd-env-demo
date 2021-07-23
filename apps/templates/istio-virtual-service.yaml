@@ -2,40 +2,40 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: {{ include "sample.fullname" . }}
+  name: {{ include "app.fullname" . }}
   labels:
-    app: {{ include "sample.fullname" . }}
-    {{- include "sample.labels" . | nindent 4 }}
+    app: {{ include "app.fullname" . }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   hosts:
     {{- range .Values.ingress.hosts }}
     - {{ .host | quote }}
     {{- end }}
   gateways:
-    - {{ include "sample.fullname" . }}
+    - {{ include "app.fullname" . }}
   http:
     - route:
         - destination:
-            host: {{ include "sample.fullname" . }}
+            host: {{ include "app.fullname" . }}
 ---
 {{- if .Values.preview.enabled -}}
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: {{ include "sample.fullname" . }}-preview
+  name: {{ include "app.fullname" . }}-preview
   labels:
-    app: {{ include "sample.fullname" . }}
-    {{- include "sample.labels" . | nindent 4 }}
+    app: {{ include "app.fullname" . }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   hosts:
     {{- range .Values.preview.hosts }}
     - {{ .host | quote }}
     {{- end }}
   gateways:
-    - {{ include "sample.fullname" . }}
+    - {{ include "app.fullname" . }}
   http:
     - route:
         - destination:
-            host: {{ include "sample.fullname" . }}-preview
+            host: {{ include "app.fullname" . }}-preview
 {{- end }}
 {{- end }}

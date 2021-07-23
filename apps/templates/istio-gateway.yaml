@@ -4,10 +4,10 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: {{ include "sample.fullname" . }}
+  name: {{ include "app.fullname" . }}
   labels:
-    app: {{ include "sample.fullname" . }}
-    {{- include "sample.labels" . | nindent 4 }}
+    app: {{ include "app.fullname" . }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   servers:
     - hosts:

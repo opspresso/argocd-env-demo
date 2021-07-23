@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: {{ include "sample.fullname" . }}-success-rate
+  name: {{ include "app.fullname" . }}-success-rate
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:

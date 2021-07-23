@@ -2,14 +2,14 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "sample.fullname" . }}
+  name: {{ include "app.fullname" . }}
   labels:
-    app: {{ include "sample.fullname" . }}
+    app: {{ include "app.fullname" . }}
     release: {{ .Values.serviceMonitor.selector.release }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "sample.fullname" . }}
+      app: {{ include "app.fullname" . }}
   endpoints:
   {{- range .Values.serviceMonitor.endpoints }}
     - interval: {{ .interval | quote }}

@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "sample.name" -}}
+{{- define "app.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -9,7 +9,7 @@ Expand the name of the chart.
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "sample.fullname" -}}
+{{- define "app.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -25,33 +25,33 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "sample.chart" -}}
+{{- define "app.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end }}
 
 {{/*
 Return instance and name labels.
 */}}
-{{- define "sample.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "sample.name" . | quote }}
+{{- define "app.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "app.name" . | quote }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end }}
 
 {{/*
 Return labels, including instance and name.
 */}}
-{{- define "sample.labels" -}}
-{{ include "sample.selectorLabels" . }}
+{{- define "app.labels" -}}
+{{ include "app.selectorLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-helm.sh/chart: {{ include "sample.chart" . }}
+helm.sh/chart: {{ include "app.chart" . }}
 {{- end }}
 
 {{/*
 Return the service account name used by the pod.
 */}}
-{{- define "sample.serviceAccountName" -}}
+{{- define "app.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "sample.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "app.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

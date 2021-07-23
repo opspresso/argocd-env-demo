@@ -5,7 +5,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: {{ include "sample.fullname" . }}-http-benchmark
+  name: {{ include "app.fullname" . }}-http-benchmark
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
