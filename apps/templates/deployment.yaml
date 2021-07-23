@@ -45,7 +45,7 @@ spec:
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: app
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
