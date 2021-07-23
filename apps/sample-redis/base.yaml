@@ -1,0 +1,13 @@
+nameOverride: sample-redis
+fullnameOverride: sample-redis
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+service:
+  port: 6379
