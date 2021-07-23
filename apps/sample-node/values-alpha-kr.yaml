@@ -49,3 +49,9 @@ secret:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNy4xNg==
   enabled: true
+externalSecrets:
+  enabled: false
+  backendType: systemManager
+  data:
+    - key: /k8s/alpha/slack_token
+      name: slack_token
