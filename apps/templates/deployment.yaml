@@ -72,7 +72,7 @@ spec:
             {{- with .Values.env }}
 {{ toYaml . | indent 12 }}
             {{- end }}
-          {{ if or .Values.configmap.enabled .Values.secret.enabled }}
+          {{ if or .Values.configmap.enabled .Values.secret.enabled .Values.externalSecrets.enabled }}
           envFrom:
             {{ if .Values.configmap.enabled }}
             - configMapRef:
@@ -81,6 +81,10 @@ spec:
             {{ if .Values.secret.enabled }}
             - secretRef:
                 name: {{ include "app.fullname" . }}
+            {{ end }}
+            {{ if .Values.externalSecrets.enabled }}
+            - secretRef:
+                name: {{ include "app.fullname" . }}-ex
             {{ end }}
           {{ end }}
       {{- with .Values.nodeSelector }}
