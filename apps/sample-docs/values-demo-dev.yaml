@@ -15,9 +15,6 @@ autoscaling:
   minReplicas: 2
 controller:
   kind: Rollout
-datadog:
-  enabled: true
-  env: alpha
 env:
 - name: PROFILE
   value: dev

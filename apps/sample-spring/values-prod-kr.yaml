@@ -15,9 +15,6 @@ configmap:
     MESSAGE: hello world
     VERSION: v0.7.8
   enabled: true
-datadog:
-  enabled: true
-  env: prod
 env:
 - name: PROFILE
   value: prod

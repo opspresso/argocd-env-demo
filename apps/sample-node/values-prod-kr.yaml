@@ -11,9 +11,6 @@ configmap:
   enabled: true
 controller:
   kind: Rollout
-datadog:
-  enabled: true
-  env: prod
 env:
 - name: PROFILE
   value: prod

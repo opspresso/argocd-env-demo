@@ -21,9 +21,6 @@ configmap:
   enabled: true
 controller:
   kind: Rollout
-datadog:
-  enabled: true
-  env: alpha
 env:
 - name: PROFILE
   value: dev
