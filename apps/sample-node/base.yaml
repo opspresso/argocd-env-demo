@@ -1,5 +1,4 @@
 nameOverride: sample-node
-fullnameOverride: sample-node
 
 podAnnotations:
   chaos.alpha.kubernetes.io/enabled: "true"
