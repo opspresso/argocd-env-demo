@@ -20,7 +20,7 @@ env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 53f517c9728db63fddf2182a9efb4252x
+  value: 53f517c9728db63fddf2182a9efb4252xx
 image:
   repository: nalbam/sample-node
   tag: v0.7.15
