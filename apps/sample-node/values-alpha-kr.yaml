@@ -11,7 +11,6 @@ autoscaling:
   minReplicas: 2
 configmap:
   data:
-    DD_VERSION: v0.7.17
     MESSAGE: hello world
     REDIS_URL: redis://sample-redis.sample.cluster.local:6379
     VERSION: v0.7.17

@@ -15,7 +15,6 @@ autoscaling:
   minReplicas: 1
 configmap:
   data:
-    DD_VERSION: v0.6.22
     MESSAGE: hello world
     VERSION: v0.6.22
   enabled: true

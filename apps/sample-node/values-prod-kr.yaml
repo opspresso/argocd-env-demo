@@ -5,7 +5,6 @@ analysis:
   url: http://sample-node-preview:3000/success/98
 configmap:
   data:
-    DD_VERSION: v0.7.17
     MESSAGE: hello world
     VERSION: v0.7.17
   enabled: true
