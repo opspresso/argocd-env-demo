@@ -4,7 +4,6 @@ fullnameOverride: sample-node
 podAnnotations:
   chaos.alpha.kubernetes.io/enabled: "true"
 
-replicaCount: 1
 resources:
   limits:
     cpu: 250m
@@ -12,33 +11,9 @@ resources:
   requests:
     cpu: 250m
     memory: 256Mi
-revisionHistoryLimit: 1
+
 service:
   port: 3000
-sidekicks:
-  - affinity: {}
-    env: []
-    envFrom: []
-    image:
-      repository: redis
-      tag: latest
-    livenessProbe: {}
-    name: sample-node-redis
-    nodeSelector: {}
-    readinessProbe: {}
-    replicaCount: 1
-    resources:
-      limits:
-        cpu: 100m
-        memory: 128Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    revisionHistoryLimit: 2
-    service:
-      name: redis
-      port: 6379
-    tolerations: []
 
 livenessProbe:
   failureThreshold: 3

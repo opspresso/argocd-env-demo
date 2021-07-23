@@ -1,9 +1,9 @@
+nameOverride: sample-spring
 fullnameOverride: sample-spring
 
 podAnnotations:
   chaos.alpha.kubernetes.io/enabled: "true"
 
-replicaCount: 1
 resources:
   limits:
     cpu: "1"
@@ -11,7 +11,7 @@ resources:
   requests:
     cpu: "1"
     memory: 1Gi
-revisionHistoryLimit: 2
+
 service:
   port: 8080
 

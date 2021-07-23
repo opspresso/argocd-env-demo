@@ -1,4 +1,20 @@
+nameOverride: sample-tomcat
 fullnameOverride: sample-tomcat
+
+podAnnotations:
+  chaos.alpha.kubernetes.io/enabled: "true"
+
+resources:
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: "1"
+    memory: 1Gi
+
+service:
+  port: 8080
+
 livenessProbe:
   failureThreshold: 3
   httpGet:
@@ -6,8 +22,7 @@ livenessProbe:
     port: 8080
   initialDelaySeconds: 30
   periodSeconds: 10
-podAnnotations:
-  chaos.alpha.kubernetes.io/enabled: "true"
+
 readinessProbe:
   failureThreshold: 3
   httpGet:
@@ -15,14 +30,3 @@ readinessProbe:
     port: 8080
   initialDelaySeconds: 30
   periodSeconds: 10
-replicaCount: 1
-resources:
-  limits:
-    cpu: 500m
-    memory: 1Gi
-  requests:
-    cpu: 500m
-    memory: 1Gi
-revisionHistoryLimit: 2
-service:
-  port: 8080

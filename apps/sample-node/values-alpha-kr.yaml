@@ -13,13 +13,14 @@ configmap:
   data:
     DD_VERSION: v0.7.16
     MESSAGE: hello world
+    REDIS_URL: redis://sample-redis:6379
     VERSION: v0.7.16
   enabled: true
 env:
 - name: PROFILE
   value: dev
 - name: ENV_HASH
-  value: 53f517c9728db63fddf2182a9efb4252
+  value: 53f517c9728db63fddf2182a9efb4252x
 image:
   repository: nalbam/sample-node
   tag: v0.7.15

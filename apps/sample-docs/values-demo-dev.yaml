@@ -18,8 +18,6 @@ controller:
 env:
 - name: PROFILE
   value: dev
-# - name: DD_AGENT_ENABLED
-#   value: 'true'
 - name: ENV_HASH
   value: 7f1af7e99d453d9f6d321d16f07a25bd
 image:

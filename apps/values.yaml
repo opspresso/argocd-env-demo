@@ -184,22 +184,3 @@ externalSecrets:
   data: []
     # - key: /k8s/alpha/PASSWORD
     #   name: PASSWORD
-
-sidekicks: []
-  # - name: sample-redis
-  #   replicaCount: 1
-  #   revisionHistoryLimit: 2
-  #   image:
-  #     repository: redis
-  #     tag: latest
-  #   service:
-  #     name: redis
-  #     port: 6379
-  #   livenessProbe: {}
-  #   readinessProbe: {}
-  #   resources: {}
-  #   env: []
-  #   envFrom: []
-  #   nodeSelector: {}
-  #   affinity: {}
-  #   tolerations: []
