@@ -50,8 +50,7 @@ secret:
     SECRET_VERSION: djAuNy4xNg==
   enabled: true
 externalSecrets:
-  enabled: false
-  backendType: systemManager
+  enabled: true
   data:
     - key: /k8s/alpha/slack_token
       name: slack_token
