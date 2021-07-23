@@ -160,10 +160,6 @@ serviceMonitor:
       path: /metrics
       port: http
 
-datadog:
-  enabled: false
-  env: alpha
-
 env: []
   # - name: MESSAGE
   #   value: "hello world"
