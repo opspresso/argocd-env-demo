@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
-              host: "dashboard.alpha-b.kr.krmt.io"
+              host: "dashboard.bruce.spic.me"
 
   template:
     metadata:
@@ -21,7 +21,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: addons
+      project: default
       destination:
         server: "{{url}}"
         namespace: addon-dashboard

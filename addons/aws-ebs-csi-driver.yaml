@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
-              rolearn: "arn:aws:iam::314695318048:role/irsa--eks-demo--aws-ebs-csi-driver"
+              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-ebs-csi-driver"
 
   template:
     metadata:
@@ -21,7 +21,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: addons
+      project: default
       destination:
         server: "{{url}}"
         namespace: addon-aws-ebs-csi-driver

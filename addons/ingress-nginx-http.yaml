@@ -9,7 +9,8 @@ spec:
           - cluster: eks-demo
             url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
-              ingress_class: "nginx"
+              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+              hostname: "*.bruce.spic.me"
 
   template:
     metadata:
@@ -21,7 +22,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: addons
+      project: default
       destination:
         server: "{{url}}"
         namespace: addon-ingress-nginx-http
@@ -36,90 +37,16 @@ spec:
             controller:
               kind: DaemonSet
 
-              # replicaCount: 2
-
-              config:
-                use-forwarded-headers: "true"
-                compute-full-forwarded-for: "true"
-                # whitelist-source-range: "10.0.0.0/8" # internal only
-                ssl-redirect: "false" # we use `special` port to control ssl redirection
-                server-snippet: |
-                  listen 8000;
-                  if ( $server_port = 80 ) {
-                    return 308 https://$host$request_uri;
-                  }
-
-              ingressClass: "{{values.ingress_class}}"
-
-              containerPort:
-                http: 80
-                https: 443
-                special: 8000
-
               service:
-                type: NodePort
-
-                nodePorts:
-                  http: 30080
-                  https: 30443
-                  tcp:
-                    "8200": 30200
-
                 targetPorts:
                   http: http
-                  https: special # http
-
-                externalTrafficPolicy: Local
-
-                # internal:
-                #   enabled: true # internal only
-
-              resources:
-                limits:
-                  cpu: 500m
-                  memory: 512Mi
-                requests:
-                  cpu: 500m
-                  memory: 512Mi
-
-              # autoscaling:
-              #   enabled: false
-              #   minReplicas: 2
-              #   maxReplicas: 5
-              #   targetCPUUtilizationPercentage: 60
-              #   targetMemoryUtilizationPercentage: 60
-
-              stats:
-                enabled: true
-
-              # metrics:
-              #   enabled: true
-              #   serviceMonitor:
-              #     enabled: false
-              #     additionalLabels:
-              #       release: prometheus-operator
-
-              tolerations:
-                - key: group
-                  operator: Equal
-                  effect: NoSchedule
-                  value: ingress
-
-              affinity:
-                nodeAffinity:
-                  requiredDuringSchedulingIgnoredDuringExecution:
-                    nodeSelectorTerms:
-                      - matchExpressions:
-                          - key: group
-                            operator: In
-                            values:
-                              - ingress
-
-            tcp:
-              "8200": "addon-ingress-nginx-http/ingress-nginx-http-default-backend:80"
-
-            defaultBackend:
-              enabled: true
+                  https: http
+                annotations:
+                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
       syncPolicy:
         automated:

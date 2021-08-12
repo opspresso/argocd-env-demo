@@ -19,7 +19,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: addons
+      project: default
       destination:
         server: "{{url}}"
         namespace: addon-metrics-server
@@ -37,15 +37,6 @@ spec:
 
             apiService:
               create: false
-
-            tolerations:
-              - key: group
-                operator: Equal
-                value: operation
-                effect: NoSchedule
-
-            nodeSelector:
-              group: operation
 
       syncPolicy:
         automated:

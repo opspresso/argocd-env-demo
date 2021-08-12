@@ -19,7 +19,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: addons
+      project: default
       destination:
         server: "{{url}}"
         namespace: addon-chaoskube

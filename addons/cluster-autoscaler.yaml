@@ -10,7 +10,7 @@ spec:
             url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
               region: "ap-northeast-2"
-              rolearn: "arn:aws:iam::314695318048:role/irsa--eks-demo--cluster-autoscaler"
+              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--cluster-autoscaler"
 
   template:
     metadata:
@@ -22,7 +22,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: addons
+      project: default
       destination:
         server: "{{url}}"
         namespace: addon-cluster-autoscaler
@@ -54,26 +54,11 @@ spec:
               skip-nodes-with-system-pods: false
               expander: least-waste
 
-            tolerations:
-              - key: group
-                operator: Equal
-                value: operation
-                effect: NoSchedule
-
-            nodeSelector:
-              group: operation
-
             rbac:
               create: true
               serviceAccount:
                 annotations:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
-
-            # serviceMonitor:
-            #   enabled: false
-            #   namespace: addon-prometheus
-            #   selector:
-            #     release: prometheus-operator
 
       syncPolicy:
         automated:

@@ -52,3 +52,18 @@ Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Po
 HTTP                      80                    HTTP                 30081            N/A       N/A
 HTTPS                     443                   HTTPS                30069                      281ab87d-f28b-43db-b4d2-b4759950c369 (ACM)
 ```
+
+## argocd login
+
+```bash
+argocd login argocd.bruce.spic.me --grpc-web
+
+argocd cluster list
+argocd cluster add eks-demo
+```
+
+## addons
+
+```bash
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/addons.yaml
+```
