@@ -32,6 +32,7 @@ aws ssm get-parameter --name /k8s/common/github-secret --with-decryption | jq .P
 ```bash
 kubectl apply -n argocd -f argocd-secret.yaml
 kubectl apply -n argocd -f argocd-cm.yaml
+kubectl apply -n argocd -f argocd-rbac-cm.yaml
 ```
 
 ## Change the argocd-server service type to LoadBalancer
