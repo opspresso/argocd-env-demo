@@ -4,13 +4,13 @@ metadata:
   name: addons
   namespace: argocd
   labels:
-    app.kubernetes.io/instance: "addons"
+    app.kubernetes.io/instance: addons
 spec:
   project: default
   source:
-    repoURL: "git@github.com:opspresso/argocd-env-demo.git"
-    path: addons
+    repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD
+    path: addons
   destination:
     name: in-cluster
     namespace: argocd
