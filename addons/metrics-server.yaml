@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: metrics-server
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            url: https://036CC21FD52FBA1C2D0E7F6C4551A402.yl4.ap-northeast-2.eks.amazonaws.com
+
+  template:
+    metadata:
+      name: "metrics-server-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        server: "{{url}}"
+        namespace: addon-metrics-server
+      source:
+        repoURL: https://charts.helm.sh/stable
+        targetRevision: "2.11.4"
+        chart: metrics-server
+        helm:
+          values: |-
+            fullnameOverride: metrics-server
+
+            args:
+              - --kubelet-insecure-tls
+              - --kubelet-preferred-address-types=InternalIP
+
+            apiService:
+              create: false
+
+            tolerations:
+              - key: group
+                operator: Equal
+                value: operation
+                effect: NoSchedule
+
+            nodeSelector:
+              group: operation
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

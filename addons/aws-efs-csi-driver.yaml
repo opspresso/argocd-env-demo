@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: aws-efs-csi-driver
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            url: https://036CC21FD52FBA1C2D0E7F6C4551A402.yl4.ap-northeast-2.eks.amazonaws.com
+            values:
+              efsid: "fs-3e5eff5e"
+              rolearn: "arn:aws:iam::314695318048:role/irsa--eks-demo--aws-efs-csi-driver"
+
+  template:
+    metadata:
+      name: "aws-efs-csi-driver-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        server: "{{url}}"
+        namespace: addon-aws-efs-csi-driver
+      source:
+        repoURL: https://kubernetes-sigs.github.io/aws-efs-csi-driver
+        targetRevision: "2.1.5"
+        chart: aws-efs-csi-driver
+        helm:
+          values: |-
+            fullnameOverride: aws-efs-csi-driver
+
+            controller:
+              serviceAccount:
+                annotations:
+                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+
+            node:
+              serviceAccount:
+                annotations:
+                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+
+            # storageClasses:
+            #   - name: aws-efs
+            #     mountOptions:
+            #       - tls
+            #     parameters:
+            #       basePath: "/shared"
+            #       directoryPerms: "700"
+            #       fileSystemId: "{{values.efsid}}"
+            #       gidRangeEnd: "2000"
+            #       gidRangeStart: "1000"
+            #       provisioningMode: efs-ap
+            #     reclaimPolicy: Delete
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

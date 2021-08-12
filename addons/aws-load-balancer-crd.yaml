@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: aws-load-balancer-crd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            url: https://036CC21FD52FBA1C2D0E7F6C4551A402.yl4.ap-northeast-2.eks.amazonaws.com
+
+  template:
+    metadata:
+      name: "aws-load-balancer-crd-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        server: "{{url}}"
+        namespace: addon-aws-load-balancer-controller
+      source:
+        repoURL: https://github.com/aws/eks-charts
+        targetRevision: HEAD
+        path: stable/aws-load-balancer-controller/crds
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

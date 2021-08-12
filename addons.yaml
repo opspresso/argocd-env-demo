@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: addons
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: "addons"
+spec:
+  project: addons
+  source:
+    repoURL: "git@github.com:opspresso/argocd-env-demo.git"
+    path: addons
+    targetRevision: HEAD
+  destination:
+    name: in-cluster
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
