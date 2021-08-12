@@ -7,7 +7,7 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            url: https://036CC21FD52FBA1C2D0E7F6C4551A402.yl4.ap-northeast-2.eks.amazonaws.com
+            url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
               region: "ap-northeast-2"
               rolearn: "arn:aws:iam::314695318048:role/irsa--eks-demo--aws-load-balancer-controller"
