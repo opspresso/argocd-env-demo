@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: ingress-nginx-http-public
+  name: ingress-nginx-http
 spec:
   generators:
     - list:
@@ -13,7 +13,7 @@ spec:
 
   template:
     metadata:
-      name: "ingress-nginx-http-public-{{cluster}}"
+      name: "ingress-nginx-http-{{cluster}}"
       annotations:
         recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
       labels:
@@ -24,14 +24,14 @@ spec:
       project: addons
       destination:
         server: "{{url}}"
-        namespace: addon-ingress-nginx-http-public
+        namespace: addon-ingress-nginx-http
       source:
         repoURL: https://kubernetes.github.io/ingress-nginx
         targetRevision: "3.35.0"
         chart: ingress-nginx
         helm:
           values: |-
-            fullnameOverride: ingress-nginx-http-public
+            fullnameOverride: ingress-nginx-http
 
             controller:
               kind: DaemonSet
@@ -116,7 +116,7 @@ spec:
                               - ingress
 
             tcp:
-              "8200": "addon-ingress-nginx-http-public/ingress-nginx-http-public-default-backend:80"
+              "8200": "addon-ingress-nginx-http/ingress-nginx-http-default-backend:80"
 
             defaultBackend:
               enabled: true
