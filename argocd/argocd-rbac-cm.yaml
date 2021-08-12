@@ -6,5 +6,17 @@ metadata:
 data:
   policy.default: role:readonly
   policy.csv: |
-    g, "/admin", role:admin
-    g, "me@nalbam.com", role:admin
+    p, role:org-admin, applications, *, */*, allow
+    p, role:org-admin, clusters, create, *, allow
+    p, role:org-admin, clusters, delete, *, allow
+    p, role:org-admin, clusters, get, *, allow
+    p, role:org-admin, clusters, update, *, allow
+    p, role:org-admin, projects, create, *, allow
+    p, role:org-admin, projects, delete, *, allow
+    p, role:org-admin, projects, get, *, allow
+    p, role:org-admin, projects, update, *, allow
+    p, role:org-admin, repositories, create, *, allow
+    p, role:org-admin, repositories, delete, *, allow
+    p, role:org-admin, repositories, get, *, allow
+    p, role:org-admin, repositories, update, *, allow
+    g, opspresso:sre, role:org-admin
