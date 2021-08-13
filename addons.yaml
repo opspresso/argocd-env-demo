@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: addons
+  name: addons-demo
   namespace: argocd
   labels:
     app.kubernetes.io/instance: addons
