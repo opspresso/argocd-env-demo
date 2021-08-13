@@ -4,7 +4,8 @@ metadata:
   name: addons-demo
   namespace: argocd
   labels:
-    app.kubernetes.io/instance: addons
+    app.kubernetes.io/instance: addons-demo
+    krmt.io/group: addons
 spec:
   project: default
   source:
