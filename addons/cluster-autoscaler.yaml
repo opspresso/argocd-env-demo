@@ -7,7 +7,6 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
               region: "ap-northeast-2"
               rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--cluster-autoscaler"
@@ -24,7 +23,7 @@ spec:
     spec:
       project: default
       destination:
-        server: "{{url}}"
+        name: "{{cluster}}"
         namespace: addon-cluster-autoscaler
       source:
         repoURL: https://kubernetes.github.io/autoscaler

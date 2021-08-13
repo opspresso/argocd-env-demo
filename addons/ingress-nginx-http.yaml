@@ -7,7 +7,6 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
             values:
               acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
               hostname: "*.bruce.spic.me"
@@ -24,7 +23,7 @@ spec:
     spec:
       project: default
       destination:
-        server: "{{url}}"
+        name: "{{cluster}}"
         namespace: addon-ingress-nginx-http
       source:
         repoURL: https://kubernetes.github.io/ingress-nginx

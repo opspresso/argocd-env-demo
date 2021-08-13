@@ -7,7 +7,6 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            url: https://A580F7DE2A082613969729827EFCBCBF.gr7.ap-northeast-2.eks.amazonaws.com
 
   template:
     metadata:
@@ -21,7 +20,7 @@ spec:
     spec:
       project: default
       destination:
-        server: "{{url}}"
+        name: "{{cluster}}"
         namespace: addon-argo-rollouts
       source:
         repoURL: https://charts.helm.sh/incubator
