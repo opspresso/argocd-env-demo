@@ -21,7 +21,8 @@ spec:
     spec:
       project: default
       destination:
-        server: "{{url}}"
+        # server: "{{url}}"
+        name: "{{cluster}}"
         namespace: addon-argo-rollouts
       source:
         repoURL: https://argoproj.github.io/argo-helm
