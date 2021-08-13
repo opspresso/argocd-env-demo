@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: external-dns
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              region: "ap-northeast-2"
+              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--external-dns"
+
+  template:
+    metadata:
+      name: "external-dns-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-external-dns
+      source:
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: "5.3.0"
+        chart: external-dns
+        helm:
+          values: |-
+            fullnameOverride: external-dns
+
+            sources:
+              # - crd
+              - service
+              - ingress
+
+            serviceAccount:
+              annotations:
+                eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
