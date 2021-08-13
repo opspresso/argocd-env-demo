@@ -1,11 +1,11 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.11.2",
+      "default": "3.11.5",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "1.0.3",
+      "default": "1.0.4",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_notifications": {
@@ -13,7 +13,7 @@
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
-      "default": "2.0.4",
+      "default": "2.1.0",
       "description": "aws-ebs-csi-driver/aws-ebs-csi-driver"
     },
     "helm_aws_efs_csi_driver": {
@@ -25,7 +25,7 @@
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_cert_manager": {
-      "default": "v1.4.3",
+      "default": "v1.5.0",
       "description": "jetstack/cert-manager"
     },
     "helm_chaoskube": {
@@ -45,7 +45,7 @@
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "5.3.0",
+      "default": "5.4.0",
       "description": "bitnami/external-dns"
     },
     "helm_gocd": {
@@ -61,7 +61,7 @@
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_kube_prometheus_stack": {
-      "default": "17.1.3",
+      "default": "17.2.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {

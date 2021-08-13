@@ -27,7 +27,7 @@ spec:
         namespace: addon-external-dns
       source:
         repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: "5.3.0"
+        targetRevision: "5.4.0"
         chart: external-dns
         helm:
           values: |-

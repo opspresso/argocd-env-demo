@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              replicas: "0"
+              replicas: "1"
 
   template:
     metadata:
