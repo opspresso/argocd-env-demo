@@ -21,7 +21,7 @@ spec:
       project: default
       destination:
         name: "{{cluster}}"
-        namespace: addon-irsa-operator-controller
+        namespace: addon-irsa-operator
       source:
         repoURL: https://github.com/VoodooTeam/irsa-operator
         targetRevision: HEAD
