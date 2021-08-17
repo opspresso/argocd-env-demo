@@ -69,3 +69,10 @@ strategy:
     - setWeight: 75
     - pause:
         duration: 10
+irsa:
+  enabled: true
+  statement:
+    - resource: "arn:aws:s3:::irsa-sample"
+      action:
+        - "s3:Get*"
+        - "s3:List*"
