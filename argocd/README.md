@@ -19,13 +19,18 @@ aws ssm put-parameter --name /k8s/common/github-secret --value "xxxx" --type Sec
 
 # argocd-password
 PASSWORD=$(aws ssm get-parameter --name /k8s/common/argocd-password --with-decryption | jq .Parameter.Value -r)
-echo "$(htpasswd -nbBC 10 "" ${PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')" | base64
+ADMIN_PASSWORD="$(htpasswd -nbBC 10 "" ${PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/' | base64)"
 
 # argocd-mtime
-echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" | base64
+ADMIN_PASSWORD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ" | base64)"
 
 # github-secret
-aws ssm get-parameter --name /k8s/common/github-secret --with-decryption | jq .Parameter.Value -r | base64
+GITHUB_CLIENT_SECRET=$(aws ssm get-parameter --name /k8s/common/github-secret --with-decryption | jq .Parameter.Value -r | base64)
+
+# replace argocd-secret.yaml
+find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
+find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
+find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
 ```
 
 ## save argocd congifmap, secret
@@ -45,14 +50,14 @@ kubectl get svc argocd-server -n argocd
 ```
 
 ```
-NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                                PORT(S)                      AGE
-argocd-server   LoadBalancer   172.20.41.157   xxx-000.ap-northeast-2.elb.amazonaws.com   80:30081/TCP,443:30069/TCP   64m
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                       PORT(S)                      AGE
+argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30081/TCP,443:30069/TCP   64m
 ```
 
 ```
 Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Port    Cipher    SSL Certificate
 HTTP                      80                    HTTP                 30081            N/A       N/A
-HTTPS                     443                   HTTPS                30069                      281ab87d-f28b-43db-b4d2-b4759950c369 (ACM)
+HTTPS                     443                   HTTPS                30069                      xxxx-xxxx-xxxx-xxxx-xxxx (ACM)
 ```
 
 ## argocd login
