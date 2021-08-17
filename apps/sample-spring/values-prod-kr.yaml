@@ -12,7 +12,7 @@ autoscaling:
 configmap:
   data:
     MESSAGE: hello world
-    VERSION: v0.7.8
+    VERSION: v0.7.14
   enabled: true
 env:
 - name: PROFILE
@@ -20,10 +20,10 @@ env:
 - name: JAVA_AGENT_ENABLED
   value: 'true'
 - name: ENV_HASH
-  value: e7607dff8f2d04f27ee588f261204eff
+  value: e6c9b417d9f74901c51a88f0f629e93c
 image:
   repository: nalbam/sample-spring
-  tag: v0.7.8
+  tag: v0.7.14
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx-public
@@ -58,7 +58,7 @@ preview:
 secret:
   data:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNy44
+    SECRET_VERSION: djAuNy4xNA==
   enabled: true
 serviceMonitor:
   enabled: false
