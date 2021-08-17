@@ -48,8 +48,8 @@ spec:
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
