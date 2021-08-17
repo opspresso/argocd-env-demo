@@ -72,7 +72,7 @@ strategy:
 irsa:
   enabled: true
   statement:
-    - resource: "arn:aws:s3:::irsa-sample"
+    - resource: "arn:aws:s3:::sample-bucket"
       action:
         - "s3:Get*"
         - "s3:List*"
