@@ -5,7 +5,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/opspresso/argocd-env-demo"
+    repoURL: https://github.com/opspresso/argocd-env-demo
     path: apps
     targetRevision: HEAD
     helm:

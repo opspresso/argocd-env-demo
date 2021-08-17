@@ -78,3 +78,9 @@ argocd repo add https://opspresso.github.io/helm-charts --type helm --name opspr
 ```bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/addons.yaml
 ```
+
+## apps
+
+```bash
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
+```

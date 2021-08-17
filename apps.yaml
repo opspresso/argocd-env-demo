@@ -1,21 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sample-node-dev
+  name: apps-demo
+  namespace: argocd
+  labels:
+    krmt.io/group: apps
 spec:
   project: default
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
-    path: apps
     targetRevision: HEAD
-    helm:
-      valueFiles:
-        - sample-node/base.yaml
-        - sample-node/values-alpha-kr.yaml
+    path: apps/eks-demo
   destination:
-    server: "https://kubernetes.default.svc"
-    namespace: sample-node
+    namespace: argocd
+    name: in-cluster
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
