@@ -53,3 +53,10 @@ secret:
     SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
     SECRET_VERSION: djAuNy4xOA==
   enabled: true
+irsa:
+  enabled: true
+  statement:
+    - resource: "arn:aws:s3:::sample-bucket"
+      action:
+        - "s3:Get*"
+        - "s3:List*"
