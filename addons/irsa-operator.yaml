@@ -34,12 +34,8 @@ spec:
             fullnameOverride: irsa-operator
 
             clusterName: "{{cluster}}"
-            roleARN: "{{values.rolearn}}"
             oidcProviderARN: "{{values.oidcarn}}"
-
-            serviceAccount:
-              annotations:
-                eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+            roleARN: "{{values.rolearn}}"
 
       syncPolicy:
         automated:
