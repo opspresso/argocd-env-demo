@@ -37,6 +37,10 @@ spec:
             oidcProviderARN: "{{values.oidcarn}}"
             roleARN: "{{values.rolearn}}"
 
+            podSecurityContext:
+              runAsNonRoot: false
+              fsGroup: 65532
+
       syncPolicy:
         automated:
           prune: true
