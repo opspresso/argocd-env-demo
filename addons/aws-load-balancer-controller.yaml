@@ -39,8 +39,8 @@ spec:
                 eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
