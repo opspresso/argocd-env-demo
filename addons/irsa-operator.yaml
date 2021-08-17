@@ -8,8 +8,8 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              region: "ap-northeast-2"
               rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--irsa-operator"
+              oidcarn: "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/43D40A495139B51C51D1461CEBC49DCB"
 
   template:
     metadata:
@@ -34,6 +34,8 @@ spec:
             fullnameOverride: irsa-operator
 
             clusterName: "{{cluster}}"
+            roleARN: "{{values.rolearn}}"
+            oidcProviderARN: "{{values.oidcarn}}"
 
             serviceAccount:
               annotations:
