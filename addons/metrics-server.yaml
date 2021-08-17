@@ -34,8 +34,8 @@ spec:
               - --kubelet-insecure-tls
               - --kubelet-preferred-address-types=InternalIP
 
-            apiService:
-              create: false
+            # apiService:
+            #   create: false
 
       syncPolicy:
         # automated:
