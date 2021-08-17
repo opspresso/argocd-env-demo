@@ -4,6 +4,9 @@
 
 ## Install Argo CD
 
+> Argocd 를 설치 합니다.
+> addons 를 위해 ApplicationSet 도 함께 설치 합니다.
+
 ```bash
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
@@ -11,6 +14,10 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/appli
 ```
 
 ## show secret
+
+> argocd admin password 를 잊어버리지 않기 위해, aws ssm 에 저장해 놓습니다. 그리고 그것을 base64 인코딩해서 argocd-secret.yaml 에 넣습니다.
+> github 계정으로 인증학 위해 client id 와 client secret 을 각각 argocd-cm.yaml 와 argocd-secret.yaml 에 넣습니다.
+> github org (opspresso) 에 team (sre) 을 만들고 권한을 부여하기 위해 argocd-rbac-cm.yaml 에 관련 내용을 입력 합니다.
 
 ```bash
 # put aws ssm param
@@ -35,6 +42,8 @@ find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GIT
 
 ## save argocd congifmap, secret
 
+> 모두 apply 합니다.
+
 ```bash
 kubectl apply -n argocd -f argocd-secret.yaml
 kubectl apply -n argocd -f argocd-cm.yaml
@@ -42,6 +51,9 @@ kubectl apply -n argocd -f argocd-rbac-cm.yaml
 ```
 
 ## Change the argocd-server service type to LoadBalancer
+
+> argocd 에 접속 하기 위해 service 를 LoadBalancer 타입으로 변경 합니다.
+> aws 에 elb 가 생성 되어있음을 알 수 있습니다. port 와 ssm 을 설정 합니다.
 
 ```bash
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
@@ -62,6 +74,9 @@ HTTPS                     443                   HTTPS                30069      
 
 ## argocd login
 
+> argocd 에 로그인 합니다.
+> cluster 를 add 합니다. repo 도 add 합니다.
+
 ```bash
 argocd login argocd.bruce.spic.me --grpc-web
 
@@ -75,11 +90,15 @@ argocd repo add https://opspresso.github.io/helm-charts --type helm --name opspr
 
 ## addons
 
+> addons 를 등록 합니다.
+
 ```bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/addons.yaml
 ```
 
 ## apps
+
+> apps 를 등록 합니다.
 
 ```bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
