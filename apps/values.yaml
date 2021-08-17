@@ -11,6 +11,14 @@ controller:
 analysis:
   enabled: false
 
+irsa:
+  enabled: false
+  statement: []
+    # - resource: "arn:aws:s3:::irsa-sample"
+    #   action:
+    #     - "s3:Get*"
+    #     - "s3:List*"
+
 strategy: {}
   # blueGreen:
   #   activeService: sample
