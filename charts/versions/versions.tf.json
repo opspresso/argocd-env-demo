@@ -1,11 +1,11 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.11.5",
+      "default": "3.12.1",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "1.0.4",
+      "default": "2.0.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_notifications": {
@@ -25,7 +25,7 @@
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_cert_manager": {
-      "default": "v1.5.0",
+      "default": "v1.5.1",
       "description": "jetstack/cert-manager"
     },
     "helm_chaoskube": {
@@ -37,15 +37,15 @@
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
-      "default": "0.7.2",
+      "default": "0.7.3",
       "description": "deliveryhero/cluster-overprovisioner"
     },
     "helm_datadog": {
-      "default": "2.19.9",
+      "default": "2.20.1",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "5.4.0",
+      "default": "5.4.1",
       "description": "bitnami/external-dns"
     },
     "helm_gocd": {
@@ -60,8 +60,12 @@
       "default": "3.35.0",
       "description": "ingress-nginx/ingress-nginx"
     },
+    "helm_irsa_operator": {
+      "default": "0.1.6",
+      "description": "irsa-operator/irsa-operator"
+    },
     "helm_kube_prometheus_stack": {
-      "default": "17.2.1",
+      "default": "17.2.2",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
