@@ -50,7 +50,7 @@ helm.sh/chart: {{ include "app.chart" . }}
 Return the service account name used by the pod.
 */}}
 {{- define "app.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
+{{- if or .Values.serviceAccount.create .Values.irsa.enabled }}
 {{- default (include "app.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}

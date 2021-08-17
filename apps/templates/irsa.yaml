@@ -2,7 +2,7 @@
 apiVersion: irsa.voodoo.io/v1alpha1
 kind: IamRoleServiceAccount
 metadata:
-  name: {{ include "app.fullname" . }}
+  name: {{ include "app.serviceAccountName" . }}
 spec:
   policy:
     {{- with .Values.irsa.statement }}
