@@ -1,3 +1,5 @@
+analysis:
+  enabled: false
 autoscaling:
   behavior:
     scaleDown:
@@ -64,7 +66,7 @@ strategy:
         args:
         - name: url
           value: http://sample-node-preview:3000/success/98
-        templateName: http-benchmark
+        templateName: sample-node-http-benchmark
     - setWeight: 50
     - pause:
         duration: 10
