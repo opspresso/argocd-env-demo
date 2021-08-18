@@ -21,14 +21,14 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/appli
 
 ```bash
 # put aws ssm param
-aws ssm put-parameter --name /k8s/common/argocd-password --value "xxxx" --type SecureString --overwrite | jq .
+aws ssm put-parameter --name /k8s/common/admin-password --value "xxxx" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-secret --value "xxxx" --type SecureString --overwrite | jq .
 
-# argocd-password
-PASSWORD=$(aws ssm get-parameter --name /k8s/common/argocd-password --with-decryption | jq .Parameter.Value -r)
+# admin-password
+PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
 ADMIN_PASSWORD="$(htpasswd -nbBC 10 "" ${PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/' | base64)"
 
-# argocd-mtime
+# admin-mtime
 ADMIN_PASSWORD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ" | base64)"
 
 # github-secret
