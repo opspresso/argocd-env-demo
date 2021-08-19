@@ -8,6 +8,8 @@ command:
   - "ls"
   - "aws-deepracer-bruce"
 
+restartPolicy: Naver
+
 irsa:
   enabled: true
   statement:

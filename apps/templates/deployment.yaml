@@ -60,6 +60,7 @@ spec:
             - name: {{ .Values.service.name | default "http" }}
               containerPort: {{ .Values.service.port }}
               protocol: {{ .Values.service.protocol | default "TCP" }}
+          restartPolicy: {{ .Values.restartPolicy | default "Always" }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
 {{ toYaml . | nindent 12 }}
