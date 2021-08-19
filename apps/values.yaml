@@ -41,13 +41,18 @@ strategy: {}
   #     - pause:
   #         duration: 10
 
+imagePullSecrets: []
+
 image:
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
   tag: latest
 
-imagePullSecrets: []
+command: []
+  # - "aws"
+  # - "s3"
+  # - "ls"
 
 serviceAccount:
   # Specifies whether a service account should be created
