@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "http-benchmark-{{cluster}}"
+      name: "argo-rollouts-http-benchmark-{{cluster}}"
       annotations:
         recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
       labels:
@@ -28,7 +28,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: http-benchmark
+            fullnameOverride: argo-rollouts-http-benchmark
 
             resources:
               - apiVersion: argoproj.io/v1alpha1

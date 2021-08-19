@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "success-rate-{{cluster}}"
+      name: "argo-rollouts-success-rate-{{cluster}}"
       annotations:
         recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
       labels:
@@ -28,7 +28,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: success-rate
+            fullnameOverride: argo-rollouts-success-rate
 
             resources:
               - apiVersion: argoproj.io/v1alpha1
