@@ -8,6 +8,7 @@ helm repo add autoscaler https://kubernetes.github.io/autoscaler
 helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
 helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver
 helm repo add chaoskube https://linki.github.io/chaoskube
+helm repo add cortex https://cortexproject.github.io/cortex-helm-chart
 helm repo add dashboard https://kubernetes.github.io/dashboard
 helm repo add datadog https://helm.datadoghq.com
 helm repo add deliveryhero https://charts.deliveryhero.io

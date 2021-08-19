@@ -54,38 +54,38 @@ spec:
                               istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}"}[5m]
                             ))
 
-              # - apiVersion: argoproj.io/v1alpha1
-              #   kind: ClusterAnalysisTemplate
-              #   metadata:
-              #     name: http-benchmark
-              #   spec:
-              #     args:
-              #       - name: url
-              #     metrics:
-              #       - name: http-benchmark
-              #         interval: 60s
-              #         count: 5
-              #         failureLimit: 5
-              #         provider:
-              #           job:
-              #             spec:
-              #               template:
-              #                 metadata:
-              #                   annotations:
-              #                     sidecar.istio.io/inject: "false"
-              #                 spec:
-              #                   containers:
-              #                     - name: load-tester
-              #                       image: argoproj/load-tester:latest
-              #                       command: [sh, -xec]
-              #                       args:
-              #                         - |
-              #                           wrk -t5 -c5 -d10 -s report.lua {{args.url}}
-              #                           jq -e '.errors_ratio <= 0.5' report.json
-              #                   restartPolicy: Never
-              #               activeDeadlineSeconds: 300
-              #               backoffLimit: 10
-              #               ttlSecondsAfterFinished: 600
+              - apiVersion: argoproj.io/v1alpha1
+                kind: ClusterAnalysisTemplate
+                metadata:
+                  name: http-benchmark
+                spec:
+                  args:
+                    - name: url
+                  metrics:
+                    - name: http-benchmark
+                      interval: 60s
+                      count: 5
+                      failureLimit: 5
+                      provider:
+                        job:
+                          spec:
+                            template:
+                              metadata:
+                                annotations:
+                                  sidecar.istio.io/inject: "false"
+                              spec:
+                                containers:
+                                  - name: load-tester
+                                    image: argoproj/load-tester:latest
+                                    command: [sh, -xec]
+                                    args:
+                                      - |
+                                        wrk -t5 -c5 -d10 -s report.lua {{args.url}}
+                                        jq -e '.errors_ratio <= 0.5' report.json
+                                restartPolicy: Never
+                            activeDeadlineSeconds: 300
+                            backoffLimit: 10
+                            ttlSecondsAfterFinished: 600
 
       syncPolicy:
         automated:

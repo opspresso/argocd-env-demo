@@ -40,6 +40,10 @@
       "default": "0.7.3",
       "description": "deliveryhero/cluster-overprovisioner"
     },
+    "helm_cortex": {
+      "default": "0.6.0",
+      "description": "cortex/cortex"
+    },
     "helm_datadog": {
       "default": "2.20.1",
       "description": "datadog/datadog"
@@ -53,7 +57,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.15.0",
+      "default": "6.16.0",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -71,6 +75,10 @@
     "helm_kubernetes_external_secrets": {
       "default": "8.3.0",
       "description": "external-secrets/kubernetes-external-secrets"
+    },
+    "helm_loki": {
+      "default": "2.6.0",
+      "description": "grafana/loki"
     },
     "helm_metrics_server": {
       "default": "2.11.4",
