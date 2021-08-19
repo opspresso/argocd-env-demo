@@ -42,6 +42,7 @@ spec:
                           storage: 50Gi
                 securityContext:
                   runAsNonRoot: false
+                  fsGroup: 1005
 
             grafana:
               admin:
@@ -91,8 +92,8 @@ spec:
                 size: 10Gi
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
