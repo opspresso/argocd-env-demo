@@ -40,7 +40,7 @@ spec:
                 #         - key: topology.kubernetes.io/zone
                 #           operator: In
                 #           values:
-                #           - ap-northeast-2a
+                #           - ap-northeast-2b
 
                 storageSpec:
                   volumeClaimTemplate:
@@ -61,6 +61,19 @@ spec:
                   kubernetes.io/ingress.class: nginx
                 hosts:
                   - grafana.bruce.spic.me
+
+              dashboardProviders:
+                dashboardproviders.yaml:
+                  apiVersion: 1
+                  providers:
+                  - name: 'default'
+                    orgId: 1
+                    folder: ''
+                    type: file
+                    disableDeletion: false
+                    editable: true
+                    options:
+                      path: /var/lib/grafana/dashboards/default
 
               dashboards:
                 default:
