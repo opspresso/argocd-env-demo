@@ -26,10 +26,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 1ca0b85f4c40792503c9810cdc1f4143-3
+    value: 0c09b731c02111d9b43ae023f2ff4f26
   image:
     repository: nalbam/sample-node
-    tag: v0.7.18
+    tag: v0.7.19
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -40,6 +40,17 @@ app:
     - host: sample-node-dev.bruce.spic.me
       paths:
       - /
+  irsa:
+    enabled: true
+    statement:
+    - action:
+      - s3:Get*
+      - s3:List*
+      resource: arn:aws:s3:::sample-bucket
+    - action:
+      - autoscaling:Get*
+      - autoscaling:Describe*
+      resource: '*'
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -53,12 +64,12 @@ app:
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: djAuNy4xOA==
+      SECRET_VERSION: djAuNy4xOQ==
     enabled: true
   strategy:
     canary:
-      stableService: sample-node
       canaryService: sample-node-preview
+      stableService: sample-node
       steps:
       - setWeight: 25
       - pause:
@@ -72,14 +83,3 @@ app:
       - setWeight: 75
       - pause:
           duration: 10
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "s3:Get*"
-          - "s3:List*"
-        resource: "arn:aws:s3:::sample-bucket"
-      - action:
-          - "autoscaling:Get*"
-          - "autoscaling:Describe*"
-        resource: "*"
