@@ -43,21 +43,21 @@ spec:
 
                 # securityContext:
                 #   runAsNonRoot: false
-                #   fsGroup: 1005
-                #   runAsUser: 1005
-                #   runAsGroup: 1005
-                #   fsGroup: 1005
+                #   fsGroup: 1007
+                #   runAsUser: 1007
+                #   runAsGroup: 1007
+                #   fsGroup: 1007
 
             grafana:
               admin:
                 existingSecret: "prometheus-grafana-secret"
 
-              # securityContext:
-              #   runAsNonRoot: false
-              #   fsGroup: 1004
-              #   runAsUser: 1004
-              #   runAsGroup: 1004
-              #   fsGroup: 1004
+              securityContext:
+                # runAsNonRoot: false
+                fsGroup: 1006
+                runAsUser: 1006
+                runAsGroup: 1006
+                fsGroup: 1006
 
               ingress:
                 enabled: true
