@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "argo-rollouts-success-rate-{{cluster}}"
+      name: "success-rate-{{cluster}}"
       annotations:
         recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
       labels:
