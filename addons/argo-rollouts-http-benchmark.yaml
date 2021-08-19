@@ -28,7 +28,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: argo-rollouts-http-benchmark
+            fullnameOverride: http-benchmark
 
             resources:
               - apiVersion: argoproj.io/v1alpha1

@@ -28,7 +28,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: argo-rollouts-success-rate
+            fullnameOverride: success-rate
 
             resources:
               - apiVersion: argoproj.io/v1alpha1
