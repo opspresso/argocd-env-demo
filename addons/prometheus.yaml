@@ -35,29 +35,15 @@ spec:
                 storageSpec:
                   volumeClaimTemplate:
                     spec:
-                      storageClassName: efs
+                      storageClassName: gp3
                       accessModes: ["ReadWriteOnce"]
                       resources:
                         requests:
                           storage: 50Gi
 
-                # securityContext:
-                #   runAsNonRoot: false
-                #   fsGroup: 1007
-                #   runAsUser: 1007
-                #   runAsGroup: 1007
-                #   fsGroup: 1007
-
             grafana:
               admin:
                 existingSecret: "prometheus-grafana-secret"
-
-              securityContext:
-                # runAsNonRoot: false
-                fsGroup: 1006
-                runAsUser: 1006
-                runAsGroup: 1006
-                fsGroup: 1006
 
               ingress:
                 enabled: true
@@ -93,7 +79,7 @@ spec:
               persistence:
                 enabled: true
                 type: pvc
-                storageClassName: efs
+                storageClassName: gp3
                 accessModes:
                   - ReadWriteOnce
                 size: 10Gi
