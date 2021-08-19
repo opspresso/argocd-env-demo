@@ -30,11 +30,11 @@ spec:
           values: |-
             fullnameOverride: argo-rollouts
 
-      # ignoreDifferences:
-      #   - kind: CustomResourceDefinition
-      #     group: apiextensions.k8s.io
-      #     jsonPointers:
-      #       - /spec/preserveUnknownFields
+      ignoreDifferences:
+        - kind: CustomResourceDefinition
+          group: apiextensions.k8s.io
+          jsonPointers:
+            - /spec/preserveUnknownFields
 
       syncPolicy:
         automated:
