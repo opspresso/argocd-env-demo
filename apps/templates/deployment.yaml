@@ -43,7 +43,8 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      dnsPolicy: {{ .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy | default "ClusterFirst" }}
+      restartPolicy: {{ .Values.restartPolicy | default "Always" }}
       containers:
         - name: app
           {{- with .Values.securityContext }}
@@ -60,7 +61,6 @@ spec:
             - name: {{ .Values.service.name | default "http" }}
               containerPort: {{ .Values.service.port }}
               protocol: {{ .Values.service.protocol | default "TCP" }}
-          restartPolicy: {{ .Values.restartPolicy | default "Always" }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
 {{ toYaml . | nindent 12 }}
