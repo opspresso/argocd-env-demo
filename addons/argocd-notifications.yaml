@@ -33,9 +33,9 @@ spec:
             argocdUrl: https://argocd.bruce.spic.me/
 
             secret:
-              create: true
+              create: false
               items:
-                slack-token: slack-token-string
+                slack-token: SLACK_TOKEN
 
             notifiers:
               # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/
