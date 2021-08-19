@@ -85,5 +85,6 @@ irsa:
         - "s3:List*"
       resource: "arn:aws:s3:::sample-bucket"
     - action:
+        - "autoscaling:Get*"
         - "autoscaling:Describe*"
       resource: "*"
