@@ -12,7 +12,7 @@ spec:
     metadata:
       name: "cluster-role-{{cluster}}"
       annotations:
-        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: sandbox;noti-argocd-alpha-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
