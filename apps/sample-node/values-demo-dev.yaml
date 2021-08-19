@@ -1,84 +1,85 @@
-analysis:
-  enabled: true
-  url: http://sample-node-preview:3000/success/98
-autoscaling:
-  behavior:
-    scaleDown:
-      policies:
-      - periodSeconds: 60
-        type: Percent
-        value: 25
-      stabilizationWindowSeconds: 600
-  enabled: true
-  maxReplicas: 5
-  metrics:
-  - resource:
-      name: cpu
-      target:
-        averageUtilization: 60
-        type: Utilization
-    type: Resource
-  minReplicas: 4
-controller:
-  kind: Rollout
-env:
-- name: PROFILE
-  value: dev
-- name: ENV_HASH
-  value: 1ca0b85f4c40792503c9810cdc1f4143-3
-image:
-  repository: nalbam/sample-node
-  tag: v0.7.18
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: sample-node-dev.bruce.spic.me
-    paths:
-    - /
-preview:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: sample-node-dev-preview.bruce.spic.me
-    paths:
-    - /
-secret:
-  data:
-    SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNy4xOA==
-  enabled: true
-strategy:
-  canary:
-    stableService: sample-node
-    canaryService: sample-node-preview
-    steps:
-    - setWeight: 25
-    - pause:
-        duration: 10
-    - analysis:
-        templates:
-        - templateName: sample-node-http-benchmark
-    - setWeight: 50
-    - pause:
-        duration: 10
-    - setWeight: 75
-    - pause:
-        duration: 10
-irsa:
-  enabled: true
-  statement:
-    - action:
-        - "s3:Get*"
-        - "s3:List*"
-      resource: "arn:aws:s3:::sample-bucket"
-    - action:
-        - "autoscaling:Get*"
-        - "autoscaling:Describe*"
-      resource: "*"
+app:
+  analysis:
+    enabled: true
+    url: http://sample-node-preview:3000/success/98
+  autoscaling:
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 25
+        stabilizationWindowSeconds: 600
+    enabled: true
+    maxReplicas: 5
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 60
+          type: Utilization
+      type: Resource
+    minReplicas: 4
+  controller:
+    kind: Rollout
+  env:
+  - name: PROFILE
+    value: dev
+  - name: ENV_HASH
+    value: 1ca0b85f4c40792503c9810cdc1f4143-3
+  image:
+    repository: nalbam/sample-node
+    tag: v0.7.18
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: sample-node-dev.bruce.spic.me
+      paths:
+      - /
+  preview:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: sample-node-dev-preview.bruce.spic.me
+      paths:
+      - /
+  secret:
+    data:
+      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+      SECRET_VERSION: djAuNy4xOA==
+    enabled: true
+  strategy:
+    canary:
+      stableService: sample-node
+      canaryService: sample-node-preview
+      steps:
+      - setWeight: 25
+      - pause:
+          duration: 10
+      - analysis:
+          templates:
+          - templateName: sample-node-http-benchmark
+      - setWeight: 50
+      - pause:
+          duration: 10
+      - setWeight: 75
+      - pause:
+          duration: 10
+  irsa:
+    enabled: true
+    statement:
+      - action:
+          - "s3:Get*"
+          - "s3:List*"
+        resource: "arn:aws:s3:::sample-bucket"
+      - action:
+          - "autoscaling:Get*"
+          - "autoscaling:Describe*"
+        resource: "*"
