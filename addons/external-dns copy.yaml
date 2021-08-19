@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kube-prometheus-stack
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+
+  template:
+    metadata:
+      name: "kube-prometheus-stack-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-kube-prometheus-stack
+      source:
+        repoURL: https://prometheus-community.github.io/helm-charts
+        targetRevision: "18.0.0"
+        chart: kube-prometheus-stack
+        helm:
+          values: |-
+            fullnameOverride: kube-prometheus-stack
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

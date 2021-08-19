@@ -9,7 +9,7 @@
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_notifications": {
-      "default": "1.4.1",
+      "default": "1.4.3",
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
@@ -60,12 +60,8 @@
       "default": "3.35.0",
       "description": "ingress-nginx/ingress-nginx"
     },
-    "helm_irsa_operator": {
-      "default": "0.1.6",
-      "description": "irsa-operator/irsa-operator"
-    },
     "helm_kube_prometheus_stack": {
-      "default": "17.2.2",
+      "default": "18.0.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
