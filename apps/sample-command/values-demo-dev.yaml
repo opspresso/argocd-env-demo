@@ -6,8 +6,6 @@ command:
   - "aws"
   - "ec2"
   - "describe-instances"
-  - "--query"
-  - '"Reservations[].Instances[].InstanceId"'
 
 # restartPolicy: Never
 
