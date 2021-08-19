@@ -1,3 +1,3 @@
 app:
-  fullnameOverride: sample-job
-  nameOverride: sample-job
+  fullnameOverride: sample-jobs
+  nameOverride: sample-jobs

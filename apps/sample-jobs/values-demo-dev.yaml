@@ -1,14 +1,13 @@
 app:
-  image:
-    repository: amazon/aws-cli
-    tag: latest
-
-  command:
-    - "aws"
-    - "ec2"
-    - "describe-instances"
-
-  restartPolicy: Never
+  jobs:
+    - name: job1
+      image:
+        repository: amazon/aws-cli
+        tag: latest
+      command:
+        - "aws"
+        - "ec2"
+        - "describe-instances"
 
   irsa:
     enabled: true
