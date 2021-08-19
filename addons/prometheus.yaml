@@ -47,6 +47,9 @@ spec:
               admin:
                 existingSecret: "prometheus-grafana-secret"
 
+              securityContext:
+                runAsNonRoot: false
+
               ingress:
                 enabled: true
                 annotations:
