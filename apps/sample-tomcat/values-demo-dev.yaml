@@ -1,61 +1,62 @@
-autoscaling:
-  enabled: true
-  maxReplicas: 5
-  metrics:
-  - pods:
-      metricName: container_network_receive_bytes
-      targetAverageValue: 10k
-    type: Pods
-  - resource:
-      name: cpu
-      target:
-        averageUtilization: 60
-        type: Utilization
-    type: Resource
-  minReplicas: 1
-configmap:
-  data:
-    MESSAGE: hello world
-    VERSION: v0.6.21-80
-  enabled: true
-controller:
-  kind: Rollout
-env:
-- name: PROFILE
-  value: dev
-- name: JAVA_AGENT_ENABLED
-  value: 'true'
-- name: ENV_HASH
-  value: 95ea3d48dd8b43415eab422e7ef09d56
-image:
-  repository: nalbam/sample-tomcat
-  tag: v0.6.21-80
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: sample-tomcat-dev.bruce.spic.me
-    paths:
-    - /
-preview:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: sample-tomcat-dev-preview.bruce.spic.me
-    paths:
-    - /
-secret:
-  data:
-    SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNi4yMS04MA==
-  enabled: true
-strategy:
-  blueGreen:
-    activeService: sample-tomcat
-    autoPromotionEnabled: true
-    autoPromotionSeconds: 30
-    previewService: sample-tomcat-preview
+app:
+  autoscaling:
+    enabled: true
+    maxReplicas: 5
+    metrics:
+    - pods:
+        metricName: container_network_receive_bytes
+        targetAverageValue: 10k
+      type: Pods
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 60
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+  configmap:
+    data:
+      MESSAGE: hello world
+      VERSION: v0.6.21-80
+    enabled: true
+  controller:
+    kind: Rollout
+  env:
+  - name: PROFILE
+    value: dev
+  - name: JAVA_AGENT_ENABLED
+    value: 'true'
+  - name: ENV_HASH
+    value: 95ea3d48dd8b43415eab422e7ef09d56
+  image:
+    repository: nalbam/sample-tomcat
+    tag: v0.6.21-80
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: sample-tomcat-dev.bruce.spic.me
+      paths:
+      - /
+  preview:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: sample-tomcat-dev-preview.bruce.spic.me
+      paths:
+      - /
+  secret:
+    data:
+      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+      SECRET_VERSION: djAuNi4yMS04MA==
+    enabled: true
+  strategy:
+    blueGreen:
+      activeService: sample-tomcat
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+      previewService: sample-tomcat-preview

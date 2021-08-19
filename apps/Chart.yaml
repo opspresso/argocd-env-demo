@@ -1,6 +1,0 @@
-apiVersion: v2
-name: sample
-description: A Helm chart for Kubernetes
-icon: https://avatars0.githubusercontent.com/u/39108256
-appVersion: v0.3.1
-version: v0.3.1

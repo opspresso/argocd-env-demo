@@ -1,18 +1,19 @@
-env:
-  - name: PROFILE
-    value: dev
-  - name: ENV_HASH
-    value: 75de9c53266eb537d080942027e96da8
-image:
-  repository: tobegit3hub/grpc-helloworld
-  tag: latest
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  enabled: true
-  hosts:
-    - host: grpc-dev.bruce.spic.me
-      paths:
-        - /
+app:
+  env:
+    - name: PROFILE
+      value: dev
+    - name: ENV_HASH
+      value: 75de9c53266eb537d080942027e96da8
+  image:
+    repository: tobegit3hub/grpc-helloworld
+    tag: latest
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    enabled: true
+    hosts:
+      - host: grpc-dev.bruce.spic.me
+        paths:
+          - /

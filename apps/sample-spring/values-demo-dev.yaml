@@ -1,64 +1,65 @@
-autoscaling:
-  enabled: true
-  maxReplicas: 5
-  metrics:
-  - resource:
-      name: cpu
-      target:
-        averageUtilization: 60
-        type: Utilization
-    type: Resource
-  minReplicas: 2
-configmap:
-  data:
-    MESSAGE: hello world
-    VERSION: v0.7.14
-  enabled: true
-controller:
-  kind: Rollout
-env:
-- name: PROFILE
-  value: dev
-- name: JAVA_AGENT_ENABLED
-  value: 'true'
-- name: ENV_HASH
-  value: 35f99fc73504edae0558102d8e598d2f-3
-image:
-  repository: nalbam/sample-spring
-  tag: v0.7.14
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: sample-spring-dev.bruce.spic.me
-    paths:
-    - /
-preview:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: sample-spring-dev-preview.bruce.spic.me
-    paths:
-    - /
-secret:
-  data:
-    SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-    SECRET_VERSION: djAuNy4xNA==
-  enabled: true
-strategy:
-  blueGreen:
-    activeService: sample-spring
-    autoPromotionEnabled: true
-    autoPromotionSeconds: 30
-    previewService: sample-spring-preview
-irsa:
-  enabled: true
-  statement:
-    - resource: "arn:aws:s3:::sample-bucket"
-      action:
-        - "s3:Get*"
-        - "s3:List*"
+app:
+  autoscaling:
+    enabled: true
+    maxReplicas: 5
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 60
+          type: Utilization
+      type: Resource
+    minReplicas: 2
+  configmap:
+    data:
+      MESSAGE: hello world
+      VERSION: v0.7.14
+    enabled: true
+  controller:
+    kind: Rollout
+  env:
+  - name: PROFILE
+    value: dev
+  - name: JAVA_AGENT_ENABLED
+    value: 'true'
+  - name: ENV_HASH
+    value: 35f99fc73504edae0558102d8e598d2f-3
+  image:
+    repository: nalbam/sample-spring
+    tag: v0.7.14
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: sample-spring-dev.bruce.spic.me
+      paths:
+      - /
+  preview:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: sample-spring-dev-preview.bruce.spic.me
+      paths:
+      - /
+  secret:
+    data:
+      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+      SECRET_VERSION: djAuNy4xNA==
+    enabled: true
+  strategy:
+    blueGreen:
+      activeService: sample-spring
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+      previewService: sample-spring-preview
+  irsa:
+    enabled: true
+    statement:
+      - resource: "arn:aws:s3:::sample-bucket"
+        action:
+          - "s3:Get*"
+          - "s3:List*"

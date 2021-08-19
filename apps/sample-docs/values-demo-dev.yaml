@@ -1,51 +1,52 @@
-autoscaling:
-  enabled: true
-  maxReplicas: 10
-  metrics:
-  - pods:
-      metricName: container_network_receive_bytes
-      targetAverageValue: 3k
-    type: Pods
-  - resource:
-      name: cpu
-      target:
-        averageUtilization: 60
-        type: Utilization
-    type: Resource
-  minReplicas: 2
-controller:
-  kind: Rollout
-env:
-- name: PROFILE
-  value: dev
-- name: ENV_HASH
-  value: 7f1af7e99d453d9f6d321d16f07a25bd
-image:
-  repository: nalbam/docs
-  tag: 0.2.13
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: docs-dev.bruce.spic.me
-    paths:
-    - /
-preview:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-  enabled: true
-  hosts:
-  - host: docs-dev-preview.bruce.spic.me
-    paths:
-    - /
-strategy:
-  blueGreen:
-    activeService: sample-docs
-    autoPromotionEnabled: true
-    autoPromotionSeconds: 30
-    previewService: sample-docs-preview
+app:
+  autoscaling:
+    enabled: true
+    maxReplicas: 10
+    metrics:
+    # - pods:
+    #     metricName: container_network_receive_bytes
+    #     targetAverageValue: 3k
+    #   type: Pods
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 60
+          type: Utilization
+      type: Resource
+    minReplicas: 2
+  controller:
+    kind: Rollout
+  env:
+  - name: PROFILE
+    value: dev
+  - name: ENV_HASH
+    value: 7f1af7e99d453d9f6d321d16f07a25bd
+  image:
+    repository: nalbam/docs
+    tag: 0.2.13
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: docs-dev.bruce.spic.me
+      paths:
+      - /
+  preview:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    enabled: true
+    hosts:
+    - host: docs-dev-preview.bruce.spic.me
+      paths:
+      - /
+  strategy:
+    blueGreen:
+      activeService: sample-docs
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+      previewService: sample-docs-preview
