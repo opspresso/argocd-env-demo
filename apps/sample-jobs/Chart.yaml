@@ -2,11 +2,11 @@ apiVersion: v2
 name: sample-jobs
 description: A Helm chart for Kubernetes
 type: application
-version: v0.1.0
-appVersion: v0.1.0
+version: v0.1.1
+appVersion: v0.1.1
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: jobs
-    version: v0.1.0
-    alias: app
+    version: v0.1.1
+    alias: job1
