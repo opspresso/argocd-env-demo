@@ -49,7 +49,7 @@ spec:
                   - tls
                 parameters:
                   basePath: "/shared"
-                  directoryPerms: "700"
+                  directoryPerms: "755"
                   fileSystemId: "{{values.efsid}}"
                   gidRangeEnd: "2000"
                   gidRangeStart: "1000"
