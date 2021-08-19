@@ -40,11 +40,11 @@ def replace_values(args):
             doc["app"]["image"]["tag"] = args.version
 
             # configmap
-            if "configmap" in doc:
+            if "configmap" in doc["app"]:
                 doc["app"]["configmap"]["data"]["VERSION"] = args.version
 
             # secret
-            if "secret" in doc:
+            if "secret" in doc["app"]:
                 doc["app"]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(args.version)
 
         if doc != None:
@@ -69,7 +69,7 @@ def replace_hash(args, hash):
         with open(filepath, "r") as file:
             doc = yaml.load(file, Loader=yaml.FullLoader)
 
-            if "env" in doc:
+            if "env" in doc["app"]:
                 for i, env in enumerate(doc["app"]["env"]):
                     if env["name"] == "ENV_HASH":
                         env["value"] = hash
