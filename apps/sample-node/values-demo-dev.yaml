@@ -1,5 +1,6 @@
 analysis:
   enabled: true
+  url: http://sample-node-preview:3000/success/98
 autoscaling:
   behavior:
     scaleDown:
@@ -57,12 +58,12 @@ strategy:
   canary:
     stableService: sample-node
     canaryService: sample-node-preview
-    analysis:
-      templates:
-      - templateName: sample-node-http-benchmark
-      args:
-      - name: url
-        value: http://sample-node-preview:3000/success/98
+    # analysis:
+    #   templates:
+    #   - templateName: sample-node-http-benchmark
+    #   args:
+    #   - name: url
+    #     value: http://sample-node-preview:3000/success/98
     steps:
     - setWeight: 25
     - pause:
