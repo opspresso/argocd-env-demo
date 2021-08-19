@@ -41,7 +41,10 @@ spec:
                         requests:
                           storage: 50Gi
                 securityContext:
-                  runAsNonRoot: false
+                  # runAsNonRoot: false
+                  fsGroup: 1005
+                  runAsUser: 1005
+                  runAsGroup: 1005
                   fsGroup: 1005
 
             grafana:
@@ -50,6 +53,9 @@ spec:
 
               securityContext:
                 # runAsNonRoot: false
+                fsGroup: 1004
+                runAsUser: 1004
+                runAsGroup: 1004
                 fsGroup: 1004
 
               ingress:
