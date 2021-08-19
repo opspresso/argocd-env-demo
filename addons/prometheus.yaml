@@ -32,16 +32,6 @@ spec:
 
             prometheus:
               prometheusSpec:
-                # affinity:
-                #   nodeAffinity:
-                #     requiredDuringSchedulingIgnoredDuringExecution:
-                #       nodeSelectorTerms:
-                #       - matchExpressions:
-                #         - key: topology.kubernetes.io/zone
-                #           operator: In
-                #           values:
-                #           - ap-northeast-2b
-
                 storageSpec:
                   volumeClaimTemplate:
                     spec:
@@ -50,6 +40,26 @@ spec:
                       resources:
                         requests:
                           storage: 50Gi
+
+                # tolerations:
+                #   - key: group
+                #     operator: Equal
+                #     value: monitoring
+                #     effect: NoSchedule
+
+                # nodeSelector:
+                #   group: monitoring
+
+            # alertmanager:
+            #   alertmanagerSpec:
+            #     tolerations:
+            #       - key: group
+            #         operator: Equal
+            #         value: monitoring
+            #         effect: NoSchedule
+
+            #     nodeSelector:
+            #       group: monitoring
 
             grafana:
               admin:
@@ -85,6 +95,19 @@ spec:
                     gnetId: 9679
                     revision: 9
                     datasource: Prometheus
+
+              # persistence:
+              #   enabled: true
+              #   existingClaim: prometheus-pvc-grafana
+
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: monitoring
+              #     effect: NoSchedule
+
+              # nodeSelector:
+              #   group: monitoring
 
       syncPolicy:
         automated:

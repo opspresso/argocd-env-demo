@@ -1,18 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: aws-ebs-csi-driver
+  name: aws-efs-csi-driver
 spec:
   generators:
     - list:
         elements:
           - cluster: eks-demo
             values:
-              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-ebs-csi-driver"
+              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-efs-csi-driver"
+              efsid: "fs-61cd4101"
 
   template:
     metadata:
-      name: "aws-ebs-csi-driver-{{cluster}}"
+      name: "aws-efs-csi-driver-{{cluster}}"
       annotations:
         recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
       labels:
@@ -20,26 +21,19 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: default
+      project: addons
       destination:
-        name: "{{cluster}}"
-        namespace: addon-aws-ebs-csi-driver
+        name: "{{cluster_name}}"
+        namespace: addon-aws-efs-csi-driver
       source:
-        repoURL: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
-        targetRevision: "2.1.0"
-        chart: aws-ebs-csi-driver
+        repoURL: https://kubernetes-sigs.github.io/aws-efs-csi-driver
+        targetRevision: "2.1.5"
+        chart: aws-efs-csi-driver
         helm:
           values: |-
-            fullnameOverride: aws-ebs-csi-driver
+            fullnameOverride: aws-efs-csi-driver
 
             controller:
-              k8sTagClusterId: "{{cluster}}"
-
-              extraVolumeTags:
-                Environment: alpha
-                Role: eks
-                Service: ks
-
               serviceAccount:
                 annotations:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
@@ -50,15 +44,17 @@ spec:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
             storageClasses:
-              - name: gp3
-                annotations:
-                  storageclass.kubernetes.io/is-default-class: "true"
-                volumeBindingMode: Immediate
-                reclaimPolicy: Retain
+              - name: aws-efs
+                mountOptions:
+                  - tls
                 parameters:
-                  type: "gp3"
-                  allowAutoIOPSPerGBIncrease: "true"
-                allowVolumeExpansion: true
+                  basePath: "/shared"
+                  directoryPerms: "700"
+                  fileSystemId: "{{values.efsid}}"
+                  gidRangeEnd: "2000"
+                  gidRangeStart: "1000"
+                  provisioningMode: efs-ap
+                reclaimPolicy: Retain
 
       syncPolicy:
         automated:
