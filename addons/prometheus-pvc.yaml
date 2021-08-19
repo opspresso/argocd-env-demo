@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prometheus-pvc
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+
+  template:
+    metadata:
+      name: "prometheus-pvc-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-prometheus
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: prometheus-pvc
+
+            resources:
+              - apiVersion: v1
+                kind: PersistentVolumeClaim
+                metadata:
+                  name: prometheus-prometheus-pvc
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 50Gi
+                  storageClassName: gp3-a
+
+              - apiVersion: v1
+                kind: PersistentVolumeClaim
+                metadata:
+                  name: prometheus-grafana-pvc
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 10Gi
+                  storageClassName: gp3-a
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
