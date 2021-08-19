@@ -40,6 +40,8 @@ spec:
                       resources:
                         requests:
                           storage: 50Gi
+                securityContext:
+                  runAsNonRoot: false
 
             grafana:
               admin:
