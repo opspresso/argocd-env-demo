@@ -21,6 +21,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/appli
 
 ```bash
 # put aws ssm param
+aws ssm put-parameter --name /k8s/common/admin-user --value "admin" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/admin-password --value "xxxx" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-secret --value "xxxx" --type SecureString --overwrite | jq .
 
