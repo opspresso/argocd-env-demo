@@ -36,11 +36,11 @@ app:
   podAnnotations:
     chaos.alpha.kubernetes.io/enabled: "true"
 
-  istio:
-    gateway:
-      enabled: true
-    virtualService:
-      enabled: true
+  # istio:
+  #   gateway:
+  #     enabled: true
+  #   virtualService:
+  #     enabled: true
 
 redis:
   nameOverride: sample-redis
