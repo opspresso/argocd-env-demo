@@ -55,6 +55,13 @@ spec:
               admin:
                 existingSecret: "prometheus-grafana-secret"
 
+              ingress:
+                enabled: true
+                annotations:
+                  kubernetes.io/ingress.class: nginx
+                hosts:
+                  - grafana.bruce.spic.me
+
       syncPolicy:
         # automated:
         #   prune: true
