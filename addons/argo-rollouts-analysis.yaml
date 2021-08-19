@@ -80,7 +80,7 @@ spec:
                                     command: [sh, -xec]
                                     args:
                                       - |
-                                        wrk -t5 -c5 -d10 -s report.lua {{ .Values.analysis.url }}
+                                        wrk -t5 -c5 -d10 -s report.lua {{args.url}}
                                         jq -e '.errors_ratio <= 0.5' report.json
                                 restartPolicy: Never
                             # https://kubernetes.io/ko/docs/concepts/workloads/controllers/jobs-run-to-completion/
