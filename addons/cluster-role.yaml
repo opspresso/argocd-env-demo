@@ -38,8 +38,10 @@ spec:
                 rules:
                   - apiGroups:
                       - ""
-                      - extensions
                       - apps
+                      - batch
+                      - extensions
+                      - networking.istio.io
                     resources:
                       - "*"
                     verbs:
