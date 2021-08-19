@@ -158,6 +158,8 @@ autoscaling:
 
 dnsPolicy: ClusterFirst # ClusterFirst Default
 
+restartPolicy: Always # Always, OnFailure, Never
+
 nodeSelector: {}
 
 tolerations: []
