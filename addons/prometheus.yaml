@@ -30,6 +30,10 @@ spec:
           values: |-
             fullnameOverride: prometheus
 
+            grafana:
+              admin:
+                existingSecret: "prometheus-grafana-secret"
+
       syncPolicy:
         # automated:
         #   prune: true
