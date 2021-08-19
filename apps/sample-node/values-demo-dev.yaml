@@ -1,7 +1,7 @@
 app:
-  analysis:
-    enabled: true
-    url: http://sample-node-preview:3000/success/98
+  # analysis:
+  #   enabled: true
+  #   url: http://sample-node-preview:3000/success/98
   autoscaling:
     behavior:
       scaleDown:
@@ -31,7 +31,7 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 0c09b731c02111d9b43ae023f2ff4f26
+    value: 0c09b731c02111d9b43ae023f2ff4f26-1
   image:
     repository: nalbam/sample-node
     tag: v0.7.19
@@ -79,7 +79,10 @@ app:
           duration: 10
       - analysis:
           templates:
-          - templateName: sample-node-http-benchmark
+          - templateName: http-benchmark
+          args:
+          - name: url
+            value: http://sample-node-preview:3000/success/98
       - setWeight: 50
       - pause:
           duration: 10
