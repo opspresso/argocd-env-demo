@@ -41,7 +41,7 @@ spec:
                         requests:
                           storage: 50Gi
                 securityContext:
-                  # runAsNonRoot: false
+                  runAsNonRoot: false
                   fsGroup: 1005
                   runAsUser: 1005
                   runAsGroup: 1005
@@ -52,7 +52,7 @@ spec:
                 existingSecret: "prometheus-grafana-secret"
 
               securityContext:
-                # runAsNonRoot: false
+                runAsNonRoot: false
                 fsGroup: 1004
                 runAsUser: 1004
                 runAsGroup: 1004
@@ -98,8 +98,8 @@ spec:
                 size: 10Gi
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
