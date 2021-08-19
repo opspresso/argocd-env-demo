@@ -1,3 +1,0 @@
-fullnameOverride: sample-s3
-nameOverride: sample-s3
-replicaCount: 1

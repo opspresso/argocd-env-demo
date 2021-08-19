@@ -69,7 +69,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sample-s3-eks-demo
+  name: sample-command-eks-demo
   namespace: argocd
   annotations:
     recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha
@@ -81,8 +81,8 @@ spec:
     targetRevision: HEAD
     helm:
       valueFiles:
-        - sample-s3/base.yaml
-        - sample-s3/values-demo-dev.yaml
+        - sample-command/base.yaml
+        - sample-command/values-demo-dev.yaml
   destination:
     name: eks-demo
     namespace: sample
