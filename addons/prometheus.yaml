@@ -41,26 +41,6 @@ spec:
                         requests:
                           storage: 50Gi
 
-                # tolerations:
-                #   - key: group
-                #     operator: Equal
-                #     value: monitoring
-                #     effect: NoSchedule
-
-                # nodeSelector:
-                #   group: monitoring
-
-            # alertmanager:
-            #   alertmanagerSpec:
-            #     tolerations:
-            #       - key: group
-            #         operator: Equal
-            #         value: monitoring
-            #         effect: NoSchedule
-
-            #     nodeSelector:
-            #       group: monitoring
-
             grafana:
               admin:
                 existingSecret: "prometheus-grafana-secret"
@@ -96,18 +76,13 @@ spec:
                     revision: 9
                     datasource: Prometheus
 
-              # persistence:
-              #   enabled: true
-              #   existingClaim: prometheus-pvc-grafana
-
-              # tolerations:
-              #   - key: group
-              #     operator: Equal
-              #     value: monitoring
-              #     effect: NoSchedule
-
-              # nodeSelector:
-              #   group: monitoring
+              persistence:
+                enabled: true
+                type: pvc
+                storageClassName: efs
+                accessModes:
+                  - ReadWriteOnce
+                size: 10Gi
 
       syncPolicy:
         automated:
