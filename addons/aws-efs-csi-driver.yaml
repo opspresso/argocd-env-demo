@@ -23,7 +23,7 @@ spec:
     spec:
       project: addons
       destination:
-        name: "{{cluster_name}}"
+        name: "{{cluster}}"
         namespace: addon-aws-efs-csi-driver
       source:
         repoURL: https://kubernetes-sigs.github.io/aws-efs-csi-driver
