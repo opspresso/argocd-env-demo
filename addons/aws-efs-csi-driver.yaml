@@ -44,7 +44,7 @@ spec:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
             storageClasses:
-              - name: aws-efs
+              - name: efs
                 mountOptions:
                   - tls
                 parameters:
