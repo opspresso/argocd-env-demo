@@ -48,7 +48,8 @@ spec:
                 existingSecret: "prometheus-grafana-secret"
 
               securityContext:
-                runAsNonRoot: false
+                # runAsNonRoot: false
+                fsGroup: 1004
 
               ingress:
                 enabled: true
