@@ -55,6 +55,7 @@ spec:
                   gidRangeStart: "1000"
                   provisioningMode: efs-ap
                 reclaimPolicy: Retain
+                allowVolumeExpansion: true
 
       syncPolicy:
         automated:

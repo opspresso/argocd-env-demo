@@ -35,7 +35,7 @@ spec:
                 storageSpec:
                   volumeClaimTemplate:
                     spec:
-                      storageClassName: gp3
+                      storageClassName: efs
                       accessModes: ["ReadWriteOnce"]
                       resources:
                         requests:
