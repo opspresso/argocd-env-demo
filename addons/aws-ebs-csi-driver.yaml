@@ -8,6 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
+              region: "ap-northeast-2"
               rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-ebs-csi-driver"
 
   template:
@@ -51,13 +52,22 @@ spec:
 
             storageClasses:
               - name: gp3
-                # annotations:
-                #   storageclass.kubernetes.io/is-default-class: "true"
+                annotations:
+                  storageclass.kubernetes.io/is-default-class: "true"
                 volumeBindingMode: Immediate
                 reclaimPolicy: Retain
                 parameters:
                   type: "gp3"
                   allowAutoIOPSPerGBIncrease: "true"
+                allowVolumeExpansion: true
+
+              - name: gp3-a
+                volumeBindingMode: Immediate
+                reclaimPolicy: Retain
+                parameters:
+                  type: "gp3"
+                  allowAutoIOPSPerGBIncrease: "true"
+                  zone: "{{values.region}}a"
                 allowVolumeExpansion: true
 
       syncPolicy:
