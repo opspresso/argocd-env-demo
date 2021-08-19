@@ -62,6 +62,17 @@ spec:
                 hosts:
                   - grafana.bruce.spic.me
 
+              dashboards:
+                default:
+                  kube-cluster:
+                    gnetId: 9797
+                    revision: 15
+                    datasource: Prometheus
+                  kube-deploy:
+                    gnetId: 9679
+                    revision: 9
+                    datasource: Prometheus
+
       syncPolicy:
         automated:
           prune: true
