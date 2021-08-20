@@ -8,11 +8,11 @@ job1:
     - "ec2"
     - "describe-instances"
 
-  env:
-  - name: PROFILE
-    value: dev
-  - name: ENV_HASH
-    value: er7dcfe72a4443x73b3c49b31a68c46a-4
+  # env:
+  # - name: PROFILE
+  #   value: dev
+  # - name: ENV_HASH
+  #   value: er7dcfe72a4443x73b3c49b31a68c46a-4
 
   irsa:
     enabled: true
