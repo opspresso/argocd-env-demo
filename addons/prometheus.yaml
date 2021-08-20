@@ -41,6 +41,28 @@ spec:
                         requests:
                           storage: 50Gi
 
+            alertmanager:
+              config:
+                global:
+                  slack_api_url: $slack-token
+              route:
+                receiver: "slack"
+                routes:
+                  - receiver: "slack"
+
+              alertmanagerSpec:
+                useExistingSecret: true
+                secrets:
+                  - prometheus-alertmanager-secret
+                storage:
+                  volumeClaimTemplate:
+                    spec:
+                      storageClassName: gp3
+                      accessModes: ["ReadWriteOnce"]
+                      resources:
+                        requests:
+                          storage: 10Gi
+
             grafana:
               admin:
                 existingSecret: "prometheus-grafana-secret"
