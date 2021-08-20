@@ -30,7 +30,7 @@ spec:
           values: |-
             fullnameOverride: argocd-notifications
 
-            argocdUrl: https://argocd.bruce.spic.me/
+            argocdUrl: https://argocd.bruce.spic.me
 
             secret:
               create: false
