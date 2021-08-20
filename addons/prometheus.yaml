@@ -131,12 +131,14 @@ spec:
         - kind: MutatingWebhookConfiguration
           group: admissionregistration.k8s.io
           jqPathExpressions:
-            - .webhooks | .[].failurePolicy
+            # - '.webhooks | .[].failurePolicy'
+            - '.webhooks[]?.failurePolicy'
 
         - kind: ValidatingWebhookConfiguration
           group: admissionregistration.k8s.io
           jqPathExpressions:
-            - .webhooks | .[].failurePolicy
+            # - '.webhooks | .[].failurePolicy'
+            - '.webhooks[]?.failurePolicy'
 
       syncPolicy:
         # automated:
