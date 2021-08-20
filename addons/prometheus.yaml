@@ -56,8 +56,8 @@ spec:
 
               alertmanagerSpec:
                 # useExistingSecret: true
-                # secrets:
-                #   - prometheus-alertmanager-secret
+                secrets:
+                  - prometheus-alertmanager-secret
                 storage:
                   volumeClaimTemplate:
                     spec:
