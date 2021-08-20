@@ -50,18 +50,18 @@ spec:
                 routes:
                   - receiver: "slack"
 
-            #   alertmanagerSpec:
-            #     useExistingSecret: true
-            #     secrets:
-            #       - prometheus-alertmanager-secret
-            #     storage:
-            #       volumeClaimTemplate:
-            #         spec:
-            #           storageClassName: gp3
-            #           accessModes: ["ReadWriteOnce"]
-            #           resources:
-            #             requests:
-            #               storage: 10Gi
+              alertmanagerSpec:
+                # useExistingSecret: true
+                # secrets:
+                #   - prometheus-alertmanager-secret
+                storage:
+                  volumeClaimTemplate:
+                    spec:
+                      storageClassName: gp3
+                      accessModes: ["ReadWriteOnce"]
+                      resources:
+                        requests:
+                          storage: 10Gi
 
             grafana:
               admin:
