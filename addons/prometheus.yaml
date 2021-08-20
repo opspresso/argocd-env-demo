@@ -65,7 +65,7 @@ spec:
                           {{ range .Alerts }}
                           *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
 
-                          # *Cluster:* `{{cluster}}`
+                          *Cluster:* `{{cluster}}`
 
                           *Description:* {{ .Annotations.description }}
 
@@ -73,7 +73,6 @@ spec:
                             {{ range .Labels.SortedPairs }} • *{{ .Name }}:* {{ .Value }}
                             {{ end }}
                           {{ end }}
-              tplConfig: false
 
               alertmanagerSpec:
                 secrets:
