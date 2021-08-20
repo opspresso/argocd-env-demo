@@ -51,9 +51,13 @@ spec:
                   routes:
                     - match:
                         alertname: Watchdog
-                      receiver: 'slack'
+                      receiver: "null"
+                    - match:
+                      receiver: "slack"
+                      continue: false
 
                 receivers:
+                  - name: "null"
                   - name: "slack"
                     slack_configs:
                       - channel: "#sandbox"
