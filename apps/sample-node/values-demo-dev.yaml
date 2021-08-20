@@ -1,7 +1,4 @@
 app:
-  # analysis:
-  #   enabled: true
-  #   url: http://sample-node-preview:3000/success/98
   autoscaling:
     behavior:
       scaleDown:
@@ -23,7 +20,7 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.7.19
+      VERSION: v0.7.20
     enabled: true
   controller:
     kind: Rollout
@@ -31,10 +28,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 0c09b731c02111d9b43ae023f2ff4f26-4
+    value: a1256894aab83618bd3c91c69a71fa8b
   image:
     repository: nalbam/sample-node
-    tag: v0.7.19
+    tag: v0.7.20
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -67,7 +64,7 @@ app:
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: djAuNy4xOQ==
+      SECRET_VERSION: djAuNy4yMA==
     enabled: true
   strategy:
     canary:
@@ -78,12 +75,12 @@ app:
       - pause:
           duration: 10
       - analysis:
-          templates:
-          - templateName: http-benchmark
-            clusterScope: true
           args:
           - name: url
             value: http://sample-node-preview:3000/success/98
+          templates:
+          - clusterScope: true
+            templateName: http-benchmark
       - setWeight: 50
       - pause:
           duration: 10
