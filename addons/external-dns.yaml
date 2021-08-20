@@ -36,7 +36,7 @@ spec:
             sources:
               # - crd
               - service
-              - ingress
+              # - ingress
 
             serviceAccount:
               annotations:
