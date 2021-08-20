@@ -1,0 +1,17 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "argocd.bruce.spic.me",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "a2704bd0164294e7888213e9473802e5-279538340.ap-northeast-2.elb.amazonaws.com"
+          }
+        ]
+      }
+    }
+  ]
+}

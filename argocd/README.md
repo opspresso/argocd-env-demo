@@ -68,6 +68,15 @@ NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                      
 argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30081/TCP,443:30069/TCP   64m
 ```
 
+```bash
+HOSTNAME=$(kubectl get svc argocd-server -n argocd -o json | jq '.status.loadBalancer.ingress | .[].hostname' -r)
+
+aws route53 list-hosted-zones | jq .
+ZONE_ID=$(aws route53 list-hosted-zones | jq '.HostedZones | .[] | select(.Name=="bruce.spic.me.") | .Id' -r | cut -d'/' -f3)
+
+# aws route53 change-resource-record-sets --hosted-zone-id ${ZONE_ID} --change-batch file://argocd.json
+```
+
 ```
 Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Port    Cipher    SSL Certificate
 HTTP                      80                    HTTP                 30081            N/A       N/A
