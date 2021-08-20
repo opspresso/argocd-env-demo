@@ -13,20 +13,18 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.7.16-184-x
+      VERSION: v0.7.17
     enabled: true
   controller:
     kind: Rollout
   env:
   - name: PROFILE
     value: dev
-  # - name: JAVA_AGENT_ENABLED
-  #   value: 'true'
   - name: ENV_HASH
-    value: 8f7dcfe7ba4443173b3c49b31d68c48a-7
+    value: 3a7abe0004ac196d4db2b3db379ac5c3
   image:
     repository: nalbam/sample-spring
-    tag: v0.7.16-184-x
+    tag: v0.7.17
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -55,7 +53,7 @@ app:
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: djAuNy4xNi0xODQ=
+      SECRET_VERSION: djAuNy4xNw==
     enabled: true
   strategy:
     blueGreen:
