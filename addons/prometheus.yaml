@@ -41,10 +41,6 @@ spec:
                         requests:
                           storage: 50Gi
 
-                # ruleSelector:
-                #   matchLabels:
-                #     role: alert-rules
-
             alertmanager:
               # config:
               #   global:
@@ -76,8 +72,8 @@ spec:
               #           {{ end }}
 
               alertmanagerSpec:
-                # secrets:
-                #   - prometheus-alertmanager-secret
+                secrets:
+                  - prometheus-alertmanager-secret
                 storage:
                   volumeClaimTemplate:
                     spec:
