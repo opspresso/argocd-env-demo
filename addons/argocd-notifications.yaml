@@ -21,7 +21,7 @@ spec:
       project: default
       destination:
         name: "{{cluster}}"
-        namespace: addon-argocd-notifications
+        namespace: argocd
       source:
         repoURL: https://argoproj.github.io/argo-helm
         targetRevision: "1.4.3"
