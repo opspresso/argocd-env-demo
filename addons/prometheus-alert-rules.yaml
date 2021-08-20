@@ -35,7 +35,8 @@ spec:
                 kind: PrometheusRule
                 metadata:
                   labels:
-                    role: alert-rules
+                    app: kube-prometheus-stack
+                    release: prometheus-{{cluster}}
                   name: prometheus-alert-rules
                 spec:
                   groups:

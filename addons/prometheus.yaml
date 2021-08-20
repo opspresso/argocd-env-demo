@@ -41,9 +41,9 @@ spec:
                         requests:
                           storage: 50Gi
 
-                ruleSelector:
-                  matchLabels:
-                    role: alert-rules
+                # ruleSelector:
+                #   matchLabels:
+                #     role: alert-rules
 
             alertmanager:
               config:
