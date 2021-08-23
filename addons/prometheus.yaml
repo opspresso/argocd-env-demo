@@ -147,7 +147,7 @@ spec:
                     datasource: Prometheus
                   kube-deploy:
                     gnetId: 9679
-                    revision: 10
+                    revision: 11
                     datasource: Prometheus
 
               persistence:
