@@ -39,6 +39,7 @@ spec:
                   commonName: bruce.spic.me
                   dnsNames:
                     - "*.bruce.spic.me"
+                    - "*.istio.bruce.spic.me"
                   secretName: "istio-cert-bruce-spic-me"
                   duration: "87600h0m0s"
                   renewBefore: "70080h0m0s"
