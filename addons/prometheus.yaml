@@ -42,12 +42,12 @@ spec:
             prometheus:
               prometheusSpec:
                 resources:
+                  requests:
+                    cpu: "1"
+                    memory: 2Gi
                   limits:
                     cpu: "1"
                     memory: 3Gi
-                  requests:
-                    cpu: "2"
-                    memory: 2Gi
 
                 storageSpec:
                   volumeClaimTemplate:
