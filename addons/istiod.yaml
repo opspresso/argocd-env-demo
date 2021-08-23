@@ -35,6 +35,10 @@ spec:
             - /webhooks/0/failurePolicy
             - /webhooks/1/clientConfig/caBundle
             - /webhooks/1/failurePolicy
+            - /webhooks/2/clientConfig/caBundle
+            - /webhooks/2/failurePolicy
+            - /webhooks/3/clientConfig/caBundle
+            - /webhooks/3/failurePolicy
 
         - kind: ValidatingWebhookConfiguration
           group: admissionregistration.k8s.io
