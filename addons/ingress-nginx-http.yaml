@@ -34,7 +34,14 @@ spec:
             fullnameOverride: ingress-nginx-http
 
             controller:
-              kind: DaemonSet
+              # kind: DaemonSet
+
+              replicaCount: 2
+
+              # autoscaling:
+              #   enabled: true
+              #   minReplicas: 2
+              #   maxReplicas: 4
 
               service:
                 targetPorts:
