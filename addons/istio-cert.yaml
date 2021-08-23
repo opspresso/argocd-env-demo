@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: istio-cert-bruce-spic-me
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+
+  template:
+    metadata:
+      name: "istio-cert-bruce-spic-me-{{cluster}}"
+      annotations:
+        recipients.argocd-notifications.argoproj.io: slack:noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-system
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: istio-cert-bruce-spic-me
+
+            resources:
+              - apiVersion: cert-manager.io/v1
+                kind: Certificate
+                metadata:
+                  name: istio-cert-bruce-spic-me
+                spec:
+                  commonName: bruce.spic.me
+                  dnsNames:
+                    - "*.bruce.spic.me"
+                  secretName: "istio-cert-bruce-spic-me"
+                  duration: "87600h0m0s"
+                  renewBefore: "70080h0m0s"
+                  issuerRef:
+                    kind: "ClusterIssuer"
+                    name: "cluster-issuer-selfsigned"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
