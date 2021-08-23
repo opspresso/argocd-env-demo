@@ -60,9 +60,9 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: argo-rollouts
+                            host: argo-rollouts-dashboard
                             port:
-                              number: 80
+                              number: 3100
 
       syncPolicy:
         automated:
