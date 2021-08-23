@@ -63,7 +63,7 @@ spec:
                 email:
                   subject: New version of an application {{.app.metadata.name}} is up and running.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-running:{{end}} Application `{{.app.metadata.name}}` is now running new version of deployments manifests.
+                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} Application `{{.app.metadata.name}}` is now running new version of deployments manifests.
                 slack:
                   attachments: |
                     [{
