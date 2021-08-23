@@ -7,6 +7,9 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3e3a7d57-e800-4748-990d-cc2e20c30740"
+              hostname: "*.istio.bruce.spic.me"
 
   template:
     metadata:
@@ -31,6 +34,13 @@ spec:
             gateways:
               istio-ingressgateway:
                 autoscaleMin: 2
+
+                serviceAnnotations:
+                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
       syncPolicy:
         # automated:
