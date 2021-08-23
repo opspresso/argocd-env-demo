@@ -81,7 +81,7 @@ spec:
                                     args:
                                       - |
                                         wrk -t5 -c5 -d10 -s report.lua {{args.url}}
-                                        jq -e '.errors_ratio <= 0.5' report.json
+                                        jq -e '.errors_ratio <= 0.95' report.json
                                 restartPolicy: Never
                             activeDeadlineSeconds: 300
                             backoffLimit: 10
