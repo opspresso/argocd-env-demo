@@ -27,6 +27,19 @@ spec:
         targetRevision: 1.11.0
         path: manifests/charts/istio-control/istio-discovery
 
+      ignoreDifferences:
+        - kind: MutatingWebhookConfiguration
+          group: admissionregistration.k8s.io
+          jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
+            - /webhooks/0/failurePolicy
+
+        - kind: ValidatingWebhookConfiguration
+          group: admissionregistration.k8s.io
+          jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
+            - /webhooks/0/failurePolicy
+
       syncPolicy:
         # automated:
         #   prune: true
