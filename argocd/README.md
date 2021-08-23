@@ -13,7 +13,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/applicationset/master/manifests/install.yaml
 ```
 
-## show secret
+## generate secrets
 
 > argocd admin password 를 잊어버리지 않기 위해, aws ssm 에 저장해 놓습니다. 그리고 그것을 base64 인코딩해서 argocd-secret.yaml 에 넣습니다.
 > github 계정으로 인증학 위해 client id 와 client secret 을 각각 argocd-cm.yaml 와 argocd-secret.yaml 에 넣습니다.
@@ -42,7 +42,7 @@ find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADM
 find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
 ```
 
-## save argocd congifmap, secret
+## apply congifmap, secret
 
 > 모두 apply 합니다.
 
@@ -113,4 +113,22 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 
 ```bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
+```
+
+## argocd ha
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: argocd-application-controller
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: argocd-application-controller
+        env:
+        - name: ARGOCD_CONTROLLER_REPLICAS
+          value: "2"
 ```
