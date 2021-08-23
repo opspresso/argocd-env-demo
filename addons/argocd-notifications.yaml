@@ -63,13 +63,13 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} has deployed.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} Application `{{.app.metadata.name}}` has `deployed`.
+                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} `{{.app.metadata.name}}` has `deployed`.
                 slack:
                   attachments: |
                     [{
                       "title": "{{.app.metadata.name}}",
                       "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                      "color": "#18be52",
+                      "color": "good",
                       "fields": [
                       {
                         "title": "Sync Status",
@@ -101,13 +101,13 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} has degraded.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` has `degraded`.
+                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} `{{.app.metadata.name}}` has `degraded`.
                 slack:
                   attachments: |-
                     [{
                       "title": "{{.app.metadata.name}}",
                       "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                      "color": "#f4c030",
+                      "color": "danger",
                       "fields": [
                       {
                         "title": "Sync Status",
@@ -134,14 +134,14 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} sync failed.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` sync `failed` at {{.app.status.operationState.finishedAt}}
+                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} `{{.app.metadata.name}}` sync `failed` at {{.app.status.operationState.finishedAt}}
                   with the following error: {{.app.status.operationState.message}}
                 slack:
                   attachments: |-
                     [{
                       "title": "{{.app.metadata.name}}",
                       "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                      "color": "#E96D76",
+                      "color": "danger",
                       "fields": [
                       {
                         "title": "Sync Status",
@@ -168,13 +168,13 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} sync running.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-running:{{end}} Application `{{.app.metadata.name}}` sync `running` at {{.app.status.operationState.startedAt}}.
+                  {{if eq .serviceType "slack"}}:argocd-running:{{end}} `{{.app.metadata.name}}` sync `running` at {{.app.status.operationState.startedAt}}.
                 slack:
                   attachments: |-
                     [{
                       "title": "{{.app.metadata.name}}",
                       "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                      "color": "#0DADEA",
+                      "color": "warning",
                       "fields": [
                       {
                         "title": "Sync Status",
@@ -184,6 +184,11 @@ spec:
                       {
                         "title": "Repository",
                         "value": "{{.app.spec.source.repoURL}}",
+                        "short": true
+                      },
+                      {
+                        "title": "Revision",
+                        "value": "{{.app.status.sync.revision}}",
                         "short": true
                       }
                       {{range $index, $c := .app.status.conditions}}
@@ -201,13 +206,13 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} sync status is 'unknown'
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` sync status is `unknown`.
+                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} `{{.app.metadata.name}}` sync status is `unknown`.
                 slack:
                   attachments: |-
                     [{
                       "title": "{{.app.metadata.name}}",
                       "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                      "color": "#E96D76",
+                      "color": "danger",
                       "fields": [
                       {
                         "title": "Sync Status",
@@ -234,14 +239,14 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} sync succeeded.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} Application `{{.app.metadata.name}}` sync `succeeded` at {{.app.status.operationState.finishedAt}}.
+                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} `{{.app.metadata.name}}` sync `succeeded` at {{.app.status.operationState.finishedAt}}.
                 slack:
                 slack:
                   attachments: |-
                     [{
                       "title": "{{.app.metadata.name}}",
                       "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                      "color": "#18be52",
+                      "color": "good",
                       "fields": [
                       {
                         "title": "Sync Status",
