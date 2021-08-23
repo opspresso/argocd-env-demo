@@ -158,6 +158,10 @@ spec:
                     gnetId: 9679
                     revision: 11
                     datasource: Prometheus
+                  kube-sts:
+                    gnetId: 14902
+                    revision: 2
+                    datasource: Prometheus
 
               persistence:
                 enabled: true
