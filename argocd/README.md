@@ -77,6 +77,8 @@ ZONE_ID=$(aws route53 list-hosted-zones | jq '.HostedZones | .[] | select(.Name=
 # aws route53 change-resource-record-sets --hosted-zone-id ${ZONE_ID} --change-batch file://argocd.json
 ```
 
+* https://ap-northeast-2.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-2#LoadBalancers:sort=loadBalancerName
+
 ```
 Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Port    Cipher    SSL Certificate
 HTTP                      80                    HTTP                 30081            N/A       N/A
