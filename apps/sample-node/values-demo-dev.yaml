@@ -28,10 +28,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: fd7f7d3152e8c2d6d102806e6dd2b94f
+    value: fd7f7d3152e8c2d6d102806e6dd2b94f-x
   image:
     repository: nalbam/sample-node
-    tag: v0.7.21
+    tag: v0.7.21-x
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
