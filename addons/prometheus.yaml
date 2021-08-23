@@ -143,11 +143,11 @@ spec:
                 default:
                   kube-cluster:
                     gnetId: 9797
-                    revision: 15
+                    revision: 16
                     datasource: Prometheus
                   kube-deploy:
                     gnetId: 9679
-                    revision: 9
+                    revision: 10
                     datasource: Prometheus
 
               persistence:
