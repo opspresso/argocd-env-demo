@@ -185,11 +185,6 @@ spec:
                         "title": "Repository",
                         "value": "{{.app.spec.source.repoURL}}",
                         "short": true
-                      },
-                      {
-                        "title": "Revision",
-                        "value": "{{.app.status.sync.revision}}",
-                        "short": true
                       }
                       {{range $index, $c := .app.status.conditions}}
                       {{if not $index}},{{end}}
