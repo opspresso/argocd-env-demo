@@ -8,7 +8,7 @@ app:
           value: 25
         stabilizationWindowSeconds: 600
     enabled: true
-    maxReplicas: 5
+    maxReplicas: 6
     metrics:
     - resource:
         name: cpu
