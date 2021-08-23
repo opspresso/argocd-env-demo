@@ -106,14 +106,15 @@ spec:
               alertmanagerSpec:
                 secrets:
                   - prometheus-alertmanager-secret
-                storage:
-                  volumeClaimTemplate:
-                    spec:
-                      storageClassName: gp3
-                      accessModes: ["ReadWriteOnce"]
-                      resources:
-                        requests:
-                          storage: 10Gi
+
+                # storage:
+                #   volumeClaimTemplate:
+                #     spec:
+                #       storageClassName: gp3
+                #       accessModes: ["ReadWriteOnce"]
+                #       resources:
+                #         requests:
+                #           storage: 12Gi
 
                 # tolerations:
                 #   - key: group
