@@ -148,20 +148,20 @@ spec:
                     options:
                       path: /var/lib/grafana/dashboards/default
 
-              # dashboards:
-              #   default:
-              #     kube-cluster:
-              #       gnetId: 9797
-              #       revision: 16
-              #       datasource: Prometheus
-              #     kube-deploy:
-              #       gnetId: 9679
-              #       revision: 11
-              #       datasource: Prometheus
-              #     kube-sts:
-              #       gnetId: 14902
-              #       revision: 2
-              #       datasource: Prometheus
+              dashboards:
+                default:
+                  kube-cluster:
+                    gnetId: 9797
+                    revision: 16
+                    datasource: Prometheus
+                  kube-deploy:
+                    gnetId: 9679
+                    revision: 11
+                    datasource: Prometheus
+                  kube-sts:
+                    gnetId: 14902
+                    revision: 1
+                    datasource: Prometheus
 
               persistence:
                 enabled: true
