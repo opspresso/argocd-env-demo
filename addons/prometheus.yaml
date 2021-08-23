@@ -30,14 +30,14 @@ spec:
           values: |-
             fullnameOverride: prometheus
 
-            prometheusOperator:
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: monitoring
-                  effect: NoSchedule
-              nodeSelector:
-                group: monitoring
+            # prometheusOperator:
+            #   tolerations:
+            #     - key: group
+            #       operator: Equal
+            #       value: monitoring
+            #       effect: NoSchedule
+            #   nodeSelector:
+            #     group: monitoring
 
             prometheus:
               prometheusSpec:
@@ -50,13 +50,13 @@ spec:
                         requests:
                           storage: 50Gi
 
-                tolerations:
-                  - key: group
-                    operator: Equal
-                    value: monitoring
-                    effect: NoSchedule
-                nodeSelector:
-                  group: monitoring
+                # tolerations:
+                #   - key: group
+                #     operator: Equal
+                #     value: monitoring
+                #     effect: NoSchedule
+                # nodeSelector:
+                #   group: monitoring
 
             alertmanager:
               config:
