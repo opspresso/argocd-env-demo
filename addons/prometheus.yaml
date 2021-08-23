@@ -30,6 +30,15 @@ spec:
           values: |-
             fullnameOverride: prometheus
 
+            prometheusOperator:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
+
             prometheus:
               prometheusSpec:
                 storageSpec:
@@ -98,6 +107,14 @@ spec:
                         requests:
                           storage: 10Gi
 
+                # tolerations:
+                #   - key: group
+                #     operator: Equal
+                #     value: monitoring
+                #     effect: NoSchedule
+                # nodeSelector:
+                #   topology.kubernetes.io/zone: ap-northeast-2a
+
             grafana:
               admin:
                 existingSecret: "prometheus-grafana-secret"
@@ -140,6 +157,14 @@ spec:
                 accessModes:
                   - ReadWriteOnce
                 size: 10Gi
+
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: monitoring
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   topology.kubernetes.io/zone: ap-northeast-2a
 
       ignoreDifferences:
         - kind: MutatingWebhookConfiguration
