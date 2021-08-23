@@ -171,14 +171,14 @@ spec:
                   - ReadWriteOnce
                 size: 10Gi
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: monitoring
-                  effect: NoSchedule
-              nodeSelector:
-                group: monitoring
-                # topology.kubernetes.io/zone: ap-northeast-2a
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: monitoring
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: monitoring
+              #   # topology.kubernetes.io/zone: ap-northeast-2a
 
       ignoreDifferences:
         - kind: MutatingWebhookConfiguration
