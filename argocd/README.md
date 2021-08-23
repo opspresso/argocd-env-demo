@@ -117,6 +117,18 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
 ```
 
+## argocd external-dns
+
+```bash
+export DOMAIN="argocd.bruce.spic.me"
+export ACMARN=""
+
+kubectl annotate svc argocd-server -n argocd external-dns.alpha.kubernetes.io/hostname=${DOMAIN}
+kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-backend-protocol=http
+kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-ssl-cert=${ACMARN}
+kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-ssl-ports=https
+```
+
 ## argocd ha
 
 ```yaml
