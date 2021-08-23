@@ -41,6 +41,14 @@ spec:
                         requests:
                           storage: 50Gi
 
+                tolerations:
+                  - key: group
+                    operator: Equal
+                    value: monitoring
+                    effect: NoSchedule
+                nodeSelector:
+                  group: monitoring
+
             alertmanager:
               config:
                 global:
