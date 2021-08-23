@@ -31,12 +31,16 @@ spec:
         - kind: MutatingWebhookConfiguration
           group: admissionregistration.k8s.io
           jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
+            - /webhooks/0/failurePolicy
             - /webhooks/1/clientConfig/caBundle
             - /webhooks/1/failurePolicy
 
         - kind: ValidatingWebhookConfiguration
           group: admissionregistration.k8s.io
           jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
+            - /webhooks/0/failurePolicy
             - /webhooks/1/clientConfig/caBundle
             - /webhooks/1/failurePolicy
 
