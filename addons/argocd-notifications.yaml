@@ -61,9 +61,9 @@ spec:
 
               template.app-deployed: |
                 email:
-                  subject: New version of an application {{.app.metadata.name}} is up and running.
+                  subject: Application {{.app.metadata.name}} has deployed.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} New version of an application `{{.app.metadata.name}}` is up and running.
+                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} Application `{{.app.metadata.name}}` has `deployed`.
                 slack:
                   attachments: |
                     [{
@@ -101,8 +101,7 @@ spec:
                 email:
                   subject: Application {{.app.metadata.name}} has degraded.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` has degraded.
-                  Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` has `degraded`.
                 slack:
                   attachments: |-
                     [{
@@ -133,10 +132,10 @@ spec:
                     }]
               template.app-sync-failed: |
                 email:
-                  subject: Failed to sync application {{.app.metadata.name}}.
+                  subject: Application {{.app.metadata.name}} sync failed.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} The sync operation of application `{{.app.metadata.name}}` has failed at {{.app.status.operationState.finishedAt}} with the following error: {{.app.status.operationState.message}}
-                  Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
+                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` sync `failed` at {{.app.status.operationState.finishedAt}}
+                  with the following error: {{.app.status.operationState.message}}
                 slack:
                   attachments: |-
                     [{
@@ -167,10 +166,9 @@ spec:
                     }]
               template.app-sync-running: |
                 email:
-                  subject: Start syncing application {{.app.metadata.name}}.
+                  subject: Application {{.app.metadata.name}} sync running.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-running:{{end}} The sync operation of application `{{.app.metadata.name}}` has started at {{.app.status.operationState.startedAt}}.
-                  Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
+                  {{if eq .serviceType "slack"}}:argocd-running:{{end}} Application `{{.app.metadata.name}}` sync `running` at {{.app.status.operationState.startedAt}}.
                 slack:
                   attachments: |-
                     [{
@@ -201,15 +199,9 @@ spec:
                     }]
               template.app-sync-status-unknown: |
                 email:
-                  subject: Application {{.app.metadata.name}} sync status is 'Unknown'
+                  subject: Application {{.app.metadata.name}} sync status is 'unknown'
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` sync is `Unknown`.
-                  Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
-                  {{if ne .serviceType "slack"}}
-                  {{range $c := .app.status.conditions}}
-                      * {{$c.message}}
-                  {{end}}
-                  {{end}}
+                  {{if eq .serviceType "slack"}}:argocd-failed:{{end}} Application `{{.app.metadata.name}}` sync status is `unknown`.
                 slack:
                   attachments: |-
                     [{
@@ -240,10 +232,9 @@ spec:
                     }]
               template.app-sync-succeeded: |
                 email:
-                  subject: Application {{.app.metadata.name}} has been successfully synced.
+                  subject: Application {{.app.metadata.name}} sync succeeded.
                 message: |
-                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} Application `{{.app.metadata.name}}` has been successfully synced at {{.app.status.operationState.finishedAt}}.
-                  Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
+                  {{if eq .serviceType "slack"}}:argocd-done:{{end}} Application `{{.app.metadata.name}}` sync `succeeded` at {{.app.status.operationState.finishedAt}}.
                 slack:
                 slack:
                   attachments: |-
