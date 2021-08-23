@@ -15,7 +15,7 @@ spec:
     metadata:
       name: "irsa-operator-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: sandbox;noti-argocd-alpha-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
