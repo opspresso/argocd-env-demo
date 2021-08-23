@@ -27,7 +27,7 @@ spec:
         namespace: addon-ingress-nginx-http
       source:
         repoURL: https://kubernetes.github.io/ingress-nginx
-        targetRevision: "3.35.0"
+        targetRevision: "3.36.0"
         chart: ingress-nginx
         helm:
           values: |-

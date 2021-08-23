@@ -25,7 +25,7 @@
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_cert_manager": {
-      "default": "v1.5.1",
+      "default": "v1.5.2",
       "description": "jetstack/cert-manager"
     },
     "helm_chaoskube": {
@@ -61,7 +61,7 @@
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "3.35.0",
+      "default": "3.36.0",
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_kube_prometheus_stack": {
@@ -89,7 +89,7 @@
       "description": "prometheus/prometheus-adapter"
     },
     "helm_promtail": {
-      "default": "3.7.0",
+      "default": "3.8.1",
       "description": "grafana/promtail"
     },
     "helm_raw": {

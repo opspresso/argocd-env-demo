@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cert-manager
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+
+  template:
+    metadata:
+      name: "cert-manager-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-cert-manager
+      source:
+        repoURL: https://charts.jetstack.io
+        targetRevision: "v1.5.2"
+        chart: cert-manager
+        helm:
+          values: |-
+            fullnameOverride: cert-manager
+
+            installCRDs: true
+
+            ingressShim:
+              defaultIssuerName: letsencrypt-issuer
+              defaultIssuerKind: ClusterIssuer
+
+            tolerations:
+              - key: group
+                operator: Equal
+                value: operation
+                effect: NoSchedule
+
+            nodeSelector:
+              group: operation
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
