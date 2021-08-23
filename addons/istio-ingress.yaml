@@ -26,6 +26,11 @@ spec:
         repoURL: https://github.com/istio/istio
         targetRevision: 1.11.0
         path: manifests/charts/gateways/istio-ingress
+        helm:
+          values: |-
+            gateways:
+              istio-ingressgateway:
+                autoscaleMin: 2
 
       syncPolicy:
         # automated:
