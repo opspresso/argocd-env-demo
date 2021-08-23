@@ -1,6 +1,6 @@
 app:
   autoscaling:
-    enabled: true
+    enabled: false
     maxReplicas: 5
     metrics:
     - resource:
