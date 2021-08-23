@@ -41,14 +41,6 @@ spec:
 
             prometheus:
               prometheusSpec:
-                resources:
-                  requests:
-                    cpu: "1"
-                    memory: 2Gi
-                  limits:
-                    cpu: "1"
-                    memory: 3Gi
-
                 storageSpec:
                   volumeClaimTemplate:
                     spec:
@@ -57,6 +49,14 @@ spec:
                       resources:
                         requests:
                           storage: 50Gi
+
+                # resources:
+                #   requests:
+                #     cpu: "1"
+                #     memory: 2Gi
+                #   limits:
+                #     cpu: "1"
+                #     memory: 3Gi
 
                 tolerations:
                   - key: group
