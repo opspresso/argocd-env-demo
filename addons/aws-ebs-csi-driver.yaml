@@ -45,6 +45,7 @@ spec:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
             node:
+              tolerateAllTaints: true
               serviceAccount:
                 annotations:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
