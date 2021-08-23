@@ -156,11 +156,11 @@ spec:
                     datasource: Prometheus
                   kube-deploy:
                     gnetId: 9679
-                    revision: 11
+                    revision: 12
                     datasource: Prometheus
                   kube-sts:
                     gnetId: 14902
-                    revision: 1
+                    revision: 2
                     datasource: Prometheus
 
               persistence:
