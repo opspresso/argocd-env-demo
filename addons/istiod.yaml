@@ -26,6 +26,15 @@ spec:
         repoURL: https://github.com/istio/istio
         targetRevision: 1.11.0
         path: manifests/charts/istio-control/istio-discovery
+        helm:
+          values: |-
+            pilot:
+              resources:
+                requests:
+                  # cpu: 500m
+                  # memory: 2Gi
+                  cpu: 200m
+                  memory: 256Mi
 
       ignoreDifferences:
         - kind: MutatingWebhookConfiguration
