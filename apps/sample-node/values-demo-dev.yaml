@@ -24,6 +24,10 @@ app:
     enabled: true
   controller:
     kind: Rollout
+  podLabels:
+    chaoskube: "true"
+  podAnnotations:
+    chaos.alpha.kubernetes.io/enabled: "true"
   env:
   - name: PROFILE
     value: dev
