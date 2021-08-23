@@ -17,7 +17,7 @@ spec:
         - values-demo-dev.yaml
   destination:
     name: eks-demo
-    namespace: sample
+    namespace: default
   syncPolicy:
     automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
       prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
@@ -51,7 +51,7 @@ spec:
         - values-demo-dev.yaml
   destination:
     name: eks-demo
-    namespace: sample
+    namespace: default
   syncPolicy:
     automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
       prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
@@ -85,7 +85,7 @@ spec:
         - values-demo-dev.yaml
   destination:
     name: eks-demo
-    namespace: sample
+    namespace: default
   syncPolicy:
     automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
       prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
