@@ -31,3 +31,5 @@ build/
 *.pid
 *.log
 *.tmp
+
+argocd-extra-secret.output.yaml

@@ -36,15 +36,16 @@ ADMIN_PASSWORD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ" | base64)"
 # github-secret
 GITHUB_CLIENT_SECRET=$(aws ssm get-parameter --name /k8s/common/github-secret --with-decryption | jq .Parameter.Value -r | base64)
 
-# replace argocd-secret.yaml
-find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
-find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
-find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
+# # replace argocd-secret.yaml
+# find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
+# find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
+# find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
 
 # replace argocd-extra-secret.yaml
-find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
-find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
-find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
+cp argocd-extra-secret.yaml argocd-extra-secret.output.yaml
+find . -name argocd-extra-secret.output.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
+find . -name argocd-extra-secret.output.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
+find . -name argocd-extra-secret.output.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
 ```
 
 ## apply congifmap, secret
@@ -52,10 +53,13 @@ find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET
 > 모두 apply 합니다.
 
 ```bash
-kubectl apply -n argocd -f argocd-cm.yaml
-kubectl apply -n argocd -f argocd-rbac-cm.yaml
-kubectl apply -n argocd -f argocd-secret.yaml
-kubectl apply -n argocd -f argocd-extra-secret.yaml
+kubectl create ns argocd
+
+# kubectl apply -n argocd -f argocd-cm.yaml
+# kubectl apply -n argocd -f argocd-rbac-cm.yaml
+# kubectl apply -n argocd -f argocd-secret.yaml
+
+kubectl apply -n argocd -f argocd-extra-secret.output.yaml
 ```
 
 ## Change the argocd-server service type to LoadBalancer
@@ -64,21 +68,22 @@ kubectl apply -n argocd -f argocd-extra-secret.yaml
 > aws 에 elb 가 생성 되어있음을 알 수 있습니다. port 와 ssm 을 설정 합니다.
 
 ```bash
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+# kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
 kubectl get svc argocd-server -n argocd
 ```
 
 ```
 NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                       PORT(S)                      AGE
-argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30081/TCP,443:30069/TCP   64m
+argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30080/TCP,443:30443/TCP   64m
 ```
 
 ```bash
-HOSTNAME=$(kubectl get svc argocd-server -n argocd -o json | jq '.status.loadBalancer.ingress | .[].hostname' -r)
+# kubectl get svc argocd-server -n argocd -o json | jq .status.loadBalancer
+# HOSTNAME=$(kubectl get svc argocd-server -n argocd -o json | jq '.status.loadBalancer.ingress | .[].hostname' -r)
 
-aws route53 list-hosted-zones | jq .
-ZONE_ID=$(aws route53 list-hosted-zones | jq '.HostedZones | .[] | select(.Name=="bruce.spic.me.") | .Id' -r | cut -d'/' -f3)
+# aws route53 list-hosted-zones | jq .HostedZones
+# ZONE_ID=$(aws route53 list-hosted-zones | jq '.HostedZones | .[] | select(.Name=="bruce.spic.me.") | .Id' -r | cut -d'/' -f3)
 
 # aws route53 change-resource-record-sets --hosted-zone-id ${ZONE_ID} --change-batch file://argocd.json
 ```
@@ -87,8 +92,8 @@ ZONE_ID=$(aws route53 list-hosted-zones | jq '.HostedZones | .[] | select(.Name=
 
 ```
 Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Port    Cipher    SSL Certificate
-HTTP                      80                    HTTP                 30081            N/A       N/A
-HTTPS                     443                   HTTPS                30069                      xxxx-xxxx-xxxx-xxxx-xxxx (ACM)
+HTTP                      80                    HTTP                 30080            N/A       N/A
+HTTPS                     443                   HTTPS                30443                      xxxx-xxxx-xxxx-xxxx-xxxx (ACM)
 ```
 
 ## argocd login
@@ -102,9 +107,9 @@ argocd login argocd.bruce.spic.me --grpc-web
 argocd cluster list
 argocd cluster add eks-demo
 
-argocd repo list
-argocd repo add https://github.com/opspresso/argocd-env-demo --type git --name env-demo
-argocd repo add https://opspresso.github.io/helm-charts --type helm --name opspresso
+# argocd repo list
+# argocd repo add https://github.com/opspresso/argocd-env-demo --type git --name env-demo
+# argocd repo add https://opspresso.github.io/helm-charts --type helm --name opspresso
 ```
 
 ## addons
@@ -129,26 +134,8 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 export DOMAIN="argocd.bruce.spic.me"
 export ACMARN=""
 
-kubectl annotate svc argocd-server -n argocd external-dns.alpha.kubernetes.io/hostname=${DOMAIN}
-kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-backend-protocol=http
-kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-ssl-cert=${ACMARN}
-kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-ssl-ports=https
-```
-
-## argocd ha
-
-```yaml
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: argocd-application-controller
-spec:
-  replicas: 2
-  template:
-    spec:
-      containers:
-      - name: argocd-application-controller
-        env:
-        - name: ARGOCD_CONTROLLER_REPLICAS
-          value: "2"
+# kubectl annotate svc argocd-server -n argocd external-dns.alpha.kubernetes.io/hostname=${DOMAIN}
+# kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-backend-protocol=http
+# kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-ssl-cert=${ACMARN}
+# kubectl annotate svc argocd-server -n argocd service.beta.kubernetes.io/aws-load-balancer-ssl-ports=https
 ```
