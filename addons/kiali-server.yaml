@@ -7,6 +7,8 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              host: "kiali.bruce.spic.me"
 
   template:
     metadata:
@@ -29,6 +31,9 @@ spec:
         helm:
           values: |-
             fullnameOverride: kiali-server
+
+            server:
+              web_fqdn: "{{values.host}}"
 
       syncPolicy:
         # automated:
