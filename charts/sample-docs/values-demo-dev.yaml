@@ -32,8 +32,6 @@ app:
     enabled: true
     hosts:
     - host: docs-dev.bruce.spic.me
-      paths:
-      - /
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -42,8 +40,6 @@ app:
     enabled: true
     hosts:
     - host: docs-dev-preview.bruce.spic.me
-      paths:
-      - /
   strategy:
     blueGreen:
       activeService: sample-docs

@@ -39,8 +39,6 @@ app:
     enabled: true
     hosts:
     - host: sample-node-dev.bruce.spic.me
-      paths:
-      - /
   irsa:
     enabled: true
     statement:
@@ -63,8 +61,6 @@ app:
     enabled: true
     hosts:
     - host: sample-node-dev-preview.bruce.spic.me
-      paths:
-      - /
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=

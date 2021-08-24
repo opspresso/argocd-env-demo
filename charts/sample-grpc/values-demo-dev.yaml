@@ -15,5 +15,3 @@ app:
     enabled: true
     hosts:
       - host: grpc-dev.bruce.spic.me
-        paths:
-          - /
