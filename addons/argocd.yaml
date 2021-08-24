@@ -88,6 +88,15 @@ spec:
                   p, role:org-admin, repositories, update, *, allow
                   g, opspresso:sre, role:org-admin
 
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled:
+                  interval: 30s
+                  selector:
+                    prometheus: kube-prometheus
+                  namespace: addon-prometheus
+
             repoServer:
               replicas: 2
 
