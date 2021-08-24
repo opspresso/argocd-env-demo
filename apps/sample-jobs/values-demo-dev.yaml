@@ -12,9 +12,23 @@ job1:
     enabled: true
     statement:
       - action:
+          - "ec2:Describe*"
+        resource: "*"
+
+job2:
+  image:
+    repository: amazon/aws-cli
+    tag: latest
+
+  command:
+    - "aws"
+    - "ec2"
+    - "describe-instances"
+
+  irsa:
+    enabled: true
+    statement:
+      - action:
           - "s3:Get*"
           - "s3:List*"
         resource: "arn:aws:s3:::aws-deepracer-bruce"
-      - action:
-          - "ec2:Describe*"
-        resource: "*"

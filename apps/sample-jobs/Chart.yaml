@@ -10,3 +10,7 @@ dependencies:
     name: job
     version: v0.1.0
     alias: job1
+  - repository: https://opspresso.github.io/helm-charts
+    name: job
+    version: v0.1.0
+    alias: job2
