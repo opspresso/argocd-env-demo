@@ -8,4 +8,4 @@ appVersion: v0.3.2
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: v0.1.0
+    version: v0.1.2
