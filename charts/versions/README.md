@@ -12,6 +12,7 @@ helm repo add cortex https://cortexproject.github.io/cortex-helm-chart
 helm repo add dashboard https://kubernetes.github.io/dashboard
 helm repo add datadog https://helm.datadoghq.com
 helm repo add deliveryhero https://charts.deliveryhero.io
+helm repo add devtron https://helm.devtron.ai
 helm repo add eks https://aws.github.io/eks-charts
 helm repo add external-secrets https://external-secrets.github.io/kubernetes-external-secrets
 helm repo add fluxcd https://charts.fluxcd.io
@@ -29,18 +30,6 @@ helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
 helm search repo "argo/argo-cd" -o json | jq .
-helm search repo "argo/argo-rollouts" -o json | jq .
-helm search repo "argo/argocd-notifications" -o json | jq .
-helm search repo "autoscaler/cluster-autoscaler" -o json | jq .
-helm search repo "aws-ebs-csi-driver/aws-ebs-csi-driver" -o json | jq .
-helm search repo "aws-efs-csi-driver/aws-efs-csi-driver" -o json | jq .
-helm search repo "chaoskube/chaoskube" -o json | jq .
 helm search repo "dashboard/kubernetes-dashboard" -o json | jq .
-helm search repo "datadog/datadog" -o json | jq .
-helm search repo "deliveryhero/cluster-overprovisioner" -o json | jq .
-helm search repo "eks/aws-load-balancer-controller" -o json | jq .
-helm search repo "external-secrets/kubernetes-external-secrets" -o json | jq .
 helm search repo "ingress-nginx/ingress-nginx" -o json | jq .
-helm search repo "jetstack/cert-manager" -o json | jq .
-helm search repo "stable/metrics-server" -o json | jq .
 ```
