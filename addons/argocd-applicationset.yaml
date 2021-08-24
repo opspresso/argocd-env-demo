@@ -31,8 +31,8 @@ spec:
             fullnameOverride: argocd-applicationset
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
