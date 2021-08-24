@@ -10,10 +10,10 @@ spec:
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD
-    path: apps/eks-demo
+    path: apps
   destination:
-    namespace: argocd
     name: in-cluster
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
