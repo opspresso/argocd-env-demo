@@ -5,11 +5,6 @@ server:
 
   replicas: 2
 
-  autoscaling:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 5
-
   service:
     type: LoadBalancer
     annotations:
@@ -21,12 +16,6 @@ server:
 
   extraArgs:
     - --insecure
-
-  envFrom: []
-  # - configMapRef:
-  #     name: config-map-name
-  # - secretRef:
-  #     name: argocd-extra-secret
 
   config:
     url: https://argocd.bruce.spic.me

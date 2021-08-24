@@ -36,12 +36,7 @@ spec:
             server:
               name: server
 
-              autoscaling:
-                enabled: true
-                minReplicas: 2
-                maxReplicas: 5
-                targetCPUUtilizationPercentage: 60
-                targetMemoryUtilizationPercentage: 0
+              replicas: 2
 
               service:
                 type: LoadBalancer
@@ -54,12 +49,6 @@ spec:
 
               extraArgs:
                 - --insecure
-
-              envFrom: []
-              # - configMapRef:
-              #     name: config-map-name
-              # - secretRef:
-              #     name: argocd-extra-secret
 
               config:
                 url: https://{{values.hostname}}
