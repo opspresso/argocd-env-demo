@@ -73,13 +73,13 @@ spec:
 
                 route:
                   receiver: "slack"
-                  # routes:
-                  #   - match:
-                  #       alertname: Watchdog
-                  #     receiver: "null"
-                  #   - match:
-                  #     receiver: "slack"
-                  #     continue: false
+                  routes:
+                    - match:
+                        alertname: Watchdog
+                      receiver: "null"
+                    - match:
+                      receiver: "slack"
+                      continue: false
 
                 receivers:
                   - name: "null"
@@ -107,22 +107,22 @@ spec:
                 secrets:
                   - prometheus-alertmanager-secret
 
-                # storage:
-                #   volumeClaimTemplate:
-                #     spec:
-                #       storageClassName: gp3
-                #       accessModes: ["ReadWriteOnce"]
-                #       resources:
-                #         requests:
-                #           storage: 12Gi
+                storage:
+                  volumeClaimTemplate:
+                    spec:
+                      storageClassName: gp3
+                      accessModes: ["ReadWriteOnce"]
+                      resources:
+                        requests:
+                          storage: 12Gi
 
-                # tolerations:
-                #   - key: group
-                #     operator: Equal
-                #     value: monitoring
-                #     effect: NoSchedule
-                # nodeSelector:
-                #   topology.kubernetes.io/zone: ap-northeast-2a
+                tolerations:
+                  - key: group
+                    operator: Equal
+                    value: monitoring
+                    effect: NoSchedule
+                nodeSelector:
+                  group: monitoring
 
             grafana:
               admin:
@@ -172,14 +172,13 @@ spec:
                   - ReadWriteOnce
                 size: 10Gi
 
-              # tolerations:
-              #   - key: group
-              #     operator: Equal
-              #     value: monitoring
-              #     effect: NoSchedule
-              # nodeSelector:
-              #   group: monitoring
-              #   # topology.kubernetes.io/zone: ap-northeast-2a
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
 
       ignoreDifferences:
         - kind: MutatingWebhookConfiguration
