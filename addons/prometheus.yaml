@@ -189,6 +189,16 @@ spec:
                     revision: 2
                     datasource: Prometheus
 
+                  nginx-ingress:
+                    url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
+                    datasource: Prometheus
+                  argo-cd:
+                    url: https://raw.githubusercontent.com/argoproj/argo-cd/master/examples/dashboard.json
+                    datasource: Prometheus
+                  argo-rollouts:
+                    url: https://raw.githubusercontent.com/argoproj/argo-rollouts/master/examples/dashboard.json
+                    datasource: Prometheus
+
               persistence:
                 enabled: true
                 type: pvc
