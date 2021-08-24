@@ -53,10 +53,10 @@ kubectl create ns argocd
 
 helm repo update
 helm upgrade argocd argoproj/argo-cd -n argocd -f values-argocd.output.yaml
-# helm install argocd-applicationset argoproj/argocd-applicationset -n argocd
+helm upgrade argocd-applicationset argoproj/argocd-applicationset -n argocd
 
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.1.0/manifests/install.yaml
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/applicationset/v0.2.0/manifests/install.yaml
+# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/applicationset/v0.2.0/manifests/install.yaml
 ```
 
 ## Change the argocd-server service type to LoadBalancer
@@ -77,7 +77,7 @@ argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com  
 ```
 Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Port    Cipher    SSL Certificate
 HTTP                      80                    HTTP                 30080            N/A       N/A
-HTTPS                     443                   HTTPS                30443                      xxxx-xxxx-xxxx-xxxx-xxxx (ACM)
+HTTPS                     443                   HTTP                 30443                      xxxx-xxxx-xxxx-xxxx-xxxx (ACM)
 ```
 
 ## argocd login

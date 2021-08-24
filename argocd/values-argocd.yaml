@@ -19,8 +19,8 @@ server:
       service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3e3a7d57-e800-4748-990d-cc2e20c30740"
       service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
-  extraArgs: []
-  #  - --insecure
+  extraArgs:
+    - --insecure
 
   envFrom: []
   # - configMapRef:
