@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.12.1",
+      "default": "3.15.0",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -25,19 +25,15 @@
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_cert_manager": {
-      "default": "v1.5.2",
+      "default": "v1.5.3",
       "description": "jetstack/cert-manager"
-    },
-    "helm_kiali_operator": {
-      "default": "v1.38.1",
-      "description": "kiali/kiali-operator"
     },
     "helm_chaoskube": {
       "default": "3.3.2",
       "description": "stable/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.10.4",
+      "default": "9.10.5",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
@@ -65,11 +61,15 @@
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "3.36.0",
+      "default": "4.0.1",
       "description": "ingress-nginx/ingress-nginx"
     },
+    "helm_kiali_operator": {
+      "default": "1.39.0",
+      "description": "kiali/kiali-operator"
+    },
     "helm_kube_prometheus_stack": {
-      "default": "18.0.0",
+      "default": "18.0.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {

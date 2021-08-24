@@ -24,7 +24,7 @@ spec:
         namespace: addon-cert-manager
       source:
         repoURL: https://charts.jetstack.io
-        targetRevision: "v1.5.2"
+        targetRevision: "v1.5.3"
         chart: cert-manager
         helm:
           values: |-
@@ -46,8 +46,8 @@ spec:
             #   group: operation
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
