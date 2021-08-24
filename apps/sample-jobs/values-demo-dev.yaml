@@ -15,6 +15,6 @@ job1:
           - "s3:Get*"
           - "s3:List*"
         resource: "arn:aws:s3:::aws-deepracer-bruce"
-      # - action:
-      #     - "ec2:Describe*"
-      #   resource: "*"
+      - action:
+          - "ec2:Describe*"
+        resource: "*"
