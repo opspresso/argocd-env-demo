@@ -12,3 +12,7 @@ dependencies:
   - repository: https://argoproj.github.io/argo-helm
     name: argocd-applicationset
     version: 1.3.0
+  - repository: https://charts.helm.sh/incubator
+    name: raw
+    version: 0.2.5
+    alias: argocd-secret

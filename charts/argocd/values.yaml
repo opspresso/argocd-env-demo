@@ -18,17 +18,17 @@ argo-cd:
         service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
         service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
         service.beta.kubernetes.io/aws-load-balancer-ssl-cert: |
-          "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+          "arn:aws:acm:ap-northeast-2:082867736673:certificate/29ab1f7d-826f-4e96-b857-fc4d1a7f6edc"
         service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
     extraArgs: []
     #  - --insecure
 
-    envFrom:
+    envFrom: []
     # - configMapRef:
     #     name: config-map-name
-    - secretRef:
-        name: argocd-extra-secret
+    # - secretRef:
+    #     name: argocd-extra-secret
 
     config:
       url: https://argocd.bruce.spic.me
@@ -70,16 +70,40 @@ argo-cd:
         p, role:org-admin, repositories, update, *, allow
         g, opspresso:sre, role:org-admin
 
-  # configs:
-  #   secret:
-  #     extra:
-  #       dex.github.clientSecret: "ZGVtbwo="
+  configs:
+    secret:
+      createSecret: false
 
-  #     # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
-  #     # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'`
-  #     argocdServerAdminPassword: "ZGVtbwo="
-  #     # Password modification time defaults to current time if not set
-  #     argocdServerAdminPasswordMtime: "2021-08-24T02:22:09Z"
+      githubSecret: "GITHUB_WEBHOOK"
+
+      extra:
+        dex.github.clientSecret: "GITHUB_SECRET"
+
+      # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
+      # `htpasswd -nbBC 10 "" $PASSWORD | tr -d ':\n' | sed 's/$2y/$2a/'`
+      argocdServerAdminPassword: "ARGOCD_PASSWORD"
+      # Password modification time defaults to current time if not set
+      argocdServerAdminPasswordMtime: "ARGOCD_MTIME"
+
+argocd-secret:
+  fullnameOverride: argocd-secret
+
+  resources:
+    - apiVersion: kubernetes-client.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: argocd-secret
+      spec:
+        backendType: systemManager
+        data:
+          - key: /k8s/common/argocd-password
+            name: admin.password
+          - key: /k8s/common/argocd-mtime
+            name: admin.passwordMtime
+          - key: /k8s/common/github-secret
+            name: dex.github.clientSecret
+          - key: /k8s/common/github-webhook
+            name: webhook.github.secret
 
 argocd-applicationset:
   fullnameOverride: argocd-applicationset
