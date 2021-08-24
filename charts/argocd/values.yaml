@@ -1,4 +1,6 @@
 argo-cd:
+  fullnameOverride: argocd
+
   server:
     name: server
 
@@ -39,14 +41,19 @@ argo-cd:
           type: helm
           url: https://opspresso.github.io/helm-charts
 
-      oidc.config: |
-        name: github
-        clientID: 0ca6b78d5dda3cfc8a53
-        clientSecret: $dex.github.clientSecret
-        orgs:
-          - name: opspresso
+      dex.config: |
+        connectors:
+        - type: github
+          id: github
+          name: github
+          config:
+            clientID: 0ca6b78d5dda3cfc8a53
+            clientSecret: $dex.github.clientSecret
+            orgs:
+              - name: opspresso
 
     rbacConfig:
+      policy.default: "role:readonly"
       policy.csv: |
         p, role:org-admin, applications, *, */*, allow
         p, role:org-admin, clusters, create, *, allow
@@ -63,7 +70,8 @@ argo-cd:
         p, role:org-admin, repositories, update, *, allow
         g, opspresso:sre, role:org-admin
 
-    additionalApplications: []
+    additionalApplications:
+      []
       # - name: addons
       #   namespace: argocd
       #   additionalLabels:
@@ -82,7 +90,6 @@ argo-cd:
       #       selfHeal: true
       #     syncOptions:
       #       - CreateNamespace=true
-
       # - name: apps
       #   namespace: argocd
       #   additionalLabels:
