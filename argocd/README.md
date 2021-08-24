@@ -37,9 +37,14 @@ ADMIN_PASSWORD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ" | base64)"
 GITHUB_CLIENT_SECRET=$(aws ssm get-parameter --name /k8s/common/github-secret --with-decryption | jq .Parameter.Value -r | base64)
 
 # replace argocd-secret.yaml
-find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
 find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
+find . -name argocd-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
 find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
+
+# replace argocd-extra-secret.yaml
+find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD_MTIME/${ADMIN_PASSWORD_MTIME}/g" {} \;
+find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/ADMIN_PASSWORD/${ADMIN_PASSWORD}/g" {} \;
+find . -name argocd-extra-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GITHUB_CLIENT_SECRET}/g" {} \;
 ```
 
 ## apply congifmap, secret
@@ -47,9 +52,10 @@ find . -name argocd-secret.yaml -exec sed -i "" -e "s/GITHUB_CLIENT_SECRET/${GIT
 > 모두 apply 합니다.
 
 ```bash
-kubectl apply -n argocd -f argocd-secret.yaml
 kubectl apply -n argocd -f argocd-cm.yaml
 kubectl apply -n argocd -f argocd-rbac-cm.yaml
+kubectl apply -n argocd -f argocd-secret.yaml
+kubectl apply -n argocd -f argocd-extra-secret.yaml
 ```
 
 ## Change the argocd-server service type to LoadBalancer

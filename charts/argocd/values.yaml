@@ -24,11 +24,11 @@ argo-cd:
     extraArgs: []
     #  - --insecure
 
-    envFrom: []
+    envFrom:
     # - configMapRef:
     #     name: config-map-name
-    # - secretRef:
-    #     name: secret-name
+    - secretRef:
+        name: argocd-extra-secret
 
     config:
       url: https://argocd.bruce.spic.me
@@ -69,45 +69,6 @@ argo-cd:
         p, role:org-admin, repositories, get, *, allow
         p, role:org-admin, repositories, update, *, allow
         g, opspresso:sre, role:org-admin
-
-    additionalApplications:
-      []
-      # - name: addons
-      #   namespace: argocd
-      #   additionalLabels:
-      #     krmt.io/group: addons
-      #   project: default
-      #   source:
-      #     repoURL: https://github.com/opspresso/argocd-env-demo
-      #     targetRevision: HEAD
-      #     path: addons
-      #   destination:
-      #     namespace: argocd
-      #     name: in-cluster
-      #   syncPolicy:
-      #     automated:
-      #       prune: true
-      #       selfHeal: true
-      #     syncOptions:
-      #       - CreateNamespace=true
-      # - name: apps
-      #   namespace: argocd
-      #   additionalLabels:
-      #     krmt.io/group: apps
-      #   project: default
-      #   source:
-      #     repoURL: https://github.com/opspresso/argocd-env-demo
-      #     targetRevision: HEAD
-      #     path: apps/eks-demo
-      #   destination:
-      #     namespace: argocd
-      #     name: in-cluster
-      #   syncPolicy:
-      #     automated:
-      #       prune: true
-      #       selfHeal: true
-      #     syncOptions:
-      #       - CreateNamespace=true
 
   configs:
     secret:
