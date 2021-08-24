@@ -108,3 +108,6 @@ argo-cd:
       #       selfHeal: true
       #     syncOptions:
       #       - CreateNamespace=true
+
+argocd-applicationset:
+  fullnameOverride: argocd-applicationset
