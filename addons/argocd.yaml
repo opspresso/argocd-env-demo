@@ -34,8 +34,6 @@ spec:
             fullnameOverride: argocd
 
             server:
-              name: server
-
               replicas: 2
 
               service:
@@ -89,6 +87,9 @@ spec:
                   p, role:org-admin, repositories, get, *, allow
                   p, role:org-admin, repositories, update, *, allow
                   g, opspresso:sre, role:org-admin
+
+            repoServer:
+              replicas: 2
 
             configs:
               secret:
