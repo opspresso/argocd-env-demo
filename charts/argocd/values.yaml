@@ -109,5 +109,11 @@ argo-cd:
       #     syncOptions:
       #       - CreateNamespace=true
 
+  configs:
+    secret:
+      admin.password: "ZGVtbwo="
+      admin.passwordMtime: "ZGVtbwo="
+      dex.github.clientSecret: "ZGVtbwo="
+
 argocd-applicationset:
   fullnameOverride: argocd-applicationset
