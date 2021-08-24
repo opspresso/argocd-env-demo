@@ -60,9 +60,9 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: prometheus-grafana
+                            host: prometheus-eks-demo-grafana
                             port:
-                              number: 3100
+                              number: 80
 
       syncPolicy:
         automated:
