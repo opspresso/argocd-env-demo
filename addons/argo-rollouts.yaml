@@ -35,8 +35,8 @@ spec:
                 enabled: true
                 serviceMonitor:
                   enabled: true
-                  additionalLabels: {}
-                  additionalAnnotations: {}
+                  additionalLabels:
+                    prometheus: kube-prometheus
 
             dashboard:
               enabled: true
