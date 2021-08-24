@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kiali-operator
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+
+  template:
+    metadata:
+      name: "kiali-operator-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-system
+      source:
+        repoURL: https://kiali.org/helm-charts
+        targetRevision: "v1.38.1"
+        chart: kiali-operator
+        helm:
+          values: |-
+            fullnameOverride: kiali-operator
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
