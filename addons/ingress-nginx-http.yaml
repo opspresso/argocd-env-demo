@@ -52,6 +52,12 @@ spec:
                   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  additionalLabels:
+                    prometheus: kube-prometheus
+
       syncPolicy:
         automated:
           prune: true
