@@ -54,7 +54,7 @@ spec:
               - name: gp3
                 annotations:
                   storageclass.kubernetes.io/is-default-class: "true"
-                volumeBindingMode: Immediate
+                volumeBindingMode: WaitForFirstConsumer
                 parameters:
                   type: "gp3"
                   allowAutoIOPSPerGBIncrease: "true"
