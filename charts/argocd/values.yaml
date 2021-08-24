@@ -1,3 +1,5 @@
+fullnameOverride: argocd
+
 argo-cd:
   fullnameOverride: argocd
 

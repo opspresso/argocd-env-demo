@@ -4,9 +4,9 @@
 
 ## generate secrets
 
-> argocd admin password 를 잊어버리지 않기 위해, aws ssm 에 저장해 놓습니다. 그리고 그것을 base64 인코딩해서 argocd-secret.yaml 에 넣습니다.
-> github 계정으로 인증학 위해 client id 와 client secret 을 각각 argocd-cm.yaml 와 argocd-secret.yaml 에 넣습니다.
-> github org (opspresso) 에 team (sre) 을 만들고 권한을 부여하기 위해 argocd-rbac-cm.yaml 에 관련 내용을 입력 합니다.
+> argocd admin password 를 잊어버리지 않기 위해, aws ssm 에 저장 합니다.
+> github 계정으로 인증학 위해 client id 와 client secret 을 저장 합니다.
+> github org (opspresso) 에 team (sre) 을 만들고 권한을 부여 합니다.
 
 ```bash
 ADMIN_USERNAME="admin"
@@ -69,7 +69,7 @@ helm upgrade argocd-applicationset argoproj/argocd-applicationset -n argocd
 
 ## Change the argocd-server service type to LoadBalancer
 
-> aws 에 elb 가 생성 되었습니다. port 와 acm 을 설정 합니다.
+> aws 에 elb 가 생성 되었습니다. route53 에서 argocd.bruce.spic.me 와 연결해 줍니다.
 
 ```bash
 kubectl get svc argocd-server -n argocd
@@ -80,13 +80,7 @@ NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                      
 argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30080/TCP,443:30443/TCP   64m
 ```
 
-* https://ap-northeast-2.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-2#LoadBalancers:sort=loadBalancerName
-
-```
-Load Balancer Protocol    Load Balancer Port    Instance Protocol    Instance Port    Cipher    SSL Certificate
-HTTP                      80                    HTTP                 30080            N/A       N/A
-HTTPS                     443                   HTTP                 30443                      xxxx-xxxx-xxxx-xxxx-xxxx (ACM)
-```
+* https://console.aws.amazon.com/route53/v2/hostedzones#
 
 ## argocd login
 
