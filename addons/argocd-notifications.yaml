@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "argocd-notifications-{{cluster}}"
+      name: "argocd-notifications"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
