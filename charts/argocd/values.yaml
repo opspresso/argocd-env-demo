@@ -70,16 +70,16 @@ argo-cd:
         p, role:org-admin, repositories, update, *, allow
         g, opspresso:sre, role:org-admin
 
-  configs:
-    secret:
-      extra:
-        dex.github.clientSecret: "ZGVtbwo="
+  # configs:
+  #   secret:
+  #     extra:
+  #       dex.github.clientSecret: "ZGVtbwo="
 
-      # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
-      # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'`
-      argocdServerAdminPassword: "ZGVtbwo="
-      # Password modification time defaults to current time if not set
-      argocdServerAdminPasswordMtime: "2021-08-24T02:22:09Z"
+  #     # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
+  #     # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'`
+  #     argocdServerAdminPassword: "ZGVtbwo="
+  #     # Password modification time defaults to current time if not set
+  #     argocdServerAdminPasswordMtime: "2021-08-24T02:22:09Z"
 
 argocd-applicationset:
   fullnameOverride: argocd-applicationset
