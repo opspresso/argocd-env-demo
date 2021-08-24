@@ -85,6 +85,11 @@ spec:
                         "title": "Revision",
                         "value": "{{.app.status.sync.revision}}",
                         "short": true
+                      },
+                      {
+                        "title": "Images",
+                        "value": "{{ range .app.status.summary.images }}- {{.}}\n{{end}}",
+                        "short": false
                       }
                       {{range $index, $c := .app.status.conditions}}
                       {{if not $index}},{{end}}
@@ -185,6 +190,11 @@ spec:
                         "title": "Repository",
                         "value": "{{.app.spec.source.repoURL}}",
                         "short": true
+                      },
+                      {
+                        "title": "Images",
+                        "value": "{{ range .app.status.summary.images }}- {{.}}\n{{end}}",
+                        "short": false
                       }
                       {{range $index, $c := .app.status.conditions}}
                       {{if not $index}},{{end}}
@@ -252,6 +262,11 @@ spec:
                         "title": "Repository",
                         "value": "{{.app.spec.source.repoURL}}",
                         "short": true
+                      },
+                      {
+                        "title": "Images",
+                        "value": "{{ range .app.status.summary.images }}- {{.}}\n{{end}}",
+                        "short": false
                       }
                       {{range $index, $c := .app.status.conditions}}
                       {{if not $index}},{{end}}
