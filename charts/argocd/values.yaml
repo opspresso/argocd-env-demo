@@ -86,25 +86,3 @@ argo-cd:
       argocdServerAdminPassword: "ARGOCD_PASSWORD"
       # Password modification time defaults to current time if not set
       argocdServerAdminPasswordMtime: "ARGOCD_MTIME"
-
-argocd-secret:
-  fullnameOverride: argocd-secret
-
-  resources:
-    - apiVersion: kubernetes-client.io/v1
-      kind: ExternalSecret
-      metadata:
-        name: argocd-secret
-      spec:
-        backendType: systemManager
-        data:
-          - key: /k8s/common/argocd-password
-            name: admin.password
-          - key: /k8s/common/argocd-mtime
-            name: admin.passwordMtime
-          - key: /k8s/common/github-secret
-            name: dex.github.clientSecret
-          - key: /k8s/common/github-webhook
-            name: webhook.github.secret
-          - key: /k8s/common/argocd-secret
-            name: server.secretkey

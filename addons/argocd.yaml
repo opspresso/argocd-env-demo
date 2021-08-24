@@ -7,6 +7,9 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+              hostname: "argocd.bruce.spic.me"
 
   template:
     metadata:
@@ -23,12 +26,82 @@ spec:
         name: "{{cluster}}"
         namespace: argocd
       source:
-        repoURL: https://github.com/opspresso/argocd-env-demo
-        targetRevision: HEAD
-        path: charts/argocd
+        repoURL: https://argoproj.github.io/argo-helm
+        targetRevision: "3.13.2"
+        chart: argocd
         helm:
-          valueFiles:
-            - values.yaml
+          values: |-
+            fullnameOverride: argocd
+
+            server:
+              name: server
+
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 5
+
+              service:
+                type: LoadBalancer
+                annotations:
+                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+
+              extraArgs:
+                - --insecure
+
+              envFrom: []
+              # - configMapRef:
+              #     name: config-map-name
+              # - secretRef:
+              #     name: argocd-extra-secret
+
+              config:
+                url: https://{{values.hostname}}
+
+                repositories: |
+                  - name: env-demo
+                    type: git
+                    url: https://github.com/opspresso/argocd-env-demo
+                  - name: opspresso
+                    type: helm
+                    url: https://opspresso.github.io/helm-charts
+
+                dex.config: |
+                  connectors:
+                  - type: github
+                    id: github
+                    name: github
+                    config:
+                      clientID: 0ca6b78d5dda3cfc8a53
+                      clientSecret: $dex.github.clientSecret
+                      orgs:
+                        - name: opspresso
+
+              rbacConfig:
+                policy.default: "role:readonly"
+                policy.csv: |
+                  p, role:org-admin, applications, *, */*, allow
+                  p, role:org-admin, clusters, create, *, allow
+                  p, role:org-admin, clusters, delete, *, allow
+                  p, role:org-admin, clusters, get, *, allow
+                  p, role:org-admin, clusters, update, *, allow
+                  p, role:org-admin, projects, create, *, allow
+                  p, role:org-admin, projects, delete, *, allow
+                  p, role:org-admin, projects, get, *, allow
+                  p, role:org-admin, projects, update, *, allow
+                  p, role:org-admin, repositories, create, *, allow
+                  p, role:org-admin, repositories, delete, *, allow
+                  p, role:org-admin, repositories, get, *, allow
+                  p, role:org-admin, repositories, update, *, allow
+                  g, opspresso:sre, role:org-admin
+
+            configs:
+              secret:
+                createSecret: false
 
       syncPolicy:
         # automated:
