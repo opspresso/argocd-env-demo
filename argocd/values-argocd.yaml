@@ -16,8 +16,7 @@ server:
       external-dns.alpha.kubernetes.io/hostname: "argocd.bruce.spic.me"
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
       service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: |
-        "arn:aws:acm:ap-northeast-2:082867736673:certificate/29ab1f7d-826f-4e96-b857-fc4d1a7f6edc"
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3e3a7d57-e800-4748-990d-cc2e20c30740"
       service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
   extraArgs: []

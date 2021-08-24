@@ -51,6 +51,7 @@ find . -name values-argocd.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GI
 ```bash
 kubectl create ns argocd
 
+helm repo update
 helm upgrade argocd argoproj/argo-cd -n argocd -f values-argocd.output.yaml
 # helm install argocd-applicationset argoproj/argocd-applicationset -n argocd
 
