@@ -55,6 +55,7 @@ spec:
               metrics:
                 enabled: true
                 serviceMonitor:
+                  enabled: true
                   additionalLabels:
                     prometheus: kube-prometheus
 
