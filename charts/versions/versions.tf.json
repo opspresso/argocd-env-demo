@@ -28,9 +28,9 @@
       "default": "v1.5.2",
       "description": "jetstack/cert-manager"
     },
-    "helm_kiali": {
+    "helm_kiali_operator": {
       "default": "v1.38.1",
-      "description": "kiali/kiali"
+      "description": "kiali/kiali-operator"
     },
     "helm_chaoskube": {
       "default": "3.3.2",
