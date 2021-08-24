@@ -12,18 +12,20 @@
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="xxxx"
 
+ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
+ARGOCD_SECRET="xxxx"
+
 GITHUB_SECRET="xxxx"
 GITHUB_WEBHOOK="xxxx"
 SLACK_TOKEN="xxxx"
 
-ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
-ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-
 # put aws ssm param
-aws ssm put-parameter --name /k8s/common/admin-user --value "${ADMIN_USERNAME}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/admin-password --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
-aws ssm put-parameter --name /k8s/common/argocd-password --value "${ARGOCD_PASSWORD}" --type SecureString --overwrite | jq .
+aws ssm put-parameter --name /k8s/common/admin-user --value "${ADMIN_USERNAME}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-mtime --value "${ARGOCD_MTIME}" --type SecureString --overwrite | jq .
+aws ssm put-parameter --name /k8s/common/argocd-password --value "${ARGOCD_PASSWORD}" --type SecureString --overwrite | jq .
+aws ssm put-parameter --name /k8s/common/argocd-secret --value "${ARGOCD_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-secret --value "${GITHUB_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-webhook --value "${GITHUB_WEBHOOK}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/slack-token --value "${SLACK_TOKEN}" --type SecureString --overwrite | jq .
@@ -32,13 +34,15 @@ aws ssm put-parameter --name /k8s/common/slack-token --value "${SLACK_TOKEN}" --
 ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
 ARGOCD_MTIME=$(aws ssm get-parameter --name /k8s/common/argocd-mtime --with-decryption | jq .Parameter.Value -r)
 ARGOCD_PASSWORD=$(aws ssm get-parameter --name /k8s/common/argocd-password --with-decryption | jq .Parameter.Value -r)
+ARGOCD_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-secret --with-decryption | jq .Parameter.Value -r)
 GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/github-secret --with-decryption | jq .Parameter.Value -r)
 GITHUB_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/github-webhook --with-decryption | jq .Parameter.Value -r)
 
 # replace values-argocd.yaml
 cp values.yaml values.output.yaml
-find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_MTIME/${ARGOCD_MTIME}/g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s@ARGOCD_PASSWORD@${ARGOCD_PASSWORD}@g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_MTIME/${ARGOCD_MTIME}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_SECRET/${ARGOCD_SECRET}/g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s/GITHUB_SECRET/${GITHUB_SECRET}/g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GITHUB_WEBHOOK}/g" {} \;
 ```

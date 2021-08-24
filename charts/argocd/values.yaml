@@ -76,6 +76,7 @@ argo-cd:
       githubSecret: "GITHUB_WEBHOOK"
 
       extra:
+        server.secretkey: "ARGOCD_SECRET"
         dex.github.clientSecret: "GITHUB_SECRET"
 
       # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
@@ -103,6 +104,8 @@ argocd-secret:
             name: dex.github.clientSecret
           - key: /k8s/common/github-webhook
             name: webhook.github.secret
+          - key: /k8s/common/argocd-secret
+            name: server.secretkey
 
 argocd-applicationset:
   fullnameOverride: argocd-applicationset
