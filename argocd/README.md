@@ -36,11 +36,11 @@ GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/github-secret --with-de
 GITHUB_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/github-webhook --with-decryption | jq .Parameter.Value -r)
 
 # replace values-argocd.yaml
-cp values-argocd.yaml values-argocd.output.yaml
-find . -name values-argocd.output.yaml -exec sed -i "" -e "s/ARGOCD_MTIME/${ARGOCD_MTIME}/g" {} \;
-find . -name values-argocd.output.yaml -exec sed -i "" -e "s@ARGOCD_PASSWORD@${ARGOCD_PASSWORD}@g" {} \;
-find . -name values-argocd.output.yaml -exec sed -i "" -e "s/GITHUB_SECRET/${GITHUB_SECRET}/g" {} \;
-find . -name values-argocd.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GITHUB_WEBHOOK}/g" {} \;
+cp values.yaml values.output.yaml
+find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_MTIME/${ARGOCD_MTIME}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s@ARGOCD_PASSWORD@${ARGOCD_PASSWORD}@g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/GITHUB_SECRET/${GITHUB_SECRET}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GITHUB_WEBHOOK}/g" {} \;
 ```
 
 ## Install Argo CD
@@ -52,7 +52,11 @@ find . -name values-argocd.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GI
 kubectl create ns argocd
 
 helm repo update
-helm upgrade argocd argoproj/argo-cd -n argocd -f values-argocd.output.yaml
+
+helm install argocd argoproj/argo-cd -n argocd -f values.output.yaml
+helm install argocd-applicationset argoproj/argocd-applicationset -n argocd
+
+helm upgrade argocd argoproj/argo-cd -n argocd -f values.output.yaml
 helm upgrade argocd-applicationset argoproj/argocd-applicationset -n argocd
 
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.1.0/manifests/install.yaml

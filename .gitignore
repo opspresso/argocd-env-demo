@@ -32,6 +32,4 @@ build/
 *.log
 *.tmp
 
-argocd-secret.output.yaml
-argocd-extra-secret.output.yaml
-values-argocd.output.yaml
+values.output.yaml
