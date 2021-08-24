@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kiali-server-ingress
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              host: "kiali.bruce.spic.me"
+
+  template:
+    metadata:
+      name: "kiali-server-ingress-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-system
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: kiali-server-ingress
+
+            resources:
+              - apiVersion: networking.k8s.io/v1
+                kind: Ingress
+                metadata:
+                  annotations:
+                    kubernetes.io/ingress.class: nginx
+                    kubernetes.io/ssl-redirect: 'true'
+                  name: kiali
+                spec:
+                  rules:
+                    - host: "{{values.host}}"
+                      http:
+                        paths:
+                          - backend:
+                              service:
+                                name: kiali-server
+                                port:
+                                  number: 20001
+                            path: /
+                            pathType: Prefix
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
