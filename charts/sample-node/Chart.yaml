@@ -8,8 +8,8 @@ appVersion: v0.3.4
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: v0.1.2
+    version: v0.1.3
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: v0.1.2
+    version: v0.1.3
     alias: redis
