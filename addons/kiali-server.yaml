@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: kiali-operator
+  name: kiali-server
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "kiali-operator-{{cluster}}"
+      name: "kiali-server-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -25,10 +25,10 @@ spec:
       source:
         repoURL: https://kiali.org/helm-charts
         targetRevision: "v1.38.1"
-        chart: kiali-operator
+        chart: kiali-server
         helm:
           values: |-
-            fullnameOverride: kiali-operator
+            fullnameOverride: kiali-server
 
       syncPolicy:
         # automated:
