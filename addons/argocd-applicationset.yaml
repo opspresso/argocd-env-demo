@@ -21,7 +21,7 @@ spec:
       project: default
       destination:
         name: "{{cluster}}"
-        namespace: addon-argocd-applicationset
+        namespace: argocd
       source:
         repoURL: https://argoproj.github.io/argo-helm
         targetRevision: "1.3.0"
