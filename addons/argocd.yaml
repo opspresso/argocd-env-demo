@@ -28,7 +28,7 @@ spec:
       source:
         repoURL: https://argoproj.github.io/argo-helm
         targetRevision: "3.13.2"
-        chart: argocd
+        chart: argo-cd
         helm:
           values: |-
             fullnameOverride: argocd
