@@ -46,8 +46,10 @@ spec:
                       http:
                         paths:
                           - backend:
-                              serviceName: argo-rollouts-dashboard
-                              servicePort: 3100
+                              service:
+                                name: argo-rollouts-dashboard
+                                port:
+                                  number: 3100
                             path: /
 
       syncPolicy:
