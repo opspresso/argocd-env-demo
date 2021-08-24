@@ -65,8 +65,8 @@ configs:
     githubSecret: "GITHUB_WEBHOOK"
 
     extra:
-      server.secretkey: "ARGOCD_SECRET"
-      dex.github.clientSecret: "GITHUB_SECRET"
+      server.secretkey: "ARGOCD_SERVER_SECRET"
+      dex.github.clientSecret: "ARGOCD_GITHUB_SECRET"
 
     # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
     # `htpasswd -nbBC 10 "" $PASSWORD | tr -d ':\n' | sed 's/$2y/$2a/'`

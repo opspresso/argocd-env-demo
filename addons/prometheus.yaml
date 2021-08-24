@@ -128,6 +128,31 @@ spec:
               admin:
                 existingSecret: "prometheus-grafana-secret"
 
+              grafana.ini:
+                # https://grafana.com/docs/grafana/latest/auth/google/
+                auth.google:
+                  enabled: false
+                  allow_sign_up: true
+                  client_id: GOOGLE_CLIENT_ID
+                  client_secret: GOOGLE_CLIENT_SECRET
+                  scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+                  auth_url: https://accounts.google.com/o/oauth2/auth
+                  token_url: https://accounts.google.com/o/oauth2/token
+                  allowed_domains: nalbam.com
+
+                # https://grafana.com/docs/grafana/latest/auth/github/
+                auth.github:
+                  enabled: true
+                  allow_sign_up: true
+                  client_id: bd889ee6939aad541bcb
+                  client_secret: GITHUB_CLIENT_SECRET
+                  scopes: user:email,read:org
+                  auth_url: https://github.com/login/oauth/authorize
+                  token_url: https://github.com/login/oauth/access_token
+                  api_url: https://api.github.com/user
+                  allowed_organizations: opspresso
+                  team_ids: sre
+
               ingress:
                 enabled: true
                 annotations:
