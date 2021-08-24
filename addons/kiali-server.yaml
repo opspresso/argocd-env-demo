@@ -32,8 +32,8 @@ spec:
           values: |-
             fullnameOverride: kiali-server
 
-            server:
-              web_fqdn: "{{values.host}}"
+            # server:
+            #   web_fqdn: "{{values.host}}"
 
       syncPolicy:
         automated:
