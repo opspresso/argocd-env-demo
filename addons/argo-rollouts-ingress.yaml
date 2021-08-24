@@ -51,6 +51,7 @@ spec:
                                 port:
                                   number: 3100
                             path: /
+                            pathType: Prefix
 
       syncPolicy:
         automated:
