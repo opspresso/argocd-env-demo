@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             values:
               rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--irsa-operator"
-              oidcarn: "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/43D40A495139B51C51D1461CEBC49DCB"
+              oidcarn: "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/EB05973A6591B8D28B88A131317732CA"
 
   template:
     metadata:
