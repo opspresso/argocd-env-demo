@@ -20,22 +20,18 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.7.24
+      VERSION: v0.7.25
     enabled: true
   controller:
     kind: Rollout
-  podLabels:
-    chaoskube: "true"
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: "true"
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 7edaa0393b3f45ae7d5e4ab15a084a33
+    value: 75b6b2eb56da4c72647cb818ab0fc60c
   image:
     repository: nalbam/sample-node
-    tag: v0.7.24
+    tag: v0.7.25
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -56,6 +52,10 @@ app:
       - autoscaling:Get*
       - autoscaling:Describe*
       resource: '*'
+  podAnnotations:
+    chaos.alpha.kubernetes.io/enabled: 'true'
+  podLabels:
+    chaoskube: 'true'
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -68,7 +68,7 @@ app:
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: djAuNy4yNA==
+      SECRET_VERSION: djAuNy4yNQ==
     enabled: true
   strategy:
     canary:
