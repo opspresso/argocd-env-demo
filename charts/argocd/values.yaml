@@ -1,0 +1,103 @@
+argo-cd:
+  server:
+    name: server
+
+    replicas: 2
+
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+    service:
+      type: LoadBalancer
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "argocd.bruce.spic.me"
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+        service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+        service.beta.kubernetes.io/aws-load-balancer-ssl-cert: |
+          "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+        service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+
+    extraArgs: []
+    #  - --insecure
+
+    envFrom: []
+    # - configMapRef:
+    #     name: config-map-name
+    # - secretRef:
+    #     name: secret-name
+
+    config:
+      url: https://argocd.bruce.spic.me
+
+      repositories: |
+        - name: env-demo
+          type: git
+          url: https://github.com/opspresso/argocd-env-demo
+        - name: opspresso
+          type: helm
+          url: https://opspresso.github.io/helm-charts
+
+      oidc.config: |
+        name: github
+        clientID: 0ca6b78d5dda3cfc8a53
+        clientSecret: $dex.github.clientSecret
+        orgs:
+          - name: opspresso
+
+    rbacConfig:
+      policy.csv: |
+        p, role:org-admin, applications, *, */*, allow
+        p, role:org-admin, clusters, create, *, allow
+        p, role:org-admin, clusters, delete, *, allow
+        p, role:org-admin, clusters, get, *, allow
+        p, role:org-admin, clusters, update, *, allow
+        p, role:org-admin, projects, create, *, allow
+        p, role:org-admin, projects, delete, *, allow
+        p, role:org-admin, projects, get, *, allow
+        p, role:org-admin, projects, update, *, allow
+        p, role:org-admin, repositories, create, *, allow
+        p, role:org-admin, repositories, delete, *, allow
+        p, role:org-admin, repositories, get, *, allow
+        p, role:org-admin, repositories, update, *, allow
+        g, opspresso:sre, role:org-admin
+
+    additionalApplications: []
+      # - name: addons
+      #   namespace: argocd
+      #   additionalLabels:
+      #     krmt.io/group: addons
+      #   project: default
+      #   source:
+      #     repoURL: https://github.com/opspresso/argocd-env-demo
+      #     targetRevision: HEAD
+      #     path: addons
+      #   destination:
+      #     namespace: argocd
+      #     name: in-cluster
+      #   syncPolicy:
+      #     automated:
+      #       prune: true
+      #       selfHeal: true
+      #     syncOptions:
+      #       - CreateNamespace=true
+
+      # - name: apps
+      #   namespace: argocd
+      #   additionalLabels:
+      #     krmt.io/group: apps
+      #   project: default
+      #   source:
+      #     repoURL: https://github.com/opspresso/argocd-env-demo
+      #     targetRevision: HEAD
+      #     path: apps/eks-demo
+      #   destination:
+      #     namespace: argocd
+      #     name: in-cluster
+      #   syncPolicy:
+      #     automated:
+      #       prune: true
+      #       selfHeal: true
+      #     syncOptions:
+      #       - CreateNamespace=true

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: argocd
+description: A Helm chart for Kubernetes
+type: application
+version: v0.1.0
+appVersion: 3.13.2
+
+dependencies:
+  - repository: https://argoproj.github.io/argo-helm
+    name: argo-cd
+    version: 3.13.2
+  - repository: https://argoproj.github.io/argo-helm
+    name: argocd-applicationset
+    version: 1.3.0
