@@ -48,21 +48,21 @@ spec:
                         name: http
                         protocol: HTTP
 
-              # - apiVersion: networking.istio.io/v1beta1
-              #   kind: VirtualService
-              #   metadata:
-              #     name: kiali-server
-              #   spec:
-              #     hosts:
-              #       - {{values.host}}
-              #     gateways:
-              #       - kiali-server
-              #     http:
-              #       - route:
-              #           - destination:
-              #               host: kiali-server
-              #               port:
-              #                 number: 20001
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: kiali-server
+                spec:
+                  hosts:
+                    - {{values.host}}
+                  gateways:
+                    - kiali-server
+                  http:
+                    - route:
+                        - destination:
+                            host: kiali-server
+                            port:
+                              number: 20001
 
       syncPolicy:
         automated:
