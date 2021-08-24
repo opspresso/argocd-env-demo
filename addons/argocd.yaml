@@ -95,7 +95,7 @@ spec:
                   interval: 30s
                   selector:
                     prometheus: kube-prometheus
-                  namespace: addon-prometheus
+                  # namespace: addon-prometheus
 
             repoServer:
               replicas: 2
