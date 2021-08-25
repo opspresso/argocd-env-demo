@@ -48,6 +48,7 @@ spec:
                       pathType: Prefix
 
             postgresql:
+              fullnameOverride: keycloak-postgresql
               persistence:
                 storageClass: "gp3"
 
