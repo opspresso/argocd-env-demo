@@ -1,23 +1,7 @@
 app:
-  fullnameOverride: sample-grpc
-  livenessProbe:
-    failureThreshold: 3
-    httpGet:
-      path: /
-      port: 50051
-    initialDelaySeconds: 3
-    periodSeconds: 10
   nameOverride: sample-grpc
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: "true"
-  readinessProbe:
-    failureThreshold: 3
-    httpGet:
-      path: /
-      port: 50051
-    initialDelaySeconds: 3
-    periodSeconds: 10
-  replicaCount: 1
+  fullnameOverride: sample-grpc
+
   resources:
     limits:
       cpu: 100m
@@ -25,5 +9,22 @@ app:
     requests:
       cpu: 100m
       memory: 128Mi
+
   service:
     port: 50051
+
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /
+      port: 50051
+    initialDelaySeconds: 3
+    periodSeconds: 10
+
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /
+      port: 50051
+    initialDelaySeconds: 3
+    periodSeconds: 10

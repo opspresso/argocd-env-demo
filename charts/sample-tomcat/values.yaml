@@ -2,9 +2,6 @@ app:
   nameOverride: sample-tomcat
   fullnameOverride: sample-tomcat
 
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: "true"
-
   resources:
     limits:
       cpu: "1"

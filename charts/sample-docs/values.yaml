@@ -2,9 +2,6 @@ app:
   nameOverride: sample-docs
   fullnameOverride: sample-docs
 
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: "true"
-
   resources:
     limits:
       cpu: 100m

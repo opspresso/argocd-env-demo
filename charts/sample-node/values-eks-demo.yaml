@@ -50,6 +50,9 @@ app:
       - autoscaling:Get*
       - autoscaling:Describe*
       resource: '*'
+  istio:
+    gateway:
+      enabled: true
   podAnnotations:
     chaos.alpha.kubernetes.io/enabled: 'true'
   podLabels:

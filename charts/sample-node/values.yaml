@@ -2,13 +2,6 @@ app:
   nameOverride: sample-node
   fullnameOverride: sample-node
 
-  # image:
-  #   repository: nalbam/sample-node
-  #   tag: v0.7.15
-
-  service:
-    port: 3000
-
   resources:
     limits:
       cpu: 250m
@@ -16,6 +9,9 @@ app:
     requests:
       cpu: 250m
       memory: 256Mi
+
+  service:
+    port: 3000
 
   livenessProbe:
     failureThreshold: 3
@@ -33,15 +29,6 @@ app:
     initialDelaySeconds: 3
     periodSeconds: 10
 
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: "true"
-
-  # istio:
-  #   gateway:
-  #     enabled: true
-  #   virtualService:
-  #     enabled: true
-
 redis:
   nameOverride: sample-redis
   fullnameOverride: sample-redis
@@ -50,9 +37,6 @@ redis:
     repository: redis
     tag: alpine3.14
 
-  service:
-    port: 6379
-
   resources:
     limits:
       cpu: 100m
@@ -60,3 +44,6 @@ redis:
     requests:
       cpu: 100m
       memory: 128Mi
+
+  service:
+    port: 6379

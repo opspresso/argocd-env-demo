@@ -2,9 +2,6 @@ app:
   nameOverride: sample-spring
   fullnameOverride: sample-spring
 
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: "true"
-
   resources:
     limits:
       cpu: "1"
