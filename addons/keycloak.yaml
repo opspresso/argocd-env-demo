@@ -32,20 +32,37 @@ spec:
           values: |-
             fullnameOverride: keycloak
 
-            serviceMonitor:
-              enabled: true
-              labels:
-                release: prometheus-eks-demo
+            extraEnv: |
+              - name: PROXY_ADDRESS_FORWARDING
+                value: "true"
+
+            extraVolumes: |
+              - name: keycloak-realm
+                secret:
+                  secretName: keycloak-realm
+
+            extraVolumeMounts: |
+              - name: keycloak-realm
+                mountPath: "/realm/"
+                readOnly: true
+
+            extraArgs: -Dkeycloak.import=/realm/demo.json
 
             ingress:
               enabled: true
-              annotations: {}
-              labels: {}
+              annotations:
+                kubernetes.io/ingress.class: nginx
+                nginx.ingress.kubernetes.io/ssl-redirect: "true"
               rules:
                 - host: "keycloak.{{values.host}}"
                   paths:
                     - path: /
                       pathType: Prefix
+
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: prometheus-eks-demo
 
             postgresql:
               fullnameOverride: keycloak-postgresql

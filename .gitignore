@@ -33,3 +33,4 @@ build/
 *.tmp
 
 values.output.yaml
+realm.output.json
