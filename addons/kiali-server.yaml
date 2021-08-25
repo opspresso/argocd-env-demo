@@ -45,8 +45,8 @@ spec:
             # login_token:
             #   signing_key: CHANGEME
 
-            # server:
-            #   web_fqdn: "{{values.host}}"
+            server:
+              web_fqdn: "{{values.host}}"
 
       syncPolicy:
         automated:
