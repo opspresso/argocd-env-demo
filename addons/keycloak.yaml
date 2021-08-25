@@ -41,6 +41,8 @@ spec:
                 value: "true"
               - name: KEYCLOAK_IMPORT
                 value: /realm/demo.json
+              - name: KEYCLOAK_FRONTEND_URL
+                value: "https://keycloak.{{values.host}}/auth"
 
             extraVolumes: |
               - name: keycloak-realm
