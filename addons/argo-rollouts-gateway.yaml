@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              host: "argo-rollouts.istio.bruce.spic.me"
+              host: "istio.bruce.spic.me"
 
   template:
     metadata:
@@ -42,7 +42,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - {{values.host}}
+                        - "argo-rollouts.{{values.host}}"
                       port:
                         number: 80
                         name: http
@@ -54,7 +54,7 @@ spec:
                   name: argo-rollouts
                 spec:
                   hosts:
-                    - {{values.host}}
+                    - "argo-rollouts.{{values.host}}"
                   gateways:
                     - argo-rollouts
                   http:

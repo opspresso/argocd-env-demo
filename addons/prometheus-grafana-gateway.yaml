@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              host: "grafana.istio.bruce.spic.me"
+              host: "istio.bruce.spic.me"
 
   template:
     metadata:
@@ -42,7 +42,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - {{values.host}}
+                        - "grafana.{{values.host}}"
                       port:
                         number: 80
                         name: http
@@ -54,7 +54,7 @@ spec:
                   name: prometheus-grafana
                 spec:
                   hosts:
-                    - {{values.host}}
+                    - "grafana.{{values.host}}"
                   gateways:
                     - prometheus-grafana
                   http:
