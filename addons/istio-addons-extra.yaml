@@ -42,9 +42,9 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "grafana.{{values.host}}"
-                        - "kiali.{{values.host}}"
-                        - "prometheus.{{values.host}}"
+                        - "grafana-istio.{{values.host}}"
+                        - "kiali-istio.{{values.host}}"
+                        - "prometheus-istio.{{values.host}}"
                       port:
                         number: 80
                         name: http
