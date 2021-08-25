@@ -33,6 +33,10 @@ spec:
             fullnameOverride: keycloak
 
             extraEnv: |
+              - name: KEYCLOAK_USER
+                value: "admin"
+              - name: KEYCLOAK_PASSWORD_FILE
+                value: /secrets/keycloak-secret/admin-password
               - name: PROXY_ADDRESS_FORWARDING
                 value: "true"
 
