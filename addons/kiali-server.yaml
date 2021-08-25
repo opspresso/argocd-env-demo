@@ -32,21 +32,22 @@ spec:
           values: |-
             fullnameOverride: kiali-server
 
-            # auth:
-            #   openid: {}
-            #   strategy: "anonymous"
+            auth:
+              openid: {}
+              strategy: "anonymous"
 
             deployment:
+              ingress_enabled: false
               pod_labels:
                 sidecar.istio.io/inject: "false"
               accessible_namespaces:
               - '**'
 
-            # login_token:
-            #   signing_key: CHANGEME
+            login_token:
+              signing_key: CHANGEME
 
-            # server:
-            #   web_fqdn: "{{values.host}}"
+            server:
+              web_fqdn: "{{values.host}}"
 
       syncPolicy:
         automated:
