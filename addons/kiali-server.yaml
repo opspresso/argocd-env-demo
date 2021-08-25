@@ -32,9 +32,9 @@ spec:
           values: |-
             fullnameOverride: kiali-server
 
-            auth:
-              openid: {}
-              strategy: "anonymous"
+            # auth:
+            #   openid: {}
+            #   strategy: "anonymous"
 
             deployment:
               pod_labels:
