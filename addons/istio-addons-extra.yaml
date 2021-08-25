@@ -62,7 +62,7 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: grafana
+                            host: grafana-gatekeeper
                             port:
                               number: 3000
 
@@ -78,9 +78,9 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: kiali
+                            host: kiali-gatekeeper
                             port:
-                              number: 20001
+                              number: 80
 
               - apiVersion: networking.istio.io/v1beta1
                 kind: VirtualService
@@ -94,7 +94,7 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: prometheus
+                            host: prometheus-gatekeeper
                             port:
                               number: 9090
 
