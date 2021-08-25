@@ -7,6 +7,8 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              host: "bruce.spic.me"
 
   template:
     metadata:
@@ -31,26 +33,6 @@ spec:
             fullnameOverride: argo-rollouts-extra
 
             resources:
-              - apiVersion: networking.k8s.io/v1
-                kind: Ingress
-                metadata:
-                  annotations:
-                    kubernetes.io/ingress.class: nginx
-                    kubernetes.io/ssl-redirect: 'true'
-                  name: argo-rollouts
-                spec:
-                  rules:
-                    - host: "argo-rollouts.{{values.host}}"
-                      http:
-                        paths:
-                          - backend:
-                              service:
-                                name: argo-rollouts-dashboard
-                                port:
-                                  number: 3100
-                            path: /
-                            pathType: Prefix
-
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway
                 metadata:

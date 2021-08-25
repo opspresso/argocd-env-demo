@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-ingress
+  name: ingress-nginx-http
 spec:
   generators:
     - list:
@@ -13,7 +13,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-ingress-{{cluster}}"
+      name: "ingress-nginx-http-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -24,43 +24,44 @@ spec:
       project: default
       destination:
         name: "{{cluster}}"
-        namespace: istio-system
+        namespace: addon-ingress-nginx-http
       source:
-        repoURL: https://github.com/istio/istio
-        targetRevision: 1.11.1
-        path: manifests/charts/gateways/istio-ingress
+        repoURL: https://kubernetes.github.io/ingress-nginx
+        targetRevision: "3.36.0"
+        chart: ingress-nginx
         helm:
           values: |-
-            gateways:
-              istio-ingressgateway:
-                ports:
-                - port: 15021
-                  targetPort: 15021
-                  name: status-port
-                  protocol: TCP
-                - port: 80
-                  targetPort: 8080
-                  name: http2
-                  protocol: TCP
-                - port: 443
-                  targetPort: 8080
-                  name: https
-                  protocol: TCP
+            fullnameOverride: ingress-nginx-http
 
-                autoscaleEnabled: true
-                autoscaleMin: 2
-                autoscaleMax: 5
+            controller:
+              # kind: DaemonSet
 
-                serviceAnnotations:
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 4
+
+              service:
+                targetPorts:
+                  http: http
+                  https: http
+                annotations:
                   external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  additionalLabels:
+                    release: prometheus-{{cluster}}
+
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true

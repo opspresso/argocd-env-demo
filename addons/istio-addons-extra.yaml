@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              host: "istio.bruce.spic.me"
+              host: "bruce.spic.me"
 
   template:
     metadata:
@@ -33,66 +33,6 @@ spec:
             fullnameOverride: istio-addons-extra
 
             resources:
-              - apiVersion: networking.k8s.io/v1
-                kind: Ingress
-                metadata:
-                  annotations:
-                    kubernetes.io/ingress.class: nginx
-                    kubernetes.io/ssl-redirect: 'true'
-                  name: istio-addons-grafana
-                spec:
-                  rules:
-                    - host: "grafana-istio.{{values.host}}"
-                      http:
-                        paths:
-                          - backend:
-                              service:
-                                name: grafana
-                                port:
-                                  number: 3000
-                            path: /
-                            pathType: Prefix
-
-              - apiVersion: networking.k8s.io/v1
-                kind: Ingress
-                metadata:
-                  annotations:
-                    kubernetes.io/ingress.class: nginx
-                    kubernetes.io/ssl-redirect: 'true'
-                  name: istio-addons-kiali
-                spec:
-                  rules:
-                    - host: "kiali-istio.{{values.host}}"
-                      http:
-                        paths:
-                          - backend:
-                              service:
-                                name: kiali
-                                port:
-                                  number: 20001
-                            path: /
-                            pathType: Prefix
-
-              - apiVersion: networking.k8s.io/v1
-                kind: Ingress
-                metadata:
-                  annotations:
-                    kubernetes.io/ingress.class: nginx
-                    kubernetes.io/ssl-redirect: 'true'
-                  name: istio-addons-prometheus
-                spec:
-                  rules:
-                    - host: "prometheus-istio.{{values.host}}"
-                      http:
-                        paths:
-                          - backend:
-                              service:
-                                name: prometheus
-                                port:
-                                  number: 9090
-                            path: /
-                            pathType: Prefix
-
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway
                 metadata:
