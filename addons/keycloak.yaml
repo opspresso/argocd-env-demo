@@ -78,6 +78,7 @@ spec:
                     paths:
                       - path: /auth/admin/
                         pathType: Prefix
+              tls: []
 
             serviceMonitor:
               enabled: true
