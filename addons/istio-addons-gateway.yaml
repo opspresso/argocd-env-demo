@@ -1,0 +1,106 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: istio-addons-gateway
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              host: "istio.bruce.spic.me"
+
+  template:
+    metadata:
+      name: "istio-addons-gateway-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-system
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: istio-addons-gateway
+
+            resources:
+              - apiVersion: networking.istio.io/v1beta1
+                kind: Gateway
+                metadata:
+                  name: istio-addons
+                spec:
+                  selector:
+                    istio: ingressgateway
+                  servers:
+                    - hosts:
+                        - "grafana.{{values.host}}"
+                        - "kiali.{{values.host}}"
+                        - "prometheus.{{values.host}}"
+                      port:
+                        number: 80
+                        name: http
+                        protocol: HTTP
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: istio-addons-grafana
+                spec:
+                  hosts:
+                    - "grafana.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: grafana
+                            port:
+                              number: 3000
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: istio-addons-kiali
+                spec:
+                  hosts:
+                    - "kiali.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: kiali
+                            port:
+                              number: 20001
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: istio-addons-prometheus
+                spec:
+                  hosts:
+                    - "prometheus.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: prometheus
+                            port:
+                              number: 9090
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
