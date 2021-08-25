@@ -52,7 +52,7 @@ spec:
 
                 # serviceMonitorSelector:
                 #   matchLabels:
-                #     prometheus: kube-prometheus
+                #     release: prometheus-eks-demo
 
                 # resources:
                 #   requests:

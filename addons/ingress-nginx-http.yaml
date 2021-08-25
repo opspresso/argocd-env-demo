@@ -57,7 +57,7 @@ spec:
                 serviceMonitor:
                   enabled: true
                   additionalLabels:
-                    prometheus: kube-prometheus
+                    release: prometheus-eks-demo
 
       syncPolicy:
         automated:
