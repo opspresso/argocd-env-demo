@@ -8,10 +8,8 @@ app:
     repository: tobegit3hub/grpc-helloworld
     tag: latest
   ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    enabled: true
     hosts:
-      - host: grpc.bruce.spic.me
+      - host: sample-grpc.bruce.spic.me
+  istio:
+    gateway:
+      enabled: true
