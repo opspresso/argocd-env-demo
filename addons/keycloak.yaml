@@ -63,11 +63,9 @@ spec:
                 additionalLabels:
                   release: prometheus-{{cluster}}
 
-            # extraEnvVars: |
-            #   - name: KEYCLOAK_IMPORT
-            #     value: /realm/demo.json
-            #   - name: PROXY_ADDRESS_FORWARDING
-            #     value: "true"
+            extraEnvVars: |
+              - name: KEYCLOAK_IMPORT
+                value: /realm/demo.json
 
             extraVolumes: |
               - name: keycloak-realm
