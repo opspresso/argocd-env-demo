@@ -181,9 +181,9 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: prometheus-eks-demo-grafana
+                            host: prometheus-grafana
                             port:
-                              number: 80
+                              number: 3000
 
       syncPolicy:
         automated:
