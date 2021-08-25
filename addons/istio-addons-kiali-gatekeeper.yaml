@@ -34,7 +34,7 @@ spec:
 
             upstreamURL: http://kiali.istio-system.svc.cluster.local:20001
 
-            ClientID: kiali
+            ClientID: kiali-istio
             ClientSecret: 746b5179-2b86-4c5c-8b1f-440e893f650b
 
             # extraArgs:
