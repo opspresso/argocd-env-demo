@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-cert-bruce-spic-me
+  name: istio-extra
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-cert-bruce-spic-me-{{cluster}}"
+      name: "istio-extra-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -28,7 +28,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: istio-cert-bruce-spic-me
+            fullnameOverride: istio-extra
 
             resources:
               - apiVersion: cert-manager.io/v1
@@ -41,6 +41,22 @@ spec:
                     - "*.bruce.spic.me"
                     - "*.istio.bruce.spic.me"
                   secretName: "istio-cert-bruce-spic-me"
+                  duration: "87600h0m0s"
+                  renewBefore: "70080h0m0s"
+                  issuerRef:
+                    kind: "ClusterIssuer"
+                    name: "cluster-issuer-selfsigned"
+
+              - apiVersion: cert-manager.io/v1
+                kind: Certificate
+                metadata:
+                  name: istio-cert-bruce-opspresso-com
+                spec:
+                  commonName: bruce.opspresso.com
+                  dnsNames:
+                    - "*.bruce.opspresso.com"
+                    - "*.istio.bruce.opspresso.com"
+                  secretName: "istio-cert-bruce-opspresso-com"
                   duration: "87600h0m0s"
                   renewBefore: "70080h0m0s"
                   issuerRef:

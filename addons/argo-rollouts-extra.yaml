@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: argo-rollouts-analysis
+  name: argo-rollouts-extra
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "argo-rollouts-analysis-{{cluster}}"
+      name: "argo-rollouts-extra-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -28,9 +28,60 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: argo-rollouts-analysis
+            fullnameOverride: argo-rollouts-extra
 
             resources:
+              - apiVersion: networking.k8s.io/v1
+                kind: Ingress
+                metadata:
+                  annotations:
+                    kubernetes.io/ingress.class: nginx
+                    kubernetes.io/ssl-redirect: 'true'
+                  name: argo-rollouts
+                spec:
+                  rules:
+                    - host: "argo-rollouts.{{values.host}}"
+                      http:
+                        paths:
+                          - backend:
+                              service:
+                                name: argo-rollouts-dashboard
+                                port:
+                                  number: 3100
+                            path: /
+                            pathType: Prefix
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: Gateway
+                metadata:
+                  name: argo-rollouts
+                spec:
+                  selector:
+                    istio: ingressgateway
+                  servers:
+                    - hosts:
+                        - "argo-rollouts.{{values.host}}"
+                      port:
+                        number: 80
+                        name: http
+                        protocol: HTTP
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: argo-rollouts
+                spec:
+                  hosts:
+                    - "argo-rollouts.{{values.host}}"
+                  gateways:
+                    - argo-rollouts
+                  http:
+                    - route:
+                        - destination:
+                            host: argo-rollouts-dashboard
+                            port:
+                              number: 3100
+
               - apiVersion: argoproj.io/v1alpha1
                 kind: ClusterAnalysisTemplate
                 metadata:
