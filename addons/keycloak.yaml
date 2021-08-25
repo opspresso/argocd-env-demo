@@ -63,22 +63,25 @@ spec:
                 additionalLabels:
                   release: prometheus-{{cluster}}
 
-            extraEnvVars: |
-              - name: KEYCLOAK_IMPORT
-                value: /realm/demo.json
+            # extraEnvVars: |
+            #   - name: KEYCLOAK_IMPORT
+            #     value: /realm/demo.json
 
-            extraVolumes: |
-              - name: keycloak-realm
-                secret:
-                  secretName: keycloak-realm
+            keycloakConfigCli:
+              enabled: true
 
-            extraVolumeMounts: |
-              - name: keycloak-realm
-                mountPath: "/realm/"
-                readOnly: true
+              extraVolumes: |
+                - name: keycloak-realm
+                  secret:
+                    secretName: keycloak-realm
 
-            configuration:
-              /realm/demo.json:
+              extraVolumeMounts: |
+                - name: keycloak-realm
+                  mountPath: "/realm/"
+                  readOnly: true
+
+              configuration:
+                /realm/demo.json:
 
             postgresql:
               fullnameOverride: keycloak-postgresql
