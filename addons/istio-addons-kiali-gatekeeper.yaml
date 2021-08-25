@@ -37,8 +37,8 @@ spec:
             ClientID: kiali
             ClientSecret: 746b5179-2b86-4c5c-8b1f-440e893f650b
 
-            extraArgs:
-            - enable-https-redirection
+            # extraArgs:
+            # - enable-https-redirection
 
       syncPolicy:
         automated:
