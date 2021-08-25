@@ -40,7 +40,7 @@ spec:
                 keyMapping:
                   admin-password: admin-password
                   management-password: management-password
-                  database-password: database-password
+                  # database-password: database-password
 
             proxyAddressForwarding: true
 
