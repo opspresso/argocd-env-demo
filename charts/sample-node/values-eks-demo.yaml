@@ -39,6 +39,10 @@ app:
     enabled: true
     hosts:
     - host: sample-node.bruce.spic.me
+    preview:
+      enabled: true
+      hosts:
+      - host: sample-node-preview.bruce.spic.me
   istio:
     gateway:
       enabled: true
@@ -47,18 +51,14 @@ app:
   podLabels:
     chaoskube: 'true'
     sidecar.istio.io/inject: 'true'
-  preview:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      kubernetes.io/ssl-redirect: 'true'
-    enabled: true
-    hosts:
-    - host: sample-node-preview.bruce.spic.me
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: djAuNy4yNw==
     enabled: true
+  service:
+    preview:
+      enabled: true
   strategy:
     canary:
       canaryService: sample-node-preview

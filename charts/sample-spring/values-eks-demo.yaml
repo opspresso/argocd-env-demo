@@ -17,12 +17,15 @@ app:
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
+    preview:
+      hosts:
+      - host: sample-spring-preview.bruce.spic.me
   istio:
     gateway:
       enabled: true
-  preview:
-    hosts:
-    - host: sample-spring-preview.bruce.spic.me
+  service:
+    preview:
+      enabled: true
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
