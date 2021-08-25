@@ -36,6 +36,8 @@ spec:
             fullnameOverride: keycloak
 
             auth:
+              adminUser: admin
+
               existingSecret:
                 name: keycloak-secret
                 keyMapping:
