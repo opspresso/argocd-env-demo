@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: keycloak
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              host: "bruce.spic.me"
+
+  template:
+    metadata:
+      name: "keycloak-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-keycloak
+      source:
+        repoURL: https://codecentric.github.io/helm-charts
+        targetRevision: "14.0.1"
+        chart: keycloak
+        helm:
+          values: |-
+            fullnameOverride: keycloak
+
+            ingress:
+              enabled: true
+              annotations: {}
+              labels: {}
+              rules:
+                - host: "keycloak.{{values.host}}"
+                  paths:
+                    - path: /
+                      pathType: Prefix
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
