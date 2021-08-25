@@ -28,9 +28,7 @@ spec:
         chart: keycloak-gatekeeper
         helm:
           values: |-
-            fullnameOverride: dashboard
-
-            nameOverride: kiali-gatekeeper
+            fullnameOverride: kiali-gatekeeper
 
             discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
 
