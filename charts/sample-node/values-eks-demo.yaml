@@ -54,6 +54,7 @@ app:
     chaos.alpha.kubernetes.io/enabled: 'true'
   podLabels:
     chaoskube: 'true'
+    sidecar.istio.io/inject: 'true'
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
