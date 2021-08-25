@@ -3,10 +3,6 @@ app:
     enabled: true
     maxReplicas: 10
     metrics:
-    # - pods:
-    #     metricName: container_network_receive_bytes
-    #     targetAverageValue: 3k
-    #   type: Pods
     - resource:
         name: cpu
         target:
@@ -20,13 +16,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 7f1af7e99d453d9f6d321d16f07a25bd
-  istio:
-    gateway:
-      enabled: true
+    value: acb7d85c9d20c9811671a88ef736816c
   image:
     repository: nalbam/docs
-    tag: 0.2.13
+    tag: v0.3.1
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -35,6 +28,9 @@ app:
     enabled: true
     hosts:
     - host: docs.bruce.spic.me
+  istio:
+    gateway:
+      enabled: true
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
