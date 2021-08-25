@@ -183,7 +183,7 @@ spec:
                         - destination:
                             host: prometheus-grafana
                             port:
-                              number: 3000
+                              number: 80
 
       syncPolicy:
         automated:
