@@ -23,8 +23,8 @@ app:
   istio:
     gateway:
       enabled: true
-  podLabels:
-    sidecar.istio.io/inject: 'true'
+    sidecar:
+      inject: true
   service:
     preview:
       enabled: true

@@ -46,11 +46,12 @@ app:
   istio:
     gateway:
       enabled: true
+    sidecar:
+      inject: true
   podAnnotations:
     chaos.alpha.kubernetes.io/enabled: 'true'
   podLabels:
     chaoskube: 'true'
-    sidecar.istio.io/inject: 'true'
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
