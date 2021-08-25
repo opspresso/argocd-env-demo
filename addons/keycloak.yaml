@@ -44,10 +44,16 @@ spec:
               - name: keycloak-realm
                 secret:
                   secretName: keycloak-realm
+              - name: keycloak-secret
+                secret:
+                  secretName: keycloak-secret
 
             extraVolumeMounts: |
               - name: keycloak-realm
                 mountPath: "/realm/"
+                readOnly: true
+              - name: keycloak-secret
+                mountPath: "/secrets/keycloak-secret/"
                 readOnly: true
 
             extraArgs: -Dkeycloak.import=/realm/demo.json
