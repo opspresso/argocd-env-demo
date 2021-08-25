@@ -44,7 +44,7 @@ spec:
                       name: admin-password
                     - key: /k8s/common/admin-password
                       name: management-password
-                    - key: /k8s/common/admin-password
+                    - key: /k8s/common/keycloak-database-password
                       name: database-password
 
               - apiVersion: kubernetes-client.io/v1
