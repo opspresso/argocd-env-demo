@@ -57,7 +57,7 @@ spec:
                 serviceMonitor:
                   enabled: true
                   additionalLabels:
-                    release: prometheus-eks-demo
+                    release: prometheus-{{cluster}}
 
       syncPolicy:
         automated:

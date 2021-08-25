@@ -36,7 +36,7 @@ spec:
                 serviceMonitor:
                   enabled: true
                   additionalLabels:
-                    release: prometheus-eks-demo
+                    release: prometheus-{{cluster}}
 
             dashboard:
               enabled: true

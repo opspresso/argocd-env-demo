@@ -94,7 +94,7 @@ spec:
                   enabled: true
                   interval: 30s
                   selector:
-                    release: prometheus-eks-demo
+                    release: prometheus-{{cluster}}
 
             repoServer:
               replicas: 2

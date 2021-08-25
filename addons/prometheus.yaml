@@ -54,7 +54,7 @@ spec:
 
                 # serviceMonitorSelector:
                 #   matchLabels:
-                #     release: prometheus-eks-demo
+                #     release: prometheus-{{cluster}}
 
                 # resources:
                 #   requests:
