@@ -26,26 +26,12 @@ spec:
         name: "{{cluster}}"
         namespace: addon-keycloak
       source:
-        # repoURL: https://codecentric.github.io/helm-charts
-        # targetRevision: "14.0.1"
-        repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: "5.0.1"
+        repoURL: https://codecentric.github.io/helm-charts
+        targetRevision: "14.0.1"
         chart: keycloak
         helm:
           values: |-
             fullnameOverride: keycloak
-
-            auth:
-              adminUser: admin
-
-              existingSecret:
-                name: keycloak-secret
-                keyMapping:
-                  admin-password: admin-password
-                  management-password: management-password
-                  database-password: postgresql-password
-
-            proxyAddressForwarding: true
 
             service:
               type: LoadBalancer
@@ -56,38 +42,42 @@ spec:
                 service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
                 service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
-            metrics:
+            extraEnv: |
+              - name: KEYCLOAK_USER
+                value: "admin"
+              - name: KEYCLOAK_PASSWORD_FILE
+                value: /secrets/keycloak-secret/admin-password
+              - name: PROXY_ADDRESS_FORWARDING
+                value: "true"
+              - name: KEYCLOAK_IMPORT
+                value: /realm/demo.json
+
+            extraVolumes: |
+              - name: keycloak-realm
+                secret:
+                  secretName: keycloak-realm
+              - name: keycloak-secret
+                secret:
+                  secretName: keycloak-secret
+
+            extraVolumeMounts: |
+              - name: keycloak-realm
+                mountPath: "/realm/"
+                readOnly: true
+              - name: keycloak-secret
+                mountPath: "/secrets/keycloak-secret/"
+                readOnly: true
+
+            serviceMonitor:
               enabled: true
-              serviceMonitor:
-                enabled: true
-                additionalLabels:
-                  release: prometheus-{{cluster}}
-
-            # extraEnvVars: |
-            #   - name: KEYCLOAK_IMPORT
-            #     value: /realm/demo.json
-
-            keycloakConfigCli:
-              enabled: true
-
-              extraVolumes: |
-                - name: keycloak-realm
-                  secret:
-                    secretName: keycloak-realm
-
-              extraVolumeMounts: |
-                - name: keycloak-realm
-                  mountPath: "/realm/"
-                  readOnly: true
-
-              configuration:
-                /realm/demo.json:
+              labels:
+                release: prometheus-{{cluster}}
 
             postgresql:
               fullnameOverride: keycloak-postgresql
-              postgresqlUsername: keycloak
-              postgresqlDatabase: keycloak
-              existingSecret: keycloak-secret
+              # postgresqlUsername: keycloak
+              # postgresqlDatabase: keycloak
+              # existingSecret: keycloak-secret
               persistence:
                 storageClass: "gp3"
 
