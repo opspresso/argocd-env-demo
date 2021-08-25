@@ -84,7 +84,7 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: keycloak-http
+                            host: keycloak
                             port:
                               number: 80
 
