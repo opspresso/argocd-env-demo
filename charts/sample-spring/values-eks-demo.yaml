@@ -31,7 +31,7 @@ app:
       kubernetes.io/ssl-redirect: 'true'
     enabled: true
     hosts:
-    - host: sample-spring-dev.bruce.spic.me
+    - host: sample-spring.bruce.spic.me
   irsa:
     enabled: true
     statement:
@@ -50,7 +50,7 @@ app:
       kubernetes.io/ssl-redirect: 'true'
     enabled: true
     hosts:
-    - host: sample-spring-dev-preview.bruce.spic.me
+    - host: sample-spring-preview.bruce.spic.me
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=

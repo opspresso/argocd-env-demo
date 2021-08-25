@@ -37,14 +37,14 @@ app:
       kubernetes.io/ssl-redirect: 'true'
     enabled: true
     hosts:
-    - host: sample-tomcat-dev.bruce.spic.me
+    - host: sample-tomcat.bruce.spic.me
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
       kubernetes.io/ssl-redirect: 'true'
     enabled: true
     hosts:
-    - host: sample-tomcat-dev-preview.bruce.spic.me
+    - host: sample-tomcat-preview.bruce.spic.me
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=

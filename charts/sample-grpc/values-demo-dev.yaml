@@ -14,4 +14,4 @@ app:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
     enabled: true
     hosts:
-      - host: grpc-dev.bruce.spic.me
+      - host: grpc.bruce.spic.me

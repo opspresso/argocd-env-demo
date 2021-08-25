@@ -13,7 +13,7 @@ app:
   service:
     port: 3000
 
-  livenessProbe:
+  readinessProbe:
     failureThreshold: 3
     httpGet:
       path: /
@@ -21,7 +21,7 @@ app:
     initialDelaySeconds: 3
     periodSeconds: 10
 
-  readinessProbe:
+  livenessProbe:
     failureThreshold: 3
     httpGet:
       path: /
