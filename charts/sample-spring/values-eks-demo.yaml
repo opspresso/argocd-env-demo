@@ -15,6 +15,8 @@ app:
       MESSAGE: hello world
       VERSION: v0.7.19
     enabled: true
+  controller:
+    kind: Rollout
   env:
   - name: PROFILE
     value: dev
@@ -51,3 +53,9 @@ app:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: djAuNy4xOQ==
     enabled: true
+  strategy:
+    blueGreen:
+      activeService: sample-spring
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+      previewService: sample-spring-preview
