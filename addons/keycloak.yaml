@@ -37,8 +37,10 @@ spec:
                 value: "admin"
               - name: KEYCLOAK_PASSWORD_FILE
                 value: /secrets/keycloak-secret/admin-password
-              # - name: PROXY_ADDRESS_FORWARDING
-              #   value: "true"
+              - name: PROXY_ADDRESS_FORWARDING
+                value: "true"
+              - name: KEYCLOAK_IMPORT
+                value: /realm/demo.json
 
             extraVolumes: |
               - name: keycloak-realm
@@ -56,7 +58,7 @@ spec:
                 mountPath: "/secrets/keycloak-secret/"
                 readOnly: true
 
-            extraArgs: -Dkeycloak.import=/realm/demo.json
+            # extraArgs: -Dkeycloak.import=/realm/demo.json
 
             ingress:
               enabled: false
