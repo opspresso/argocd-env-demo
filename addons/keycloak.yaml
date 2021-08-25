@@ -32,6 +32,11 @@ spec:
           values: |-
             fullnameOverride: keycloak
 
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: prometheus-eks-demo
+
             ingress:
               enabled: true
               annotations: {}
@@ -42,9 +47,13 @@ spec:
                     - path: /
                       pathType: Prefix
 
+            postgresql:
+              persistence:
+                storageClass: "gp3"
+
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
