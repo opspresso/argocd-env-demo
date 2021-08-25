@@ -1,17 +1,4 @@
 app:
-  autoscaling:
-    enabled: true
-    maxReplicas: 10
-    metrics:
-    - resource:
-        name: cpu
-        target:
-          averageUtilization: 60
-          type: Utilization
-      type: Resource
-    minReplicas: 2
-  controller:
-    kind: Rollout
   env:
   - name: PROFILE
     value: dev
@@ -21,27 +8,11 @@ app:
     repository: nalbam/docs
     tag: v0.3.1
   ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/backend-protocol: HTTP
-      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-    enabled: true
     hosts:
     - host: docs.bruce.spic.me
   istio:
     gateway:
       enabled: true
   preview:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/backend-protocol: HTTP
-      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-    enabled: true
     hosts:
     - host: docs-preview.bruce.spic.me
-  strategy:
-    blueGreen:
-      activeService: sample-docs
-      autoPromotionEnabled: true
-      autoPromotionSeconds: 30
-      previewService: sample-docs-preview
