@@ -50,9 +50,9 @@ spec:
                         requests:
                           storage: 50Gi
 
-                serviceMonitorSelector:
-                  matchLabels:
-                    prometheus: kube-prometheus
+                # serviceMonitorSelector:
+                #   matchLabels:
+                #     prometheus: kube-prometheus
 
                 # resources:
                 #   requests:
