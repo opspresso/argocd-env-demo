@@ -87,6 +87,7 @@ spec:
 
             postgresql:
               fullnameOverride: keycloak-postgresql
+              existingSecret: keycloak-secret
               persistence:
                 storageClass: "gp3"
 
