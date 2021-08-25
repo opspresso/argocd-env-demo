@@ -1,0 +1,92 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: keycloak
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+              hostname: "keycloak.bruce.spic.me"
+
+  template:
+    metadata:
+      name: "keycloak-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-keycloak
+      source:
+        # repoURL: https://codecentric.github.io/helm-charts
+        # targetRevision: "14.0.1"
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: "5.0.1"
+        chart: keycloak
+        helm:
+          values: |-
+            fullnameOverride: keycloak
+
+            auth:
+              adminUser: admin
+              existingSecret:
+                name: keycloak-secret
+                keyMapping:
+                  admin-password: admin-password
+                  management-password: management-password
+                  database-password: postgresql-password
+
+            proxyAddressForwarding: true
+
+            service:
+              type: LoadBalancer
+              annotations:
+                external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+                service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+
+            metrics:
+              enabled: true
+              serviceMonitor:
+                enabled: true
+                additionalLabels:
+                  release: prometheus-{{cluster}}
+
+            # extraEnvVars: |
+            #   - name: KEYCLOAK_IMPORT
+            #     value: /realm/demo.json
+
+            # extraVolumes: |
+            #   - name: keycloak-realm
+            #     secret:
+            #       secretName: keycloak-realm
+
+            # extraVolumeMounts: |
+            #   - name: keycloak-realm
+            #     mountPath: "/realm/"
+            #     readOnly: true
+
+            postgresql:
+              fullnameOverride: keycloak-postgresql
+              postgresqlUsername: keycloak
+              postgresqlDatabase: keycloak
+              existingSecret: keycloak-secret
+              persistence:
+                storageClass: "gp3"
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
