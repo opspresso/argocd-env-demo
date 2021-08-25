@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              host: "bruce.spic.me"
+              hostname: "keycloak.bruce.spic.me"
 
   template:
     metadata:
@@ -45,7 +45,13 @@ spec:
             # proxyAddressForwarding: true
 
             service:
-              type: ClusterIP
+              type: LoadBalancer
+              annotations:
+                external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+                service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
             metrics:
               enabled: true

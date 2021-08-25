@@ -59,37 +59,6 @@ spec:
                     - key: /k8s/common/keycloak-realm
                       name: demo.json
 
-              - apiVersion: networking.istio.io/v1beta1
-                kind: Gateway
-                metadata:
-                  name: keycloak
-                spec:
-                  selector:
-                    istio: ingressgateway
-                  servers:
-                    - hosts:
-                        - "keycloak.{{values.host}}"
-                      port:
-                        number: 80
-                        name: http
-                        protocol: HTTP
-
-              - apiVersion: networking.istio.io/v1beta1
-                kind: VirtualService
-                metadata:
-                  name: keycloak
-                spec:
-                  hosts:
-                    - "keycloak.{{values.host}}"
-                  gateways:
-                    - keycloak
-                  http:
-                    - route:
-                        - destination:
-                            host: keycloak
-                            port:
-                              number: 80
-
       syncPolicy:
         automated:
           prune: true
