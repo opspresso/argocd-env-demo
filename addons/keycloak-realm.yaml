@@ -37,11 +37,9 @@ spec:
                   name: keycloak-realm
                 spec:
                   backendType: secretsManager
-                  # dataFrom:
-                  #   - /k8s/common/keycloak-realm
                   data:
                     - key: /k8s/common/keycloak-realm
-                      name: realm
+                      name: realm.json
 
       syncPolicy:
         automated:
