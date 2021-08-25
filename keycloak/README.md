@@ -23,7 +23,6 @@ find . -name realm.output.json -exec sed -i "" -e "s/KEYCLOAK_GITHUB_CLIENT_ID/$
 find . -name realm.output.json -exec sed -i "" -e "s/KEYCLOAK_GITHUB_CLIENT_SECRET/${KEYCLOAK_GITHUB_CLIENT_SECRET}/g" {} \;
 
 # /k8s/common/keycloak-realm
-aws secretsmanager create-secret --name /k8s/common/keycloak-realm --secret-string '{"username":"admin","password":"1234"}'
-
-
+aws secretsmanager create-secret --name /k8s/common/keycloak-realm --secret-string file://realm.output.json
+aws secretsmanager update-secret --secret-id /k8s/common/keycloak-realm --secret-string file://realm.output.json
 ```
