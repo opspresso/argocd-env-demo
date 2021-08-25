@@ -37,12 +37,14 @@ spec:
                 value: "admin"
               - name: KEYCLOAK_PASSWORD_FILE
                 value: /secrets/keycloak-secret/admin-password
-              - name: PROXY_ADDRESS_FORWARDING
-                value: "true"
               - name: KEYCLOAK_IMPORT
                 value: /realm/demo.json
-              - name: KEYCLOAK_FRONTEND_URL
-                value: "https://keycloak.{{values.host}}/auth"
+              - name: PROXY_ADDRESS_FORWARDING
+                value: "true"
+              # - name: KEYCLOAK_FRONTEND_URL
+              #   value: "https://keycloak.{{values.host}}/auth"
+              - name: HTTP_PROTOCOL
+                value: "https"
 
             extraVolumes: |
               - name: keycloak-realm
@@ -59,8 +61,6 @@ spec:
               - name: keycloak-secret
                 mountPath: "/secrets/keycloak-secret/"
                 readOnly: true
-
-            # extraArgs: -Dkeycloak.import=/realm/demo.json
 
             ingress:
               enabled: false
