@@ -131,6 +131,8 @@ spec:
                   group: monitoring
 
             grafana:
+              fullnameOverride: prometheus-grafana
+
               admin:
                 existingSecret: "prometheus-grafana-secret"
 
