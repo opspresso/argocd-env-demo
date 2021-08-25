@@ -43,7 +43,7 @@ spec:
                   name: http2
                   protocol: TCP
                 - port: 443
-                  targetPort: 8443
+                  targetPort: 8080
                   name: https
                   protocol: TCP
 
