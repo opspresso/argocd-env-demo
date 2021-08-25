@@ -1,16 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-base
+  name: istio-addon-kiali
 spec:
   generators:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              host: "kiali.bruce.spic.me"
 
   template:
     metadata:
-      name: "istio-base-{{cluster}}"
+      name: "istio-addon-kiali-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -25,7 +27,7 @@ spec:
       source:
         repoURL: https://github.com/istio/istio
         targetRevision: 1.11.1
-        path: manifests/charts/base
+        path: samples/addons/kiali.yaml
 
       syncPolicy:
         # automated:
