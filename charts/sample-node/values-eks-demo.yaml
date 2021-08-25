@@ -39,17 +39,6 @@ app:
     enabled: true
     hosts:
     - host: sample-node.bruce.spic.me
-  irsa:
-    enabled: true
-    statement:
-    - action:
-      - s3:Get*
-      - s3:List*
-      resource: arn:aws:s3:::sample-bucket
-    - action:
-      - autoscaling:Get*
-      - autoscaling:Describe*
-      resource: '*'
   istio:
     gateway:
       enabled: true

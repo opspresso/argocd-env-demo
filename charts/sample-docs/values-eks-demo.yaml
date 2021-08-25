@@ -13,6 +13,3 @@ app:
   istio:
     gateway:
       enabled: true
-  preview:
-    hosts:
-    - host: docs-preview.bruce.spic.me

@@ -28,3 +28,10 @@ app:
       port: 8080
     initialDelaySeconds: 30
     periodSeconds: 10
+
+  # strategy:
+  #   blueGreen:
+  #     activeService: sample-tomcat
+  #     autoPromotionEnabled: true
+  #     autoPromotionSeconds: 30
+  #     previewService: sample-tomcat-preview

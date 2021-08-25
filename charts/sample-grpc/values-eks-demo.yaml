@@ -1,15 +1,15 @@
 app:
   env:
-    - name: PROFILE
-      value: dev
-    - name: ENV_HASH
-      value: 75de9c53266eb537d080942027e96da8
+  - name: PROFILE
+    value: dev
+  - name: ENV_HASH
+    value: 75de9c53266eb537d080942027e96da8
   image:
     repository: tobegit3hub/grpc-helloworld
     tag: latest
   ingress:
     hosts:
-      - host: sample-grpc.bruce.spic.me
+    - host: sample-grpc.bruce.spic.me
   istio:
     gateway:
       enabled: true
