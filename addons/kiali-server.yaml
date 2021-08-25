@@ -32,6 +32,19 @@ spec:
           values: |-
             fullnameOverride: kiali-server
 
+            auth:
+              openid: {}
+              strategy: "anonymous"
+
+            deployment:
+              pod_labels:
+                sidecar.istio.io/inject: "false"
+              accessible_namespaces:
+              - '**'
+
+            # login_token:
+            #   signing_key: CHANGEME
+
             # server:
             #   web_fqdn: "{{values.host}}"
 
