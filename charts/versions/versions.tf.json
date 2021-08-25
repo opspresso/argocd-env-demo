@@ -52,6 +52,10 @@
       "default": "5.4.1",
       "description": "bitnami/external-dns"
     },
+    "helm_keycloak": {
+      "default": "5.0.0",
+      "description": "bitnami/keycloak"
+    },
     "helm_gocd": {
       "default": "1.37.0",
       "description": "gocd/gocd"
