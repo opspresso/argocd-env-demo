@@ -88,3 +88,6 @@ app:
       - setWeight: 75
       - pause:
           duration: 10
+redis:
+  podLabels:
+    sidecar.istio.io/inject: 'true'

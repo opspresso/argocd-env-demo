@@ -37,6 +37,8 @@ app:
       - s3:Get*
       - s3:List*
       resource: arn:aws:s3:::sample-bucket
+  podLabels:
+    sidecar.istio.io/inject: 'true'
   preview:
     annotations:
       kubernetes.io/ingress.class: nginx
