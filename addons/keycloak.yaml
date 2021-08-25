@@ -54,31 +54,21 @@ spec:
                 additionalLabels:
                   release: prometheus-{{cluster}}
 
-            # extraEnv: |
-            #   # - name: KEYCLOAK_USER
-            #   #   value: "admin"
-            #   # - name: KEYCLOAK_PASSWORD_FILE
-            #   #   value: /secrets/keycloak-secret/admin-password
+            # extraEnvVars: |
             #   - name: KEYCLOAK_IMPORT
             #     value: /realm/demo.json
             #   - name: PROXY_ADDRESS_FORWARDING
             #     value: "true"
 
-            # extraVolumes: |
-            #   - name: keycloak-realm
-            #     secret:
-            #       secretName: keycloak-realm
-            #   # - name: keycloak-secret
-            #   #   secret:
-            #   #     secretName: keycloak-secret
+            extraVolumes: |
+              - name: keycloak-realm
+                secret:
+                  secretName: keycloak-realm
 
-            # extraVolumeMounts: |
-            #   - name: keycloak-realm
-            #     mountPath: "/realm/"
-            #     readOnly: true
-            #   # - name: keycloak-secret
-            #   #   mountPath: "/secrets/keycloak-secret/"
-            #   #   readOnly: true
+            extraVolumeMounts: |
+              - name: keycloak-realm
+                mountPath: "/realm/"
+                readOnly: true
 
             postgresql:
               fullnameOverride: keycloak-postgresql
