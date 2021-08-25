@@ -21,6 +21,9 @@ app:
     value: dev
   - name: ENV_HASH
     value: 7f1af7e99d453d9f6d321d16f07a25bd
+  istio:
+    gateway:
+      enabled: true
   image:
     repository: nalbam/docs
     tag: 0.2.13
