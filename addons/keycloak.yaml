@@ -28,7 +28,7 @@ spec:
         # repoURL: https://codecentric.github.io/helm-charts
         # targetRevision: "14.0.1"
         repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: "5.0.2"
+        targetRevision: "5.0.1"
         chart: keycloak
         helm:
           values: |-
