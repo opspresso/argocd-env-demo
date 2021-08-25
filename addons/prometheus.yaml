@@ -137,6 +137,9 @@ spec:
                 existingSecret: "prometheus-grafana-secret"
 
               grafana.ini:
+                server:
+                  root_url: "https://grafana.{{values.host}}/"
+
                 # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
                 auth.generic_oauth:
                   enabled: true
@@ -163,7 +166,7 @@ spec:
                 auth.github:
                   enabled: false
                   allow_sign_up: true
-                  client_id: bd889ee6939aad541bcb
+                  client_id: GITHUB_CLIENT_ID
                   client_secret: GITHUB_CLIENT_SECRET
                   scopes: user:email,read:org
                   auth_url: https://github.com/login/oauth/authorize

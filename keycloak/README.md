@@ -6,9 +6,6 @@
 KEYCLOAK_GITHUB_CLIENT_ID=""
 KEYCLOAK_GITHUB_CLIENT_SECRET=""
 
-KEYCLOAK_GOOGLE_CLIENT_ID=""
-KEYCLOAK_GOOGLE_CLIENT_SECRET=""
-
 # put aws ssm param
 aws ssm put-parameter --name /k8s/common/keycloak-github-id --value "${KEYCLOAK_GITHUB_CLIENT_ID}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/keycloak-github-secret --value "${KEYCLOAK_GITHUB_CLIENT_SECRET}" --type SecureString --overwrite | jq .
