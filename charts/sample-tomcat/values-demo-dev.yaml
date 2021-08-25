@@ -3,10 +3,10 @@ app:
     enabled: true
     maxReplicas: 5
     metrics:
-    - pods:
-        metricName: container_network_receive_bytes
-        targetAverageValue: 10k
-      type: Pods
+    # - pods:
+    #     metricName: container_network_receive_bytes
+    #     targetAverageValue: 10k
+    #   type: Pods
     - resource:
         name: cpu
         target:
