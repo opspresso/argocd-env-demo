@@ -50,21 +50,21 @@ spec:
                         name: http
                         protocol: HTTP
 
-              # - apiVersion: networking.istio.io/v1beta1
-              #   kind: VirtualService
-              #   metadata:
-              #     name: istio-addons-grafana
-              #   spec:
-              #     hosts:
-              #       - "grafana.{{values.host}}"
-              #     gateways:
-              #       - istio-addons
-              #     http:
-              #       - route:
-              #           - destination:
-              #               host: grafana-gatekeeper
-              #               port:
-              #                 number: 80
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: istio-addons-grafana
+                spec:
+                  hosts:
+                    - "grafana-istio.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: grafana-gatekeeper
+                            port:
+                              number: 80
 
               - apiVersion: networking.istio.io/v1beta1
                 kind: VirtualService
@@ -72,7 +72,7 @@ spec:
                   name: istio-addons-kiali
                 spec:
                   hosts:
-                    - "kiali.{{values.host}}"
+                    - "kiali-istio.{{values.host}}"
                   gateways:
                     - istio-addons
                   http:
@@ -82,25 +82,25 @@ spec:
                             port:
                               number: 80
 
-              # - apiVersion: networking.istio.io/v1beta1
-              #   kind: VirtualService
-              #   metadata:
-              #     name: istio-addons-prometheus
-              #   spec:
-              #     hosts:
-              #       - "prometheus.{{values.host}}"
-              #     gateways:
-              #       - istio-addons
-              #     http:
-              #       - route:
-              #           - destination:
-              #               host: prometheus-gatekeeper
-              #               port:
-              #                 number: 80
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: istio-addons-prometheus
+                spec:
+                  hosts:
+                    - "prometheus-istio.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: prometheus-gatekeeper
+                            port:
+                              number: 80
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
