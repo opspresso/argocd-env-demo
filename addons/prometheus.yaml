@@ -207,6 +207,25 @@ spec:
                     url: https://raw.githubusercontent.com/argoproj/argo-rollouts/master/examples/dashboard.json
                     datasource: Prometheus
 
+                  istio-extension-dashboard:
+                    url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-extension-dashboard.json
+                    datasource: istio
+                  istio-mesh-dashboard:
+                    url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-mesh-dashboard.json
+                    datasource: istio
+                  istio-performance-dashboard:
+                    url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-performance-dashboard.json
+                    datasource: istio
+                  istio-service-dashboard:
+                    url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-service-dashboard.json
+                    datasource: istio
+                  istio-workload-dashboard:
+                    url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-workload-dashboard.json
+                    datasource: istio
+                  pilot-dashboard:
+                    url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/pilot-dashboard.json
+                    datasource: istio
+
               persistence:
                 enabled: true
                 type: pvc
