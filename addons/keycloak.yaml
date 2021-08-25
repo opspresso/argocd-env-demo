@@ -40,7 +40,7 @@ spec:
                 keyMapping:
                   admin-password: admin-password
                   management-password: management-password
-                  database-password: database-password
+                  database-password: postgresql-password
 
             proxyAddressForwarding: true
 
@@ -73,8 +73,8 @@ spec:
             postgresql:
               fullnameOverride: keycloak-postgresql
               postgresqlUsername: keycloak
-              postgresqlPassword: keycloak
               postgresqlDatabase: keycloak
+              existingSecret: keycloak-secret
               persistence:
                 storageClass: "gp3"
 
