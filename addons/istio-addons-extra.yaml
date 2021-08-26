@@ -82,6 +82,22 @@ spec:
                             port:
                               number: 80
 
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: istio-addons-jaeger
+                spec:
+                  hosts:
+                    - "jaeger-istio.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: jaeger-gatekeeper
+                            port:
+                              number: 80
+
       syncPolicy:
         automated:
           prune: true
