@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-addons-kiali-gatekeeper
+  name: istio-addons-tracing-gatekeeper
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-addons-kiali-gatekeeper-{{cluster}}"
+      name: "istio-addons-tracing-gatekeeper-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -28,14 +28,14 @@ spec:
         chart: keycloak-gatekeeper
         helm:
           values: |-
-            fullnameOverride: kiali-gatekeeper
+            fullnameOverride: tracing-gatekeeper
 
             discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
 
-            upstreamURL: http://kiali.istio-system.svc.cluster.local:20001
+            upstreamURL: http://tracing.istio-system.svc.cluster.local:20001
 
-            ClientID: kiali
-            ClientSecret: 746b5179-2b86-4c5c-8b1f-440e893f650b
+            ClientID: tracing
+            ClientSecret: 0e94208b-1ea1-4e9b-b6e4-3e0b15c9fb9d
 
             # extraArgs:
             # - enable-https-redirection
