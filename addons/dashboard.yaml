@@ -26,7 +26,7 @@ spec:
         namespace: addon-dashboard
       source:
         repoURL: https://kubernetes.github.io/dashboard
-        targetRevision: "4.5.0"
+        targetRevision: "4.6.0"
         chart: kubernetes-dashboard
         helm:
           values: |-
@@ -59,8 +59,8 @@ spec:
             #   group: operation
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
