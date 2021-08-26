@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.15.0",
+      "default": "3.16.0",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -9,7 +9,7 @@
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_notifications": {
-      "default": "1.4.3",
+      "default": "1.4.4",
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
@@ -49,24 +49,24 @@
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "5.4.1",
+      "default": "5.4.2",
       "description": "bitnami/external-dns"
-    },
-    "helm_keycloak": {
-      "default": "5.0.0",
-      "description": "bitnami/keycloak"
     },
     "helm_gocd": {
       "default": "1.37.0",
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.16.0",
+      "default": "6.16.2",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
       "default": "4.0.1",
       "description": "ingress-nginx/ingress-nginx"
+    },
+    "helm_keycloak": {
+      "default": "14.0.1",
+      "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
       "default": "1.39.0",

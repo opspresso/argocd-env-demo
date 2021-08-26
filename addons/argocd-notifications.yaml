@@ -24,7 +24,7 @@ spec:
         namespace: argocd
       source:
         repoURL: https://argoproj.github.io/argo-helm
-        targetRevision: "1.4.3"
+        targetRevision: "1.4.4"
         chart: argocd-notifications
         helm:
           values: |-
@@ -321,8 +321,8 @@ spec:
                 - on-sync-status-unknown
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true

@@ -27,7 +27,7 @@ spec:
         namespace: addon-external-dns
       source:
         repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: "5.4.1"
+        targetRevision: "5.4.2"
         chart: external-dns
         helm:
           values: |-
@@ -43,8 +43,8 @@ spec:
                 eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
