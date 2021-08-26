@@ -85,6 +85,16 @@ spec:
               hosts:
                 - "grafana.{{values.host}}"
 
+            datasources:
+              datasources.yaml:
+                apiVersion: 1
+                datasources:
+                - name: Prometheus
+                  type: prometheus
+                  url: http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090
+                  access: proxy
+                  isDefault: true
+
             dashboardProviders:
               dashboardproviders.yaml:
                 apiVersion: 1
@@ -148,7 +158,7 @@ spec:
               storageClassName: gp3
               accessModes:
                 - ReadWriteOnce
-              size: 10Gi
+              size: 5Gi
 
             tolerations:
               - key: group
