@@ -7,8 +7,6 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            values:
-              host: "bruce.spic.me"
 
   template:
     metadata:
@@ -139,51 +137,6 @@ spec:
                       name: slack-token
                     - key: /k8s/common/slack-hooks
                       name: slack-hooks
-
-              - apiVersion: kubernetes-client.io/v1
-                kind: ExternalSecret
-                metadata:
-                  name: prometheus-grafana-secret
-                spec:
-                  backendType: systemManager
-                  data:
-                    - key: /k8s/common/admin-user
-                      name: admin-user
-                    - key: /k8s/common/admin-password
-                      name: admin-password
-                    - key: /k8s/common/grafana-github-secret
-                      name: github-secret
-
-              - apiVersion: networking.istio.io/v1beta1
-                kind: Gateway
-                metadata:
-                  name: prometheus-grafana
-                spec:
-                  selector:
-                    istio: ingressgateway
-                  servers:
-                    - hosts:
-                        - "grafana.{{values.host}}"
-                      port:
-                        number: 80
-                        name: http
-                        protocol: HTTP
-
-              - apiVersion: networking.istio.io/v1beta1
-                kind: VirtualService
-                metadata:
-                  name: prometheus-grafana
-                spec:
-                  hosts:
-                    - "grafana.{{values.host}}"
-                  gateways:
-                    - prometheus-grafana
-                  http:
-                    - route:
-                        - destination:
-                            host: prometheus-grafana
-                            port:
-                              number: 80
 
       syncPolicy:
         automated:
