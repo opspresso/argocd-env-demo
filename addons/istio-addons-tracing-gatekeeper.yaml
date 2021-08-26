@@ -32,7 +32,7 @@ spec:
 
             discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
 
-            upstreamURL: http://tracing.istio-system.svc.cluster.local:20001
+            upstreamURL: http://tracing.istio-system.svc.cluster.local:80
 
             ClientID: tracing
             ClientSecret: 0e94208b-1ea1-4e9b-b6e4-3e0b15c9fb9d
