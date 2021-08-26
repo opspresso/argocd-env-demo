@@ -52,6 +52,7 @@ spec:
                 auth_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/auth"
                 token_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/token"
                 api_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/userinfo"
+                # role_attribute_path = role
 
               # https://grafana.com/docs/grafana/latest/auth/google/
               auth.google:

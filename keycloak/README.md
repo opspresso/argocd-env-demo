@@ -27,7 +27,11 @@ find . -name realm.output.json -exec sed -i "" -e "s/KEYCLOAK_GITHUB_CLIENT_ID/$
 find . -name realm.output.json -exec sed -i "" -e "s/KEYCLOAK_GITHUB_CLIENT_SECRET/${KEYCLOAK_GITHUB_CLIENT_SECRET}/g" {} \;
 find . -name realm.output.json -exec sed -i "" -e "s/KEYCLOAK_GOOGLE_CLIENT_ID/${KEYCLOAK_GOOGLE_CLIENT_ID}/g" {} \;
 find . -name realm.output.json -exec sed -i "" -e "s/KEYCLOAK_GOOGLE_CLIENT_SECRET/${KEYCLOAK_GOOGLE_CLIENT_SECRET}/g" {} \;
+```
 
+* https://ap-northeast-2.console.aws.amazon.com/secretsmanager/home?region=ap-northeast-2#!/listSecrets
+
+```bash
 # /k8s/common/keycloak-realm
 aws secretsmanager create-secret --name /k8s/common/keycloak-realm --secret-string file://realm.output.json
 aws secretsmanager get-secret-value --secret-id /k8s/common/keycloak-realm | jq .
