@@ -1,0 +1,86 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: grafana-extra
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              host: "bruce.spic.me"
+
+  template:
+    metadata:
+      name: "grafana-extra-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: default
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-grafana
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: grafana-extra
+
+            resources:
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: grafana-secret
+                spec:
+                  backendType: systemManager
+                  data:
+                    - key: /k8s/common/admin-user
+                      name: admin-user
+                    - key: /k8s/common/admin-password
+                      name: admin-password
+                    - key: /k8s/common/grafana-github-secret
+                      name: github-secret
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: Gateway
+                metadata:
+                  name: grafana
+                spec:
+                  selector:
+                    istio: ingressgateway
+                  servers:
+                    - hosts:
+                        - "grafana.{{values.host}}"
+                      port:
+                        number: 80
+                        name: http
+                        protocol: HTTP
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: grafana
+                spec:
+                  hosts:
+                    - "grafana.{{values.host}}"
+                  gateways:
+                    - grafana
+                  http:
+                    - route:
+                        - destination:
+                            host: grafana
+                            port:
+                              number: 80
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
