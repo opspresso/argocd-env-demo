@@ -94,6 +94,11 @@ spec:
                   url: http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090
                   access: proxy
                   isDefault: true
+                - name: istio
+                  type: prometheus
+                  url: http://prometheus.istio-system.svc.cluster.local:9090
+                  access: proxy
+                  isDefault: true
 
             dashboardProviders:
               dashboardproviders.yaml:
