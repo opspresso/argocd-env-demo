@@ -42,6 +42,14 @@ spec:
                       name: admin-password
                     - key: /k8s/common/admin-password
                       name: management-password
+
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: keycloak-postgresql
+                spec:
+                  backendType: systemManager
+                  data:
                     - key: /k8s/common/keycloak-database-password
                       name: postgresql-password
                     - key: /k8s/common/keycloak-database-password

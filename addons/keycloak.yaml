@@ -78,7 +78,7 @@ spec:
               fullnameOverride: keycloak-postgresql
               postgresqlUsername: keycloak
               postgresqlDatabase: keycloak
-              existingSecret: keycloak-secret
+              existingSecret: keycloak-postgresql
               persistence:
                 storageClass: "gp3"
 
