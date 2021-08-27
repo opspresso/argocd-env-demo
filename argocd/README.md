@@ -9,17 +9,16 @@
 > github org (opspresso) 에 team (sre) 을 만들고 권한을 부여 합니다.
 
 ```bash
-ADMIN_PASSWORD="xxxx"
+ADMIN_PASSWORD="REPLACE_ME"
 
 ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
 ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-ARGOCD_SERVER_SECRET="xxxx"
-ARGOCD_GITHUB_SECRET="xxxx"
+ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
+ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
 
-GITHUB_WEBHOOK="xxxx"
+GITHUB_WEBHOOK="REPLACE_ME" # random string
 
-GRAFANA_GITHUB_SECRET="xxxx"
-SLACK_TOKEN="xxxx"
+SLACK_TOKEN="REPLACE_ME"
 
 # put aws ssm param
 aws ssm put-parameter --name /k8s/common/admin-password --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
@@ -28,7 +27,6 @@ aws ssm put-parameter --name /k8s/common/argocd-mtime --value "${ARGOCD_MTIME}" 
 aws ssm put-parameter --name /k8s/common/argocd-server-secret --value "${ARGOCD_SERVER_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-github-secret --value "${ARGOCD_GITHUB_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-webhook --value "${GITHUB_WEBHOOK}" --type SecureString --overwrite | jq .
-aws ssm put-parameter --name /k8s/common/grafana-github-secret --value "${GRAFANA_GITHUB_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/slack-token --value "${SLACK_TOKEN}" --type SecureString --overwrite | jq .
 
 # get aws ssm param
