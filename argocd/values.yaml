@@ -59,9 +59,6 @@ server:
       clusterResourceWhitelist:
         - group: "*"
           kind: "*"
-      namespaceResourceBlacklist:
-        - group: "*"
-          kind: "*"
 
     - name: apps
       namespace: argocd
@@ -72,9 +69,6 @@ server:
         - namespace: "*"
           server: "*"
       clusterResourceWhitelist:
-        - group: "*"
-          kind: "*"
-      namespaceResourceBlacklist:
         - group: "*"
           kind: "*"
 
