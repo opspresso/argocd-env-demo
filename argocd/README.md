@@ -91,10 +91,6 @@ argocd login argocd.bruce.spic.me --grpc-web
 
 argocd cluster list
 argocd cluster add eks-demo
-
-argocd repo list
-# argocd repo add https://github.com/opspresso/argocd-env-demo --type git --name env-demo
-# argocd repo add https://opspresso.github.io/helm-charts --type helm --name opspresso
 ```
 
 ## addons
