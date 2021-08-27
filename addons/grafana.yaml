@@ -116,16 +116,19 @@ spec:
             dashboards:
               default:
                 kube-cluster:
-                  gnetId: 9797
-                  revision: 16
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-cluster.json
+                  # gnetId: 9797
+                  # revision: 16
                   datasource: Prometheus
                 kube-deploy:
-                  gnetId: 9679
-                  revision: 12
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-deployment.json
+                  # gnetId: 9679
+                  # revision: 12
                   datasource: Prometheus
                 kube-sts:
-                  gnetId: 14902
-                  revision: 2
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-statefulset.json
+                  # gnetId: 14902
+                  # revision: 2
                   datasource: Prometheus
 
                 nginx-ingress:
