@@ -6,7 +6,7 @@ metadata:
   labels:
     krmt.io/group: apps
 spec:
-  project: default
+  project: apps
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD

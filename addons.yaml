@@ -6,7 +6,7 @@ metadata:
   labels:
     krmt.io/group: addons
 spec:
-  project: default
+  project: addons
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD

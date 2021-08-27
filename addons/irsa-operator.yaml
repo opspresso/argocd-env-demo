@@ -21,7 +21,7 @@ spec:
         krmt.io/cluster: "{{cluster}}"
         krmt.io/group: "addons"
     spec:
-      project: default
+      project: addons
       destination:
         name: "{{cluster}}"
         namespace: addon-irsa-operator
