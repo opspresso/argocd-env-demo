@@ -52,17 +52,13 @@ spec:
                         requests:
                           storage: 50Gi
 
-                # serviceMonitorSelector:
-                #   matchLabels:
-                #     release: prometheus-{{cluster}}
-
-                # resources:
-                #   requests:
-                #     cpu: "1"
-                #     memory: 2Gi
-                #   limits:
-                #     cpu: "1"
-                #     memory: 3Gi
+                resources:
+                  requests:
+                    cpu: "1"
+                    memory: 2Gi
+                  limits:
+                    cpu: "2"
+                    memory: 4Gi
 
                 tolerations:
                   - key: group
