@@ -95,6 +95,7 @@ spec:
                   interval: 30s
                   selector:
                     release: prometheus-{{cluster}}
+                  namespace: addon-prometheus
 
             repoServer:
               replicas: 2
