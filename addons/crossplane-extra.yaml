@@ -41,6 +41,17 @@ spec:
                     - key: aws-cred-bruce-ops
                       name: credentials
 
+              - apiVersion: aws.crossplane.io/v1beta1
+                kind: ProviderConfig
+                metadata:
+                  name: aws-bruce-ops
+                spec:
+                  credentials:
+                    source: Secret
+                    secretRef:
+                      name: crossplane-aws-cred-bruce-ops
+                      key: credentials
+
       syncPolicy:
         automated:
           prune: true
