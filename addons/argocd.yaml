@@ -115,7 +115,7 @@ spec:
               secret:
                 createSecret: false
 
-              repositories: |
+              repositories:
                 - name: env-demo
                   type: git
                   url: https://github.com/opspresso/argocd-env-demo
