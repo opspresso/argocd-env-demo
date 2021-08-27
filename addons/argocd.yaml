@@ -88,6 +88,7 @@ spec:
                   p, role:org-admin, repositories, get, *, allow
                   p, role:org-admin, repositories, update, *, allow
                   g, opspresso:sre, role:org-admin
+                  g, daangn:sre, role:org-admin
 
               additionalProjects:
                 - name: addons
