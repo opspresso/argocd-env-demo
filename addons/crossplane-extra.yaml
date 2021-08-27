@@ -38,7 +38,7 @@ spec:
                 spec:
                   backendType: secretsManager
                   data:
-                    - key: aws-cred-bruce-ops
+                    - key: /k8s/common/crossplane-cred-aws-bruce-ops
                       name: credentials
 
               - apiVersion: aws.crossplane.io/v1beta1
@@ -49,7 +49,7 @@ spec:
                   credentials:
                     source: Secret
                     secretRef:
-                      name: /k8s/common/crossplane-cred-aws-bruce-ops
+                      name: crossplane-cred-aws-bruce-ops
                       key: credentials
 
       syncPolicy:
