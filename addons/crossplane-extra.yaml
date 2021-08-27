@@ -50,6 +50,7 @@ spec:
                     source: Secret
                     secretRef:
                       name: crossplane-cred-aws-bruce-ops
+                      namespace: addon-crossplane
                       key: credentials
 
       syncPolicy:
