@@ -70,6 +70,7 @@ spec:
                       clientSecret: $dex.github.clientSecret
                       orgs:
                         - name: opspresso
+                        - name: daangn
 
               rbacConfig:
                 policy.default: "role:readonly"
