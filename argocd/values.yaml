@@ -18,14 +18,6 @@ server:
   config:
     url: https://argocd.bruce.spic.me
 
-    repositories: |
-      - name: env-demo
-        type: git
-        url: https://github.com/opspresso/argocd-env-demo
-      - name: opspresso
-        type: helm
-        url: https://opspresso.github.io/helm-charts
-
     dex.config: |
       connectors:
       - type: github
@@ -55,6 +47,25 @@ server:
       p, role:org-admin, repositories, update, *, allow
       g, opspresso:sre, role:org-admin
 
+    additionalProjects:
+      - name: addons
+        namespace: argocd
+        description: addons project
+        sourceRepos:
+          - "*"
+        destinations:
+          - namespace: "*"
+            server: "*"
+
+      - name: apps
+        namespace: argocd
+        description: apps project
+        sourceRepos:
+          - "*"
+        destinations:
+          - namespace: "*"
+            server: "*"
+
 repoServer:
   replicas: 2
 
@@ -73,3 +84,11 @@ configs:
     argocdServerAdminPassword: "ARGOCD_PASSWORD"
     # Password modification time defaults to current time if not set
     argocdServerAdminPasswordMtime: "ARGOCD_MTIME"
+
+  repositories: |
+    - name: env-demo
+      type: git
+      url: https://github.com/opspresso/argocd-env-demo
+    - name: opspresso
+      type: helm
+      url: https://opspresso.github.io/helm-charts
