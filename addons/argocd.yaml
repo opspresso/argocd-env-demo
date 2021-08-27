@@ -33,6 +33,15 @@ spec:
           values: |-
             fullnameOverride: argocd
 
+            controller:
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
+
             server:
               replicas: 2
 
@@ -112,10 +121,26 @@ spec:
                   interval: 30s
                   selector:
                     release: prometheus-{{cluster}}
-                  namespace: addon-prometheus
+
+            dex:
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
 
             repoServer:
               replicas: 2
+
+              metrics:
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+                  interval: 30s
+                  selector:
+                    release: prometheus-{{cluster}}
 
             configs:
               secret:
