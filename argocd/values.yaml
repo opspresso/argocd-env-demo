@@ -47,24 +47,24 @@ server:
       p, role:org-admin, repositories, update, *, allow
       g, opspresso:sre, role:org-admin
 
-    additionalProjects:
-      - name: addons
-        namespace: argocd
-        description: addons project
-        sourceRepos:
-          - "*"
-        destinations:
-          - namespace: "*"
-            server: "*"
+  additionalProjects:
+    - name: addons
+      namespace: argocd
+      description: addons project
+      sourceRepos:
+        - "*"
+      destinations:
+        - namespace: "*"
+          server: "*"
 
-      - name: apps
-        namespace: argocd
-        description: apps project
-        sourceRepos:
-          - "*"
-        destinations:
-          - namespace: "*"
-            server: "*"
+    - name: apps
+      namespace: argocd
+      description: apps project
+      sourceRepos:
+        - "*"
+      destinations:
+        - namespace: "*"
+          server: "*"
 
 repoServer:
   replicas: 2
