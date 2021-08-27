@@ -10,6 +10,7 @@ helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-d
 helm repo add chaoskube https://linki.github.io/chaoskube
 helm repo add codecentric https://codecentric.github.io/helm-charts
 helm repo add cortex https://cortexproject.github.io/cortex-helm-chart
+helm repo add crossplane https://charts.crossplane.io/stable
 helm repo add dashboard https://kubernetes.github.io/dashboard
 helm repo add datadog https://helm.datadoghq.com
 helm repo add deliveryhero https://charts.deliveryhero.io
