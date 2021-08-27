@@ -6,6 +6,12 @@ app:
     enabled: true
   controller:
     kind: Rollout
+    strategy:
+      blueGreen:
+        activeService: sample-spring
+        autoPromotionEnabled: true
+        autoPromotionSeconds: 30
+        previewService: sample-spring-preview
   env:
   - name: PROFILE
     value: dev
@@ -33,9 +39,3 @@ app:
   service:
     preview:
       enabled: true
-  strategy:
-    blueGreen:
-      activeService: sample-spring
-      autoPromotionEnabled: true
-      autoPromotionSeconds: 30
-      previewService: sample-spring-preview
