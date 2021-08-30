@@ -33,6 +33,9 @@ helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
 helm search repo "argo/argo-cd" -o json | jq .
+helm search repo "autoscaler/cluster-autoscaler" -o json | jq .
+helm search repo "aws-ebs-csi-driver/aws-ebs-csi-driver" -o json | jq .
+helm search repo "aws-efs-csi-driver/aws-efs-csi-driver" -o json | jq .
 helm search repo "dashboard/kubernetes-dashboard" -o json | jq .
-helm search repo "ingress-nginx/ingress-nginx" -o json | jq .
+helm search repo "datadog/datadog" -o json | jq .
 ```

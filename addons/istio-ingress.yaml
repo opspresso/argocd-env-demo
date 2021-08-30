@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             values:
               acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
-              hostname: "*.bruce.spic.me"
+              host: "bruce.spic.me"
 
   template:
     metadata:
@@ -52,7 +52,7 @@ spec:
                 autoscaleMax: 5
 
                 serviceAnnotations:
-                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                  external-dns.alpha.kubernetes.io/hostname: "*.{{values.host}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"

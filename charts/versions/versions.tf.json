@@ -68,6 +68,10 @@
       "default": "4.0.1",
       "description": "ingress-nginx/ingress-nginx"
     },
+    "helm_irsa_operator": {
+      "default": "0.1.6",
+      "description": "irsa-operator/irsa-operator"
+    },
     "helm_keycloak": {
       "default": "14.0.1",
       "description": "codecentric/keycloak"

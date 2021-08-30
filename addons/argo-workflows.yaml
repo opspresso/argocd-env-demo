@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: argo-workflows
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              host: "bruce.spic.me"
+
+  template:
+    metadata:
+      name: "argo-workflows-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-argo-workflows
+      source:
+        repoURL: https://argoproj.github.io/argo-helm
+        targetRevision: "0.5.0"
+        chart: argo-workflows
+        helm:
+          values: |-
+            fullnameOverride: argo-workflows
+
+            server:
+              extraArgs:
+                - --auth-mode=sso
+
+              sso:
+                issuer: https://argocd.{{values.host}}/api/dex
+                # sessionExpiry defines how long your login is valid for in hours. (optional, default: 10h)
+                sessionExpiry: 240h
+                clientId:
+                  name: argo-workflows-secret
+                  key: github.clientId
+                clientSecret:
+                  name: argo-workflows-secret
+                  key: github.clientSecret
+                redirectUrl: https://argo-workflows.mydomain.com/oauth2/callback
+
+      ignoreDifferences:
+        - kind: CustomResourceDefinition
+          group: apiextensions.k8s.io
+          jsonPointers:
+            - /spec/preserveUnknownFields
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

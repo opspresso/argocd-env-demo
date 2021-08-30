@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             values:
               acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
-              hostname: "argocd.bruce.spic.me"
+              host: "bruce.spic.me"
 
   template:
     metadata:
@@ -48,7 +48,7 @@ spec:
               service:
                 type: LoadBalancer
                 annotations:
-                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                  external-dns.alpha.kubernetes.io/hostname: "argocd.{{values.host}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
@@ -58,7 +58,7 @@ spec:
                 - --insecure
 
               config:
-                url: https://{{values.hostname}}
+                url: https://argocd.{{values.host}}
 
                 dex.config: |
                   connectors:
@@ -70,6 +70,12 @@ spec:
                       clientSecret: $dex.github.clientSecret
                       orgs:
                         - name: opspresso
+                  staticClients:
+                  - id: argo-workflows-sso
+                    name: Argo Workflow
+                    redirectURIs:
+                      - https://argo-workflows.{{values.host}}/oauth2/callback
+                    secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
                 policy.default: "role:readonly"
@@ -110,6 +116,12 @@ spec:
                     release: prometheus-{{cluster}}
 
             dex:
+              env:
+                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: argocd-secret
+                      key: argo-workflows.github.clientSecret
               metrics:
                 enabled: true
                 serviceMonitor:

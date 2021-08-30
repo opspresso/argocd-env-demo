@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: argocd-secret
+  name: argo-workflows-extra
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "argocd-secret"
+      name: "argo-workflows-extra"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -21,39 +21,33 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: argocd
+        namespace: addon-argo-workflows
       source:
         repoURL: https://charts.helm.sh/incubator
         targetRevision: "0.2.5"
         chart: raw
         helm:
           values: |-
-            fullnameOverride: argocd-secret
+            fullnameOverride: argo-workflows-extra
 
             resources:
               - apiVersion: kubernetes-client.io/v1
                 kind: ExternalSecret
                 metadata:
-                  name: argocd-secret
+                  name: argo-workflows-secret
                 spec:
                   backendType: systemManager
                   data:
-                    - key: /k8s/common/argocd-password
-                      name: admin.password
-                    - key: /k8s/common/argocd-mtime
-                      name: admin.passwordMtime
-                    - key: /k8s/common/argocd-github-secret
-                      name: dex.github.clientSecret
+                    - key: /k8s/common/argo-workflows-github-id
+                      name: github.clientId
+                    - key: /k8s/common/argo-workflows-github-secret
+                      name: github.clientSecret
                     - key: /k8s/common/github-webhook
                       name: webhook.github.secret
-                    - key: /k8s/common/argocd-server-secret
-                      name: server.secretkey
-                    - key: /k8s/common/argo-workflows-github-secret
-                      name: argo-workflows.github.clientSecret
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
