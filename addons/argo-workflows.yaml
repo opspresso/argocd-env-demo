@@ -46,7 +46,7 @@ spec:
                 clientSecret:
                   name: argo-workflows-secret
                   key: github.clientSecret
-                redirectUrl: https://argo-workflows.mydomain.com/oauth2/callback
+                redirectUrl: https://argo-workflows.{{values.host}}/oauth2/callback
 
       ignoreDifferences:
         - kind: CustomResourceDefinition
