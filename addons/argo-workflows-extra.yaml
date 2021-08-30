@@ -79,18 +79,31 @@ spec:
               - apiVersion: v1
                 kind: ServiceAccount
                 metadata:
+                  name: read-only
+                  annotations:
+                    workflows.argoproj.io/rbac-rule: "true"
+                    workflows.argoproj.io/rbac-rule-precedence: "0"
+
+              - apiVersion: v1
+                kind: ServiceAccount
+                metadata:
                   name: admin-user
                   annotations:
                     workflows.argoproj.io/rbac-rule: "'opspresso:sre' in groups"
                     workflows.argoproj.io/rbac-rule-precedence: "1"
 
-              - apiVersion: v1
-                kind: ServiceAccount
+              - apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRoleBinding
                 metadata:
-                  name: read-only
-                  annotations:
-                    workflows.argoproj.io/rbac-rule: "true"
-                    workflows.argoproj.io/rbac-rule-precedence: "0"
+                  name: admin-user
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: k8s-readonly
+                subjects:
+                  - kind: ServiceAccount
+                    namespace: argo
+                    name: admin-user
 
       syncPolicy:
         automated:
