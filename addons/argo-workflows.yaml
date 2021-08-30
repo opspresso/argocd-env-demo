@@ -48,7 +48,7 @@ spec:
               sso:
                 issuer: https://argocd.{{values.host}}/api/dex
                 # sessionExpiry defines how long your login is valid for in hours. (optional, default: 10h)
-                sessionExpiry: 240h
+                # sessionExpiry: 240h
                 clientId:
                   name: argo-workflows-secret
                   key: client-id
