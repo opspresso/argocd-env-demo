@@ -42,8 +42,6 @@ spec:
                 group: monitoring
 
             prometheus:
-              fullnameOverride: prometheus
-
               prometheusSpec:
                 storageSpec:
                   volumeClaimTemplate:
@@ -71,8 +69,6 @@ spec:
                   group: monitoring
 
             alertmanager:
-              fullnameOverride: alertmanager
-
               config:
                 global:
                   slack_api_url: SLACK_TOKEN
