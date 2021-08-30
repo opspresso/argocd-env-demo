@@ -38,10 +38,10 @@ spec:
                 size: 10Gi
                 storageClassName: gp3
 
-              serviceMonitor:
-                enabled: true
-                additionalLabels:
-                  release: prometheus-{{cluster}}
+              # serviceMonitor:
+              #   enabled: true
+              #   additionalLabels:
+              #     release: prometheus-{{cluster}}
 
               tolerations:
                 - key: group
