@@ -40,9 +40,9 @@ spec:
                 spec:
                   backendType: systemManager
                   data:
-                    - key: /k8s/common/argo-workflows-github-id
+                    - key: /k8s/common/argo-workflows-client-id
                       name: client-id
-                    - key: /k8s/common/argo-workflows-github-secret
+                    - key: /k8s/common/argo-workflows-client-secret
                       name: client-secret
 
               - apiVersion: networking.istio.io/v1beta1
