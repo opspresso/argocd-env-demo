@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-addons-tracing-gatekeeper
+  name: istio-addons
 spec:
   generators:
     - list:
         elements:
-          - cluster: eks-demo-x
+          - cluster: eks-demo
 
   template:
     metadata:
-      name: "istio-addons-tracing-gatekeeper-{{cluster}}"
+      name: "istio-addons-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -23,22 +23,9 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://gabibbo97.github.io/charts
-        targetRevision: "4.0.0"
-        chart: keycloak-gatekeeper
-        helm:
-          values: |-
-            fullnameOverride: tracing-gatekeeper
-
-            discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
-
-            upstreamURL: http://tracing.istio-system.svc.cluster.local:80
-
-            ClientID: tracing
-            ClientSecret: 0e94208b-1ea1-4e9b-b6e4-3e0b15c9fb9d
-
-            # extraArgs:
-            # - enable-https-redirection
+        repoURL: https://github.com/istio/istio
+        targetRevision: 1.11.1
+        path: samples/addons
 
       syncPolicy:
         # automated:

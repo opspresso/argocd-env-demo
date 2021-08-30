@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-addons
+  name: istio-addons-kiali-gatekeeper
 spec:
   generators:
     - list:
         elements:
-          - cluster: eks-demo-x
+          - cluster: eks-demo
 
   template:
     metadata:
-      name: "istio-addons-{{cluster}}"
+      name: "istio-addons-kiali-gatekeeper-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -23,9 +23,22 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://github.com/istio/istio
-        targetRevision: 1.11.1
-        path: samples/addons
+        repoURL: https://gabibbo97.github.io/charts
+        targetRevision: "4.0.0"
+        chart: keycloak-gatekeeper
+        helm:
+          values: |-
+            fullnameOverride: kiali-gatekeeper
+
+            discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
+
+            upstreamURL: http://kiali.istio-system.svc.cluster.local:20001
+
+            ClientID: kiali
+            ClientSecret: 746b5179-2b86-4c5c-8b1f-440e893f650b
+
+            # extraArgs:
+            # - enable-https-redirection
 
       syncPolicy:
         # automated:
