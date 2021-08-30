@@ -71,7 +71,7 @@ spec:
             alertmanager:
               config:
                 global:
-                  slack_api_url: $slack-token
+                  slack_api_url: SLACK_TOKEN
 
                 route:
                   receiver: "slack"
@@ -106,8 +106,8 @@ spec:
                           {{ end }}
 
               alertmanagerSpec:
-                secrets:
-                  - prometheus-alertmanager-secret
+                # secrets:
+                #   - prometheus-alertmanager-secret
 
                 storage:
                   volumeClaimTemplate:
