@@ -46,10 +46,6 @@ spec:
                   targetPort: 8080
                   name: https
                   protocol: TCP
-                - port: 15090
-                  targetPort: 15090
-                  name: http-envoy-prom
-                  protocol: TCP
 
                 autoscaleEnabled: true
                 autoscaleMin: 2
