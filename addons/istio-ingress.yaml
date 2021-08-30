@@ -50,6 +50,10 @@ spec:
                   targetPort: 15090
                   name: http-envoy-prom
                   protocol: TCP
+                - port: 15020
+                  targetPort: 15020
+                  name: http-scrape
+                  protocol: TCP
 
                 autoscaleEnabled: true
                 autoscaleMin: 2
