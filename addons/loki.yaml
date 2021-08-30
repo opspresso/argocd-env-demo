@@ -31,8 +31,6 @@ spec:
             fullnameOverride: loki
 
             loki:
-              # fullnameOverride: loki
-
               persistence:
                 enabled: true
                 accessModes:
@@ -52,12 +50,6 @@ spec:
                   effect: NoSchedule
               nodeSelector:
                 group: monitoring
-
-            promtail:
-              # fullnameOverride: promtail
-
-              # config:
-              #   lokiAddress: http://loki.addon-loki.svc.cluster.local:3100/loki/api/v1/push
 
       syncPolicy:
         # automated:
