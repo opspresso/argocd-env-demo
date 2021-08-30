@@ -76,6 +76,14 @@ spec:
                             port:
                               number: 2746
 
+              - apiVersion: v1
+                kind: ServiceAccount
+                metadata:
+                  name: admin-user
+                  annotations:
+                    workflows.argoproj.io/rbac-rule: "'opspresso:sre' in groups"
+                    workflows.argoproj.io/rbac-rule-precedence: "1"
+
       syncPolicy:
         automated:
           prune: true
