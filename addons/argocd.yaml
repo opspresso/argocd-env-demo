@@ -121,7 +121,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: argocd-secret
-                      key: argo-workflows.github.clientSecret
+                      key: argo-workflows-client-secret
               metrics:
                 enabled: true
                 serviceMonitor:
