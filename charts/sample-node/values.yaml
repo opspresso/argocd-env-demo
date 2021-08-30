@@ -46,4 +46,5 @@ redis:
       memory: 128Mi
 
   service:
+    name: redis
     port: 6379
