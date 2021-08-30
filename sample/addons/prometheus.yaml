@@ -99,13 +99,13 @@ spec:
 
                 route:
                   receiver: "slack"
-                  routes:
-                    - match:
-                        alertname: Watchdog
-                      receiver: "null"
-                    - match:
-                      receiver: "slack"
-                      continue: false
+                  # routes:
+                  #   - match:
+                  #       alertname: Watchdog
+                  #     receiver: "null"
+                  #   - match:
+                  #     receiver: "slack"
+                  #     continue: false
 
             serverFiles:
               alerting_rules.yml: {}
