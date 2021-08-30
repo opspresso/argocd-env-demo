@@ -70,12 +70,12 @@ spec:
                       clientSecret: $dex.github.clientSecret
                       orgs:
                         - name: opspresso
-                  staticClients:
-                  - id: argo-workflows-sso
-                    name: Argo Workflow
-                    redirectURIs:
-                      - https://argo-workflows.{{values.host}}/oauth2/callback
-                    secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+                  # staticClients:
+                  # - id: argo-workflows-sso
+                  #   name: Argo Workflow
+                  #   redirectURIs:
+                  #     - https://argo-workflows.{{values.host}}/oauth2/callback
+                  #   secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
                 policy.default: "role:readonly"
@@ -116,12 +116,12 @@ spec:
                     release: prometheus-{{cluster}}
 
             dex:
-              env:
-                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: argocd-secret
-                      key: argo-workflows.github.clientSecret
+              # env:
+              #   - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+              #     valueFrom:
+              #       secretKeyRef:
+              #         name: argocd-secret
+              #         key: argo-workflows.github.clientSecret
               metrics:
                 enabled: true
                 serviceMonitor:
