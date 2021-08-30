@@ -84,6 +84,14 @@ spec:
                     workflows.argoproj.io/rbac-rule: "'opspresso:sre' in groups"
                     workflows.argoproj.io/rbac-rule-precedence: "1"
 
+              - apiVersion: v1
+                kind: ServiceAccount
+                metadata:
+                  name: read-only
+                  annotations:
+                    workflows.argoproj.io/rbac-rule: "true"
+                    workflows.argoproj.io/rbac-rule-precedence: "0"
+
       syncPolicy:
         automated:
           prune: true
