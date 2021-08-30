@@ -65,8 +65,8 @@ spec:
               # auth.google:
               #   enabled: false
               #   allow_sign_up: true
-              #   client_id: GOOGLE_CLIENT_ID
-              #   client_secret: GOOGLE_CLIENT_SECRET
+              #   client_id: $__file{/etc/secrets/grafana-secret/github-secret}
+              #   client_secret: $__file{/etc/secrets/grafana-secret/google-secret}
               #   scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
               #   auth_url: https://accounts.google.com/o/oauth2/auth
               #   token_url: https://accounts.google.com/o/oauth2/token
@@ -76,7 +76,7 @@ spec:
               auth.github:
                 enabled: true
                 allow_sign_up: true
-                client_id: bd889ee6939aad541bcb
+                client_id: $__file{/etc/secrets/grafana-secret/github-id}
                 client_secret: $__file{/etc/secrets/grafana-secret/github-secret}
                 scopes: user:email,read:org
                 auth_url: https://github.com/login/oauth/authorize

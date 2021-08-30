@@ -44,6 +44,8 @@ spec:
                       name: admin-user
                     - key: /k8s/common/admin-password
                       name: admin-password
+                    - key: /k8s/common/grafana-github-id
+                      name: github-id
                     - key: /k8s/common/grafana-github-secret
                       name: github-secret
 
