@@ -8,6 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
+              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--cluster-autoscaler"
               host: "bruce.spic.me"
 
   template:
@@ -32,7 +33,15 @@ spec:
           values: |-
             fullnameOverride: argo-workflows
 
+            workflow:
+              serviceAccount:
+                create: true
+                annotations:
+                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+
             server:
+              replicas: 1
+
               extraArgs:
                 - --auth-mode=sso
 
