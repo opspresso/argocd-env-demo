@@ -40,6 +40,14 @@ spec:
                 size: 5Gi
                 storageClass: gp3
 
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
+
             server:
               fullnameOverride: prometheus
 
@@ -47,6 +55,14 @@ spec:
                 enabled: true
                 size: 50Gi
                 storageClass: gp3
+
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
 
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
