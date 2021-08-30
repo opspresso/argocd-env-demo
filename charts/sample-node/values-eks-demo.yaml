@@ -20,7 +20,7 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.7.27
+      VERSION: v0.7.29
     enabled: true
   controller:
     kind: Rollout
@@ -49,12 +49,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 38ed10efee38ee9065173296ddeca725
-  # - name: REDIS_URL
-  #   value: redis://sample-redis.default.svc.cluster.local:6379
+    value: 8913341608d8046ddb574e144c62e9ca
   image:
     repository: nalbam/sample-node
-    tag: v0.7.27
+    tag: v0.7.29
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -78,7 +76,7 @@ app:
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: djAuNy4yNw==
+      SECRET_VERSION: djAuNy4yOQ==
     enabled: true
   service:
     preview:
