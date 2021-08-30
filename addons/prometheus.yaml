@@ -126,6 +126,12 @@ spec:
                 nodeSelector:
                   group: monitoring
 
+            kube-state-metrics:
+              fullnameOverride: kube-state-metrics
+
+            prometheus-node-exporter:
+              fullnameOverride: prometheus-node-exporter
+
             grafana:
               enabled: false
 
