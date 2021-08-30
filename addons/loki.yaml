@@ -56,8 +56,8 @@ spec:
             promtail:
               fullnameOverride: promtail
 
-              config:
-                lokiAddress: http://loki.addon-loki.svc.cluster.local:3100/loki/api/v1/push
+              # config:
+              #   lokiAddress: http://loki.addon-loki.svc.cluster.local:3100/loki/api/v1/push
 
       syncPolicy:
         # automated:
