@@ -11,6 +11,7 @@ app:
       memory: 256Mi
 
   service:
+    name: http
     port: 3000
 
   readinessProbe:

@@ -11,6 +11,7 @@ app:
       memory: 1Gi
 
   service:
+    name: http
     port: 8080
 
   readinessProbe:
