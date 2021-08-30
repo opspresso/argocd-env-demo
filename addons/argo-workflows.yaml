@@ -57,6 +57,11 @@ spec:
                   key: client-secret
                 redirectUrl: https://argo-workflows.{{values.host}}/oauth2/callback
 
+                rbac:
+                  enabled: true
+                scopes:
+                  - groups
+
       syncPolicy:
         automated:
           prune: true
