@@ -30,6 +30,13 @@ spec:
           values: |-
             fullnameOverride: crossplane
 
+      ignoreDifferences:
+        - group: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: crossplane
+          jsonPointers:
+            - /rules
+
       syncPolicy:
         # automated:
         #   prune: true
