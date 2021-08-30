@@ -31,7 +31,7 @@ spec:
             fullnameOverride: loki
 
             loki:
-              fullnameOverride: loki
+              # fullnameOverride: loki
 
               persistence:
                 enabled: true
@@ -54,7 +54,7 @@ spec:
                 group: monitoring
 
             promtail:
-              fullnameOverride: promtail
+              # fullnameOverride: promtail
 
               # config:
               #   lokiAddress: http://loki.addon-loki.svc.cluster.local:3100/loki/api/v1/push
