@@ -50,8 +50,8 @@ app:
     value: dev
   - name: ENV_HASH
     value: 38ed10efee38ee9065173296ddeca725
-  - name: REDIS_URL
-    value: redis://sample-redis.default.svc.cluster.local:6379
+  # - name: REDIS_URL
+  #   value: redis://sample-redis.default.svc.cluster.local:6379
   image:
     repository: nalbam/sample-node
     tag: v0.7.27
@@ -70,7 +70,7 @@ app:
     gateway:
       enabled: true
     sidecar:
-      inject: true
+      inject: false
   podAnnotations:
     chaos.alpha.kubernetes.io/enabled: 'true'
   podLabels:
