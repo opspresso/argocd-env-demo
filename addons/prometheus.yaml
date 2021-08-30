@@ -35,6 +35,11 @@ spec:
             alertmanager:
               fullnameOverride: alertmanager
 
+              persistentVolume:
+                enabled: true
+                size: 5Gi
+                storageClass: gp3
+
             server:
               fullnameOverride: prometheus
 
