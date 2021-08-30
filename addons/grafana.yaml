@@ -168,7 +168,7 @@ spec:
                   datasource: istio
 
             persistence:
-              enabled: true
+              enabled: false
               accessModes:
                 - ReadWriteOnce
               size: 5Gi
