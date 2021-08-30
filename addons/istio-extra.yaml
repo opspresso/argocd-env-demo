@@ -35,6 +35,26 @@ spec:
                 kind: Service
                 metadata:
                   labels:
+                    app: istiod
+                    app.kubernetes.io/name: istiod-metrics
+                    istio: pilot
+                    release: prometheus-{{cluster}}
+                  name: istiod-metrics
+                spec:
+                  ports:
+                    - name: http-scrape
+                      port: 15014
+                      protocol: TCP
+                      targetPort: 15014
+                  selector:
+                    app: istiod
+                    istio: pilot
+                  type: ClusterIP
+
+              - apiVersion: v1
+                kind: Service
+                metadata:
+                  labels:
                     app: istio-ingressgateway
                     app.kubernetes.io/name: istio-ingressgateway-metrics
                     istio: ingressgateway
@@ -54,6 +74,30 @@ spec:
                     app: istio-ingressgateway
                     istio: ingressgateway
                   type: ClusterIP
+
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
+                    app: istiod
+                    app.kubernetes.io/name: istiod-metrics
+                    istio: pilot
+                    release: prometheus-{{cluster}}
+                  name: istiod-metrics
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /metrics
+                    port: http-scrape
+                  jobLabel: istio-ingressgateway
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchLabels:
+                      app: istiod
+                      app.kubernetes.io/name: istiod-metrics
+                      istio: pilot
 
               - apiVersion: monitoring.coreos.com/v1
                 kind: ServiceMonitor
