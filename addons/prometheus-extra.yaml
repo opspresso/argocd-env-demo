@@ -31,6 +31,18 @@ spec:
             fullnameOverride: prometheus-extra
 
             resources:
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: prometheus-alertmanager-secret
+                spec:
+                  backendType: systemManager
+                  data:
+                    - key: /k8s/common/slack-token
+                      name: slack-token
+                    - key: /k8s/common/slack-hooks
+                      name: slack-hooks
+
               - apiVersion: monitoring.coreos.com/v1
                 kind: PrometheusRule
                 metadata:
@@ -125,18 +137,6 @@ spec:
                           annotations:
                             summary: "HPA Max Usage"
                             description: "{{ $labels.hpa }} is using HPA Max."
-
-              - apiVersion: kubernetes-client.io/v1
-                kind: ExternalSecret
-                metadata:
-                  name: prometheus-alertmanager-secret
-                spec:
-                  backendType: systemManager
-                  data:
-                    - key: /k8s/common/slack-token
-                      name: slack-token
-                    - key: /k8s/common/slack-hooks
-                      name: slack-hooks
 
       syncPolicy:
         automated:
