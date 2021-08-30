@@ -31,14 +31,35 @@ spec:
             fullnameOverride: istio-extra
 
             resources:
+              - apiVersion: v1
+                kind: Service
+                metadata:
+                  labels:
+                    app: istio-ingressgateway
+                    app.kubernetes.io/name: istio-ingressgateway-metrics
+                    istio: ingressgateway
+                    release: prometheus-{{cluster}}
+                  name: istio-ingressgateway-metrics
+                spec:
+                  ports:
+                    - name: http-envoy-prom
+                      port: 15090
+                      protocol: TCP
+                      targetPort: 15090
+                  selector:
+                    app: istio-ingressgateway
+                    istio: ingressgateway
+                  type: ClusterIP
+
               - apiVersion: monitoring.coreos.com/v1
                 kind: ServiceMonitor
                 metadata:
                   labels:
                     app: istio-ingressgateway
+                    app.kubernetes.io/name: istio-ingressgateway-metrics
                     istio: ingressgateway
                     release: prometheus-{{cluster}}
-                  name: istio-ingressgateway
+                  name: istio-ingressgateway-metrics
                 spec:
                   endpoints:
                   - interval: 15s
@@ -51,6 +72,7 @@ spec:
                   selector:
                     matchLabels:
                       app: istio-ingressgateway
+                      app.kubernetes.io/name: istio-ingressgateway-metrics
                       istio: ingressgateway
 
               - apiVersion: cert-manager.io/v1
