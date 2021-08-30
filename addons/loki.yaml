@@ -24,31 +24,34 @@ spec:
         namespace: addon-loki
       source:
         repoURL: https://grafana.github.io/helm-charts
-        targetRevision: "2.6.0"
-        chart: loki
+        targetRevision: "2.4.1"
+        chart: loki-stack
         helm:
           values: |-
             fullnameOverride: loki
 
-            persistence:
-              enabled: true
-              accessModes:
-                - ReadWriteOnce
-              size: 10Gi
-              storageClassName: gp3
+            loki:
+              fullnameOverride: loki
 
-            serviceMonitor:
-              enabled: true
-              additionalLabels:
-                release: prometheus-{{cluster}}
+              persistence:
+                enabled: true
+                accessModes:
+                  - ReadWriteOnce
+                size: 10Gi
+                storageClassName: gp3
 
-            tolerations:
-              - key: group
-                operator: Equal
-                value: monitoring
-                effect: NoSchedule
-            nodeSelector:
-              group: monitoring
+              serviceMonitor:
+                enabled: true
+                additionalLabels:
+                  release: prometheus-{{cluster}}
+
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
 
       syncPolicy:
         # automated:
