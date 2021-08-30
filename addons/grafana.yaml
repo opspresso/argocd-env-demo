@@ -106,10 +106,6 @@ spec:
                   type: loki
                   url: http://loki-eks-demo.addon-loki.svc.cluster.local:3100
                   access: proxy
-                # - name: istio
-                #   type: prometheus
-                #   url: http://prometheus.istio-system.svc.cluster.local:9090
-                #   access: proxy
 
             dashboardProviders:
               dashboardproviders.yaml:
