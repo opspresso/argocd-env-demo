@@ -48,12 +48,6 @@ spec:
                   key: github.clientSecret
                 redirectUrl: https://argo-workflows.{{values.host}}/oauth2/callback
 
-      ignoreDifferences:
-        - kind: CustomResourceDefinition
-          group: apiextensions.k8s.io
-          jsonPointers:
-            - /spec/preserveUnknownFields
-
       syncPolicy:
         automated:
           prune: true
