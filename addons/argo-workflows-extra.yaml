@@ -41,11 +41,9 @@ spec:
                   backendType: systemManager
                   data:
                     - key: /k8s/common/argo-workflows-github-id
-                      name: github.clientId
+                      name: client-id
                     - key: /k8s/common/argo-workflows-github-secret
-                      name: github.clientSecret
-                    - key: /k8s/common/github-webhook
-                      name: webhook.github.secret
+                      name: client-secret
 
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway

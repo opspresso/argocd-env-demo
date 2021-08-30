@@ -42,10 +42,10 @@ spec:
                 sessionExpiry: 240h
                 clientId:
                   name: argo-workflows-secret
-                  key: github.clientId
+                  key: client-id
                 clientSecret:
                   name: argo-workflows-secret
-                  key: github.clientSecret
+                  key: client-secret
                 redirectUrl: https://argo-workflows.{{values.host}}/oauth2/callback
 
       syncPolicy:
