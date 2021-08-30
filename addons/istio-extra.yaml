@@ -31,6 +31,24 @@ spec:
             fullnameOverride: istio-extra
 
             resources:
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  name: istio-ingressgateway
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /stats/prometheus
+                    port: http-envoy-prom
+                  jobLabel: istio-ingressgateway
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchLabels:
+                      app: istio-ingressgateway
+                      istio: ingressgateway
+
               - apiVersion: cert-manager.io/v1
                 kind: Certificate
                 metadata:
@@ -62,24 +80,6 @@ spec:
                   issuerRef:
                     kind: "ClusterIssuer"
                     name: "cluster-issuer-selfsigned"
-
-              - apiVersion: monitoring.coreos.com/v1
-                kind: ServiceMonitor
-                metadata:
-                  name: istio-ingressgateway
-                spec:
-                  endpoints:
-                  - interval: 15s
-                    path: /stats/prometheus
-                    port: http-envoy-prom
-                  jobLabel: istio-ingressgateway
-                  namespaceSelector:
-                    matchNames:
-                    - istio-system
-                  selector:
-                    matchLabels:
-                      app: istio-ingressgateway
-                      istio: ingressgateway
 
       syncPolicy:
         automated:
