@@ -95,11 +95,11 @@ spec:
               - apiVersion: rbac.authorization.k8s.io/v1
                 kind: ClusterRoleBinding
                 metadata:
-                  name: argo:admin-user:k8s-readonly
+                  name: argo:admin-user:admin
                 roleRef:
                   apiGroup: rbac.authorization.k8s.io
                   kind: ClusterRole
-                  name: k8s-readonly
+                  name: admin
                 subjects:
                   - kind: ServiceAccount
                     namespace: argo
