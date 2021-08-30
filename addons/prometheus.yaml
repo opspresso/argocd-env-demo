@@ -35,6 +35,9 @@ spec:
             alertmanager:
               fullnameOverride: alertmanager
 
+              # statefulSet:
+              #   enabled: true
+
               persistentVolume:
                 enabled: true
                 size: 5Gi
@@ -50,6 +53,9 @@ spec:
 
             server:
               fullnameOverride: prometheus
+
+              # statefulSet:
+              #   enabled: true
 
               persistentVolume:
                 enabled: true
