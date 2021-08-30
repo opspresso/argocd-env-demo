@@ -46,7 +46,7 @@ spec:
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
 
-            nodeExporter:
+            node-exporter:
               fullnameOverride: node-exporter
 
             pushgateway:
