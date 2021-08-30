@@ -162,11 +162,15 @@ spec:
 
             persistence:
               enabled: true
-              type: pvc
-              storageClassName: gp3
               accessModes:
                 - ReadWriteOnce
               size: 5Gi
+              storageClassName: gp3
+
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: prometheus-{{cluster}}
 
             tolerations:
               - key: group
