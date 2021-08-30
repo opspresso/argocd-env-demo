@@ -42,6 +42,7 @@ spec:
                       - batch
                       - extensions
                       - networking.istio.io
+                      - argoproj.io
                     resources:
                       - "*"
                     verbs:
