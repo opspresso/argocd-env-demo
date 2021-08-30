@@ -11,6 +11,7 @@ app:
       memory: 128Mi
 
   service:
+    name: http
     port: 1948
 
   readinessProbe:
