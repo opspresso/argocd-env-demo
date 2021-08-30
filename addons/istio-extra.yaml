@@ -46,6 +46,10 @@ spec:
                       port: 15090
                       protocol: TCP
                       targetPort: 15090
+                    - name: http-scrape
+                      port: 15020
+                      protocol: TCP
+                      targetPort: 15020
                   selector:
                     app: istio-ingressgateway
                     istio: ingressgateway
@@ -65,6 +69,9 @@ spec:
                   - interval: 15s
                     path: /stats/prometheus
                     port: http-envoy-prom
+                  - interval: 15s
+                    path: /stats/prometheus
+                    port: http-scrape
                   jobLabel: istio-ingressgateway
                   namespaceSelector:
                     matchNames:
