@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: addon-argo-workflows
+        namespace: argo
       source:
         repoURL: https://charts.helm.sh/incubator
         targetRevision: "0.2.5"
