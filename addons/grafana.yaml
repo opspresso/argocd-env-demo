@@ -35,6 +35,13 @@ spec:
             admin:
               existingSecret: "grafana-secret"
 
+            extraSecretMounts:
+              - name: grafana-secret
+                secretName: grafana-secret
+                defaultMode: 0440
+                mountPath: /etc/secrets/grafana-secret
+                readOnly: true
+
             grafana.ini:
               server:
                 root_url: "https://grafana.{{values.host}}/"
