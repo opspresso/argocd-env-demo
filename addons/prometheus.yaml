@@ -105,26 +105,26 @@ spec:
                             {{ end }}
                           {{ end }}
 
-              alertmanagerSpec:
-                # secrets:
-                #   - prometheus-alertmanager-secret
+              # alertmanagerSpec:
+              #   # secrets:
+              #   #   - prometheus-alertmanager-secret
 
-                storage:
-                  volumeClaimTemplate:
-                    spec:
-                      storageClassName: gp3
-                      accessModes: ["ReadWriteOnce"]
-                      resources:
-                        requests:
-                          storage: 12Gi
+              #   storage:
+              #     volumeClaimTemplate:
+              #       spec:
+              #         storageClassName: gp3
+              #         accessModes: ["ReadWriteOnce"]
+              #         resources:
+              #           requests:
+              #             storage: 12Gi
 
-                tolerations:
-                  - key: group
-                    operator: Equal
-                    value: monitoring
-                    effect: NoSchedule
-                nodeSelector:
-                  group: monitoring
+              #   tolerations:
+              #     - key: group
+              #       operator: Equal
+              #       value: monitoring
+              #       effect: NoSchedule
+              #   nodeSelector:
+              #     group: monitoring
 
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
