@@ -72,7 +72,7 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: argo-workflows
+                            host: argo-workflows-server
                             port:
                               number: 2746
 
