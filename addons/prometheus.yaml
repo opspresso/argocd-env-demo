@@ -43,8 +43,11 @@ spec:
                 size: 50Gi
                 storageClass: gp3
 
-            kube-state-metrics:
+            kubeStateMetrics:
               fullnameOverride: kube-state-metrics
+
+            nodeExporter:
+              fullnameOverride: node-exporter
 
             pushgateway:
               fullnameOverride: pushgateway
