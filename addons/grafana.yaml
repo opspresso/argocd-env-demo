@@ -99,13 +99,17 @@ spec:
                 datasources:
                 - name: Prometheus
                   type: prometheus
-                  url: http://prometheus.addon-prometheus.svc.cluster.local:80
+                  url: http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090
                   access: proxy
                   isDefault: true
                 - name: Loki
                   type: loki
                   url: http://loki-eks-demo.addon-loki.svc.cluster.local:3100
                   access: proxy
+                # - name: istio
+                #   type: prometheus
+                #   url: http://prometheus.istio-system.svc.cluster.local:9090
+                #   access: proxy
 
             dashboardProviders:
               dashboardproviders.yaml:
