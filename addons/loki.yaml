@@ -51,6 +51,9 @@ spec:
               nodeSelector:
                 group: monitoring
 
+            promtail:
+              fullnameOverride: promtail
+
       syncPolicy:
         # automated:
         #   prune: true
