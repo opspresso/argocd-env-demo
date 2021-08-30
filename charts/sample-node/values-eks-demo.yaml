@@ -84,5 +84,6 @@ app:
     preview:
       enabled: true
 redis:
-  podLabels:
-    sidecar.istio.io/inject: 'true'
+  istio:
+    sidecar:
+      inject: true
