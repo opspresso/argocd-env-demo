@@ -35,6 +35,8 @@ spec:
                 kind: ServiceMonitor
                 metadata:
                   labels:
+                    app: istio-ingressgateway
+                    istio: ingressgateway
                     release: prometheus-{{cluster}}
                   name: istio-ingressgateway
                 spec:
