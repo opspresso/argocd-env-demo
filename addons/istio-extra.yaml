@@ -63,7 +63,7 @@ spec:
                 spec:
                   ports:
                     - name: http-envoy-prom
-                      port: 15090
+                      port: 25090
                       protocol: TCP
                       targetPort: 15090
                     - name: http-scrape
