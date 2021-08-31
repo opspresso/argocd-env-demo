@@ -2,7 +2,7 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.7.24
+      VERSION: v0.8.1
     enabled: true
   controller:
     kind: Rollout
@@ -16,10 +16,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 61143acffdf0299decc386cd69e4bf39
+    value: c1daa6927267f629de6a81f052272c65
   image:
     repository: nalbam/sample-spring
-    tag: v0.7.24
+    tag: v0.8.1
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
@@ -34,7 +34,7 @@ app:
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: djAuNy4yNA==
+      SECRET_VERSION: djAuOC4x
     enabled: true
   service:
     preview:
