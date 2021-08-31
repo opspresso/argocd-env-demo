@@ -24,4 +24,4 @@ jobs:
           TG_PHASE: ${{ github.event.client_payload.phase }}
           TG_TYPE: ${{ github.event.client_payload.type }}
         run: |
-          bash ./build.sh
+          bash ./build.sh action

@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Build
           command: |
-            bash ./build.sh
+            bash ./build.sh circleci
 
 # https://circleci.com/docs/2.0/add-ssh-key/
 # https://circleci.com/docs/2.0/api-job-trigger/

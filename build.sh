@@ -4,17 +4,20 @@ OS_NAME="$(uname | awk '{print tolower($0)}')"
 
 SHELL_DIR=$(dirname $0)
 
+PROVIDER=${1}
+
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-argocd-env-demo}
 
 BRANCH=${CIRCLE_BRANCH:-main}
 
-TG_USERNAME="${1:-$TG_USERNAME}"
-TG_PROJECT="${2:-$TG_PROJECT}"
-TG_VERSION="${3:-$TG_VERSION}"
+TG_USERNAME="${TG_USERNAME:-opspresso}"
+TG_PROJECT="${TG_PROJECT:-sample}"
+TG_VERSION="${TG_VERSION:-v0.0.0}"
 
-TG_PHASE="${4:-$TG_PHASE}"
-TG_TYPE="${5:-$TG_TYPE}"
+# TG_PHASE="${TG_PHASE:-eks-demo}"
+
+# TG_TYPE="${TG_TYPE:-helm}"
 
 GIT_USERNAME="bot"
 GIT_USEREMAIL="bot@nalbam.com"
@@ -83,22 +86,79 @@ _prepare() {
     _result "${TG_USERNAME}/${TG_PROJECT}:${TG_VERSION}"
 }
 
-_phase() {
+_phase_action() {
+    if [ -z "${GITHUB_TOKEN}" ]; then
+        _error "Not found GITHUB_TOKEN"
+    fi
+
+    GITOPS_REPO="${USERNAME}/${REPONAME}"
+    EVENT_TYPE="gitops"
+
+    pushd ${SHELL_DIR}/charts/${TG_PROJECT}
+
+    # find kustomize
+    LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
+
+    for PHASE in ${LIST}; do
+        _result "${PHASE} kustomize"
+
+        if [ "${PHASE}" != "base" ]; then
+            _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${PROJECT} ${VERSION} ${PHASE}"
+
+            # build_parameters
+            PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
+            PAYLOAD="${PAYLOAD}\"client_payload\":{"
+            PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
+            PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
+            PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+            PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
+            PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
+            PAYLOAD="${PAYLOAD}}}"
+
+            _result "PAYLOAD=${PAYLOAD}"
+
+            curl -sL -X POST \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -d "${PAYLOAD}" \
+              https://api.github.com/repos/${GITOPS_REPO}/dispatches
+        fi
+    done
+
+    # find helm chart
+    LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
+
+    for V in ${LIST}; do
+        PHASE=${V:7}
+
+        _result "${PHASE} helm"
+
+        _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${PROJECT} ${VERSION} ${PHASE}"
+
+        # build_parameters
+        PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
+        PAYLOAD="${PAYLOAD}\"client_payload\":{"
+        PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
+        PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
+        PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+        PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
+        PAYLOAD="${PAYLOAD}\"type\":\"helm\""
+        PAYLOAD="${PAYLOAD}}}"
+
+        curl -sL -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+          -d "${PAYLOAD}" \
+          https://api.github.com/repos/${GITOPS_REPO}/dispatches
+    done
+
+    popd
+}
+
+_phase_circleci() {
     if [ "${PERSONAL_TOKEN}" == "" ]; then
         _error "Not found PERSONAL_TOKEN"
     fi
-
-    # # version check
-    # TMP=/tmp/releases
-    # curl -sL "https://api.github.com/repos/${TG_USERNAME}/${TG_PROJECT}/releases" > ${TMP}
-    # PRERELEASE="$(cat ${TMP} | jq -r --arg VERSION "${TG_VERSION}" '.[] | select(.tag_name==$VERSION) | "\(.draft) \(.prerelease)"')"
-
-    # _result "PRERELEASE: \"${PRERELEASE}\""
-
-    # # prerelease
-    # if [ "${PRERELEASE}" != "false false" ]; then
-    #     _success
-    # fi
 
     # https://circleci.com/docs/api/v2/#get-a-pipeline-39-s-workflows
     CIRCLE_API="https://circleci.com/api/v2/project/gh/${USERNAME}/${REPONAME}/pipeline"
@@ -240,7 +300,11 @@ _build() {
 _prepare
 
 if [ "${TG_PHASE}" == "" ]; then
-    _phase
+    if [ "${PROVIDER}" == "action" ]; then
+        _phase_action
+    elif [ "${PROVIDER}" == "circleci" ]; then
+        _phase_circleci
+    fi
 else
     _build
 fi
