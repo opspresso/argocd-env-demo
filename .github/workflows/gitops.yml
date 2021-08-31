@@ -19,4 +19,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          bash ./gitops.py
+          export TG_USERNAME="${{ github.event.client_payload.username }}"
+          export TG_PROJECT="${{ github.event.client_payload.project }}"
+          export TG_VERSION="${{ github.event.client_payload.version }}"
+          export TG_PHASE="${{ github.event.client_payload.phase }}"
+          bash ./build.sh
