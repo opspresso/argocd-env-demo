@@ -145,6 +145,8 @@ _phase_action() {
         PAYLOAD="${PAYLOAD}\"type\":\"helm\""
         PAYLOAD="${PAYLOAD}}}"
 
+        _result "PAYLOAD=${PAYLOAD}"
+
         curl -sL -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${GITHUB_TOKEN}" \
@@ -184,7 +186,7 @@ _phase_circleci() {
 
             _result "PAYLOAD=${PAYLOAD}"
 
-            curl -X POST \
+            curl -sL -X POST \
                 -u ${PERSONAL_TOKEN}: \
                 -H "Content-Type: application/json" \
                 -d "${PAYLOAD}" "${CIRCLE_API}"
@@ -210,7 +212,7 @@ _phase_circleci() {
 
         _result "PAYLOAD=${PAYLOAD}"
 
-        curl -X POST \
+        curl -sL -X POST \
             -u ${PERSONAL_TOKEN}: \
             -H "Content-Type: application/json" \
             -d "${PAYLOAD}" "${CIRCLE_API}"
