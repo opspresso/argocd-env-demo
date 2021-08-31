@@ -4,9 +4,10 @@ job1:
     tag: latest
 
   command:
-    - "aws"
-    - "ec2"
-    - "describe-instances"
+    - "uname"
+    # - "aws"
+    # - "ec2"
+    # - "describe-instances"
 
   irsa:
     enabled: true
