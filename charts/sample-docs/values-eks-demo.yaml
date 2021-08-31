@@ -3,10 +3,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 90cb150b3534113c7b4ab18540ba8d4d
+    value: 69d5ee2220701489ba1f1b6ea3d184e6
   image:
     repository: nalbam/docs
-    tag: v0.3.8
+    tag: v0.3.9
   ingress:
     hosts:
     - host: docs.bruce.spic.me
