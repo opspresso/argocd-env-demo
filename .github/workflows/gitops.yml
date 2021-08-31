@@ -3,6 +3,7 @@ name: gitops
 on:
   repository_dispatch:
     types:
+      - build
       - gitops
 
 jobs:
