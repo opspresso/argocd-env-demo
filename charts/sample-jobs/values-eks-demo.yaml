@@ -4,7 +4,7 @@ job1:
     tag: latest
 
   command:
-    - "uname"
+    - "apk"
     # - "aws"
     # - "ec2"
     # - "describe-instances"
