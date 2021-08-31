@@ -1,0 +1,42 @@
+app:
+  configmap:
+    data:
+      MESSAGE: hello world
+      VERSION: v0.8.8
+    enabled: true
+  controller:
+    kind: Rollout
+    strategy:
+      blueGreen:
+        activeService: sample-spring
+        autoPromotionEnabled: true
+        autoPromotionSeconds: 30
+        previewService: sample-spring-preview
+  env:
+  - name: PROFILE
+    value: prod
+  - name: ENV_HASH
+    value: a0e862bb4ed4b307623d400e192f9e5b
+  image:
+    repository: nalbam/sample-spring
+    tag: v0.8.8
+  ingress:
+    hosts:
+    - host: sample-spring.bruce.spic.me
+    preview:
+      hosts:
+      - host: sample-spring-preview.bruce.spic.me
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+  secret:
+    data:
+      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+      SECRET_VERSION: !!binary |
+        ZGpBdU9DNDQ=
+    enabled: true
+  service:
+    preview:
+      enabled: true

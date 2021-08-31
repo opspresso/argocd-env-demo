@@ -1,0 +1,88 @@
+app:
+  autoscaling:
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 25
+        stabilizationWindowSeconds: 600
+    enabled: true
+    maxReplicas: 6
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 60
+          type: Utilization
+      type: Resource
+    minReplicas: 4
+  configmap:
+    data:
+      MESSAGE: hello world
+      VERSION: v0.8.10
+    enabled: true
+  controller:
+    kind: Rollout
+    strategy:
+      canary:
+        canaryService: sample-node-preview
+        stableService: sample-node
+        steps:
+        - setWeight: 25
+        - pause:
+            duration: 10
+        - analysis:
+            args:
+            - name: url
+              value: http://sample-node-preview:3000/success/95
+            templates:
+            - clusterScope: true
+              templateName: http-benchmark
+        - setWeight: 50
+        - pause:
+            duration: 10
+        - setWeight: 75
+        - pause:
+            duration: 10
+  env:
+  - name: PROFILE
+    value: prod
+  - name: ENV_HASH
+    value: d48e73972ebc76cb3f1b5019cd26bd66
+  image:
+    repository: nalbam/sample-node
+    tag: v0.8.10
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ssl-redirect: 'true'
+    enabled: false
+    hosts:
+    - host: sample-node.bruce.spic.me
+    preview:
+      enabled: false
+      hosts:
+      - host: sample-node-preview.bruce.spic.me
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+  podAnnotations:
+    chaos.alpha.kubernetes.io/enabled: 'true'
+  podLabels:
+    chaoskube: 'true'
+  secret:
+    data:
+      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
+      SECRET_VERSION: !!binary |
+        ZGpBdU9DNHhNQT09
+    enabled: true
+  service:
+    preview:
+      enabled: true
+redis:
+  istio:
+    sidecar:
+      inject: true
