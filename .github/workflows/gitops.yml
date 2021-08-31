@@ -1,10 +1,14 @@
 name: build
 
-on: repository_dispatch
+on:
+  repository_dispatch:
+    types:
+      - build
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
