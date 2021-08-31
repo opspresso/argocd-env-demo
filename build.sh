@@ -11,9 +11,9 @@ REPONAME=${CIRCLE_PROJECT_REPONAME:-argocd-env-demo}
 
 BRANCH=${CIRCLE_BRANCH:-main}
 
-TG_USERNAME="${TG_USERNAME:-opspresso}"
-TG_PROJECT="${TG_PROJECT:-sample}"
-TG_VERSION="${TG_VERSION:-v0.0.0}"
+# TG_USERNAME="${TG_USERNAME:-opspresso}"
+# TG_PROJECT="${TG_PROJECT:-sample}"
+# TG_VERSION="${TG_VERSION:-v0.0.0}"
 
 # TG_PHASE="${TG_PHASE:-eks-demo}"
 
