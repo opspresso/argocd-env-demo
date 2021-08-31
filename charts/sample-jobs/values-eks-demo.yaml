@@ -4,10 +4,9 @@ job1:
     tag: latest
 
   command:
-    - "apk"
-    # - "aws"
-    # - "ec2"
-    # - "describe-instances"
+    - "aws"
+    - "ec2"
+    - "describe-instances"
 
   irsa:
     enabled: true
