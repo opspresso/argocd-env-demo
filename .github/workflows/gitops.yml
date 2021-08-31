@@ -17,7 +17,7 @@ jobs:
 
       - name: GitOps
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
           TG_USERNAME: ${{ github.event.client_payload.username }}
           TG_PROJECT: ${{ github.event.client_payload.project }}
           TG_VERSION: ${{ github.event.client_payload.version }}

@@ -103,7 +103,7 @@ _phase_action() {
         _result "${PHASE} kustomize"
 
         if [ "${PHASE}" != "base" ]; then
-            _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${PROJECT} ${VERSION} ${PHASE}"
+            _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
 
             # build_parameters
             PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
@@ -133,7 +133,7 @@ _phase_action() {
 
         _result "${PHASE} helm"
 
-        _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${PROJECT} ${VERSION} ${PHASE}"
+        _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
 
         # build_parameters
         PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
