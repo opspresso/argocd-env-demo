@@ -125,7 +125,7 @@ def replace_secret(args):
             doc = yaml.load(file, Loader=yaml.FullLoader)
 
             # replace
-            doc["data"]["SECRET_VERSION"] = base64.b64encode(args.version.encode('ascii'))
+            doc["data"]["SECRET_VERSION"] = base64.b64encode(args.version.encode('utf-8'))
 
         if doc != None:
             with open(filepath, "w") as file:
