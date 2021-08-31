@@ -39,13 +39,13 @@ jobs:
 # https://circleci.com/docs/2.0/add-ssh-key/
 # https://circleci.com/docs/2.0/api-job-trigger/
 
-workflows:
-  # version: 2
-  apply:
-    jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - main
-                - master
+# workflows:
+#   # version: 2
+#   apply:
+#     jobs:
+#       - build:
+#           filters:
+#             branches:
+#               only:
+#                 - main
+#                 - master
