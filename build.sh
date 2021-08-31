@@ -261,8 +261,6 @@ _build() {
         _success "${NEW_BRANCH}"
     fi
 
-    HAS_DEV=$(echo ${TG_PHASE} | grep '\-[dev|alpha]' | wc -l | xargs)
-
     _command "git branch ${NEW_BRANCH} ${BRANCH}"
     git branch ${NEW_BRANCH} ${BRANCH}
 
@@ -283,6 +281,9 @@ _build() {
 
     _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
+
+    # pr or merge
+    HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha|\-demo|\-dev' | wc -l | xargs)
 
     if [ "x${HAS_DEV}" == "x0" ]; then
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
