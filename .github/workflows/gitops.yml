@@ -1,6 +1,10 @@
 name: gitops
 
 on:
+  push:
+    branches:
+      - main
+      - master
   repository_dispatch:
     types:
       - build
