@@ -52,7 +52,7 @@ app:
     value: 8f865fe4b6f82c1aaf31cf7975229e81
   image:
     repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
-    tag: v0.8.30
+    tag: v0.8.32
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
