@@ -1,5 +1,4 @@
 app:
-  nameOverride: sample-spring
   fullnameOverride: sample-spring
 
   resources:

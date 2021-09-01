@@ -1,5 +1,4 @@
 app:
-  nameOverride: sample-grpc
   fullnameOverride: sample-grpc
 
   resources:

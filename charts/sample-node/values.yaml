@@ -1,5 +1,4 @@
 app:
-  nameOverride: sample-node
   fullnameOverride: sample-node
 
   resources:
@@ -31,7 +30,6 @@ app:
     periodSeconds: 10
 
 redis:
-  nameOverride: sample-redis
   fullnameOverride: sample-redis
 
   image:

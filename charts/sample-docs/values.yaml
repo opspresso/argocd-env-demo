@@ -1,5 +1,4 @@
 app:
-  nameOverride: sample-docs
   fullnameOverride: sample-docs
 
   resources:

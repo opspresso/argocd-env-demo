@@ -1,5 +1,4 @@
 app:
-  nameOverride: sample-tomcat
   fullnameOverride: sample-tomcat
 
   resources:
