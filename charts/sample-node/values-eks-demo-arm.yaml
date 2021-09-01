@@ -1,0 +1,29 @@
+app:
+  configmap:
+    data:
+      MESSAGE: hello world
+      VERSION: v0.8.27
+    enabled: true
+  env:
+  - name: PROFILE
+    value: dev
+  - name: ENV_HASH
+    value: 9b8c425f29975b97663ffc2dfc51a9b0
+  image:
+    repository: nalbam/sample-node
+    tag: v0.8.27
+  ingress:
+    hosts:
+    - host: sample-node.bruce.spic.me
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+  tolerations:
+    - key: group
+      operator: Equal
+      value: arm
+      effect: NoSchedule
+  nodeSelector:
+    group: arm
