@@ -47,7 +47,7 @@ spec:
                 group: operation
 
             dashboard:
-              enabled: true
+              enabled: false
 
               tolerations:
                 - key: group
