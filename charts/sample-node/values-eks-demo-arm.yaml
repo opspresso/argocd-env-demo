@@ -36,3 +36,10 @@ redis:
   istio:
     sidecar:
       inject: true
+  tolerations:
+    - key: group
+      operator: Equal
+      value: arm
+      effect: NoSchedule
+  nodeSelector:
+    group: arm
