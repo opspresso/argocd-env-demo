@@ -1,4 +1,6 @@
 app:
+  fullnameOverride: sample-docs-prod
+
   env:
   - name: PROFILE
     value: prod
