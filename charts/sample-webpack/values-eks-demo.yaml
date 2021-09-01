@@ -1,0 +1,17 @@
+app:
+  env:
+  - name: PROFILE
+    value: dev
+  - name: ENV_HASH
+    value: 4aac5b06d3ef3b4a2f68a59922c10460
+  image:
+    repository: nalbam/sample-webpack
+    tag: v0.3.37
+  ingress:
+    hosts:
+    - host: sample-webpack.bruce.spic.me
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true

@@ -19,7 +19,7 @@ app:
       path: /
       port: 3000
     initialDelaySeconds: 3
-    periodSeconds: 10
+    periodSeconds: 3
 
   livenessProbe:
     failureThreshold: 3
@@ -27,7 +27,7 @@ app:
       path: /
       port: 3000
     initialDelaySeconds: 3
-    periodSeconds: 10
+    periodSeconds: 3
 
 redis:
   fullnameOverride: sample-redis

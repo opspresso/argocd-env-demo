@@ -1,5 +1,5 @@
 app:
-  fullnameOverride: sample-docs
+  fullnameOverride: sample-web
 
   resources:
     limits:
@@ -11,13 +11,13 @@ app:
 
   service:
     name: http
-    port: 1948
+    port: 80
 
   readinessProbe:
     failureThreshold: 3
     httpGet:
       path: /
-      port: 1948
+      port: 80
     initialDelaySeconds: 3
     periodSeconds: 3
 
@@ -25,6 +25,6 @@ app:
     failureThreshold: 3
     httpGet:
       path: /
-      port: 1948
+      port: 80
     initialDelaySeconds: 3
     periodSeconds: 3
