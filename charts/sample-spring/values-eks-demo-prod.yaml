@@ -1,9 +1,8 @@
 app:
-  fullnameOverride: sample-spring-prod
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.8.9
+      VERSION: v0.8.11
     enabled: true
   controller:
     kind: Rollout
@@ -17,10 +16,11 @@ app:
   - name: PROFILE
     value: prod
   - name: ENV_HASH
-    value: 6bd0cea753fdba53fabf840a8304acea
+    value: 4c9a78e78240ecdacb91918210070a4b
+  fullnameOverride: sample-spring-prod
   image:
     repository: nalbam/sample-spring
-    tag: v0.8.9
+    tag: v0.8.11
   ingress:
     hosts:
     - host: sample-spring-prod.bruce.spic.me
@@ -36,7 +36,7 @@ app:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: !!binary |
-        ZGpBdU9DNDU=
+        ZGpBdU9DNHhNUT09
     enabled: true
   service:
     preview:
