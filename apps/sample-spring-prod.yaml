@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: sample-docs-prod
+  name: sample-spring-prod
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "sample-docs-prod-{{cluster}}"
+      name: "sample-spring-prod-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha
       labels:
@@ -25,7 +25,7 @@ spec:
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
-        path: charts/sample-docs
+        path: charts/sample-spring
         helm:
           valueFiles:
             - values.yaml

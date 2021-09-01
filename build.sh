@@ -290,7 +290,7 @@ _build() {
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
     # pr or merge
-    HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha|\-demo|\-dev' | wc -l | xargs)
+    HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha\.|\-demo\.|\-dev\.' | wc -l | xargs)
 
     if [ "x${HAS_DEV}" == "x0" ]; then
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
