@@ -1,4 +1,5 @@
 app:
+  fullnameOverride: sample-spring-prod
   configmap:
     data:
       MESSAGE: hello world
@@ -8,10 +9,10 @@ app:
     kind: Rollout
     strategy:
       blueGreen:
-        activeService: sample-spring
+        activeService: sample-spring-prod
         autoPromotionEnabled: true
         autoPromotionSeconds: 30
-        previewService: sample-spring-preview
+        previewService: sample-spring-prod-preview
   env:
   - name: PROFILE
     value: dev
@@ -22,10 +23,10 @@ app:
     tag: v0.8.9
   ingress:
     hosts:
-    - host: sample-spring.bruce.spic.me
+    - host: sample-spring-prod.bruce.spic.me
     preview:
       hosts:
-      - host: sample-spring-preview.bruce.spic.me
+      - host: sample-spring-prod-preview.bruce.spic.me
   istio:
     gateway:
       enabled: true
