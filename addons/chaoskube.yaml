@@ -69,13 +69,13 @@ spec:
                 # terminate pods for real: this disables dry-run mode which is on by default
                 no-dry-run: ""
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
       syncPolicy:
         automated:

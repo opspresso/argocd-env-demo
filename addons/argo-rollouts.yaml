@@ -38,24 +38,24 @@ spec:
                   additionalLabels:
                     release: prometheus-{{cluster}}
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
             dashboard:
-              enabled: false
+              enabled: true
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
       ignoreDifferences:
         - kind: CustomResourceDefinition

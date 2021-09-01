@@ -42,13 +42,13 @@ spec:
                   selector:
                     release: prometheus-{{cluster}}
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
             server:
               replicas: 2
@@ -115,13 +115,13 @@ spec:
                     - group: "*"
                       kind: "*"
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
               metrics:
                 enabled: true
@@ -139,13 +139,13 @@ spec:
                       name: argocd-secret
                       key: argo-workflows-client-secret
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
               metrics:
                 enabled: true
@@ -158,13 +158,13 @@ spec:
             repoServer:
               replicas: 2
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: operation
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: operation
 
               metrics:
                 enabled: true
@@ -174,14 +174,14 @@ spec:
                   selector:
                     release: prometheus-{{cluster}}
 
-            redis:
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: operation
-                  effect: NoSchedule
-              nodeSelector:
-                group: operation
+            # redis:
+            #   tolerations:
+            #     - key: group
+            #       operator: Equal
+            #       value: operation
+            #       effect: NoSchedule
+            #   nodeSelector:
+            #     group: operation
 
             configs:
               secret:
