@@ -1,4 +1,6 @@
 app:
+  fullnameOverride: sample-node-arm
+
   configmap:
     data:
       MESSAGE: hello world
