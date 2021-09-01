@@ -29,3 +29,10 @@ app:
       effect: NoSchedule
   nodeSelector:
     group: arm
+
+
+redis:
+  fullnameOverride: sample-redis-arm
+  istio:
+    sidecar:
+      inject: true
