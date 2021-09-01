@@ -57,6 +57,13 @@ _error() {
     exit 1
 }
 
+_error_check() {
+  RESULT=$?
+  if [ ${RESULT} != 0 ]; then
+    _error ${RESULT}
+  fi
+}
+
 _replace() {
     if [ "${OS_NAME}" == "darwin" ]; then
         sed -i "" -e "$1" $2
@@ -292,15 +299,19 @@ _build() {
         _command "git checkout ${BRANCH}"
         git checkout ${BRANCH}
 
-        _command "git pull --rebase"
-        git pull --rebase
+        # _command "git pull --rebase"
+        # git pull --rebase
 
         _command "git merge ${NEW_BRANCH}"
         git merge ${NEW_BRANCH}
 
+        _error_check
+
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
     fi
+
+    _error_check
 }
 
 _prepare
