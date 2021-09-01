@@ -51,7 +51,7 @@ app:
   - name: ENV_HASH
     value: 087ebb2aee832856df703c47a86aac0b
   image:
-    repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
+    repository: nalbam/sample-node
     tag: v0.8.41
   ingress:
     annotations:

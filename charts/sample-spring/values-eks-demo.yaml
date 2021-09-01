@@ -18,7 +18,7 @@ app:
   - name: ENV_HASH
     value: b9587318702cee0687f3039bd872a29e
   image:
-    repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-spring
+    repository: nalbam/sample-spring
     tag: v0.8.12
   ingress:
     hosts:
