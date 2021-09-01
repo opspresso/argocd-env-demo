@@ -41,11 +41,3 @@ app:
   service:
     preview:
       enabled: true
-
-  tolerations:
-    - key: instancegroup
-      operator: Equal
-      value: workers-v3g
-      effect: NoSchedule
-  nodeSelector:
-    instancegroup: workers-v3g
