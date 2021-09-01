@@ -68,7 +68,7 @@ app:
     gateway:
       enabled: true
     sidecar:
-      inject: true
+      inject: false
   podAnnotations:
     chaos.alpha.kubernetes.io/enabled: 'true'
   podLabels:
@@ -94,4 +94,4 @@ app:
 redis:
   istio:
     sidecar:
-      inject: true
+      inject: false
