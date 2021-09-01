@@ -1,19 +1,18 @@
 app:
-  fullnameOverride: sample-node-arm
-
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.8.27
+      VERSION: v0.8.28
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 9b8c425f29975b97663ffc2dfc51a9b0
+    value: b3ab0afb0a1843f7e2a2e3c236fba1bd
+  fullnameOverride: sample-node-arm
   image:
     repository: nalbam/sample-node
-    tag: v0.8.27
+    tag: v0.8.28
   ingress:
     hosts:
     - host: sample-node.bruce.spic.me
@@ -22,24 +21,22 @@ app:
       enabled: true
     sidecar:
       inject: true
-  tolerations:
-    - key: group
-      operator: Equal
-      value: arm
-      effect: NoSchedule
   nodeSelector:
     group: arm
-
-
+  tolerations:
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: arm
 redis:
   fullnameOverride: sample-redis-arm
   istio:
     sidecar:
       inject: true
-  tolerations:
-    - key: group
-      operator: Equal
-      value: arm
-      effect: NoSchedule
   nodeSelector:
     group: arm
+  tolerations:
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: arm
