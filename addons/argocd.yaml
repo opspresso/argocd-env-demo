@@ -136,10 +136,10 @@ spec:
 
               resources:
                 requests:
-                  cpu: 25m
+                  cpu: 50m
                   memory: 64Mi
                 limits:
-                  cpu: 50m
+                  cpu: 100m
                   memory: 128Mi
 
               metrics:
@@ -153,7 +153,7 @@ spec:
             dex:
               resources:
                 requests:
-                  cpu: 25m
+                  cpu: 50m
                   memory: 64Mi
                 limits:
                   cpu: 50m
@@ -173,6 +173,15 @@ spec:
                   interval: 30s
                   selector:
                     release: prometheus-{{cluster}}
+
+            redis:
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
 
             configs:
               secret:
