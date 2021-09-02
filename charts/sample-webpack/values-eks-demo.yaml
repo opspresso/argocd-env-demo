@@ -3,10 +3,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 4d21cdc97137d28afdd2dd3b9cc5ee9f
+    value: e6d4e0663ebc210fe22a0fb188ed1910
   image:
     repository: nalbam/sample-webpack
-    tag: 0.6.6
+    tag: v0.7.1
   ingress:
     hosts:
     - host: sample-webpack.bruce.spic.me
