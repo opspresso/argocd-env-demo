@@ -83,12 +83,12 @@ app:
     preview:
       enabled: true
   tolerations:
-    - key: instancegroup
+    - key: group
       operator: Equal
-      value: workers-v2g
+      value: graviton
       effect: NoSchedule
   nodeSelector:
-    instancegroup: workers-v2g
+    group: graviton
 redis:
   istio:
     sidecar:
