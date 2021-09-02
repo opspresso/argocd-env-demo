@@ -1,9 +1,9 @@
 app:
   configmap:
     data:
-      MESSAGE: hello world
-      VERSION: v0.8.13
       HOSTNAME: bruce.spic.me
+      MESSAGE: hello world
+      VERSION: v0.8.18
     enabled: true
   controller:
     kind: Rollout
@@ -17,9 +17,9 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: acce23e3c1cc8c96f44cac84c6b92ffb
+    value: a78678599c7ab4284a21d29a55b8c214
   image:
-    tag: v0.8.13
+    tag: v0.8.18
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
@@ -31,6 +31,8 @@ app:
       enabled: true
     sidecar:
       inject: true
+  nodeSelector:
+    group: graviton
   service:
     preview:
       enabled: true
@@ -39,5 +41,3 @@ app:
     key: group
     operator: Equal
     value: graviton
-  nodeSelector:
-    group: graviton
