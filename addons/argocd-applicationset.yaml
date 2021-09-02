@@ -30,14 +30,6 @@ spec:
           values: |-
             fullnameOverride: argocd-applicationset
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: operation
-            #     effect: NoSchedule
-            # nodeSelector:
-            #   group: operation
-
       syncPolicy:
         automated:
           prune: true

@@ -53,7 +53,7 @@
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "5.4.4",
+      "default": "1.2.0",
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
@@ -81,7 +81,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "18.0.2",
+      "default": "18.0.3",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
