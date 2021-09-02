@@ -26,17 +26,16 @@ spec:
         name: "{{cluster}}"
         namespace: addon-external-dns
       source:
-        repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: "5.4.4"
+        repoURL: https://kubernetes-sigs.github.io/external-dns
+        targetRevision: "1.2.0"
         chart: external-dns
         helm:
           values: |-
             fullnameOverride: external-dns
 
             sources:
-              # - crd
-              - service
               # - ingress
+              - service
 
             serviceAccount:
               annotations:
