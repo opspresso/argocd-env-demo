@@ -54,7 +54,7 @@
     },
     "helm_external_dns": {
       "default": "5.4.4",
-      "description": "bitnami/external-dns"
+      "description": "external-dns/external-dns"
     },
     "helm_gocd": {
       "default": "1.37.0",
