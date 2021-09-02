@@ -37,7 +37,7 @@ redis:
 
   image:
     repository: redis
-    tag: alpine3.14
+    tag: alpine
 
   resources:
     limits:

@@ -92,3 +92,10 @@ redis:
   istio:
     sidecar:
       inject: false
+  nodeSelector:
+    group: graviton
+  tolerations:
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: graviton
