@@ -44,6 +44,24 @@ spec:
             nodeSelector:
               group: graviton
 
+            webhook:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: graviton
+                  effect: NoSchedule
+              nodeSelector:
+                group: graviton
+
+            cainjector:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: graviton
+                  effect: NoSchedule
+              nodeSelector:
+                group: graviton
+
       syncPolicy:
         automated:
           prune: true
