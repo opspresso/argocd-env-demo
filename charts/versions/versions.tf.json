@@ -5,7 +5,7 @@
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.0.0",
+      "default": "2.0.1",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_notifications": {
@@ -45,11 +45,11 @@
       "description": "cortex/cortex"
     },
     "helm_crossplane": {
-      "default": "1.3.1",
+      "default": "1.4.0",
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.20.2",
+      "default": "2.20.4",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -61,7 +61,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.16.2",
+      "default": "6.16.3",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -73,7 +73,7 @@
       "description": "irsa-operator/irsa-operator"
     },
     "helm_keycloak": {
-      "default": "14.0.1",
+      "default": "15.0.0",
       "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
