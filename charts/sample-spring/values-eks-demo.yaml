@@ -40,3 +40,10 @@ app:
   service:
     preview:
       enabled: true
+  tolerations:
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: graviton
+  nodeSelector:
+    group: graviton
