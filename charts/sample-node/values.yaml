@@ -5,12 +5,12 @@ app:
     repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
 
   resources:
-    limits:
-      cpu: 250m
-      memory: 256Mi
     requests:
-      cpu: 250m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
   # controller:
   #   kind: Rollout
@@ -76,10 +76,10 @@ redis:
     tag: alpine
 
   resources:
-    limits:
+    requests:
       cpu: 100m
       memory: 128Mi
-    requests:
+    limits:
       cpu: 100m
       memory: 128Mi
 
