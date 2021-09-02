@@ -20,7 +20,7 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.8.48
+      VERSION: v0.8.49
     enabled: true
   controller:
     kind: Rollout
@@ -49,10 +49,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 200dd15d8121e67ea06e0cf5341ed772
+    value: 4460c0546fcd07c70aacd6b5332e2317
   image:
     repository: nalbam/sample-node
-    tag: v0.8.48
+    tag: v0.8.49
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -69,6 +69,8 @@ app:
       enabled: true
     sidecar:
       inject: false
+  nodeSelector:
+    group: graviton
   podAnnotations:
     chaos.alpha.kubernetes.io/enabled: 'true'
   podLabels:
@@ -77,18 +79,16 @@ app:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: !!binary |
-        ZGpBdU9DNDBPQT09
+        ZGpBdU9DNDBPUT09
     enabled: true
   service:
     preview:
       enabled: true
   tolerations:
-    - key: group
-      operator: Equal
-      value: graviton
-      effect: NoSchedule
-  nodeSelector:
-    group: graviton
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: graviton
 redis:
   istio:
     sidecar:
