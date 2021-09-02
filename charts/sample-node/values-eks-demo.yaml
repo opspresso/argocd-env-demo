@@ -82,8 +82,13 @@ app:
   service:
     preview:
       enabled: true
+  tolerations:
+    - key: instancegroup
+      operator: Equal
+      value: workers-v2g
+      effect: NoSchedule
   nodeSelector:
-    kubernetes.io/arch: arm64
+    instancegroup: workers-v2g
 redis:
   istio:
     sidecar:
