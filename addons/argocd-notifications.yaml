@@ -32,6 +32,14 @@ spec:
 
             argocdUrl: https://argocd.bruce.spic.me
 
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+
             secret:
               create: false
               items:

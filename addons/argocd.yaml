@@ -153,11 +153,11 @@ spec:
             dex:
               resources:
                 requests:
-                  cpu: 10m
-                  memory: 32Mi
+                  cpu: 25m
+                  memory: 64Mi
                 limits:
                   cpu: 50m
-                  memory: 64Mi
+                  memory: 128Mi
 
               env:
                 - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
