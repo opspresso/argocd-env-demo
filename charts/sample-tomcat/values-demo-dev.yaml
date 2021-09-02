@@ -1,17 +1,10 @@
 app:
   configmap:
     data:
+      HOSTNAME: bruce.spic.me
       MESSAGE: hello world
       VERSION: v0.8.14
     enabled: true
-  controller:
-    kind: Rollout
-    strategy:
-      blueGreen:
-        activeService: sample-tomcat
-        autoPromotionEnabled: true
-        autoPromotionSeconds: 30
-        previewService: sample-tomcat-preview
   env:
   - name: PROFILE
     value: dev
@@ -22,14 +15,15 @@ app:
   ingress:
     hosts:
     - host: sample-tomcat.bruce.spic.me
-    preview:
-      hosts:
-      - host: sample-tomcat-preview.bruce.spic.me
   istio:
     gateway:
       enabled: true
     sidecar:
       inject: true
-  service:
-    preview:
-      enabled: true
+  nodeSelector:
+    group: graviton
+  tolerations:
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: graviton

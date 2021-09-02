@@ -23,29 +23,29 @@ app:
       VERSION: v0.8.50
       HOSTNAME: bruce.spic.me
     enabled: true
-  controller:
-    kind: Rollout
-    strategy:
-      canary:
-        canaryService: sample-node-preview
-        stableService: sample-node
-        steps:
-        - setWeight: 25
-        - pause:
-            duration: 10
-        - analysis:
-            args:
-            - name: url
-              value: http://sample-node-preview:3000/success/95
-            templates:
-            - clusterScope: true
-              templateName: http-benchmark
-        - setWeight: 50
-        - pause:
-            duration: 10
-        - setWeight: 75
-        - pause:
-            duration: 10
+  # controller:
+  #   kind: Rollout
+  #   strategy:
+  #     canary:
+  #       canaryService: sample-node-preview
+  #       stableService: sample-node
+  #       steps:
+  #       - setWeight: 25
+  #       - pause:
+  #           duration: 10
+  #       - analysis:
+  #           args:
+  #           - name: url
+  #             value: http://sample-node-preview:3000/success/95
+  #           templates:
+  #           - clusterScope: true
+  #             templateName: http-benchmark
+  #       - setWeight: 50
+  #       - pause:
+  #           duration: 10
+  #       - setWeight: 75
+  #       - pause:
+  #           duration: 10
   env:
   - name: PROFILE
     value: dev
@@ -60,10 +60,10 @@ app:
     enabled: false
     hosts:
     - host: sample-node.bruce.spic.me
-    preview:
-      enabled: false
-      hosts:
-      - host: sample-node-preview.bruce.spic.me
+    # preview:
+    #   enabled: false
+    #   hosts:
+    #   - host: sample-node-preview.bruce.spic.me
   istio:
     gateway:
       enabled: true
@@ -71,9 +71,9 @@ app:
       inject: true
   nodeSelector:
     group: graviton
-  service:
-    preview:
-      enabled: true
+  # service:
+  #   preview:
+  #     enabled: true
   tolerations:
   - effect: NoSchedule
     key: group

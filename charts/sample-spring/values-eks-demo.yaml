@@ -15,9 +15,6 @@ app:
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
-    preview:
-      hosts:
-      - host: sample-spring-preview.bruce.spic.me
   istio:
     gateway:
       enabled: true
@@ -25,9 +22,6 @@ app:
       inject: true
   nodeSelector:
     group: graviton
-  service:
-    preview:
-      enabled: true
   tolerations:
   - effect: NoSchedule
     key: group

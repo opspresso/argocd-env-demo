@@ -12,6 +12,15 @@ app:
       cpu: "1"
       memory: 1Gi
 
+  # controller:
+  #   kind: Rollout
+  #   strategy:
+  #     blueGreen:
+  #       activeService: sample-spring
+  #       autoPromotionEnabled: true
+  #       autoPromotionSeconds: 30
+  #       previewService: sample-spring-preview
+
   service:
     name: http
     port: 8080
@@ -22,7 +31,7 @@ app:
       path: /
       port: 8080
     initialDelaySeconds: 30
-    periodSeconds: 10
+    periodSeconds: 20
 
   livenessProbe:
     failureThreshold: 3
@@ -30,13 +39,4 @@ app:
       path: /
       port: 8080
     initialDelaySeconds: 30
-    periodSeconds: 10
-
-  # controller:
-  #   kind: Rollout
-  #   strategy:
-  #     blueGreen:
-  #       activeService: sample-spring
-  #       autoPromotionEnabled: true
-  #       autoPromotionSeconds: 30
-  #       previewService: sample-spring-preview
+    periodSeconds: 20
