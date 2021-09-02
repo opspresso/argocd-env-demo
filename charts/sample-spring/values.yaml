@@ -32,9 +32,11 @@ app:
     initialDelaySeconds: 30
     periodSeconds: 10
 
-  # strategy:
-  #   blueGreen:
-  #     activeService: sample-spring
-  #     autoPromotionEnabled: true
-  #     autoPromotionSeconds: 30
-  #     previewService: sample-spring-preview
+  # controller:
+  #   kind: Rollout
+  #   strategy:
+  #     blueGreen:
+  #       activeService: sample-spring
+  #       autoPromotionEnabled: true
+  #       autoPromotionSeconds: 30
+  #       previewService: sample-spring-preview

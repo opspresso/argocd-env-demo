@@ -5,14 +5,6 @@ app:
       MESSAGE: hello world
       VERSION: v0.8.18
     enabled: true
-  controller:
-    kind: Rollout
-    strategy:
-      blueGreen:
-        activeService: sample-spring
-        autoPromotionEnabled: true
-        autoPromotionSeconds: 30
-        previewService: sample-spring-preview
   env:
   - name: PROFILE
     value: dev
