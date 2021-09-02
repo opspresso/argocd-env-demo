@@ -3,7 +3,7 @@ app:
     data:
       HOSTNAME: bruce.spic.me
       MESSAGE: hello world
-      VERSION: v0.8.16
+      VERSION: v0.8.17
     enabled: true
   controller:
     kind: Rollout
@@ -17,10 +17,10 @@ app:
   - name: PROFILE
     value: prod
   - name: ENV_HASH
-    value: c97025f81fc1c0698bc90df2145e8629
+    value: 87eda8169d254d1428135016fa22f909
   fullnameOverride: sample-spring-prod
   image:
-    tag: v0.8.16
+    tag: v0.8.17
   ingress:
     hosts:
     - host: sample-spring-prod.bruce.spic.me
@@ -38,7 +38,7 @@ app:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: !!binary |
-        ZGpBdU9DNHhOZz09
+        ZGpBdU9DNHhOdz09
     enabled: true
   service:
     preview:
