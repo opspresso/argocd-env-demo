@@ -3,10 +3,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 1977a7be83061db1f22bd207178aca53
+    value: fcac87d9161ceb224c5c1c89d0b3e437
   image:
     repository: nalbam/sample-web
-    tag: 0.6.1
+    tag: 0.6.2
   ingress:
     hosts:
     - host: sample-web.bruce.spic.me
