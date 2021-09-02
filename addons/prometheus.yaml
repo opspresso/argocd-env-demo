@@ -129,6 +129,14 @@ spec:
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
 
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
+
             prometheus-node-exporter:
               fullnameOverride: prometheus-node-exporter
 
