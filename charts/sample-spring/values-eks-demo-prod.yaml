@@ -38,6 +38,13 @@ app:
       SECRET_VERSION: !!binary |
         ZGpBdU9DNDU=
     enabled: true
+  tolerations:
+    - key: group
+      operator: Equal
+      value: graviton
+      effect: NoSchedule
+  nodeSelector:
+    group: graviton
   service:
     preview:
       enabled: true
