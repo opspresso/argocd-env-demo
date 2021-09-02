@@ -126,12 +126,13 @@ spec:
                 nodeSelector:
                   group: monitoring
 
-            kube-state-metrics:
-              fullnameOverride: kube-state-metrics
-
+            kubeStateMetrics:
               serviceMonitor:
                 selfMonitor:
                   enabled: true
+
+            kube-state-metrics:
+              fullnameOverride: kube-state-metrics
 
               tolerations:
                 - key: group
