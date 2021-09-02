@@ -10,7 +10,7 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: a78678599c7ab4284a21d29a55b8c214
+    value: a78678599c7ab4284a21d29a55b8c21a
   image:
     tag: v0.8.18
   ingress:
