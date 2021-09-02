@@ -82,6 +82,8 @@ app:
   service:
     preview:
       enabled: true
+  nodeSelector:
+    kubernetes.io/arch: arm64
 redis:
   istio:
     sidecar:
