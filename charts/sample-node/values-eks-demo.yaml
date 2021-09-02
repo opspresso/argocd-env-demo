@@ -20,7 +20,7 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.8.44
+      VERSION: v0.8.45
     enabled: true
   controller:
     kind: Rollout
@@ -49,10 +49,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 966495487595a61842a104b06219e053
+    value: 7466391983fa6ec3ff61281a9ca5db24
   image:
     repository: nalbam/sample-node
-    tag: v0.8.44
+    tag: v0.8.45
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -77,7 +77,7 @@ app:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: !!binary |
-        ZGpBdU9DNDBOQT09
+        ZGpBdU9DNDBOUT09
     enabled: true
   service:
     preview:
