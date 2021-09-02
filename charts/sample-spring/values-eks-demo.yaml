@@ -29,7 +29,7 @@ app:
     gateway:
       enabled: true
     sidecar:
-      inject: false
+      inject: true
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
