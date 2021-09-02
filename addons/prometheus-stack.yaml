@@ -129,8 +129,9 @@ spec:
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
 
-              selfMonitor:
-                enabled: true
+              serviceMonitor:
+                selfMonitor:
+                  enabled: true
 
               tolerations:
                 - key: group
