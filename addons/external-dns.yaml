@@ -45,10 +45,10 @@ spec:
             # tolerations:
             #   - key: group
             #     operator: Equal
-            #     value: operation
+            #     value: graviton
             #     effect: NoSchedule
             # nodeSelector:
-            #   group: operation
+            #   group: graviton
 
       syncPolicy:
         # automated:

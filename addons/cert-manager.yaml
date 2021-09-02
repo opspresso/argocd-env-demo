@@ -36,6 +36,14 @@ spec:
               defaultIssuerName: letsencrypt-issuer
               defaultIssuerKind: ClusterIssuer
 
+            tolerations:
+              - key: group
+                operator: Equal
+                value: graviton
+                effect: NoSchedule
+            nodeSelector:
+              group: graviton
+
       syncPolicy:
         automated:
           prune: true
