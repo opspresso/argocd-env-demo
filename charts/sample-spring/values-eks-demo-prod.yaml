@@ -1,10 +1,9 @@
 app:
-  fullnameOverride: sample-spring-prod
   configmap:
     data:
-      MESSAGE: hello world
-      VERSION: v0.8.9
       HOSTNAME: bruce.spic.me
+      MESSAGE: hello world
+      VERSION: v0.8.16
     enabled: true
   controller:
     kind: Rollout
@@ -18,9 +17,10 @@ app:
   - name: PROFILE
     value: prod
   - name: ENV_HASH
-    value: 6bd0cea753fdba53fabf840a8304acea
+    value: c97025f81fc1c0698bc90df2145e8629
+  fullnameOverride: sample-spring-prod
   image:
-    tag: v0.8.11
+    tag: v0.8.16
   ingress:
     hosts:
     - host: sample-spring-prod.bruce.spic.me
@@ -32,19 +32,19 @@ app:
       enabled: true
     sidecar:
       inject: true
+  nodeSelector:
+    group: graviton
   secret:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: !!binary |
-        ZGpBdU9DNDU=
+        ZGpBdU9DNHhOZz09
     enabled: true
-  tolerations:
-    - key: group
-      operator: Equal
-      value: graviton
-      effect: NoSchedule
-  nodeSelector:
-    group: graviton
   service:
     preview:
       enabled: true
+  tolerations:
+  - effect: NoSchedule
+    key: group
+    operator: Equal
+    value: graviton
