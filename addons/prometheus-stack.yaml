@@ -129,12 +129,6 @@ spec:
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
 
-              prometheus:
-                monitor:
-                  enabled: true
-                  additionalLabels:
-                    release: prometheus-{{cluster}}
-
               tolerations:
                 - key: group
                   operator: Equal
