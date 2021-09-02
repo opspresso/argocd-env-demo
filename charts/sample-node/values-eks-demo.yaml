@@ -51,7 +51,6 @@ app:
   - name: ENV_HASH
     value: 4460c0546fcd07c70aacd6b5332e2317
   image:
-    repository: nalbam/sample-node
     tag: v0.8.49
   ingress:
     annotations:

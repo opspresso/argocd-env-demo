@@ -19,7 +19,6 @@ app:
   - name: ENV_HASH
     value: 6bd0cea753fdba53fabf840a8304acea
   image:
-    repository: nalbam/sample-spring
     tag: v0.8.11
   ingress:
     hosts:

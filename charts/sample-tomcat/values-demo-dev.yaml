@@ -18,7 +18,6 @@ app:
   - name: ENV_HASH
     value: 4ff653cbb199d2019ebce913d7233b12
   image:
-    repository: nalbam/sample-tomcat
     tag: v0.8.12
   ingress:
     hosts:
