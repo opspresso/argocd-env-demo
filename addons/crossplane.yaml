@@ -30,6 +30,23 @@ spec:
           values: |-
             fullnameOverride: crossplane
 
+            tolerations:
+              - key: group
+                operator: Equal
+                value: graviton
+                effect: NoSchedule
+            nodeSelector:
+              group: graviton
+
+            rbacManager:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: graviton
+                  effect: NoSchedule
+              nodeSelector:
+                group: graviton
+
       ignoreDifferences:
         - group: rbac.authorization.k8s.io
           kind: ClusterRole
