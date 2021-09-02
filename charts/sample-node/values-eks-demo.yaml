@@ -21,6 +21,7 @@ app:
     data:
       MESSAGE: hello world
       VERSION: v0.8.50
+      HOSTNAME: bruce.spic.me
     enabled: true
   controller:
     kind: Rollout

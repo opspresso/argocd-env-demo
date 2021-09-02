@@ -4,6 +4,7 @@ app:
     data:
       MESSAGE: hello world
       VERSION: v0.8.9
+      HOSTNAME: bruce.spic.me
     enabled: true
   controller:
     kind: Rollout
@@ -18,8 +19,6 @@ app:
     value: prod
   - name: ENV_HASH
     value: 6bd0cea753fdba53fabf840a8304acea
-  - name: HOSTNAME
-    value: bruce.spic.me
   image:
     tag: v0.8.11
   ingress:
