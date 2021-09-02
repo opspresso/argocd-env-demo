@@ -30,12 +30,6 @@ app:
       enabled: true
     sidecar:
       inject: true
-  secret:
-    data:
-      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: !!binary |
-        ZGpBdU9DNHhNdz09
-    enabled: true
   service:
     preview:
       enabled: true

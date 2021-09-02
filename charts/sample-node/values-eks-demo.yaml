@@ -71,16 +71,6 @@ app:
       inject: true
   nodeSelector:
     group: graviton
-  podAnnotations:
-    chaos.alpha.kubernetes.io/enabled: 'true'
-  podLabels:
-    chaoskube: 'true'
-  secret:
-    data:
-      SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
-      SECRET_VERSION: !!binary |
-        ZGpBdU9DNDFNQT09
-    enabled: true
   service:
     preview:
       enabled: true
