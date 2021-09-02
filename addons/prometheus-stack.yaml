@@ -126,18 +126,11 @@ spec:
                 nodeSelector:
                   group: monitoring
 
-            kubeStateMetrics:
-              enabled: false
-
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
 
               extraArgs:
                 - --metric-labels-allowlist='=pods=[*]'
-
-              serviceMonitor:
-                selfMonitor:
-                  enabled: true
 
               tolerations:
                 - key: group
