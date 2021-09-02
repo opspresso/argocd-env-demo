@@ -123,13 +123,8 @@ spec:
                   selector:
                     release: prometheus-{{cluster}}
 
-            dex:
-              env:
-                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: argocd-secret
-                      key: argo-workflows-client-secret
+            repoServer:
+              replicas: 2
 
               metrics:
                 enabled: true
@@ -139,8 +134,13 @@ spec:
                   selector:
                     release: prometheus-{{cluster}}
 
-            repoServer:
-              replicas: 2
+            dex:
+              env:
+                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: argocd-secret
+                      key: argo-workflows-client-secret
 
               metrics:
                 enabled: true
