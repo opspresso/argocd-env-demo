@@ -37,13 +37,13 @@ spec:
             # apiService:
             #   create: false
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: operation
-            #     effect: NoSchedule
-            # nodeSelector:
-            #   group: operation
+            tolerations:
+              - key: group
+                operator: Equal
+                value: graviton
+                effect: NoSchedule
+            nodeSelector:
+              group: graviton
 
       syncPolicy:
         automated:
