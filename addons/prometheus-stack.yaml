@@ -129,8 +129,9 @@ spec:
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
 
+              # https://github.com/kubernetes/kube-state-metrics/blob/master/docs/cli-arguments.md
               extraArgs:
-                - --metric-labels-allowlist=nodes=[*],pods=[*]
+                - --metric-labels-allowlist=nodes=[*],deployments=[*],daemonsets=[*],pods=[*],services=[*]
 
               tolerations:
                 - key: group
