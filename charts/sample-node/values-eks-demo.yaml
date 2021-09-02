@@ -67,7 +67,7 @@ app:
     gateway:
       enabled: true
     sidecar:
-      inject: false
+      inject: true
   nodeSelector:
     group: graviton
   podAnnotations:
@@ -91,7 +91,7 @@ app:
 redis:
   istio:
     sidecar:
-      inject: false
+      inject: true
   nodeSelector:
     group: graviton
   tolerations:
