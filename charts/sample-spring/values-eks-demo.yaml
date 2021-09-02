@@ -1,6 +1,7 @@
 app:
   configmap:
     data:
+      CLUSTER_NAME: eks-demo
       HOSTNAME: bruce.spic.me
       MESSAGE: hello world
       VERSION: v0.8.18

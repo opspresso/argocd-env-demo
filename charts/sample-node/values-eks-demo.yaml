@@ -19,9 +19,10 @@ app:
     minReplicas: 4
   configmap:
     data:
+      CLUSTER_NAME: eks-demo
+      HOSTNAME: bruce.spic.me
       MESSAGE: hello world
       VERSION: v0.8.50
-      HOSTNAME: bruce.spic.me
     enabled: true
   # controller:
   #   kind: Rollout
