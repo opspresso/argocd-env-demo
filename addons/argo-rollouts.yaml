@@ -31,6 +31,14 @@ spec:
             fullnameOverride: argo-rollouts
 
             controller:
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+
               metrics:
                 enabled: true
                 serviceMonitor:
@@ -47,7 +55,7 @@ spec:
               #   group: operation
 
             dashboard:
-              enabled: true
+              enabled: false
 
               # tolerations:
               #   - key: group

@@ -53,6 +53,14 @@ spec:
             server:
               replicas: 2
 
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+
               service:
                 type: LoadBalancer
                 annotations:
@@ -126,6 +134,14 @@ spec:
             repoServer:
               replicas: 2
 
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  cpu: 50m
+                  memory: 128Mi
+
               metrics:
                 enabled: true
                 serviceMonitor:
@@ -135,6 +151,14 @@ spec:
                     release: prometheus-{{cluster}}
 
             dex:
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 50m
+                  memory: 64Mi
+
               env:
                 - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
                   valueFrom:
