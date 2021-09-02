@@ -2,7 +2,7 @@ app:
   configmap:
     data:
       MESSAGE: hello world
-      VERSION: v0.8.10
+      VERSION: v0.8.12
     enabled: true
   controller:
     kind: Rollout
@@ -16,10 +16,10 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 1ac932ac36da1f675bcee727ff18760a
+    value: 4ff653cbb199d2019ebce913d7233b12
   image:
     repository: nalbam/sample-tomcat
-    tag: v0.8.10
+    tag: v0.8.12
   ingress:
     hosts:
     - host: sample-tomcat.bruce.spic.me
@@ -35,7 +35,7 @@ app:
     data:
       SECRET_MESSAGE: c2VjcmV0IG1lc3NhZ2U=
       SECRET_VERSION: !!binary |
-        ZGpBdU9DNHhNQT09
+        ZGpBdU9DNHhNZz09
     enabled: true
   service:
     preview:
