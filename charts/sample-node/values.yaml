@@ -12,45 +12,45 @@ app:
       cpu: 250m
       memory: 256Mi
 
-  # controller:
-  #   kind: Rollout
-  #   strategy:
-  #     canary:
-  #       canaryService: sample-node-preview
-  #       stableService: sample-node
-  #       steps:
-  #       - setWeight: 25
-  #       - pause:
-  #           duration: 10
-  #       - analysis:
-  #           args:
-  #           - name: url
-  #             value: http://sample-node-preview:3000/success/95
-  #           templates:
-  #           - clusterScope: true
-  #             templateName: http-benchmark
-  #       - setWeight: 50
-  #       - pause:
-  #           duration: 10
-  #       - setWeight: 75
-  #       - pause:
-  #           duration: 10
+  controller:
+    kind: Rollout
+    strategy:
+      canary:
+        canaryService: sample-node-preview
+        stableService: sample-node
+        steps:
+        - setWeight: 25
+        - pause:
+            duration: 10
+        - analysis:
+            args:
+            - name: url
+              value: http://sample-node-preview:3000/success/50
+            templates:
+            - clusterScope: true
+              templateName: http-benchmark
+        - setWeight: 50
+        - pause:
+            duration: 10
+        - setWeight: 75
+        - pause:
+            duration: 10
 
   service:
     name: http
     port: 3000
-  #   preview:
-  #     enabled: true
+    preview:
+      enabled: true
 
   ingress:
     enabled: false
     annotations:
       kubernetes.io/ingress.class: nginx
       kubernetes.io/ssl-redirect: 'true'
-    # preview:
-    #   enabled: false
-    #   hosts:
-    #   - host: sample-node-preview.bruce.spic.me
+    preview:
+      enabled: false
+      hosts:
+      - host: sample-node-preview.bruce.spic.me
 
   readinessProbe:
     failureThreshold: 3
