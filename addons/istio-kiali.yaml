@@ -30,10 +30,10 @@ spec:
           values: |-
             fullnameOverride: kiali
 
-            deployment:
-              auth:
-                strategy: anonymous
+            auth:
+              strategy: anonymous
 
+            deployment:
               ingress_enabled: false
 
               # tolerations:
