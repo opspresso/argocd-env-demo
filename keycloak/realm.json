@@ -1982,8 +1982,8 @@
       "config": {
         "hostedDomain": "",
         "syncMode": "IMPORT",
-        "clientSecret": "KEYCLOAK_GOOGLE_CLIENT_SECRET",
-        "clientId": "KEYCLOAK_GOOGLE_CLIENT_ID",
+        "clientSecret": "GOOGLE_CLIENT_SECRET",
+        "clientId": "GOOGLE_CLIENT_ID",
         "useJwksUrl": "true"
       }
     }

@@ -48,6 +48,10 @@ spec:
                       name: github-id
                     - key: /k8s/common/grafana-github-secret
                       name: github-secret
+                    - key: /k8s/common/google-id
+                      name: google-id
+                    - key: /k8s/common/google-secret
+                      name: google-secret
 
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway
