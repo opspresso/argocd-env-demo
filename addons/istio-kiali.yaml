@@ -33,7 +33,8 @@ spec:
             fullnameOverride: kiali
 
             server:
-              web_fqdn: "https://kiali.bruce.spic.me"
+              web_fqdn: "kiali.{{values.host}}"
+              web_port: 80
 
             auth:
               # strategy: anonymous
