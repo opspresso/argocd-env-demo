@@ -33,7 +33,14 @@ spec:
             fullnameOverride: kiali
 
             auth:
-              strategy: anonymous
+              # strategy: anonymous
+              strategy: openid
+              openid:
+                client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
+                disable_rbac: true
+                issuer_uri: "https://accounts.google.com"
+                scopes: ["openid", "email"]
+                username_claim: "email"
 
             deployment:
               ingress_enabled: false
