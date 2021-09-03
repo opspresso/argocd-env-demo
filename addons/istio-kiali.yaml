@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kiali
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+
+  template:
+    metadata:
+      name: "kiali-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-system
+      source:
+        repoURL: https://kiali.org/helm-charts
+        targetRevision: "1.39.0"
+        chart: kiali-server
+        helm:
+          values: |-
+            fullnameOverride: kiali
+
+            # deployment:
+            #   tolerations:
+            #     - key: group
+            #       operator: Equal
+            #       value: graviton
+            #       effect: NoSchedule
+            #   nodeSelector:
+            #     group: graviton
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
