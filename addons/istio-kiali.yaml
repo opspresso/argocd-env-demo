@@ -30,14 +30,16 @@ spec:
           values: |-
             fullnameOverride: kiali
 
-            # deployment:
-            #   tolerations:
-            #     - key: group
-            #       operator: Equal
-            #       value: graviton
-            #       effect: NoSchedule
-            #   nodeSelector:
-            #     group: graviton
+            deployment:
+              ingress_enabled: false
+
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: graviton
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: graviton
 
       syncPolicy:
         # automated:
