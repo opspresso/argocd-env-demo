@@ -299,8 +299,8 @@ _build() {
         _command "git checkout ${BRANCH}"
         git checkout ${BRANCH}
 
-        # _command "git pull --rebase"
-        # git pull --rebase
+        _command "git pull"
+        git pull
 
         _command "git merge ${NEW_BRANCH}"
         git merge ${NEW_BRANCH}
@@ -309,6 +309,8 @@ _build() {
 
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
+
+        _error_check
 
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH} --delete ${NEW_BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git --delete ${NEW_BRANCH}
