@@ -49,18 +49,6 @@ spec:
               auth:
                 disable_login_form: false
 
-              # # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
-              # auth.generic_oauth:
-              #   enabled: false
-              #   allow_sign_up: true
-              #   client_id: "grafana"
-              #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
-              #   scopes: "openid email profile roles"
-              #   auth_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/auth"
-              #   token_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/token"
-              #   api_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/userinfo"
-              #   # role_attribute_path = role
-
               # https://grafana.com/docs/grafana/latest/auth/google/
               auth.google:
                 enabled: true
@@ -84,6 +72,18 @@ spec:
                 api_url: https://api.github.com/user
                 allowed_organizations: opspresso
                 # team_ids: sre
+
+              # # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
+              # auth.generic_oauth:
+              #   enabled: false
+              #   allow_sign_up: true
+              #   client_id: "grafana"
+              #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
+              #   scopes: "openid email profile roles"
+              #   auth_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/auth"
+              #   token_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/token"
+              #   api_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/userinfo"
+              #   # role_attribute_path = role
 
             ingress:
               enabled: false
