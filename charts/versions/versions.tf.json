@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.17.5",
+      "default": "3.17.6",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -49,7 +49,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.20.4",
+      "default": "2.21.0",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
