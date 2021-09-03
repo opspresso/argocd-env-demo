@@ -63,7 +63,7 @@ spec:
 
               # https://grafana.com/docs/grafana/latest/auth/google/
               auth.google:
-                enabled: false
+                enabled: true
                 allow_sign_up: true
                 client_id: $__file{/etc/secrets/grafana-secret/google-id}
                 client_secret: $__file{/etc/secrets/grafana-secret/google-secret}
