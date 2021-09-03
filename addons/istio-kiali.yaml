@@ -46,6 +46,9 @@ spec:
                 issuer_uri: "https://accounts.google.com"
                 scopes: ["openid", "email"]
                 username_claim: "email"
+                allowed_domains:
+                  - nalbam.com
+                  - daangn.com
 
             deployment:
               ingress_enabled: false
