@@ -32,6 +32,9 @@ spec:
           values: |-
             fullnameOverride: kiali
 
+            server:
+              web_fqdn: "https://kiali.bruce.spic.me"
+
             auth:
               # strategy: anonymous
               strategy: openid
