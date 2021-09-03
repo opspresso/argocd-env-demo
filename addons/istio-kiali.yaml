@@ -31,6 +31,9 @@ spec:
             fullnameOverride: kiali
 
             deployment:
+              auth:
+                strategy: anonymous
+
               ingress_enabled: false
 
               # tolerations:
