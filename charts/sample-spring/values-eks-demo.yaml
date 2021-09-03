@@ -4,15 +4,15 @@ app:
       CLUSTER_NAME: eks-demo
       HOSTNAME: bruce.spic.me
       MESSAGE: hello world
-      VERSION: v0.8.23
+      VERSION: v0.8.24
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 0627945d4759aace10989be506d8822a
+    value: 5944b2a4a8e29694a532ebfb5131db8e
   image:
-    tag: v0.8.23
+    tag: v0.8.24
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
