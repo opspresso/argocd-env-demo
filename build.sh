@@ -309,6 +309,9 @@ _build() {
 
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
+
+        _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH} --delete ${NEW_BRANCH}"
+        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git --delete ${NEW_BRANCH}
     fi
 
     _error_check
