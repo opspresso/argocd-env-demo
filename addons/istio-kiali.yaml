@@ -7,6 +7,8 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              host: "bruce.spic.me"
 
   template:
     metadata:
@@ -43,6 +45,13 @@ spec:
               #     effect: NoSchedule
               # nodeSelector:
               #   group: graviton
+
+            external_services:
+              grafana:
+                in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
+                url: "https://grafana.{{values.host}}"
+              prometheus:
+                url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
       syncPolicy:
         # automated:
