@@ -13,6 +13,7 @@ ADMIN_PASSWORD="REPLACE_ME"
 
 ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
 ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
+ARGOCD_GITHUB_ID="REPLACE_ME" # github OAuth Apps
 ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
 
 GITHUB_WEBHOOK="REPLACE_ME" # random string
@@ -23,6 +24,7 @@ SLACK_TOKEN="REPLACE_ME"
 aws ssm put-parameter --name /k8s/common/admin-password --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-password --value "${ARGOCD_PASSWORD}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-server-secret --value "${ARGOCD_SERVER_SECRET}" --type SecureString --overwrite | jq .
+aws ssm put-parameter --name /k8s/common/argocd-github-id --value "${ARGOCD_GITHUB_ID}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-github-secret --value "${ARGOCD_GITHUB_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-webhook --value "${GITHUB_WEBHOOK}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/slack-token --value "${SLACK_TOKEN}" --type SecureString --overwrite | jq .
@@ -32,6 +34,7 @@ ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-
 ARGOCD_PASSWORD=$(aws ssm get-parameter --name /k8s/common/argocd-password --with-decryption | jq .Parameter.Value -r)
 ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 ARGOCD_SERVER_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-server-secret --with-decryption | jq .Parameter.Value -r)
+ARGOCD_GITHUB_ID=$(aws ssm get-parameter --name /k8s/common/argocd-github-id --with-decryption | jq .Parameter.Value -r)
 ARGOCD_GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-github-secret --with-decryption | jq .Parameter.Value -r)
 GITHUB_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/github-webhook --with-decryption | jq .Parameter.Value -r)
 
@@ -40,6 +43,7 @@ cp values.yaml values.output.yaml
 find . -name values.output.yaml -exec sed -i "" -e "s@ARGOCD_PASSWORD@${ARGOCD_PASSWORD}@g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_MTIME/${ARGOCD_MTIME}/g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_SERVER_SECRET/${ARGOCD_SERVER_SECRET}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_GITHUB_ID/${ARGOCD_GITHUB_ID}/g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s/ARGOCD_GITHUB_SECRET/${ARGOCD_GITHUB_SECRET}/g" {} \;
 find . -name values.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GITHUB_WEBHOOK}/g" {} \;
 ```

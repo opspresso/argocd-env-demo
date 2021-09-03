@@ -24,7 +24,7 @@ server:
         id: github
         name: github
         config:
-          clientID: 0ca6b78d5dda3cfc8a53
+          clientID: ARGOCD_GITHUB_ID
           clientSecret: $dex.github.clientSecret
           orgs:
             - name: opspresso

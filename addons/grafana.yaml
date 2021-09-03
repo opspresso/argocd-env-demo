@@ -49,17 +49,6 @@ spec:
               auth:
                 disable_login_form: false
 
-              # https://grafana.com/docs/grafana/latest/auth/google/
-              auth.google:
-                enabled: true
-                allow_sign_up: true
-                client_id: $__file{/etc/secrets/grafana-secret/google-id}
-                client_secret: $__file{/etc/secrets/grafana-secret/google-secret}
-                scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
-                auth_url: https://accounts.google.com/o/oauth2/auth
-                token_url: https://accounts.google.com/o/oauth2/token
-                allowed_domains: nalbam.com daangn.com
-
               # https://grafana.com/docs/grafana/latest/auth/github/
               auth.github:
                 enabled: true
@@ -72,6 +61,17 @@ spec:
                 api_url: https://api.github.com/user
                 allowed_organizations: opspresso
                 # team_ids: sre
+
+              # https://grafana.com/docs/grafana/latest/auth/google/
+              auth.google:
+                enabled: true
+                allow_sign_up: true
+                client_id: $__file{/etc/secrets/grafana-secret/google-id}
+                client_secret: $__file{/etc/secrets/grafana-secret/google-secret}
+                scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+                auth_url: https://accounts.google.com/o/oauth2/auth
+                token_url: https://accounts.google.com/o/oauth2/token
+                allowed_domains: nalbam.com daangn.com
 
               # # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
               # auth.generic_oauth:
