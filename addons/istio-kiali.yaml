@@ -35,7 +35,7 @@ spec:
             server:
               web_schema: https
               web_fqdn: "kiali.{{values.host}}"
-              web_port: 80
+              # web_port: 80
 
             auth:
               # strategy: anonymous
