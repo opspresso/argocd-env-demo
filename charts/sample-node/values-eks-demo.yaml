@@ -22,15 +22,15 @@ app:
       CLUSTER_NAME: eks-demo
       HOSTNAME: bruce.spic.me
       MESSAGE: hello world
-      VERSION: v0.8.55
+      VERSION: v0.8.56
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 1019d5cb7b146e2149446e1e6096e3b1
+    value: 24d4cdca5e4527a4b8538ecf30b9c62c
   image:
-    tag: v0.8.55
+    tag: v0.8.56
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
