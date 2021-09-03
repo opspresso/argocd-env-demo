@@ -12,7 +12,6 @@
 ADMIN_PASSWORD="REPLACE_ME"
 
 ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
-ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
 ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
 
@@ -23,7 +22,6 @@ SLACK_TOKEN="REPLACE_ME"
 # put aws ssm param
 aws ssm put-parameter --name /k8s/common/admin-password --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-password --value "${ARGOCD_PASSWORD}" --type SecureString --overwrite | jq .
-aws ssm put-parameter --name /k8s/common/argocd-mtime --value "${ARGOCD_MTIME}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-server-secret --value "${ARGOCD_SERVER_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/argocd-github-secret --value "${ARGOCD_GITHUB_SECRET}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/github-webhook --value "${GITHUB_WEBHOOK}" --type SecureString --overwrite | jq .
