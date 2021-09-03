@@ -53,12 +53,13 @@ find . -name values.output.yaml -exec sed -i "" -e "s/GITHUB_WEBHOOK/${GITHUB_WE
 kubectl create ns argocd
 
 helm repo update
+helm search repo argo-cd
 
-helm install argocd argoproj/argo-cd -n argocd -f values.output.yaml
-helm install argocd-applicationset argoproj/argocd-applicationset -n argocd
+helm install argocd argo/argo-cd -n argocd -f values.output.yaml
+helm install argocd-applicationset argo/argocd-applicationset -n argocd
 
-helm upgrade argocd argoproj/argo-cd -n argocd -f values.output.yaml
-helm upgrade argocd-applicationset argoproj/argocd-applicationset -n argocd
+helm upgrade argocd argo/argo-cd -n argocd -f values.output.yaml
+helm upgrade argocd-applicationset argo/argocd-applicationset -n argocd
 
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.1.0/manifests/install.yaml
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/applicationset/v0.2.0/manifests/install.yaml
@@ -69,6 +70,7 @@ helm upgrade argocd-applicationset argoproj/argocd-applicationset -n argocd
 > aws 에 elb 가 생성 되었습니다. route53 에서 argocd.bruce.spic.me 와 연결해 줍니다.
 
 ```bash
+kubectl get pod -n argocd
 kubectl get svc argocd-server -n argocd
 ```
 
@@ -78,6 +80,7 @@ argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com  
 ```
 
 * https://console.aws.amazon.com/route53/v2/hostedzones#
+* https://argocd.bruce.spic.me
 
 ## argocd login
 
