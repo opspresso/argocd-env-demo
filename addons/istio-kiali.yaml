@@ -33,6 +33,7 @@ spec:
             fullnameOverride: kiali
 
             server:
+              web_schema: https
               web_fqdn: "kiali.{{values.host}}"
               web_port: 80
 
