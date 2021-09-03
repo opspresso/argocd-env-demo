@@ -53,6 +53,13 @@ spec:
             server:
               replicas: 2
 
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 5
+                targetCPUUtilizationPercentage: 50
+                targetMemoryUtilizationPercentage: 50
+
               resources:
                 requests:
                   cpu: 50m
@@ -133,6 +140,13 @@ spec:
 
             repoServer:
               replicas: 2
+
+              autoscaling:
+                enabled: true
+                minReplicas: 2
+                maxReplicas: 5
+                targetCPUUtilizationPercentage: 50
+                targetMemoryUtilizationPercentage: 50
 
               resources:
                 requests:
