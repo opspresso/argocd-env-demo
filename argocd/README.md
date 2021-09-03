@@ -108,3 +108,20 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 ```bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
 ```
+
+## 삭제
+
+### service  및 lb 삭제
+
+> service 를 삭제 하여, external-dns 가 생성한 elb 를 삭제 합니다.
+
+```bash
+kubectl delete svc -n argocd argocd-server
+kubectl delete svc -n istio-system istio-ingressgateway
+```
+
+### terraform destory
+
+```bash
+terraform destory
+```
