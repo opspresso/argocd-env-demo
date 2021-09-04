@@ -99,11 +99,6 @@ spec:
                     redirectURIs:
                       - https://argo-workflows.{{values.host}}/oauth2/callback
                     secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
-                  - id: kiali-sso
-                    name: Kiali
-                    redirectURIs:
-                      - https://kiali.{{values.host}}/kiali
-                    secret: notNeeded
 
               rbacConfig:
                 policy.default: "role:readonly"
