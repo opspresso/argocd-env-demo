@@ -33,7 +33,7 @@
       "description": "stable/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.10.5",
+      "default": "9.10.6",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
@@ -49,7 +49,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.21.0",
+      "default": "2.21.1",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -61,7 +61,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.16.3",
+      "default": "6.16.4",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -101,7 +101,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus_adapter": {
-      "default": "2.16.0",
+      "default": "2.17.0",
       "description": "prometheus/prometheus-adapter"
     },
     "helm_promtail": {
