@@ -41,14 +41,19 @@ spec:
               # strategy: anonymous
               strategy: openid
               openid:
-                client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
-                disable_rbac: true
-                issuer_uri: "https://accounts.google.com"
-                scopes: ["openid", "email"]
+                # client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
+                # disable_rbac: true
+                # issuer_uri: "https://accounts.google.com"
+                # scopes: ["openid", "email"]
+                # username_claim: "email"
+                # allowed_domains:
+                #   - nalbam.com
+                #   - daangn.com
+
+                client_id: "kiali-sso"
+                insecure_skip_verify_tls: true
+                issuer_uri: "https://argocd.{{values.host}}/api/dex"
                 username_claim: "email"
-                allowed_domains:
-                  - nalbam.com
-                  - daangn.com
 
             deployment:
               ingress_enabled: false
@@ -65,8 +70,13 @@ spec:
               grafana:
                 in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
                 url: "https://grafana.{{values.host}}"
+
               prometheus:
                 url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
+
+              # tracing:
+              #   in_cluster_url: "${TRACING_URL}"
+              #   url: "${TRACING_URL}"
 
       syncPolicy:
         # automated:
