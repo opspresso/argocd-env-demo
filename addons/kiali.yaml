@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-system
+        namespace: addon-tracing
       source:
         repoURL: https://kiali.org/helm-charts
         targetRevision: "1.39.0"
@@ -35,7 +35,6 @@ spec:
             server:
               web_schema: https
               web_fqdn: "kiali.{{values.host}}"
-              # web_port: 80
 
             auth:
               # strategy: anonymous
@@ -63,15 +62,14 @@ spec:
 
             external_services:
               grafana:
-                # in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
+                in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
                 url: "https://grafana.{{values.host}}"
 
-              # prometheus:
-              #   url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
+              prometheus:
+                url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
               # tracing:
-              #   in_cluster_url: "http://jaeger-collector.istio-system.svc.cluster.local:14268"
-              #   url: "https://jaeger.{{values.host}}"
+              #   in_cluster_url: "http://jaeger-query.addon-tracing:16686"
 
       syncPolicy:
         # automated:
