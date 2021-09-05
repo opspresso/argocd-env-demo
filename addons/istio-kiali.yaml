@@ -63,15 +63,15 @@ spec:
 
             external_services:
               grafana:
-                in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
+                # in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
                 url: "https://grafana.{{values.host}}"
 
-              prometheus:
-                url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
+              # prometheus:
+              #   url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
-              tracing:
-                in_cluster_url: "jaeger"
-                url: "https://jaeger.{{values.host}}"
+              # tracing:
+              #   in_cluster_url: "http://jaeger-collector.istio-system.svc.cluster.local:14268"
+              #   url: "https://jaeger.{{values.host}}"
 
       syncPolicy:
         # automated:
