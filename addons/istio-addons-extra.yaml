@@ -62,9 +62,9 @@ spec:
                   http:
                     - route:
                         - destination:
-                            host: kiali-gatekeeper
+                            host: kiali
                             port:
-                              number: 80
+                              number: 20001
 
       syncPolicy:
         # automated:
