@@ -94,22 +94,6 @@ spec:
                     kind: "ClusterIssuer"
                     name: "cluster-issuer-selfsigned"
 
-              - apiVersion: cert-manager.io/v1
-                kind: Certificate
-                metadata:
-                  name: istio-cert-bruce-opspresso-com
-                spec:
-                  commonName: bruce.opspresso.com
-                  dnsNames:
-                    - "*.bruce.opspresso.com"
-                    - "*.istio.bruce.opspresso.com"
-                  secretName: "istio-cert-bruce-opspresso-com"
-                  duration: "87600h0m0s"
-                  renewBefore: "70080h0m0s"
-                  issuerRef:
-                    kind: "ClusterIssuer"
-                    name: "cluster-issuer-selfsigned"
-
       syncPolicy:
         # automated:
         #   prune: true
