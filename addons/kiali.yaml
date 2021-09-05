@@ -36,6 +36,8 @@ spec:
               web_schema: https
               web_fqdn: "kiali.{{values.host}}"
 
+            istio_namespace: "istio-system"
+
             auth:
               # strategy: anonymous
               strategy: openid
