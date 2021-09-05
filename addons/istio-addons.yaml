@@ -24,7 +24,7 @@ spec:
         namespace: istio-system
       source:
         repoURL: https://github.com/istio/istio
-        targetRevision: "1.11.2"
+        targetRevision: "1.11.1"
         path: samples/addons
 
       syncPolicy:
