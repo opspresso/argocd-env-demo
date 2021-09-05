@@ -48,10 +48,10 @@ spec:
                 metadata:
                   labels:
                     release: prometheus-{{cluster}}
-                  name: istio-metrics-aggregation
+                  name: istio-recording-rules
                 spec:
                   groups:
-                  - name: "istio.metricsAggregation-rules"
+                  - name: "istio-recording-rules"
                     interval: 5s
                     rules:
                     - record: "workload:istio_requests_total"
