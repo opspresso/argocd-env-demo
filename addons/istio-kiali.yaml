@@ -69,9 +69,9 @@ spec:
               prometheus:
                 url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
-              # tracing:
-              #   in_cluster_url: "${TRACING_URL}"
-              #   url: "${TRACING_URL}"
+              tracing:
+                in_cluster_url: "jaeger"
+                url: "https://jaeger.{{values.host}}"
 
       syncPolicy:
         # automated:

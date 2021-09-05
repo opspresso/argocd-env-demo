@@ -74,9 +74,30 @@ spec:
                             port:
                               number: 20001
 
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
+                    app: kiali
+                    app.kubernetes.io/name: kiali
+                    release: prometheus-{{cluster}}
+                  name: kiali-metrics
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /metrics
+                    port: http-metrics
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchLabels:
+                      app: kiali
+                      app.kubernetes.io/name: kiali
+
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
