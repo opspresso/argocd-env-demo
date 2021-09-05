@@ -75,7 +75,7 @@ spec:
                   labels:
                     app: istio-components
                     release: prometheus-{{cluster}}
-                  name: istio-components
+                  name: istio-components-metrics
                 spec:
                   endpoints:
                   - interval: 30s
@@ -107,7 +107,8 @@ spec:
                 metadata:
                   labels:
                     app: istio-servicemesh
-                  name: istio-servicemesh-proxy
+                    release: prometheus-{{cluster}}
+                  name: istio-servicemesh-metrics
                 spec:
                   endpoints:
                   - interval: 15s
@@ -125,9 +126,8 @@ spec:
                 metadata:
                   labels:
                     app: istio-ingressgateway
-                    istio: ingressgateway
                     release: prometheus-{{cluster}}
-                  name: istio-ingressgateway
+                  name: istio-ingressgateway-metrics
                 spec:
                   endpoints:
                   - interval: 15s
@@ -147,7 +147,6 @@ spec:
                 metadata:
                   labels:
                     app: istiod
-                    istio: pilot
                     release: prometheus-{{cluster}}
                   name: istiod-metrics
                 spec:
