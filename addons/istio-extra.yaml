@@ -127,7 +127,7 @@ spec:
                     app: istio-ingressgateway
                     istio: ingressgateway
                     release: prometheus-{{cluster}}
-                  name: istio-ingressgateway-metrics
+                  name: istio-ingressgateway
                 spec:
                   endpoints:
                   - interval: 15s
