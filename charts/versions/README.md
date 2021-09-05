@@ -24,6 +24,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo add incubator https://charts.helm.sh/incubator
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo add irsa-operator https://voodooteam.github.io/irsa-operator
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
 helm repo add jetstack https://charts.jetstack.io
 helm repo add kiali https://kiali.org/helm-charts
 helm repo add prometheus https://prometheus-community.github.io/helm-charts

@@ -35,8 +35,26 @@ spec:
                 kind: Service
                 metadata:
                   labels:
+                    app: istiod
+                    istio: pilot
+                    release: prometheus-{{cluster}}
+                  name: istiod-metrics
+                spec:
+                  ports:
+                    - name: http-scrape
+                      port: 15014
+                      protocol: TCP
+                      targetPort: 15014
+                  selector:
+                    app: istiod
+                    istio: pilot
+                  type: ClusterIP
+
+              - apiVersion: v1
+                kind: Service
+                metadata:
+                  labels:
                     app: istio-ingressgateway
-                    app.kubernetes.io/name: istio-ingressgateway-metrics
                     istio: ingressgateway
                     release: prometheus-{{cluster}}
                   name: istio-ingressgateway-metrics
@@ -55,8 +73,58 @@ spec:
                 kind: ServiceMonitor
                 metadata:
                   labels:
+                    app: istio-components
+                    release: prometheus-{{cluster}}
+                  name: istio-components
+                spec:
+                  endpoints:
+                  - interval: 30s
+                    metricRelabelings:
+                      - sourceLabels:
+                          - cluster
+                        targetLabel: istio_cluster
+                      - action: labeldrop
+                        regex: cluster
+                    port: http-monitoring
+                  jobLabel: istio
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchExpressions:
+                      - key: istio
+                        operator: In
+                        values:
+                          - mixer
+                          - pilot
+                          - galley
+                          - citadel
+                          - sidecar-injector
+                          - istiod
+
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
+                    app: istio-servicemesh
+                  name: istio-servicemesh-proxy
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /stats/prometheus
+                    port: http-envoy-prom
+                  namespaceSelector:
+                    any: true
+                  selector:
+                    matchExpressions:
+                    - key: istio
+                      operator: DoesNotExist
+
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
                     app: istio-ingressgateway
-                    app.kubernetes.io/name: istio-ingressgateway-metrics
                     istio: ingressgateway
                     release: prometheus-{{cluster}}
                   name: istio-ingressgateway-metrics
@@ -65,9 +133,6 @@ spec:
                   - interval: 15s
                     path: /stats/prometheus
                     port: http-envoy-prom
-                  - interval: 15s
-                    path: /stats/prometheus
-                    port: http-scrape
                   jobLabel: istio-ingressgateway
                   namespaceSelector:
                     matchNames:
@@ -75,8 +140,29 @@ spec:
                   selector:
                     matchLabels:
                       app: istio-ingressgateway
-                      app.kubernetes.io/name: istio-ingressgateway-metrics
                       istio: ingressgateway
+
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
+                    app: istiod
+                    istio: pilot
+                    release: prometheus-{{cluster}}
+                  name: istiod-metrics
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /metrics
+                    port: http-scrape
+                  jobLabel: istio-ingressgateway
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchLabels:
+                      app: istiod
+                      istio: pilot
 
               - apiVersion: cert-manager.io/v1
                 kind: Certificate
