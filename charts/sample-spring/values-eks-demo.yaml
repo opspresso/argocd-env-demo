@@ -2,7 +2,7 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      FAULT_RATE: '3'
+      # FAULT_RATE: '3'
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       PROTOCOL: http
@@ -12,7 +12,7 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 5148be690929cbb4d6c3ef155e3b77ac
+    value: 5148be690929cbb4d6c3ef155e3b77ad
   image:
     tag: v0.8.45
   ingress:
