@@ -3,7 +3,7 @@
 name | image | amd64 | arm64
 --- | --- | --- | ---
 argo-rollouts | quay.io/argoproj/argo-rollouts | ✅ | ✅
-argocd | quay.io/argoproj/argocd [PR](https://github.com/argoproj/argo-cd/pull/6758) | ✅ | ❌
+argocd | quay.io/argoproj/argocd | ✅ | ❌ [PR](https://github.com/argoproj/argo-cd/pull/6758)
 argocd-applicationset | quay.io/argoproj/argocd-applicationset | ✅ | ❌
 argocd-notifications | argoprojlabs/argocd-notifications | ✅ | ✅
 aws-ebs-csi-driver | amazon/aws-ebs-csi-driver | ✅ | ✅
