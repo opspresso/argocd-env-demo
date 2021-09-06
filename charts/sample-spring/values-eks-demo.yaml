@@ -3,7 +3,7 @@ app:
     data:
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
-      FAULT_RATE: 3
+      FAULT_RATE: "3"
       MESSAGE: hello world
       PROTOCOL: http
       VERSION: v0.8.44
