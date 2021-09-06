@@ -5,15 +5,15 @@ app:
       HOSTNAME: default.svc.cluster.local
       MESSAGE: hello world
       PROTOCOL: http
-      VERSION: v0.8.33
+      VERSION: v0.8.34
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: c1494d5733bff3113dbf6bb4036a2b5a
+    value: 845e8a05a40459061cf1b4ad1d09aa6d
   image:
-    tag: v0.8.33
+    tag: v0.8.34
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
