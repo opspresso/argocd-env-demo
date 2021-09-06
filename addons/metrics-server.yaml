@@ -30,6 +30,9 @@ spec:
           values: |-
             fullnameOverride: metrics-server
 
+            image:
+              repository: k8s.gcr.io/metrics-server-arm64
+
             args:
               - --kubelet-insecure-tls
               - --kubelet-preferred-address-types=InternalIP
@@ -37,13 +40,13 @@ spec:
             # apiService:
             #   create: false
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: graviton
-            #     effect: NoSchedule
-            # nodeSelector:
-            #   group: graviton
+            tolerations:
+              - key: group
+                operator: Equal
+                value: graviton
+                effect: NoSchedule
+            nodeSelector:
+              group: graviton
 
       syncPolicy:
         automated:
