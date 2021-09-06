@@ -25,7 +25,7 @@ spec:
         name: "{{cluster}}"
         namespace: addon-aws-node-termination-handler
       source:
-        repoURL: https://kubernetes-sigs.github.io/aws-node-termination-handler
+        repoURL: https://aws.github.io/eks-charts
         targetRevision: "0.15.3"
         chart: aws-node-termination-handler
         helm:
