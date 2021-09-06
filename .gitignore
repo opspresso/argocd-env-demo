@@ -34,3 +34,5 @@ build/
 
 values.output.yaml
 realm.output.json
+
+istio-*/
