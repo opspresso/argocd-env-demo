@@ -20,7 +20,8 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      HOSTNAME: bruce.spic.me
+      HOSTNAME: default.svc.cluster.local
+      REDIS_URL: redis://sample-redis:6379
       MESSAGE: hello world
       VERSION: v0.8.56
     enabled: true

@@ -25,7 +25,7 @@ app:
   #       - analysis:
   #           args:
   #           - name: url
-  #             value: http://sample-node-preview:3000/success/98
+  #             value: http://sample-node-preview/success/98
   #           templates:
   #           - clusterScope: true
   #             templateName: http-benchmark

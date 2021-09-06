@@ -2,7 +2,7 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      HOSTNAME: bruce.spic.me
+      HOSTNAME: default.svc.cluster.local
       MESSAGE: hello world
       VERSION: v0.8.15
     enabled: true
