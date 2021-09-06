@@ -1,16 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: dashboard-rbac
+  name: dashboard-extra
 spec:
   generators:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              host: "bruce.spic.me"
 
   template:
     metadata:
-      name: "dashboard-rbac-{{cluster}}"
+      name: "dashboard-extra-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -28,7 +30,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: dashboard-rbac
+            fullnameOverride: dashboard-extra
 
             resources:
               - apiVersion: rbac.authorization.k8s.io/v1

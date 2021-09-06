@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: argocd-secret
+  name: argocd-extra
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "argocd-secret"
+      name: "argocd-extra"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -28,7 +28,7 @@ spec:
         chart: raw
         helm:
           values: |-
-            fullnameOverride: argocd-secret
+            fullnameOverride: argocd-extra
 
             resources:
               - apiVersion: kubernetes-client.io/v1
