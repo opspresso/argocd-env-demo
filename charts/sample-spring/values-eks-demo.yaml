@@ -2,7 +2,8 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      HOSTNAME: default.svc.cluster.local
+      PROTOCOL: https
+      HOSTNAME: bruce.spic.me
       MESSAGE: hello world
       VERSION: v0.8.31
     enabled: true
@@ -10,7 +11,7 @@ app:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 9a87179d8a3c464049292d1017ccdfab
+    value: 9a87179d8a3c464049292d1017ccdfab-https
   image:
     tag: v0.8.31
   ingress:
