@@ -114,6 +114,7 @@ spec:
                   - interval: 15s
                     path: /stats/prometheus
                     port: http-envoy-prom
+                  jobLabel: istio-servicemesh
                   namespaceSelector:
                     any: true
                   selector:

@@ -2,7 +2,7 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      # PROTOCOL: https
+      PROTOCOL: http
       HOSTNAME: default.svc.cluster.local
       MESSAGE: hello world
       VERSION: v0.8.31
