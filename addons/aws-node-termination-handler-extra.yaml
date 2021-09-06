@@ -41,21 +41,21 @@ spec:
                     - key: /k8s/common/slack-hooks
                       name: webhookurl
 
-              - apiVersion: irsa.voodoo.io/v1alpha1
-                kind: IamRoleServiceAccount
-                metadata:
-                  name: aws-node-termination-handler-demo
-                spec:
-                  policy:
-                    statement:
-                    - action:
-                        - "autoscaling:CompleteLifecycleAction"
-                        - "autoscaling:DescribeAutoScalingInstances"
-                        - "autoscaling:DescribeTags"
-                        - "ec2:DescribeInstances"
-                        - "sqs:DeleteMessage"
-                        - "sqs:ReceiveMessage"
-                      resource: "*"
+              # - apiVersion: irsa.voodoo.io/v1alpha1
+              #   kind: IamRoleServiceAccount
+              #   metadata:
+              #     name: aws-node-termination-handler-demo
+              #   spec:
+              #     policy:
+              #       statement:
+              #       - action:
+              #           - "autoscaling:CompleteLifecycleAction"
+              #           - "autoscaling:DescribeAutoScalingInstances"
+              #           - "autoscaling:DescribeTags"
+              #           - "ec2:DescribeInstances"
+              #           - "sqs:DeleteMessage"
+              #           - "sqs:ReceiveMessage"
+              #         resource: "*"
 
       syncPolicy:
         automated:
