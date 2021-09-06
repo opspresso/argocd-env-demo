@@ -11,7 +11,7 @@ app:
 
   service:
     name: http
-    port: 50051
+    targetPort: 50051
 
   readinessProbe:
     failureThreshold: 3
