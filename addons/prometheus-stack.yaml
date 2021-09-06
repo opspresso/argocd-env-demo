@@ -131,6 +131,7 @@ spec:
 
               # https://github.com/kubernetes/kube-state-metrics/blob/master/docs/cli-arguments.md
               extraArgs:
+                - --metric-annotations-allowlist=nodes=[*],namespaces=[*],deployments=[*],pods=[*],services=[*]
                 - --metric-labels-allowlist=nodes=[*],namespaces=[*],deployments=[*],pods=[*],services=[*]
 
               tolerations:
