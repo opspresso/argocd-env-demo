@@ -36,9 +36,9 @@ spec:
               annotations:
                 eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
-            enableRebalanceMonitoring: "true"
-            enableScheduledEventDraining: "true"
-            enableSpotInterruptionDraining: "true"
+            enableRebalanceMonitoring: true
+            enableScheduledEventDraining: true
+            enableSpotInterruptionDraining: true
 
             # webhookURL: https://hooks.slack.com/services/YOUR/SLACK/URL
 
