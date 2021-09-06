@@ -21,7 +21,7 @@ spec:
       project: apps
       destination:
         name: "{{cluster}}"
-        namespace: default
+        namespace: sample
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
