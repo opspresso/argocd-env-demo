@@ -21,17 +21,17 @@ app:
     data:
       CLUSTER_NAME: eks-demo
       HOSTNAME: default.svc.cluster.local
-      REDIS_URL: redis://sample-redis:6379
       MESSAGE: hello world
-      VERSION: v0.8.56
+      REDIS_URL: redis://sample-redis:6379
+      VERSION: v0.8.57
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 24d4cdca5e4527a4b8538ecf30b9c62c
+    value: baabafc5dee6fec39504d6a016903288
   image:
-    tag: v0.8.56
+    tag: v0.8.57
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
