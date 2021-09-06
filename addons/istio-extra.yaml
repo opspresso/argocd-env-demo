@@ -113,7 +113,18 @@ spec:
                   endpoints:
                   - interval: 15s
                     path: /stats/prometheus
-                    port: http-envoy-prom
+                    relabelings:
+                    - sourceLabels: [__meta_kubernetes_pod_container_port_name]
+                      action: keep
+                      regex: '.*-envoy-prom'
+                    - action: labeldrop
+                      regex: "__meta_kubernetes_pod_label_(.+)"
+                    - sourceLabels: [__meta_kubernetes_namespace]
+                      action: replace
+                      targetLabel: namespace
+                    - sourceLabels: [__meta_kubernetes_pod_name]
+                      action: replace
+                      targetLabel: pod_name
                   jobLabel: istio-servicemesh
                   namespaceSelector:
                     any: true
