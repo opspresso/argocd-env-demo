@@ -13,13 +13,15 @@ aws-node-termination-handler | public.ecr.aws/aws-ec2/aws-node-termination-handl
 cert-manager | quay.io/jetstack/cert-manager-controller | ✅ | ✅
 chaoskube | quay.io/linki/chaoskube | ✅ | ❌
 cluster-autoscaler | k8s.gcr.io/autoscaling/cluster-autoscaler | ✅ | ✅
+dex | ghcr.io/dexidp/dex | ✅ | ✅
 external-dns | k8s.gcr.io/external-dns/external-dns | ✅ | ✅
 external-secrets | ghcr.io/external-secrets/kubernetes-external-secrets | ✅ | ✅
 grafana | grafana/grafana | ✅ | ✅
 irsa-operator | ghcr.io/voodooteam/irsa-operator | ✅ | ❌
-istio | ghcr.io/voodooteam/irsa-operator | ✅ | ✅
-kiali | quay.io/kiali/kiali | ✅ | ❌
+istio | gcr.io/istio-testing/pilot / querycapistio/pilot | ✅ | ✅
+kiali | quay.io/kiali/kiali | ✅ | ✅
 kubernetes-dashboard | kubernetesui/dashboard | ✅ | ✅
 loki | grafana/loki | ✅ | ✅
-metrics-server | k8s.gcr.io/metrics-server-amd64 | ✅ | ❌
+metrics-server | k8s.gcr.io/metrics-server-amd64 / k8s.gcr.io/metrics-server-arm64 | ✅ | ✅
 prometheus | quay.io/prometheus/prometheus | ✅ | ✅
+promtail | grafana/promtail | ✅ | ✅
