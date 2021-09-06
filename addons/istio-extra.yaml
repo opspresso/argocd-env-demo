@@ -87,6 +87,27 @@ spec:
                 kind: ServiceMonitor
                 metadata:
                   labels:
+                    app: istio-ingressgateway
+                    release: prometheus-{{cluster}}
+                  name: istio-ingressgateway-metrics
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /stats/prometheus
+                    port: http-envoy-prom
+                  jobLabel: istio-ingressgateway
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchLabels:
+                      app: istio-ingressgateway
+                      istio: ingressgateway
+
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
                     app: istio-servicemesh
                     release: prometheus-{{cluster}}
                   name: istio-servicemesh-metrics
@@ -113,27 +134,6 @@ spec:
                     matchExpressions:
                     - key: istio
                       operator: DoesNotExist
-
-              - apiVersion: monitoring.coreos.com/v1
-                kind: ServiceMonitor
-                metadata:
-                  labels:
-                    app: istio-ingressgateway
-                    release: prometheus-{{cluster}}
-                  name: istio-ingressgateway-metrics
-                spec:
-                  endpoints:
-                  - interval: 15s
-                    path: /stats/prometheus
-                    port: http-envoy-prom
-                  jobLabel: istio-ingressgateway
-                  namespaceSelector:
-                    matchNames:
-                    - istio-system
-                  selector:
-                    matchLabels:
-                      app: istio-ingressgateway
-                      istio: ingressgateway
 
               - apiVersion: cert-manager.io/v1
                 kind: Certificate
