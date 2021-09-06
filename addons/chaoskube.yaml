@@ -32,7 +32,7 @@ spec:
 
             image:
               repository: quay.io/linki/chaoskube
-              tag: "v0.21.0"
+              tag: "v0.21.0-arm64v8"
 
             chaoskube:
               args:
@@ -69,13 +69,13 @@ spec:
                 # terminate pods for real: this disables dry-run mode which is on by default
                 no-dry-run: ""
 
-              # tolerations:
-              #   - key: group
-              #     operator: Equal
-              #     value: graviton
-              #     effect: NoSchedule
-              # nodeSelector:
-              #   group: graviton
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: graviton
+                  effect: NoSchedule
+              nodeSelector:
+                group: graviton
 
       syncPolicy:
         automated:
