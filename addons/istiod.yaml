@@ -24,13 +24,13 @@ spec:
         namespace: istio-system
       source:
         repoURL: https://github.com/istio/istio
-        targetRevision: "1.11.1"
+        targetRevision: "1.11.2"
         path: manifests/charts/istio-control/istio-discovery
         helm:
           values: |-
             global:
               hub: querycapistio
-              tag: "1.11.1"
+              tag: "1.11.2"
 
               # proxy:
               #   lifecycle:
