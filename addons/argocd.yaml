@@ -63,10 +63,10 @@ spec:
               resources:
                 requests:
                   cpu: 50m
-                  memory: 64Mi
+                  memory: 128Mi
                 limits:
                   cpu: 100m
-                  memory: 128Mi
+                  memory: 256Mi
 
               service:
                 type: LoadBalancer
@@ -151,10 +151,10 @@ spec:
               resources:
                 requests:
                   cpu: 100m
-                  memory: 128Mi
+                  memory: 256Mi
                 limits:
                   cpu: 200m
-                  memory: 256Mi
+                  memory: 512Mi
 
               metrics:
                 enabled: true
