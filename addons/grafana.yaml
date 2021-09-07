@@ -149,23 +149,23 @@ spec:
                   datasource: Prometheus
 
                 istio-extension-dashboard:
-                  url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-extension-dashboard.json
-                  datasource: istio
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-extension-dashboard.json
+                  datasource: Prometheus
                 istio-mesh-dashboard:
-                  url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-mesh-dashboard.json
-                  datasource: istio
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-mesh-dashboard.json
+                  datasource: Prometheus
                 istio-performance-dashboard:
-                  url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-performance-dashboard.json
-                  datasource: istio
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-performance-dashboard.json
+                  datasource: Prometheus
                 istio-service-dashboard:
-                  url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-service-dashboard.json
-                  datasource: istio
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-service-dashboard.json
+                  datasource: Prometheus
                 istio-workload-dashboard:
-                  url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/istio-workload-dashboard.json
-                  datasource: istio
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-workload-dashboard.json
+                  datasource: Prometheus
                 pilot-dashboard:
-                  url: https://raw.githubusercontent.com/istio/istio/master/manifests/addons/dashboards/pilot-dashboard.json
-                  datasource: istio
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-pilot-dashboard.json
+                  datasource: Prometheus
 
             persistence:
               enabled: true
