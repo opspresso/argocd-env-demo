@@ -32,19 +32,19 @@ spec:
               hub: querycapistio
               tag: "1.11.2"
 
-              # proxy:
-              #   lifecycle:
-              #     postStart:
-              #       exec:
-              #         command:
-              #         - pilot-agent
-              #         - wait
-              #     preStop:
-              #       exec:
-              #         command:
-              #         - "/bin/sh"
-              #         - "-c"
-              #         - "while [ $(netstat -plunt | grep tcp | grep -v envoy | wc -l | xargs) -ne 0 ]; do sleep 1; done"
+              proxy:
+                lifecycle:
+                  postStart:
+                    exec:
+                      command:
+                      - pilot-agent
+                      - wait
+                  preStop:
+                    exec:
+                      command:
+                      - "/bin/sh"
+                      - "-c"
+                      - "while [ $(netstat -plunt | grep tcp | grep -v envoy | wc -l | xargs) -ne 0 ]; do sleep 1; done"
 
             pilot:
               resources:
