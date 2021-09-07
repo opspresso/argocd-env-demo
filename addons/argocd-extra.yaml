@@ -57,6 +57,37 @@ spec:
                     - key: /k8s/common/argo-workflows-client-secret
                       name: argo-workflows-client-secret
 
+              - apiVersion: networking.istio.io/v1beta1
+                kind: Gateway
+                metadata:
+                  name: argocd
+                spec:
+                  selector:
+                    istio: ingressgateway
+                  servers:
+                    - hosts:
+                        - "argocd.{{values.host}}"
+                      port:
+                        number: 80
+                        name: http
+                        protocol: HTTP
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: argocd
+                spec:
+                  hosts:
+                    - "argocd.{{values.host}}"
+                  gateways:
+                    - argocd
+                  http:
+                    - route:
+                        - destination:
+                            host: argocd-server
+                            port:
+                              number: 80
+
       syncPolicy:
         # automated:
         #   prune: true
