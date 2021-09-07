@@ -18,6 +18,7 @@ coredns | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/coredns | ✅ | 
 dex | ghcr.io/dexidp/dex | ✅ | ✅
 external-dns | k8s.gcr.io/external-dns/external-dns | ✅ | ✅
 external-secrets | ghcr.io/external-secrets/kubernetes-external-secrets | ✅ | ✅
+gocd | gocd/gocd-server | ✅ | ❌
 grafana | grafana/grafana | ✅ | ✅
 irsa-operator | ghcr.io/voodooteam/irsa-operator | ✅ | ❌
 istio | gcr.io/istio-testing/pilot / querycapistio/pilot | ✅ | ✅
