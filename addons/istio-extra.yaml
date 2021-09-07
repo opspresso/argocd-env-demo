@@ -50,38 +50,38 @@ spec:
                     istio: ingressgateway
                   type: ClusterIP
 
-              # - apiVersion: monitoring.coreos.com/v1
-              #   kind: ServiceMonitor
-              #   metadata:
-              #     labels:
-              #       app: istio-components
-              #       release: prometheus-{{cluster}}
-              #     name: istio-components-metrics
-              #   spec:
-              #     endpoints:
-              #     - interval: 30s
-              #       metricRelabelings:
-              #         - sourceLabels:
-              #             - cluster
-              #           targetLabel: istio_cluster
-              #         - action: labeldrop
-              #           regex: cluster
-              #       port: http-monitoring
-              #     jobLabel: istio
-              #     namespaceSelector:
-              #       matchNames:
-              #       - istio-system
-              #     selector:
-              #       matchExpressions:
-              #         - key: istio
-              #           operator: In
-              #           values:
-              #             - mixer
-              #             - pilot
-              #             - galley
-              #             - citadel
-              #             - sidecar-injector
-              #             - istiod
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
+                    app: istio-components
+                    release: prometheus-{{cluster}}
+                  name: istio-components-metrics
+                spec:
+                  endpoints:
+                  - interval: 30s
+                    metricRelabelings:
+                      - sourceLabels:
+                          - cluster
+                        targetLabel: istio_cluster
+                      - action: labeldrop
+                        regex: cluster
+                    port: http-monitoring
+                  jobLabel: istio
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchExpressions:
+                      - key: istio
+                        operator: In
+                        values:
+                          - mixer
+                          - pilot
+                          - galley
+                          - citadel
+                          - sidecar-injector
+                          - istiod
 
               - apiVersion: monitoring.coreos.com/v1
                 kind: ServiceMonitor
