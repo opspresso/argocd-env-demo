@@ -14,14 +14,20 @@ aws-node-termination-handler | public.ecr.aws/aws-ec2/aws-node-termination-handl
 cert-manager | quay.io/jetstack/cert-manager-controller | ✅ | ✅
 chaoskube | quay.io/linki/chaoskube | ✅ | ❌
 cluster-autoscaler | k8s.gcr.io/autoscaling/cluster-autoscaler | ✅ | ✅
+consul | consul |  | ✅ | ✅
 coredns | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/coredns | ✅ | ✅
+cortex | cortexproject/cortex | ✅ | ❌
+crossplane | crossplane/crossplane | ✅ | ✅
+datadog | gcr.io/datadoghq/agent | ✅ | ✅
 dex | ghcr.io/dexidp/dex | ✅ | ✅
 external-dns | k8s.gcr.io/external-dns/external-dns | ✅ | ✅
 external-secrets | ghcr.io/external-secrets/kubernetes-external-secrets | ✅ | ✅
 gocd | gocd/gocd-server | ✅ | ❌
 grafana | grafana/grafana | ✅ | ✅
+ingress-nginx | quay.io/kubernetes-ingress-controller/nginx-ingress-controller | ✅ | ✅
 irsa-operator | ghcr.io/voodooteam/irsa-operator | ✅ | ❌
 istio | gcr.io/istio-testing/pilot / querycapistio/pilot | ✅ | ✅
+keycloak | jboss/keycloak | ✅ | ❌
 kiali | quay.io/kiali/kiali | ✅ | ✅
 kube-proxy | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/kube-proxy | ✅ | ✅
 kube-state-metrics | k8s.gcr.io/kube-state-metrics/kube-state-metrics | ✅ | ✅
