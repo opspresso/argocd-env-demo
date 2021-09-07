@@ -68,14 +68,14 @@ spec:
                   cpu: 100m
                   memory: 256Mi
 
-              service:
-                type: LoadBalancer
-                annotations:
-                  external-dns.alpha.kubernetes.io/hostname: "argocd.{{values.host}}"
-                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
-                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+              # service:
+              #   type: LoadBalancer
+              #   annotations:
+              #     external-dns.alpha.kubernetes.io/hostname: "argocd.{{values.host}}"
+              #     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+              #     service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+              #     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+              #     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
               extraArgs:
                 - --insecure
