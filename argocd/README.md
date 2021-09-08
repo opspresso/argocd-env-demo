@@ -118,7 +118,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 
 ### service  및 lb 삭제
 
-> service 를 삭제 하여, external-dns 가 생성한 elb 를 삭제 합니다.
+> service 를 삭제 하여, LoadBalancer 로 생성한 elb 를 삭제 합니다.
 
 ```bash
 kubectl delete svc -n argocd argocd-server
