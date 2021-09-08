@@ -4,15 +4,15 @@ app:
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      VERSION: v0.8.15
+      VERSION: v0.8.16
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 17730f92e8d5c0f2925821ce87038acf-sample
+    value: 5ab7be638747f72c5d0fc49e9a8e7d71
   image:
-    tag: v0.8.15
+    tag: v0.8.16
   ingress:
     hosts:
     - host: sample-tomcat.bruce.spic.me
