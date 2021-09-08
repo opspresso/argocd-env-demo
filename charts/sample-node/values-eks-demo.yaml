@@ -23,15 +23,15 @@ app:
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.8.63
+      VERSION: v0.8.64
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 2512be9005083cab78068f12c64a2230-sample
+    value: 47e62560fdd6fe85ba6f72a3edf1c230
   image:
-    tag: v0.8.63
+    tag: v0.8.64
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
