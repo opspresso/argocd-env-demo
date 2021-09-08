@@ -37,31 +37,31 @@ spec:
 
             gateways:
               istio-ingressgateway:
-                type: ClusterIP
+                # type: ClusterIP
 
-                # serviceAnnotations:
-                #   external-dns.alpha.kubernetes.io/hostname: "*.{{values.host}}"
-                #   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-                #   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                #   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
-                #   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+                serviceAnnotations:
+                  external-dns.alpha.kubernetes.io/hostname: "*.{{values.host}}"
+                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
                 autoscaleEnabled: true
                 autoscaleMin: 3
                 autoscaleMax: 6
 
                 ports:
-                - port: 15021
+                - name: status-port
+                  port: 15021
                   targetPort: 15021
-                  name: status-port
                   protocol: TCP
-                - port: 80
+                - name: http2
+                  port: 80
                   targetPort: 8080
-                  name: http2
                   protocol: TCP
-                - port: 443
+                - name: https
+                  port: 443
                   targetPort: 8443
-                  name: https
                   protocol: TCP
 
       syncPolicy:
