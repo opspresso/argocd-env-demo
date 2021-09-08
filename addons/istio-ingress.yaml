@@ -47,8 +47,8 @@ spec:
                 #   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
                 autoscaleEnabled: true
-                autoscaleMin: 2
-                autoscaleMax: 5
+                autoscaleMin: 3
+                autoscaleMax: 6
 
                 ports:
                 - port: 15021
