@@ -36,7 +36,7 @@ spec:
             controller:
               resources:
                 requests:
-                  cpu: 250m
+                  cpu: 300m
                   memory: 512Mi
                 limits:
                   cpu: 500m
@@ -150,10 +150,10 @@ spec:
 
               resources:
                 requests:
-                  cpu: 100m
+                  cpu: 200m
                   memory: 256Mi
                 limits:
-                  cpu: 200m
+                  cpu: 300m
                   memory: 512Mi
 
               metrics:
