@@ -6,17 +6,17 @@ server:
   service:
     type: LoadBalancer
     annotations:
-      external-dns.alpha.kubernetes.io/hostname: "argocd.bruce.spic.me"
+      external-dns.alpha.kubernetes.io/hostname: "ARGOCD_HOSTNAME"
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
       service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3e3a7d57-e800-4748-990d-cc2e20c30740"
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "AWS_ACM_CERT"
       service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
   extraArgs:
     - --insecure
 
   config:
-    url: https://argocd.bruce.spic.me
+    url: https://ARGOCD_HOSTNAME
 
     dex.config: |
       connectors:
@@ -27,12 +27,12 @@ server:
           clientID: ARGOCD_GITHUB_ID
           clientSecret: $dex.github.clientSecret
           orgs:
-            - name: opspresso
+            - name: GITHUB_ORG
 
   rbacConfig:
     policy.default: "role:readonly"
     policy.csv: |
-      g, opspresso:sre, role:admin
+      g, GITHUB_ORG:GITHUB_TEAM, role:admin
 
   additionalProjects:
     - name: addons
