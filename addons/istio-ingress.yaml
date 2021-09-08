@@ -61,7 +61,7 @@ spec:
                   protocol: TCP
                 - name: https
                   port: 443
-                  targetPort: 8443
+                  targetPort: 8080
                   protocol: TCP
 
       syncPolicy:
