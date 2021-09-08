@@ -33,16 +33,16 @@ spec:
             fullnameOverride: istio-extra
 
             resources:
-              - apiVersion: elbv2.k8s.aws/v1beta1
-                kind: TargetGroupBinding
-                metadata:
-                  name: istio-ingressgateway
-                spec:
-                  serviceRef:
-                    name: istio-ingressgateway
-                    port: http2
-                  targetGroupARN: "{{values.tg_arn}}"
-                  targetType: ip
+              # - apiVersion: elbv2.k8s.aws/v1beta1
+              #   kind: TargetGroupBinding
+              #   metadata:
+              #     name: istio-ingressgateway
+              #   spec:
+              #     serviceRef:
+              #       name: istio-ingressgateway
+              #       port: http2
+              #     targetGroupARN: "{{values.tg_arn}}"
+              #     targetType: ip
 
               - apiVersion: v1
                 kind: Service
