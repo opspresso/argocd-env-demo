@@ -1,7 +1,11 @@
 app:
+  configmap:
+    data:
+      PROFILE: dev
+      CLUSTER_NAME: eks-demo
+      VERSION: latest
+    enabled: true
   env:
-  - name: PROFILE
-    value: dev
   - name: ENV_HASH
     value: 75de9c53266eb537d080942027e96da8
   image:

@@ -19,6 +19,7 @@ app:
     minReplicas: 2
   configmap:
     data:
+      PROFILE: dev
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
@@ -26,8 +27,6 @@ app:
       VERSION: v0.8.66
     enabled: true
   env:
-  - name: PROFILE
-    value: dev
   - name: ENV_HASH
     value: 559b9ce01fd0e2e16e9ffd1417cce01e
   image:
