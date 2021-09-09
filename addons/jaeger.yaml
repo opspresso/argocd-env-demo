@@ -39,6 +39,11 @@ spec:
                   - name: CASSANDRA_SERVERS
                     value: cassandra
 
+            schema:
+              extraEnv:
+                - name: CASSANDRA_SERVERS
+                  value: cassandra
+
             cassandra:
               fullnameOverride: cassandra
               persistence:
