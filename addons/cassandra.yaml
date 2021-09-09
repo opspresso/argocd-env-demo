@@ -33,7 +33,7 @@ spec:
             fullnameOverride: cassandra
 
             dbUser:
-              user: cassandra
+              user: user
               password: password
 
             persistence:
