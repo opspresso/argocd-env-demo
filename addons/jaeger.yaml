@@ -38,6 +38,7 @@ spec:
             #   kafka: false
 
             cassandra:
+              fullnameOverride: cassandra
               persistence:
                 enabled: true
                 storageClass: gp3
