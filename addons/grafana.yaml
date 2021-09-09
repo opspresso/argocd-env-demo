@@ -137,6 +137,11 @@ spec:
                   # gnetId: 14902
                   # revision: 2
                   datasource: Prometheus
+                kube-dms:
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-daemonset.json
+                  # gnetId: 14902
+                  # revision: 2
+                  datasource: Prometheus
 
                 nginx-ingress:
                   url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
