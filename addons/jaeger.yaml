@@ -40,15 +40,14 @@ spec:
                   port: 9411
               cmdlineParams:
                 cassandra.keyspace: jaeger_v1_test
-                cassandra.servers: cassandra.addon-tracing.svc.cluster.local
+                cassandra.servers: jaeger-eks-demo-cassandra
                 collector.zipkin.host-port: 9411
                 log-level: info
 
             query:
               cmdlineParams:
                 cassandra.keyspace: jaeger_v1_test
-                cassandra.servers: cassandra.addon-tracing.svc.cluster.local
-                collector.zipkin.host-port: 9411
+                cassandra.servers: jaeger-eks-demo-cassandra
                 log-level: info
 
             agent:
