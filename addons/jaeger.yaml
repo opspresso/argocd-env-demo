@@ -37,6 +37,17 @@ spec:
               elasticsearch: false
               kafka: false
 
+            agent:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+                - key: group
+                  operator: Equal
+                  value: graviton
+                  effect: NoSchedule
+
       syncPolicy:
         # automated:
         #   prune: true
