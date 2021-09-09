@@ -32,10 +32,28 @@ spec:
           values: |-
             fullnameOverride: jaeger
 
-            provisionDataStore:
-              cassandra: false
-              elasticsearch: false
-              kafka: false
+            # provisionDataStore:
+            #   cassandra: false
+            #   elasticsearch: false
+            #   kafka: false
+
+            cassandra:
+              persistence:
+                enabled: true
+                storageClass: gp3
+
+            # storage:
+            #   type: cassandra
+            #   cassandra:
+            #     host: cassandra
+            #     port: 9042
+            #     tls:
+            #       enabled: false
+            #       secretName: cassandra-tls-secret
+            #     user: user
+            #     usePassword: true
+            #     password: password
+            #     keyspace: jaeger_v1_test
 
             agent:
               tolerations:
