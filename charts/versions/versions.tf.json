@@ -72,6 +72,10 @@
       "default": "0.1.6",
       "description": "irsa-operator/irsa-operator"
     },
+    "helm_jaeger": {
+      "default": "0.46.6",
+      "description": "jaegertracing/jaeger"
+    },
     "helm_keycloak": {
       "default": "15.0.2",
       "description": "codecentric/keycloak"
