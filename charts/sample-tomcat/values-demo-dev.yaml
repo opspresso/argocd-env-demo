@@ -21,10 +21,10 @@ app:
       enabled: true
     sidecar:
       inject: true
-  nodeSelector:
-    group: graviton
-  tolerations:
-  - effect: NoSchedule
-    key: group
-    operator: Equal
-    value: graviton
+  # nodeSelector:
+  #   group: graviton
+  # tolerations:
+  # - effect: NoSchedule
+  #   key: group
+  #   operator: Equal
+  #   value: graviton
