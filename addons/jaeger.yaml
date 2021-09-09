@@ -32,6 +32,11 @@ spec:
           values: |-
             fullnameOverride: jaeger
 
+            cassandra:
+              fullnameOverride: cassandra
+              persistence:
+                enabled: false
+
       syncPolicy:
         # automated:
         #   prune: true
