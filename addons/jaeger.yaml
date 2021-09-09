@@ -30,7 +30,7 @@ spec:
         chart: jaeger
         helm:
           values: |-
-            nameOverride: jaeger
+            fullnameOverride: jaeger
 
             cassandra:
               persistence:
