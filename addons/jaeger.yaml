@@ -38,6 +38,15 @@ spec:
                 enabled: true
                 storageClass: gp3
 
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              selector:
+                nodeSelector:
+                  group: monitoring
+
             agent:
               tolerations:
                 - key: group
