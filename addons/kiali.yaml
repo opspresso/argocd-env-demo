@@ -70,8 +70,8 @@ spec:
               prometheus:
                 url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
-              # tracing:
-              #   in_cluster_url: "http://jaeger-query.addon-tracing:16686"
+              tracing:
+                in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
 
       syncPolicy:
         # automated:
