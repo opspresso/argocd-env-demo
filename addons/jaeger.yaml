@@ -35,6 +35,9 @@ spec:
             tag: "1.26"
 
             cassandra:
+              config:
+                cluster_size: 2
+
               persistence:
                 enabled: true
                 storageClass: gp3
