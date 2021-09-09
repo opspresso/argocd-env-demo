@@ -71,6 +71,9 @@ spec:
                   }
                 }
 
+            ingester:
+              enabled: true
+
             agent:
               tolerations:
                 - key: group
