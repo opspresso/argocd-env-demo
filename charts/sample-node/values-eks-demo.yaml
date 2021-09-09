@@ -23,15 +23,15 @@ app:
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.8.64
+      VERSION: v0.8.65
     enabled: true
   env:
   - name: PROFILE
     value: dev
   - name: ENV_HASH
-    value: 47e62560fdd6fe85ba6f72a3edf1c230
+    value: 4d2bb94b5230524fcf357017182d81d2
   image:
-    tag: v0.8.64
+    tag: v0.8.65
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
@@ -44,21 +44,7 @@ app:
       enabled: true
     sidecar:
       inject: true
-  # nodeSelector:
-  #   group: graviton
-  # tolerations:
-  # - effect: NoSchedule
-  #   key: group
-  #   operator: Equal
-  #   value: graviton
 redis:
   istio:
     sidecar:
       inject: true
-  # nodeSelector:
-  #   group: graviton
-  # tolerations:
-  # - effect: NoSchedule
-  #   key: group
-  #   operator: Equal
-  #   value: graviton
