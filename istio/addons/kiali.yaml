@@ -84,17 +84,24 @@ data:
     external_services:
       custom_dashboards:
         enabled: true
+      grafana:
+        in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
+        url: "https://grafana.bruce.spic.me"
+      prometheus:
+        url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
     identity:
       cert_file: ""
       private_key_file: ""
     istio_namespace: istio-system
     login_token:
-      signing_key: CHANGEME
+      signing_key: CHANGE-ME
     server:
       metrics_enabled: true
       metrics_port: 9090
       port: 20001
       web_root: /kiali
+      web_schema: https
+      web_fqdn: "kiali.{{values.host}}"
 ---
 # Source: kiali-server/templates/role-viewer.yaml
 apiVersion: rbac.authorization.k8s.io/v1
