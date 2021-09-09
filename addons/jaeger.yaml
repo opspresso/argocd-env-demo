@@ -32,6 +32,8 @@ spec:
           values: |-
             fullnameOverride: jaeger
 
+            tag: "1.26"
+
             cassandra:
               persistence:
                 enabled: true

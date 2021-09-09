@@ -27,6 +27,7 @@ grafana | grafana/grafana | ✅ | ✅
 ingress-nginx | quay.io/kubernetes-ingress-controller/nginx-ingress-controller | ✅ | ✅
 irsa-operator | ghcr.io/voodooteam/irsa-operator | ✅ | ❌
 istio | gcr.io/istio-testing/pilot / querycapistio/pilot | ✅ | ✅
+jaeger | jaegertracing/jaeger-agent >= 1.24 | ✅ | ✅
 keycloak | jboss/keycloak | ✅ | ❌
 kiali | quay.io/kiali/kiali | ✅ | ✅
 kube-proxy | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/kube-proxy | ✅ | ✅
