@@ -71,8 +71,8 @@ spec:
                   }
                 }
 
-            ingester:
-              enabled: true
+            # ingester:
+            #   enabled: true
 
             agent:
               tolerations:
