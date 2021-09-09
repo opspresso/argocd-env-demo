@@ -41,7 +41,7 @@ spec:
               accessModes:
                 - ReadWriteOnce
               size: 10Gi
-              storageClassName: gp3
+              storageClass: gp3
 
             tolerations:
               - key: group
