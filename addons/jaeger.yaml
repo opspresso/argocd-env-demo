@@ -34,6 +34,22 @@ spec:
 
             tag: "1.26"
 
+            collector:
+              service:
+                zipkin:
+                  port: 9411
+
+            agent:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+                - key: group
+                  operator: Equal
+                  value: graviton
+                  effect: NoSchedule
+
             cassandra:
               config:
                 cluster_size: 2
@@ -50,17 +66,6 @@ spec:
               selector:
                 nodeSelector:
                   group: monitoring
-
-            agent:
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: monitoring
-                  effect: NoSchedule
-                - key: group
-                  operator: Equal
-                  value: graviton
-                  effect: NoSchedule
 
       syncPolicy:
         # automated:
