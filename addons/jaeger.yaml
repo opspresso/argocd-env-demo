@@ -38,17 +38,6 @@ spec:
               service:
                 zipkin:
                   port: 9411
-              cmdlineParams:
-                cassandra.keyspace: jaeger_v1_test
-                cassandra.servers: jaeger-eks-demo-cassandra
-                collector.zipkin.host-port: 9411
-                log-level: info
-
-            query:
-              cmdlineParams:
-                cassandra.keyspace: jaeger_v1_test
-                cassandra.servers: jaeger-eks-demo-cassandra
-                log-level: info
 
             agent:
               tolerations:
