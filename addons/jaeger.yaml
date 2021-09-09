@@ -32,6 +32,13 @@ spec:
           values: |-
             fullnameOverride: jaeger
 
+            storage:
+              type: cassandra
+              cassandra:
+                extraEnv:
+                  - name: CASSANDRA_SERVERS
+                    value: cassandra
+
             cassandra:
               fullnameOverride: cassandra
               persistence:
