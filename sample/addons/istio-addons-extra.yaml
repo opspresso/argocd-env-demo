@@ -33,6 +33,16 @@ spec:
             fullnameOverride: istio-addons-extra
 
             resources:
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: kiali
+                spec:
+                  backendType: systemManager
+                  data:
+                    - key: /k8s/common/google-secret
+                      name: oidc-secret
+
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway
                 metadata:
@@ -42,9 +52,8 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "grafana-istio.{{values.host}}"
-                        - "kiali-istio.{{values.host}}"
-                        - "prometheus-istio.{{values.host}}"
+                        - "kiali.{{values.host}}"
+                        - "tracing.{{values.host}}"
                       port:
                         number: 80
                         name: http
@@ -53,10 +62,10 @@ spec:
               - apiVersion: networking.istio.io/v1beta1
                 kind: VirtualService
                 metadata:
-                  name: istio-addons-kiali
+                  name: kiali
                 spec:
                   hosts:
-                    - "kiali-istio.{{values.host}}"
+                    - "kiali.{{values.host}}"
                   gateways:
                     - istio-addons
                   http:
@@ -65,6 +74,22 @@ spec:
                             host: kiali
                             port:
                               number: 20001
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: tracing
+                spec:
+                  hosts:
+                    - "tracing.{{values.host}}"
+                  gateways:
+                    - istio-addons
+                  http:
+                    - route:
+                        - destination:
+                            host: tracing
+                            port:
+                              number: 80
 
       syncPolicy:
         # automated:
