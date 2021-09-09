@@ -19,18 +19,18 @@ app:
     minReplicas: 2
   configmap:
     data:
-      PROFILE: dev
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
+      PROFILE: dev
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.8.66
+      VERSION: v0.8.67
     enabled: true
   env:
   - name: ENV_HASH
-    value: 559b9ce01fd0e2e16e9ffd1417cce01e
+    value: 0481f8d62c5441b85ee212046f7aea7f
   image:
-    tag: v0.8.66
+    tag: v0.8.67
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
