@@ -31,7 +31,6 @@ spec:
         helm:
           values: |-
             nameOverride: jaeger
-            fullnameOverride: jaeger
 
             cassandra:
               persistence:
