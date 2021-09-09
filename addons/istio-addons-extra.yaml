@@ -53,7 +53,7 @@ spec:
                   servers:
                     - hosts:
                         - "kiali.{{values.host}}"
-                        - "jaeger.{{values.host}}"
+                        - "tracing.{{values.host}}"
                       port:
                         number: 80
                         name: http
@@ -78,16 +78,16 @@ spec:
               - apiVersion: networking.istio.io/v1beta1
                 kind: VirtualService
                 metadata:
-                  name: jaeger
+                  name: tracing
                 spec:
                   hosts:
-                    - "jaeger.{{values.host}}"
+                    - "tracing.{{values.host}}"
                   gateways:
                     - istio-addons
                   http:
                     - route:
                         - destination:
-                            host: jaeger-query
+                            host: tracing
                             port:
                               number: 80
 
