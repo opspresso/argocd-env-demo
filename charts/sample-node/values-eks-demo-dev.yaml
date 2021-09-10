@@ -13,7 +13,7 @@ app:
     - resource:
         name: cpu
         target:
-          averageUtilization: 30
+          averageUtilization: 50
           type: Utilization
       type: Resource
     minReplicas: 2
