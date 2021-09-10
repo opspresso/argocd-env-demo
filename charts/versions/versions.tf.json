@@ -33,7 +33,7 @@
       "description": "stable/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.10.6",
+      "default": "9.10.7",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {

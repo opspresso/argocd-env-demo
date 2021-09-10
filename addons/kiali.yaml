@@ -47,7 +47,7 @@ spec:
                 issuer_uri: "https://accounts.google.com"
                 scopes: ["openid", "email"]
                 username_claim: "email"
-                allowed_domains: # https://github.com/kiali/kiali/issues/4288
+                allowed_domains: # https://github.com/kiali/kiali/pull/4296
                   - nalbam.com
                   - daangn.com
 
