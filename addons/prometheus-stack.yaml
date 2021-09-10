@@ -69,6 +69,8 @@ spec:
                   group: monitoring
 
             alertmanager:
+              enabled: false
+
               config:
                 global:
                   slack_api_url: SLACK_TOKEN
