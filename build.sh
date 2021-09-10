@@ -97,10 +97,12 @@ _hook_action() {
     PHASE=$1
     TYPE=$2
 
-    _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
+    # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+
+    _command "github dispatches : ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
 
     # build_parameters
-    PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
+    PAYLOAD="{\"event_type\":\"gitops\","
     PAYLOAD="${PAYLOAD}\"client_payload\":{"
     PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
     PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
@@ -115,16 +117,39 @@ _hook_action() {
       -H "Accept: application/vnd.github.v3+json" \
       -H "Authorization: Bearer ${GITHUB_TOKEN}" \
       -d "${PAYLOAD}" \
-      https://api.github.com/repos/${GITOPS_REPO}/dispatches
+      https://api.github.com/repos/${USERNAME}/${REPONAME}/dispatches
+}
+
+_hook_circleci() {
+    PHASE=$1
+    TYPE=$2
+
+    # https://circleci.com/docs/api/v2/#operation/listPipelinesForProject
+
+    _command "circleci pipeline : ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
+
+    # build_parameters
+    PAYLOAD="{\"parameters\":{"
+    PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
+    PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
+    PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+    PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
+    PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
+    PAYLOAD="${PAYLOAD}}}"
+
+    _result "PAYLOAD=${PAYLOAD}"
+
+    curl -sL -X POST \
+        -u ${PERSONAL_TOKEN}: \
+        -H "Content-Type: application/json" \
+        -d "${PAYLOAD}" \
+        https://circleci.com/api/v2/project/gh/${USERNAME}/${REPONAME}/pipeline
 }
 
 _phase_action() {
     if [ -z "${GITHUB_TOKEN}" ]; then
         _error "Not found GITHUB_TOKEN"
     fi
-
-    GITOPS_REPO="${USERNAME}/${REPONAME}"
-    EVENT_TYPE="gitops"
 
     pushd ${SHELL_DIR}/charts/${TG_PROJECT}
 
@@ -153,35 +178,10 @@ _phase_action() {
     popd
 }
 
-_hook_circleci() {
-    PHASE=$1
-    TYPE=$2
-
-    # build_parameters
-    PAYLOAD="{\"parameters\":{"
-    PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
-    PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
-    PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
-    PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-    PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
-    PAYLOAD="${PAYLOAD}}}"
-
-    _result "PAYLOAD=${PAYLOAD}"
-
-    curl -sL -X POST \
-        -u ${PERSONAL_TOKEN}: \
-        -H "Content-Type: application/json" \
-        -d "${PAYLOAD}" "${CIRCLE_API}"
-}
-
 _phase_circleci() {
     if [ "${PERSONAL_TOKEN}" == "" ]; then
         _error "Not found PERSONAL_TOKEN"
     fi
-
-    # https://circleci.com/docs/api/v2/#get-a-pipeline-39-s-workflows
-    CIRCLE_API="https://circleci.com/api/v2/project/gh/${USERNAME}/${REPONAME}/pipeline"
-    CIRCLE_URL="${CIRCLE_API}?circle-token=${PERSONAL_TOKEN}"
 
     pushd ${SHELL_DIR}/charts/${TG_PROJECT}
 
