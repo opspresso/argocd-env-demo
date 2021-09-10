@@ -1,18 +1,18 @@
 app:
   configmap:
     data:
-      PROFILE: dev
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
+      PROFILE: dev
       PROTOCOL: http
-      VERSION: v0.8.47
+      VERSION: v0.8.49
     enabled: true
   env:
   - name: ENV_HASH
-    value: 7ab3903f4c096865412e14d3ae497b16
+    value: a595065a39145fce851369a04ad1c753
   image:
-    tag: v0.8.47
+    tag: v0.8.49
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
