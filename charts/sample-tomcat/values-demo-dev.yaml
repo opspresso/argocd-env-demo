@@ -1,17 +1,17 @@
 app:
   configmap:
     data:
-      PROFILE: dev
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      VERSION: v0.8.16
+      PROFILE: dev
+      VERSION: v0.8.18
     enabled: true
   env:
   - name: ENV_HASH
-    value: 5ab7be638747f72c5d0fc49e9a8e7d71
+    value: be8adfd83cf9a5b15d1ad0bd27e95561
   image:
-    tag: v0.8.16
+    tag: v0.8.18
   ingress:
     hosts:
     - host: sample-tomcat.bruce.spic.me
@@ -20,10 +20,3 @@ app:
       enabled: true
     sidecar:
       inject: true
-  # nodeSelector:
-  #   group: graviton
-  # tolerations:
-  # - effect: NoSchedule
-  #   key: group
-  #   operator: Equal
-  #   value: graviton
