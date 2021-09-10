@@ -6,13 +6,13 @@ app:
       MESSAGE: hello world
       PROFILE: dev
       PROTOCOL: http
-      VERSION: v0.8.49
+      VERSION: v0.8.50
     enabled: true
   env:
   - name: ENV_HASH
-    value: a595065a39145fce851369a04ad1c753
+    value: 9e8b12b5ee239c7a08707ac56ade1ef7
   image:
-    tag: v0.8.49
+    tag: v0.8.50
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
