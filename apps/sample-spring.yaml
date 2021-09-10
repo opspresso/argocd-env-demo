@@ -29,7 +29,7 @@ spec:
         helm:
           valueFiles:
             - values.yaml
-            - values-{{cluster}}.yaml
+            - values-{{cluster}}-dev.yaml
 
       syncPolicy:
         automated:
