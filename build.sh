@@ -95,6 +95,7 @@ _prepare() {
 
 _hook_action() {
     PHASE=$1
+    TYPE=$2
 
     _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
 
@@ -105,7 +106,7 @@ _hook_action() {
     PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
     PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
     PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-    PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
+    PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
     PAYLOAD="${PAYLOAD}}}"
 
     _result "PAYLOAD=${PAYLOAD}"
@@ -127,17 +128,6 @@ _phase_action() {
 
     pushd ${SHELL_DIR}/charts/${TG_PROJECT}
 
-    # find kustomize
-    LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
-
-    for PHASE in ${LIST}; do
-        _result "${PHASE} kustomize"
-
-        if [ "${PHASE}" != "base" ]; then
-            _hook_action ${PHASE}
-        fi
-    done
-
     # find helm chart
     LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
 
@@ -146,7 +136,18 @@ _phase_action() {
 
         _result "${PHASE} helm"
 
-        _hook_action ${PHASE}
+        _hook_action ${PHASE} helm
+    done
+
+    # find kustomize
+    LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
+
+    for PHASE in ${LIST}; do
+        _result "${PHASE} kustomize"
+
+        if [ "${PHASE}" != "base" ]; then
+            _hook_action ${PHASE} kustomize
+        fi
     done
 
     popd
@@ -154,6 +155,7 @@ _phase_action() {
 
 _hook_circleci() {
     PHASE=$1
+    TYPE=$2
 
     # build_parameters
     PAYLOAD="{\"parameters\":{"
@@ -161,7 +163,7 @@ _hook_circleci() {
     PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
     PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
     PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-    PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
+    PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
     PAYLOAD="${PAYLOAD}}}"
 
     _result "PAYLOAD=${PAYLOAD}"
@@ -183,17 +185,6 @@ _phase_circleci() {
 
     pushd ${SHELL_DIR}/charts/${TG_PROJECT}
 
-    # find kustomize
-    LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
-
-    for PHASE in ${LIST}; do
-        _result "${PHASE} kustomize"
-
-        if [ "${PHASE}" != "base" ]; then
-            _hook_circleci ${PHASE}
-        fi
-    done
-
     # find helm chart
     LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
 
@@ -202,7 +193,18 @@ _phase_circleci() {
 
         _result "${PHASE} helm"
 
-        _hook_circleci ${PHASE}
+        _hook_circleci ${PHASE} helm
+    done
+
+    # find kustomize
+    LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
+
+    for PHASE in ${LIST}; do
+        _result "${PHASE} kustomize"
+
+        if [ "${PHASE}" != "base" ]; then
+            _hook_circleci ${PHASE} kustomize
+        fi
     done
 
     popd
