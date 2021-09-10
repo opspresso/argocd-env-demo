@@ -62,6 +62,9 @@ spec:
               # nodeSelector:
               #   group: graviton
 
+            login_token:
+              signing_key: eks-demo-kiali-token
+
             external_services:
               grafana:
                 in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
