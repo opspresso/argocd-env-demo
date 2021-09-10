@@ -93,6 +93,30 @@ _prepare() {
     _result "${TG_USERNAME}/${TG_PROJECT}:${TG_VERSION}"
 }
 
+_hook_action() {
+    PHASE=$1
+
+    _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
+
+    # build_parameters
+    PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
+    PAYLOAD="${PAYLOAD}\"client_payload\":{"
+    PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
+    PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
+    PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+    PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
+    PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
+    PAYLOAD="${PAYLOAD}}}"
+
+    _result "PAYLOAD=${PAYLOAD}"
+
+    curl -sL -X POST \
+      -H "Accept: application/vnd.github.v3+json" \
+      -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+      -d "${PAYLOAD}" \
+      https://api.github.com/repos/${GITOPS_REPO}/dispatches
+}
+
 _phase_action() {
     if [ -z "${GITHUB_TOKEN}" ]; then
         _error "Not found GITHUB_TOKEN"
@@ -110,25 +134,7 @@ _phase_action() {
         _result "${PHASE} kustomize"
 
         if [ "${PHASE}" != "base" ]; then
-            _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
-
-            # build_parameters
-            PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
-            PAYLOAD="${PAYLOAD}\"client_payload\":{"
-            PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
-            PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
-            PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
-            PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-            PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
-            PAYLOAD="${PAYLOAD}}}"
-
-            _result "PAYLOAD=${PAYLOAD}"
-
-            curl -sL -X POST \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-              -d "${PAYLOAD}" \
-              https://api.github.com/repos/${GITOPS_REPO}/dispatches
+            _hook_action ${PHASE}
         fi
     done
 
@@ -140,28 +146,30 @@ _phase_action() {
 
         _result "${PHASE} helm"
 
-        _command "github dispatches create ${GITOPS_REPO} ${EVENT_TYPE} ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
-
-        # build_parameters
-        PAYLOAD="{\"event_type\":\"${EVENT_TYPE}\","
-        PAYLOAD="${PAYLOAD}\"client_payload\":{"
-        PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
-        PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
-        PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
-        PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-        PAYLOAD="${PAYLOAD}\"type\":\"helm\""
-        PAYLOAD="${PAYLOAD}}}"
-
-        _result "PAYLOAD=${PAYLOAD}"
-
-        curl -sL -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-          -d "${PAYLOAD}" \
-          https://api.github.com/repos/${GITOPS_REPO}/dispatches
+        _hook_action ${PHASE}
     done
 
     popd
+}
+
+_hook_circleci() {
+    PHASE=$1
+
+    # build_parameters
+    PAYLOAD="{\"parameters\":{"
+    PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
+    PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
+    PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+    PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
+    PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
+    PAYLOAD="${PAYLOAD}}}"
+
+    _result "PAYLOAD=${PAYLOAD}"
+
+    curl -sL -X POST \
+        -u ${PERSONAL_TOKEN}: \
+        -H "Content-Type: application/json" \
+        -d "${PAYLOAD}" "${CIRCLE_API}"
 }
 
 _phase_circleci() {
@@ -182,21 +190,7 @@ _phase_circleci() {
         _result "${PHASE} kustomize"
 
         if [ "${PHASE}" != "base" ]; then
-            # build_parameters
-            PAYLOAD="{\"parameters\":{"
-            PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
-            PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
-            PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
-            PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-            PAYLOAD="${PAYLOAD}\"type\":\"kustomize\""
-            PAYLOAD="${PAYLOAD}}}"
-
-            _result "PAYLOAD=${PAYLOAD}"
-
-            curl -sL -X POST \
-                -u ${PERSONAL_TOKEN}: \
-                -H "Content-Type: application/json" \
-                -d "${PAYLOAD}" "${CIRCLE_API}"
+            _hook_circleci ${PHASE}
         fi
     done
 
@@ -208,21 +202,7 @@ _phase_circleci() {
 
         _result "${PHASE} helm"
 
-        # build_parameters
-        PAYLOAD="{\"parameters\":{"
-        PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
-        PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
-        PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
-        PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
-        PAYLOAD="${PAYLOAD}\"type\":\"helm\""
-        PAYLOAD="${PAYLOAD}}}"
-
-        _result "PAYLOAD=${PAYLOAD}"
-
-        curl -sL -X POST \
-            -u ${PERSONAL_TOKEN}: \
-            -H "Content-Type: application/json" \
-            -d "${PAYLOAD}" "${CIRCLE_API}"
+        _hook_circleci ${PHASE}
     done
 
     popd
