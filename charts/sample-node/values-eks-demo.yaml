@@ -8,12 +8,12 @@ app:
           value: 25
         stabilizationWindowSeconds: 600
     enabled: true
-    maxReplicas: 6
+    maxReplicas: 20
     metrics:
     - resource:
         name: cpu
         target:
-          averageUtilization: 50
+          averageUtilization: 30
           type: Utilization
       type: Resource
     minReplicas: 2
