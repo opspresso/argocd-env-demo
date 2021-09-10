@@ -1,5 +1,5 @@
 app:
-  replicaCount: 2
+  replicas: 2
   autoscaling:
     behavior:
       scaleDown:
