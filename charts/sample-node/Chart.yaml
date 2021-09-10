@@ -2,14 +2,14 @@ apiVersion: v2
 name: sample-node
 description: A Helm chart for Kubernetes
 type: application
-version: v0.4.4
-appVersion: v0.4.4
+version: v0.4.3
+appVersion: v0.4.3
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: v0.3.4
+    version: v0.3.3
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: v0.3.4
+    version: v0.3.3
     alias: redis
