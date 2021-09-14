@@ -44,17 +44,17 @@ spec:
               - name: METRIC_TODAY_DAILY_USAGE_NORM
                 value: "yes"
 
-            irsa:
-              enabled: true
-              statement:
-                - resource: "*"
-                  action:
-                    - "ce:*"
-
             serviceMonitor:
               enabled: true
               selector:
                 release: prometheus-{{cluster}}
+
+            # irsa:
+            #   enabled: true
+            #   statement:
+            #     - resource: "*"
+            #       action:
+            #         - "ce:*"
 
       syncPolicy:
         automated:
