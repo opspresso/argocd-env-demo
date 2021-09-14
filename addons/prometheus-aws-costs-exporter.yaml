@@ -21,7 +21,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: addon-prometheus-aws-costs-exporter
+        namespace: addon-prometheus
       source:
         repoURL: https://charts.deliveryhero.io
         targetRevision: "0.1.4"
