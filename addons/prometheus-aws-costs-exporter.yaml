@@ -24,23 +24,22 @@ spec:
         namespace: addon-prometheus
       source:
         repoURL: https://opspresso.github.io/helm-charts
-        targetRevision: "v0.1.0"
+        targetRevision: "v0.1.1"
         chart: prometheus-aws-costs-exporter
         helm:
           values: |-
-            app:
-              fullnameOverride: prometheus-aws-costs-exporter
+            fullnameOverride: prometheus-aws-costs-exporter
 
-              args:
-                - --host
-                - 0.0.0.0
+            args:
+              - --host
+              - 0.0.0.0
 
-              irsa:
-                enabled: true
-                statement:
-                  - resource: "*"
-                    action:
-                      - "ce:*"
+            irsa:
+              enabled: true
+              statement:
+                - resource: "*"
+                  action:
+                    - "ce:*"
 
       syncPolicy:
         # automated:
