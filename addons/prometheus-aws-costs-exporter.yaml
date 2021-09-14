@@ -41,6 +41,9 @@ spec:
                   action:
                     - "ce:*"
 
+            serviceMonitor:
+              enabled: true
+
       syncPolicy:
         # automated:
         #   prune: true
