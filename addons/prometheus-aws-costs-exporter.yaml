@@ -53,6 +53,8 @@ spec:
 
             serviceMonitor:
               enabled: true
+              selector:
+                release: prometheus-{{cluster}}
 
       syncPolicy:
         automated:
