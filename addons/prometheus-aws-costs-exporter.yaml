@@ -23,16 +23,28 @@ spec:
         name: "{{cluster}}"
         namespace: addon-prometheus
       source:
-        repoURL: https://charts.deliveryhero.io
-        targetRevision: "0.1.4"
+        repoURL: https://opspresso.github.io/helm-charts
+        targetRevision: "v0.1.0"
         chart: prometheus-aws-costs-exporter
         helm:
           values: |-
-            fullnameOverride: prometheus-aws-costs-exporter
+            app:
+              fullnameOverride: prometheus-aws-costs-exporter
+
+              args:
+                - --host
+                - 0.0.0.0
+
+              irsa:
+                enabled: true
+                statement:
+                  - resource: "*"
+                    action:
+                      - "ce:*"
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
