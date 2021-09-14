@@ -34,6 +34,12 @@ spec:
               - --host
               - 0.0.0.0
 
+            env:
+              METRIC_TODAY_DAILY_COSTS: yes
+              METRIC_YESTERDAY_DAILY_COSTS: yes
+              METRIC_TODAY_DAILY_USAGE: yes
+              METRIC_TODAY_DAILY_USAGE_NORM: yes
+
             irsa:
               enabled: true
               statement:
