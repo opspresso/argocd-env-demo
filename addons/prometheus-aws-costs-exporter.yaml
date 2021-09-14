@@ -35,10 +35,14 @@ spec:
               - 0.0.0.0
 
             env:
-              - METRIC_TODAY_DAILY_COSTS: yes
-              - METRIC_YESTERDAY_DAILY_COSTS: yes
-              - METRIC_TODAY_DAILY_USAGE: yes
-              - METRIC_TODAY_DAILY_USAGE_NORM: yes
+              - name: METRIC_TODAY_DAILY_COSTS
+                value: yes
+              - name: METRIC_YESTERDAY_DAILY_COSTS
+                value: yes
+              - name: METRIC_TODAY_DAILY_USAGE
+                value: yes
+              - name: METRIC_TODAY_DAILY_USAGE_NORM
+                value: yes
 
             irsa:
               enabled: true
