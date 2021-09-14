@@ -36,13 +36,13 @@ spec:
 
             env:
               - name: METRIC_TODAY_DAILY_COSTS
-                value: yes
+                value: "yes"
               - name: METRIC_YESTERDAY_DAILY_COSTS
-                value: yes
+                value: "yes"
               - name: METRIC_TODAY_DAILY_USAGE
-                value: yes
+                value: "yes"
               - name: METRIC_TODAY_DAILY_USAGE_NORM
-                value: yes
+                value: "yes"
 
             irsa:
               enabled: true
