@@ -143,6 +143,10 @@ spec:
                   # revision: 1
                   datasource: Prometheus
 
+                aws-ce:
+                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/aws-costs-exporter.json
+                  datasource: Prometheus
+
                 nginx-ingress:
                   url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
                   datasource: Prometheus
