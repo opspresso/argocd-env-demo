@@ -8,6 +8,17 @@ job1:
     - "ec2"
     - "describe-instances"
 
+  configmap:
+    data:
+      CLUSTER_NAME: eks-demo
+      MESSAGE: hello world
+      PROFILE: dev
+    enabled: true
+
+  env:
+  - name: ENV_HASH
+    value: 154af082beafe8
+
   irsa:
     enabled: true
     statement:
@@ -24,6 +35,17 @@ job2:
     - "aws"
     - "ec2"
     - "describe-instances"
+
+  configmap:
+    data:
+      CLUSTER_NAME: eks-demo
+      MESSAGE: hello world
+      PROFILE: dev
+    enabled: true
+
+  env:
+  - name: ENV_HASH
+    value: 154af082beafe8
 
   irsa:
     enabled: true
