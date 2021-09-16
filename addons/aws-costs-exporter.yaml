@@ -38,6 +38,11 @@ spec:
               - name: METRIC_YESTERDAY_DAILY_COSTS
                 value: "yes"
 
+            serviceMonitor:
+              enabled: true
+              selector:
+                release: prometheus-{{cluster}}
+
       syncPolicy:
         automated:
           prune: true
