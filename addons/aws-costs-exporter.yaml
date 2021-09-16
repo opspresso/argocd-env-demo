@@ -30,10 +30,6 @@ spec:
           values: |-
             fullnameOverride: aws-costs-exporter
 
-            args:
-              - --host
-              - 0.0.0.0
-
             env:
               - name: METRIC_MONTHLY_COSTS
                 value: "yes"
@@ -41,22 +37,6 @@ spec:
                 value: "yes"
               - name: METRIC_YESTERDAY_DAILY_COSTS
                 value: "yes"
-              # - name: METRIC_TODAY_DAILY_USAGE
-              #   value: "yes"
-              # - name: METRIC_TODAY_DAILY_USAGE_NORM
-              #   value: "yes"
-
-            serviceMonitor:
-              enabled: true
-              selector:
-                release: prometheus-{{cluster}}
-
-            # irsa:
-            #   enabled: true
-            #   statement:
-            #     - resource: "*"
-            #       action:
-            #         - "ce:GetCostAndUsage"
 
       syncPolicy:
         automated:
