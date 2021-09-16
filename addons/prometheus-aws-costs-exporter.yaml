@@ -54,7 +54,7 @@ spec:
             #   statement:
             #     - resource: "*"
             #       action:
-            #         - "ce:*"
+            #         - "ce:GetCostAndUsage"
 
       syncPolicy:
         automated:
