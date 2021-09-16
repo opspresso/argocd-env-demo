@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: prometheus-aws-costs-exporter
+  name: aws-costs-exporter
 spec:
   generators:
     - list:
@@ -10,7 +10,7 @@ spec:
 
   template:
     metadata:
-      name: "prometheus-aws-costs-exporter-{{cluster}}"
+      name: "aws-costs-exporter-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
       labels:
@@ -25,10 +25,10 @@ spec:
       source:
         repoURL: https://opspresso.github.io/helm-charts
         targetRevision: "v0.1.2"
-        chart: prometheus-aws-costs-exporter
+        chart: aws-costs-exporter
         helm:
           values: |-
-            fullnameOverride: prometheus-aws-costs-exporter
+            fullnameOverride: aws-costs-exporter
 
             args:
               - --host
