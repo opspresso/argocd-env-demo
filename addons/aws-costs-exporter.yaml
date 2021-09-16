@@ -24,7 +24,7 @@ spec:
         namespace: addon-prometheus
       source:
         repoURL: https://opspresso.github.io/helm-charts
-        targetRevision: "v0.1.3"
+        targetRevision: "v0.1.4"
         chart: aws-costs-exporter
         helm:
           values: |-
