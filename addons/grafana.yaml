@@ -32,6 +32,8 @@ spec:
           values: |-
             fullnameOverride: grafana
 
+            revisionHistoryLimit: 1
+
             admin:
               existingSecret: "grafana-secret"
 
