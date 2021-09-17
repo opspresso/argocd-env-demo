@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: aws-load-balancer-tgb
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: eks-demo
+            values:
+              tgarn: "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-20210917055451312000000001/af3b94e7af5a584e"
+
+  template:
+    metadata:
+      name: "aws-load-balancer-tgb-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster_name}}"
+        namespace: addon-aws-load-balancer-controller
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: aws-load-balancer-tgb
+
+            resources:
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-ingressgateway
+                  namespace: istio-system
+                spec:
+                  serviceRef:
+                    name: istio-ingressgateway
+                    port: http
+                  targetGroupARN: "{{values.tgarn}}"
+                  targetType: ip
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
