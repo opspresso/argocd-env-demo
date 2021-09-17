@@ -22,7 +22,7 @@ spec:
     spec:
       project: addons
       destination:
-        name: "{{cluster_name}}"
+        name: "{{cluster}}"
         namespace: addon-aws-load-balancer-controller
       source:
         repoURL: https://charts.helm.sh/incubator
