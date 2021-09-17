@@ -72,17 +72,10 @@ spec:
                 type: LoadBalancer
                 annotations:
                   external-dns.alpha.kubernetes.io/hostname: "argocd.{{values.host}}"
-
-                  kubernetes.io/ingress.class: alb
-                  alb.ingress.kubernetes.io/scheme: internet-facing
-                  alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-                  alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type":"redirect","RedirectConfig":{"Protocol":"HTTPS","Port":"443","StatusCode":"HTTP_301"}}'
-                  alb.ingress.kubernetes.io/certificate-arn: "{{values.acm_arn}}"
-
-                  # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-                  # service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                  # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
-                  # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+                  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+                  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
               extraArgs:
                 - --insecure
