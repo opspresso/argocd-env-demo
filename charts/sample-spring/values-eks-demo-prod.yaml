@@ -16,6 +16,7 @@ app:
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
+    - host: sample-spring.bruce.opspresso.com
   istio:
     gateway:
       enabled: true

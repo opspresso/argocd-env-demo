@@ -38,6 +38,7 @@ app:
     enabled: false
     hosts:
     - host: sample-node.bruce.spic.me
+    - host: sample-node.bruce.opspresso.com
   istio:
     gateway:
       enabled: true
