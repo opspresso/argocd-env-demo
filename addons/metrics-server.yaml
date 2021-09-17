@@ -30,8 +30,8 @@ spec:
           values: |-
             fullnameOverride: metrics-server
 
-            # image:
-            #   repository: k8s.gcr.io/metrics-server-arm64
+            image:
+              repository: k8s.gcr.io/metrics-server-arm64
 
             args:
               - --kubelet-insecure-tls
