@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              tgarn: "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-20210917055451312000000001/af3b94e7af5a584e"
+              tgarn: "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-0/da1c2a2cb9ca9191"
 
   template:
     metadata:
