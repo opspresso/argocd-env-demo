@@ -14,7 +14,7 @@ aws-node-termination-handler | public.ecr.aws/aws-ec2/aws-node-termination-handl
 cert-manager | quay.io/jetstack/cert-manager-controller | ✅ | ✅
 chaoskube | quay.io/linki/chaoskube | ✅ | ❌
 cluster-autoscaler | k8s.gcr.io/autoscaling/cluster-autoscaler | ✅ | ✅
-consul | consul |  | ✅ | ✅
+consul | consul | ✅ | ✅
 coredns | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/coredns | ✅ | ✅
 cortex | cortexproject/cortex | ✅ | ❌
 crossplane | crossplane/crossplane | ✅ | ✅
