@@ -41,7 +41,7 @@ spec:
                 spec:
                   serviceRef:
                     name: istio-ingressgateway
-                    port: http
+                    port: http2
                   targetGroupARN: "{{values.tgarn}}"
                   targetType: ip
 
