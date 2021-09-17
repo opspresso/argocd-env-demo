@@ -9,6 +9,7 @@
 > github org (opspresso) 에 team (sre) 을 만들고 권한을 부여 합니다.
 
 ```bash
+ARGOCD_HOSTNAME="argocd.bruce.spic.me"
 GITHUB_ORG="opspresso"
 GITHUB_TEAM="sre"
 
@@ -41,7 +42,6 @@ ARGOCD_GITHUB_ID=$(aws ssm get-parameter --name /k8s/common/argocd-github-id --w
 ARGOCD_GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-github-secret --with-decryption | jq .Parameter.Value -r)
 GITHUB_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/github-webhook --with-decryption | jq .Parameter.Value -r)
 
-ARGOCD_HOSTNAME="argocd.bruce.spic.me"
 AWS_ACM_CERT="$(aws acm list-certificates --query "CertificateSummaryList[].{CertificateArn:CertificateArn,DomainName:DomainName}[?contains(DomainName,'${ARGOCD_HOSTNAME}')] | [0].CertificateArn" | jq . -r)"
 
 # replace values.yaml
