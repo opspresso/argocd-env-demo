@@ -49,7 +49,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.22.2",
+      "default": "2.22.3",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -61,7 +61,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.16.8",
+      "default": "6.16.9",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
