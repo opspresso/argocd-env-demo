@@ -26,7 +26,7 @@ spec:
         namespace: addon-prometheus
       source:
         repoURL: https://prometheus-community.github.io/helm-charts
-        targetRevision: "18.0.8"
+        targetRevision: "18.0.12"
         chart: kube-prometheus-stack
         helm:
           values: |-
