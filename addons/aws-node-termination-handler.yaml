@@ -36,7 +36,7 @@ spec:
               annotations:
                 eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
-            enableRebalanceMonitoring: true
+            enableRebalanceDraining: true
             enableScheduledEventDraining: true
             enableSpotInterruptionDraining: true
 
