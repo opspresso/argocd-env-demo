@@ -96,9 +96,9 @@
       "default": "8.3.0",
       "description": "external-secrets/kubernetes-external-secrets"
     },
-    "helm_loki": {
-      "default": "2.6.0",
-      "description": "grafana/loki"
+    "helm_loki_stack": {
+      "default": "2.4.1",
+      "description": "grafana/loki-stack"
     },
     "helm_metrics_server": {
       "default": "2.11.4",
