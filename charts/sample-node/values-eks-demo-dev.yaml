@@ -24,13 +24,13 @@ app:
       MESSAGE: hello world
       PROFILE: dev
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.8.73
+      VERSION: v0.8.74
     enabled: true
   env:
   - name: ENV_HASH
-    value: e15894104c7dfdf7fdc32bc2b82b689a
+    value: 020aace5e07d11b8ec82df2cfabda88d
   image:
-    tag: v0.8.73
+    tag: v0.8.74
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx
