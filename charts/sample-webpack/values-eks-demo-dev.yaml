@@ -1,16 +1,16 @@
 app:
   configmap:
     data:
-      PROFILE: dev
       CLUSTER_NAME: eks-demo
-      VERSION: v0.7.1
+      PROFILE: dev
+      VERSION: v0.7.2
     enabled: true
   env:
   - name: ENV_HASH
-    value: e6d4e0663ebc210fe22a0fb188ed1910
+    value: 0a6e0b9cb91993b197b4c90dc472139e
   image:
     repository: nalbam/sample-webpack
-    tag: v0.7.1
+    tag: v0.7.2
   ingress:
     hosts:
     - host: sample-webpack.bruce.spic.me
