@@ -34,6 +34,9 @@ spec:
 
             revisionHistoryLimit: 1
 
+            image:
+              tag: "8.1.5"
+
             admin:
               existingSecret: "grafana-secret"
 
