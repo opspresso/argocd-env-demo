@@ -3,14 +3,14 @@ app:
     data:
       CLUSTER_NAME: eks-demo
       PROFILE: dev
-      VERSION: v0.7.2
+      VERSION: v0.7.3
     enabled: true
   env:
   - name: ENV_HASH
-    value: 3a8d115bf84058d90c38dd82e3acf3e1
+    value: 64aac47cbc0b27458be7fd5c373c50b9
   image:
     repository: nalbam/sample-web
-    tag: v0.7.2
+    tag: v0.7.3
   ingress:
     hosts:
     - host: sample-web.bruce.spic.me
