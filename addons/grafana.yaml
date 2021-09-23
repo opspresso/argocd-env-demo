@@ -25,17 +25,14 @@ spec:
         name: "{{cluster}}"
         namespace: addon-grafana
       source:
-        repoURL: https://opspresso.github.io/helm-charts
-        targetRevision: "6.16.9"
+        repoURL: https://grafana.github.io/helm-charts
+        targetRevision: "6.16.8"
         chart: grafana
         helm:
           values: |-
             fullnameOverride: grafana
 
             revisionHistoryLimit: 1
-
-            # image:
-            #   tag: "8.1.5"
 
             admin:
               existingSecret: "grafana-secret"
