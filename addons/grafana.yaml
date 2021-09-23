@@ -26,7 +26,7 @@ spec:
         namespace: addon-grafana
       source:
         repoURL: https://grafana.github.io/helm-charts
-        targetRevision: "6.16.7"
+        targetRevision: "6.16.8"
         chart: grafana
         helm:
           values: |-
@@ -82,9 +82,9 @@ spec:
               #   client_id: "grafana"
               #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
               #   scopes: "openid email profile roles"
-              #   auth_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/auth"
-              #   token_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/token"
-              #   api_url: "https://keycloak.bruce.spic.me/auth/realms/demo/protocol/openid-connect/userinfo"
+              #   auth_url: "https://keycloak.{{values.host}}/auth/realms/demo/protocol/openid-connect/auth"
+              #   token_url: "https://keycloak.{{values.host}}/auth/realms/demo/protocol/openid-connect/token"
+              #   api_url: "https://keycloak.{{values.host}}/auth/realms/demo/protocol/openid-connect/userinfo"
               #   # role_attribute_path = role
 
             ingress:
