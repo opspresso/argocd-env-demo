@@ -29,6 +29,11 @@ app:
   env:
   - name: ENV_HASH
     value: 020aace5e07d11b8ec82df2cfabda88d
+  externalSecrets:
+    enabled: true
+    data:
+      - key: /k8s/common/slack-hooks
+        name: slack-hooks
   image:
     tag: v0.8.74
   ingress:
