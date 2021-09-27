@@ -49,6 +49,10 @@ app:
       enabled: true
     sidecar:
       inject: true
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus-operator
 redis:
   istio:
     sidecar:
