@@ -26,3 +26,7 @@ app:
     enabled: true
     selector:
       release: prometheus-eks-demo
+    endpoints:
+      - interval: 10s
+        path: /actuator/prometheus
+        port: http
