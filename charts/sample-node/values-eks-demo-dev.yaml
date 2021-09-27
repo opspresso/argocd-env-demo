@@ -52,7 +52,7 @@ app:
   serviceMonitor:
     enabled: true
     selector:
-      release: prometheus-operator
+      release: prometheus-eks-demo
 redis:
   istio:
     sidecar:
