@@ -22,3 +22,7 @@ app:
       enabled: true
     sidecar:
       inject: true
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus-eks-demo
