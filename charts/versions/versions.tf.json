@@ -1,15 +1,15 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.21.1",
+      "default": "3.22.1",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.1.0",
+      "default": "2.1.1",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_notifications": {
-      "default": "1.5.0",
+      "default": "1.5.1",
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
@@ -49,7 +49,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.22.6",
+      "default": "2.22.10",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -73,7 +73,7 @@
       "description": "irsa-operator/irsa-operator"
     },
     "helm_jaeger": {
-      "default": "0.46.7",
+      "default": "0.47.0",
       "description": "jaegertracing/jaeger"
     },
     "helm_keycloak": {
@@ -85,7 +85,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "18.1.0",
+      "default": "19.0.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
