@@ -16,8 +16,9 @@ helm repo add datadog https://helm.datadoghq.com
 helm repo add deliveryhero https://charts.deliveryhero.io
 helm repo add devtron https://helm.devtron.ai
 helm repo add eks https://aws.github.io/eks-charts
-helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
+helm repo add external-dns https://kubernetes-sigs.github.io/external-dns
 helm repo add external-secrets https://external-secrets.github.io/kubernetes-external-secrets
+helm repo add flagger https://flagger.app
 helm repo add fluxcd https://charts.fluxcd.io
 helm repo add gocd https://gocd.github.io/helm-chart
 helm repo add grafana https://grafana.github.io/helm-charts
@@ -27,6 +28,7 @@ helm repo add irsa-operator https://voodooteam.github.io/irsa-operator
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
 helm repo add jetstack https://charts.jetstack.io
 helm repo add kiali https://kiali.org/helm-charts
+helm repo add opspresso https://opspresso.github.io/helm-charts
 helm repo add prometheus https://prometheus-community.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
 ```
@@ -36,8 +38,5 @@ helm repo update
 
 helm search repo "argo/argo-cd" -o json | jq .
 helm search repo "autoscaler/cluster-autoscaler" -o json | jq .
-helm search repo "aws-ebs-csi-driver/aws-ebs-csi-driver" -o json | jq .
-helm search repo "aws-efs-csi-driver/aws-efs-csi-driver" -o json | jq .
 helm search repo "dashboard/kubernetes-dashboard" -o json | jq .
-helm search repo "datadog/datadog" -o json | jq .
 ```
