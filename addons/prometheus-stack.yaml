@@ -42,6 +42,8 @@ spec:
                 group: monitoring
 
             prometheus:
+              fullnameOverride: prometheus
+
               prometheusSpec:
                 storageSpec:
                   volumeClaimTemplate:
