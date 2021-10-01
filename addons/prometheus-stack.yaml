@@ -88,20 +88,22 @@ spec:
                         api_url_file: /etc/alertmanager/secrets/prometheus-alertmanager-secret/slack-hooks
                         color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
                         icon_url: https://avatars3.githubusercontent.com/u/3380462
-                        send_resolved: true
-                        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
-                        text: |
-                          {{ range .Alerts }}
-                          *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
+                        # send_resolved: true
+                        title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+                        text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+                        # title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
+                        # text: |
+                        #   {{ range .Alerts }}
+                        #   *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
 
-                          *Cluster:* `{{cluster}}`
+                        #   *Cluster:* `{{cluster}}`
 
-                          *Description:* {{ .Annotations.description }}
+                        #   *Description:* {{ .Annotations.description }}
 
-                          *Details:*
-                            {{ range .Labels.SortedPairs }} • *{{ .Name }}:* {{ .Value }}
-                            {{ end }}
-                          {{ end }}
+                        #   *Details:*
+                        #     {{ range .Labels.SortedPairs }} • *{{ .Name }}:* {{ .Value }}
+                        #     {{ end }}
+                        #   {{ end }}
 
               alertmanagerSpec:
                 secrets:
