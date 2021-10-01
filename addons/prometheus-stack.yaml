@@ -75,13 +75,11 @@ spec:
                 route:
                   receiver: "slack"
                   routes:
-                    - receiver: "null"
-                      matchers: []
-                    - receiver: "slack"
-                      matchers: []
+                    - match:
+                        alertname: Watchdog
+                      receiver: "slack"
 
                 receivers:
-                  - name: "null"
                   - name: "slack"
                     # slack_configs:
                     #   - channel: "#sandbox"
