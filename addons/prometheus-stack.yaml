@@ -72,21 +72,18 @@ spec:
               # enabled: false
 
               config:
-                global:
-                  slack_api_url: SLACK_TOKEN
+                # global:
+                #   slack_api_url: SLACK_TOKEN
+                #   slack_api_url_file: ""
 
                 route:
                   receiver: "slack"
-                  # routes:
-                  #   - match:
-                  #       alertname: Watchdog
-                  #     receiver: "null"
-                  #   - match:
-                  #     receiver: "slack"
-                  #     continue: false
+                  routes:
+                    - receiver: "slack"
+                      continue: false
 
                 receivers:
-                  - name: "null"
+                  # - name: "null"
                   - name: "slack"
                     slack_configs:
                       - channel: "#sandbox"
@@ -110,8 +107,6 @@ spec:
               alertmanagerSpec:
                 secrets:
                   - prometheus-alertmanager-secret
-
-                # configSecret: alertmanager-prometheus-alertmanager
 
                 storage:
                   volumeClaimTemplate:
