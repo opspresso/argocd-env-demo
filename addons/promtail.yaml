@@ -30,10 +30,14 @@ spec:
           values: |-
             fullnameOverride: promtail
 
-            extraArgs: []
-            # -- Example:
-            # -- extraArgs:
-            # --   - -client.external-labels=hostname=$(HOSTNAME)
+            config:
+              lokiAddress: http://loki-gateway/loki/api/v1/push
+
+              snippets:
+                extraClientConfigs:
+                  cluster: {{cluster}}
+                  env: demo
+                  region: kr
 
             tolerations:
               - key: group
