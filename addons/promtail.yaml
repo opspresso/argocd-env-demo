@@ -24,7 +24,7 @@ spec:
         namespace: addon-loki
       source:
         repoURL: https://grafana.github.io/helm-charts
-        targetRevision: "2.3.0"
+        targetRevision: "3.8.1"
         chart: promtail
         helm:
           values: |-
