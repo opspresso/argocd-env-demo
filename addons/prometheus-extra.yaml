@@ -35,6 +35,8 @@ spec:
                 kind: ExternalSecret
                 metadata:
                   name: prometheus-alertmanager-secret
+                  labels:
+                    release: prometheus-eks-demo
                 spec:
                   backendType: systemManager
                   data:
