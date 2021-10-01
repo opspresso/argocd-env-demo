@@ -42,7 +42,7 @@ spec:
                 group: monitoring
 
             prometheus:
-              fullnameOverride: prometheus
+              # fullnameOverride: prometheus
 
               prometheusSpec:
                 storageSpec:
@@ -71,7 +71,7 @@ spec:
                   group: monitoring
 
             alertmanager:
-              fullnameOverride: alertmanager
+              # fullnameOverride: alertmanager
 
               config:
                 global:
