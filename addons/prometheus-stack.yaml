@@ -74,11 +74,11 @@ spec:
               config:
                 route:
                   receiver: "slack"
-                  routes:
-                    - receiver: "null"
-                      matchers: []
-                    - receiver: "slack"
-                      matchers: []
+                  # routes:
+                  #   - receiver: "null"
+                  #     matchers: []
+                  #   - receiver: "slack"
+                  #     matchers: []
 
                 receivers:
                   - name: "null"
