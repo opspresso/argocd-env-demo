@@ -34,7 +34,7 @@ spec:
               - apiVersion: kubernetes-client.io/v1
                 kind: ExternalSecret
                 metadata:
-                  name: prometheus-alertmanager-secret
+                  name: alertmanager-secret
                 spec:
                   backendType: systemManager
                   data:
