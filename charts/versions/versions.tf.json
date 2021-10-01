@@ -88,6 +88,10 @@
       "default": "19.0.1",
       "description": "prometheus/kube-prometheus-stack"
     },
+    "helm_kube_prometheus": {
+      "default": "19.0.1",
+      "description": "prometheus/kube-prometheus"
+    },
     "helm_kubernetes_dashboard": {
       "default": "5.0.0",
       "description": "dashboard/kubernetes-dashboard"
@@ -99,6 +103,10 @@
     "helm_loki_stack": {
       "default": "2.4.1",
       "description": "grafana/loki-stack"
+    },
+    "helm_loki": {
+      "default": "2.4.1",
+      "description": "grafana/loki"
     },
     "helm_metrics_server": {
       "default": "2.11.4",
