@@ -109,7 +109,7 @@ spec:
                 secrets:
                   - prometheus-alertmanager-secret
 
-                configSecret: alertmanager-prometheus-alertmanager
+                # configSecret: alertmanager-prometheus-alertmanager
 
                 storage:
                   volumeClaimTemplate:
