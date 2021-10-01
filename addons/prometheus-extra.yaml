@@ -35,8 +35,6 @@ spec:
                 kind: ExternalSecret
                 metadata:
                   name: prometheus-alertmanager-secret
-                  labels:
-                    release: prometheus-eks-demo
                 spec:
                   backendType: systemManager
                   data:
@@ -44,6 +42,10 @@ spec:
                       name: slack-token
                     - key: /k8s/common/slack-hooks
                       name: slack-hooks
+                  template:
+                    metadata:
+                      labels:
+                        release: prometheus-eks-demo
 
               - apiVersion: monitoring.coreos.com/v1
                 kind: PrometheusRule
