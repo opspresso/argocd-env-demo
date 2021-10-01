@@ -72,18 +72,18 @@ spec:
               # enabled: false
 
               config:
-                # global:
-                #   slack_api_url: SLACK_TOKEN
-                #   slack_api_url_file: ""
+                global:
+                  slack_api_url: SLACK_TOKEN
 
                 route:
                   receiver: "slack"
                   routes:
+                    - receiver: "null"
                     - receiver: "slack"
                       continue: false
 
                 receivers:
-                  # - name: "null"
+                  - name: "null"
                   - name: "slack"
                     slack_configs:
                       - channel: "#sandbox"
@@ -108,14 +108,14 @@ spec:
                 secrets:
                   - prometheus-alertmanager-secret
 
-                storage:
-                  volumeClaimTemplate:
-                    spec:
-                      storageClassName: gp3
-                      accessModes: ["ReadWriteOnce"]
-                      resources:
-                        requests:
-                          storage: 12Gi
+                # storage:
+                #   volumeClaimTemplate:
+                #     spec:
+                #       storageClassName: gp3
+                #       accessModes: ["ReadWriteOnce"]
+                #       resources:
+                #         requests:
+                #           storage: 12Gi
 
                 tolerations:
                   - key: group
