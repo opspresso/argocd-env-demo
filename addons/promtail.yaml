@@ -33,11 +33,10 @@ spec:
             config:
               lokiAddress: http://loki:3100/loki/api/v1/push
 
-              # snippets:
-              #   extraClientConfigs: |
-              #     cluster: {{cluster}}
-              #     env: demo
-              #     region: kr
+              snippets:
+                extraClientConfigs: |
+                  external_labels:
+                    cluster: "{{cluster}}"
 
             tolerations:
               - key: group
