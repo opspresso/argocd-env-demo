@@ -6,13 +6,13 @@ app:
       MESSAGE: hello world
       PROFILE: dev
       PROTOCOL: http
-      VERSION: v0.8.53
+      VERSION: v0.8.54
     enabled: true
   env:
   - name: ENV_HASH
-    value: 2deaf4b3861a8d35babd8b9d9f255293
+    value: c18268babbf73028d1048939ecf1ce57
   image:
-    tag: v0.8.53
+    tag: v0.8.54
   ingress:
     hosts:
     - host: sample-spring.bruce.spic.me
@@ -24,9 +24,9 @@ app:
       inject: true
   serviceMonitor:
     enabled: true
+    endpoints:
+    - interval: 10s
+      path: /actuator/prometheus
+      port: http
     selector:
       release: prometheus-eks-demo
-    endpoints:
-      - interval: 10s
-        path: /actuator/prometheus
-        port: http
