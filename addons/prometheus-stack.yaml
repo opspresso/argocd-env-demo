@@ -69,7 +69,7 @@ spec:
                   group: monitoring
 
             alertmanager:
-              enabled: false
+              # enabled: false
 
               config:
                 global:
