@@ -45,7 +45,7 @@ spec:
                   template:
                     metadata:
                       labels:
-                        release: prometheus-eks-demo
+                        release: prometheus-{{cluster}}
 
               - apiVersion: monitoring.coreos.com/v1
                 kind: PrometheusRule
