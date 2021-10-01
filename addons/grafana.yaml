@@ -106,7 +106,7 @@ spec:
                   isDefault: true
                 - name: Loki
                   type: loki
-                  url: http://loki-eks-demo.addon-loki.svc.cluster.local:3100
+                  url: http://loki.addon-loki.svc.cluster.local:3100
                   access: proxy
 
             dashboardProviders:
