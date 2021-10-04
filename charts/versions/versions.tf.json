@@ -81,7 +81,7 @@
       "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
-      "default": "1.40.1",
+      "default": "1.41.0",
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
@@ -109,7 +109,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "14.8.0",
+      "default": "14.8.1",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
