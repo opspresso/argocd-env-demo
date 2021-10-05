@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              tg_arn: "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-20210908123157631000000001/a78bbec1a996ef87"
+              tgarn: "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-0/da1c2a2cb9ca9191"
 
   template:
     metadata:
@@ -33,16 +33,16 @@ spec:
             fullnameOverride: istio-extra
 
             resources:
-              # - apiVersion: elbv2.k8s.aws/v1beta1
-              #   kind: TargetGroupBinding
-              #   metadata:
-              #     name: istio-ingressgateway
-              #   spec:
-              #     serviceRef:
-              #       name: istio-ingressgateway
-              #       port: http2
-              #     targetGroupARN: "{{values.tg_arn}}"
-              #     targetType: ip
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-ingressgateway
+                spec:
+                  serviceRef:
+                    name: istio-ingressgateway
+                    port: http2
+                  targetGroupARN: "{{values.tgarn}}"
+                  targetType: ip
 
               - apiVersion: v1
                 kind: Service
