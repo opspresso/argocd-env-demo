@@ -34,11 +34,11 @@ spec:
 
               proxy:
                 lifecycle:
-                  postStart:
-                    exec:
-                      command:
-                      - pilot-agent
-                      - wait
+                  # postStart:
+                  #   exec:
+                  #     command:
+                  #     - pilot-agent
+                  #     - wait
                   preStop:
                     exec:
                       command:
