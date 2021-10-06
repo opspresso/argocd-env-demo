@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.22.1",
+      "default": "3.23.0",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -41,7 +41,7 @@
       "description": "deliveryhero/cluster-overprovisioner"
     },
     "helm_cortex": {
-      "default": "0.6.0",
+      "default": "0.7.0",
       "description": "cortex/cortex"
     },
     "helm_crossplane": {
@@ -49,7 +49,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.22.11",
+      "default": "2.22.13",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -61,11 +61,11 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.16.10",
+      "default": "6.16.11",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "4.0.3",
+      "default": "4.0.5",
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_irsa_operator": {
@@ -85,11 +85,11 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "19.0.1",
+      "default": "19.0.2",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
-      "default": "5.0.0",
+      "default": "5.0.1",
       "description": "dashboard/kubernetes-dashboard"
     },
     "helm_kubernetes_external_secrets": {

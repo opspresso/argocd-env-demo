@@ -10,7 +10,7 @@
 
 ```bash
 ARGOCD_HOSTNAME="argocd.bruce.spic.me"
-GITHUB_ORG="opspresso"
+GITHUB_ORG="daangn"
 GITHUB_TEAM="sre"
 
 ADMIN_PASSWORD="REPLACE_ME"
