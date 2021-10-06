@@ -89,10 +89,10 @@ spec:
                     id: github
                     name: github
                     config:
-                      clientID: 0ca6b78d5dda3cfc8a53
+                      clientID: $dex.github.clientId
                       clientSecret: $dex.github.clientSecret
                       orgs:
-                        - name: opspresso
+                        - name: daangn
                   staticClients:
                   - id: argo-workflows-sso
                     name: Argo Workflow
@@ -103,7 +103,7 @@ spec:
               rbacConfig:
                 policy.default: "role:readonly"
                 policy.csv: |
-                  g, opspresso:sre, role:admin
+                  g, daangn:sre, role:admin
 
               additionalProjects:
                 - name: addons
