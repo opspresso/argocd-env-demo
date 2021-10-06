@@ -5,13 +5,13 @@ app:
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       PROFILE: dev
-      VERSION: v0.8.28
+      VERSION: v0.8.29
     enabled: true
   env:
   - name: ENV_HASH
-    value: ce043c88d37891f83a9a5fe54527d43b
+    value: 56c963579c543062e438e44a6428bdc5
   image:
-    tag: v0.8.28
+    tag: v0.8.29
   ingress:
     hosts:
     - host: sample-tomcat.bruce.spic.me
