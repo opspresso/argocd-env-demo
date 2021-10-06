@@ -104,6 +104,7 @@ spec:
                 policy.default: "role:readonly"
                 policy.csv: |
                   g, daangn:sre, role:admin
+                  g, daangn:deploy, role:admin
 
               additionalProjects:
                 - name: addons
