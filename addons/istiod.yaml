@@ -46,6 +46,15 @@ spec:
                       - "-c"
                       - "while [ $(netstat -plunt | grep tcp | grep -v envoy | wc -l | xargs) -ne 0 ]; do sleep 1; done"
 
+              tracer:
+                zipkin:
+                  address: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
+
+            meshConfig:
+              defaultConfig:
+                tracing:
+                  sampling: 10
+
             pilot:
               resources:
                 requests:
