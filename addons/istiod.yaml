@@ -32,8 +32,6 @@ spec:
               hub: querycapistio
               tag: "1.11.3"
 
-              rootNamespace: istio-system
-
               proxy:
                 lifecycle:
                   preStop:
@@ -55,6 +53,7 @@ spec:
                   numTrustedProxies: 1
                 holdApplicationUntilProxyStarts: true
               enableTracing: true
+              rootNamespace: istio-system
 
             pilot:
               resources:
