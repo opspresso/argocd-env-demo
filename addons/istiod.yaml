@@ -49,6 +49,9 @@ spec:
               defaultConfig:
                 tracing:
                   sampling: 10
+                gatewayTopology:
+                  numTrustedProxies: 1
+                holdApplicationUntilProxyStarts: true
 
             pilot:
               resources:
