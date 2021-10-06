@@ -32,6 +32,8 @@ spec:
               hub: querycapistio
               tag: "1.11.3"
 
+              rootNamespace: istio-system
+
               proxy:
                 lifecycle:
                   preStop:
