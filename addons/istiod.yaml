@@ -52,6 +52,7 @@ spec:
                 gatewayTopology:
                   numTrustedProxies: 1
                 holdApplicationUntilProxyStarts: true
+              enableTracing: true
 
             pilot:
               resources:
