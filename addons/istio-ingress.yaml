@@ -46,10 +46,6 @@ spec:
                 #   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
                 #   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
-                autoscaleEnabled: true
-                autoscaleMin: 3
-                autoscaleMax: 6
-
                 ports:
                 - name: status-port
                   port: 15021
@@ -59,6 +55,18 @@ spec:
                   port: 80
                   targetPort: 8080
                   protocol: TCP
+
+                autoscaleEnabled: true
+                autoscaleMin: 2
+                autoscaleMax: 6
+
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                  limits:
+                    cpu: 2000m
+                    memory: 1024Mi
 
       syncPolicy:
         # automated:
