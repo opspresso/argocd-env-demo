@@ -60,9 +60,10 @@ spec:
 
             pilot:
               resources:
+                # requests:
+                #   cpu: 500m
+                #   memory: 2048Mi
                 requests:
-                  # cpu: 500m
-                  # memory: 2048Mi
                   cpu: 100m
                   memory: 128Mi
 
