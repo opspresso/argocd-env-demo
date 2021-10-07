@@ -60,17 +60,17 @@ spec:
                 #   targetPort: 8443
                 #   protocol: TCP
 
-                autoscaleEnabled: true
-                autoscaleMin: 2
-                autoscaleMax: 6
+                # autoscaleEnabled: true
+                # autoscaleMin: 1
+                # autoscaleMax: 5
 
-                resources:
-                  requests:
-                    cpu: 100m
-                    memory: 128Mi
-                  limits:
-                    cpu: 2000m
-                    memory: 1024Mi
+                # resources:
+                #   requests:
+                #     cpu: 100m
+                #     memory: 128Mi
+                #   limits:
+                #     cpu: 2000m
+                #     memory: 1024Mi
 
       syncPolicy:
         # automated:
