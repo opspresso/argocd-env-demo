@@ -46,7 +46,7 @@ spec:
 
               tracer:
                 zipkin:
-                  address: {{values.zipkin}}
+                  address: "{{values.zipkin}}"
 
             meshConfig:
               defaultConfig:
