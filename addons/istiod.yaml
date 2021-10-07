@@ -7,6 +7,8 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            values:
+              sampling: "10"
 
   template:
     metadata:
@@ -48,7 +50,7 @@ spec:
             meshConfig:
               defaultConfig:
                 tracing:
-                  sampling: 10
+                  sampling: {{values.sampling}}
                 gatewayTopology:
                   numTrustedProxies: 1
                 holdApplicationUntilProxyStarts: true
