@@ -9,6 +9,7 @@ spec:
           - cluster: eks-demo
             values:
               sampling: "10"
+              zipkin: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
 
   template:
     metadata:
@@ -45,7 +46,7 @@ spec:
 
               tracer:
                 zipkin:
-                  address: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
+                  address: {{values.zipkin}}
 
             meshConfig:
               defaultConfig:
