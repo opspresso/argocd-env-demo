@@ -60,9 +60,9 @@ spec:
                 #   targetPort: 8443
                 #   protocol: TCP
 
-                # autoscaleEnabled: true
-                # autoscaleMin: 1
-                # autoscaleMax: 5
+                autoscaleEnabled: true
+                autoscaleMin: 2
+                autoscaleMax: 5
 
                 # resources:
                 #   requests:
