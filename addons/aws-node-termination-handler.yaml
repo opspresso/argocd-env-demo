@@ -44,8 +44,8 @@ spec:
 
             webhookURLSecretName: webhook-secret
 
-            nodeSelector:
-              lifecycle: spot
+            # nodeSelector:
+            #   lifecycle: spot
 
       syncPolicy:
         automated:
