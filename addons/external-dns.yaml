@@ -27,7 +27,7 @@ spec:
         namespace: addon-external-dns
       source:
         repoURL: https://kubernetes-sigs.github.io/external-dns
-        targetRevision: "1.2.0"
+        targetRevision: "1.3.2"
         chart: external-dns
         helm:
           values: |-
