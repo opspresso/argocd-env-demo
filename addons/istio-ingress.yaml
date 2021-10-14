@@ -7,6 +7,7 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
+            version: "1.11.3"
             values:
               acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
               host: "bruce.spic.me"
@@ -27,13 +28,13 @@ spec:
         namespace: istio-system
       source:
         repoURL: https://github.com/istio/istio
-        targetRevision: "1.11.3"
+        targetRevision: "{{version}}"
         path: manifests/charts/gateways/istio-ingress
         helm:
           values: |-
             global:
               hub: querycapistio
-              tag: "1.11.3"
+              tag: "{{version}}"
 
             gateways:
               istio-ingressgateway:
