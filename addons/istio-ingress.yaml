@@ -33,7 +33,7 @@ spec:
         helm:
           values: |-
             global:
-              hub: querycapistio
+              hub: istio
               tag: "{{version}}"
 
             gateways:
