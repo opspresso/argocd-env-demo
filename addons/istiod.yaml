@@ -7,7 +7,7 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            version: "1.11.3"
+            version: "1.11.4"
             values:
               sampling: "10"
               zipkin: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
