@@ -21,7 +21,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: addon-loki
+        namespace: addon-promtail
       source:
         repoURL: https://grafana.github.io/helm-charts
         targetRevision: "3.8.1"
