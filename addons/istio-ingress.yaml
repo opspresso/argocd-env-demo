@@ -38,6 +38,7 @@ spec:
 
             gateways:
               istio-ingressgateway:
+                kind: DaemonSet
                 type: ClusterIP
 
                 # serviceAnnotations:
