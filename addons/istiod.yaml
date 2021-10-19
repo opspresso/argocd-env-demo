@@ -7,7 +7,6 @@ spec:
     - list:
         elements:
           - cluster: eks-demo
-            version: "1.11.4"
             values:
               sampling: "10"
               zipkin: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
@@ -28,13 +27,13 @@ spec:
         namespace: istio-system
       source:
         repoURL: https://github.com/nalbam/istio
-        targetRevision: "master"
+        targetRevision: "1.11.4-ds"
         path: manifests/charts/istio-control/istio-discovery
         helm:
           values: |-
             global:
               hub: istio
-              tag: "{{version}}"
+              tag: "1.11.4"
 
               proxy:
                 lifecycle:
