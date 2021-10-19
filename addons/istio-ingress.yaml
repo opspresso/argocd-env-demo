@@ -62,7 +62,7 @@ spec:
                 #   targetPort: 8443
                 #   protocol: TCP
 
-                autoscaleEnabled: true
+                autoscaleEnabled: false
                 autoscaleMin: 2
                 autoscaleMax: 5
 
