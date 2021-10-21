@@ -49,13 +49,13 @@ spec:
               hosts:
                 - "dashboard.{{values.host}}"
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: graviton
-            #     effect: NoSchedule
-            # nodeSelector:
-            #   group: graviton
+            tolerations:
+              - key: group
+                operator: Equal
+                value: graviton
+                effect: NoSchedule
+            nodeSelector:
+              group: graviton
 
       syncPolicy:
         # automated:

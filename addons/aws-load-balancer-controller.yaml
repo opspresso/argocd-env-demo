@@ -38,13 +38,13 @@ spec:
               annotations:
                 eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: graviton
-            #     effect: NoSchedule
-            # nodeSelector:
-            #   group: graviton
+            tolerations:
+              - key: group
+                operator: Equal
+                value: graviton
+                effect: NoSchedule
+            nodeSelector:
+              group: graviton
 
       syncPolicy:
         automated:
