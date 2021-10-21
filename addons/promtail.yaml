@@ -24,7 +24,7 @@ spec:
         namespace: addon-promtail
       source:
         repoURL: https://grafana.github.io/helm-charts
-        targetRevision: "3.8.1"
+        targetRevision: "3.8.2"
         chart: promtail
         helm:
           values: |-
