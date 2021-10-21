@@ -49,6 +49,9 @@ app:
       enabled: true
     sidecar:
       inject: true
+  pdb:
+    enabled: true
+    maxUnavailable: 1
   serviceMonitor:
     enabled: true
     selector:
