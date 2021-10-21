@@ -41,8 +41,8 @@ spec:
               enabled: true
               clusterName: "{{cluster}}"
 
-            additionalLabels:
-              app: cluster-autoscaler
+            # additionalLabels:
+            #   app: cluster-autoscaler
 
             extraArgs:
               logtostderr: true
