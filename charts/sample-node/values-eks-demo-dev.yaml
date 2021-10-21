@@ -16,7 +16,7 @@ app:
           averageUtilization: 50
           type: Utilization
       type: Resource
-    minReplicas: 2
+    minReplicas: 10
   configmap:
     data:
       CLUSTER_NAME: eks-demo
