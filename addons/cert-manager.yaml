@@ -24,7 +24,7 @@ spec:
         namespace: addon-cert-manager
       source:
         repoURL: https://charts.jetstack.io
-        targetRevision: "v1.5.4"
+        targetRevision: "v1.6.0"
         chart: cert-manager
         helm:
           values: |-
