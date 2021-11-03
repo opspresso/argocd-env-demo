@@ -29,7 +29,7 @@
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_cert_manager": {
-      "default": "v1.6.0",
+      "default": "v1.6.1",
       "description": "jetstack/cert-manager"
     },
     "helm_chaoskube": {
@@ -37,7 +37,7 @@
       "description": "stable/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.10.7",
+      "default": "9.10.8",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
@@ -53,7 +53,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.23.1",
+      "default": "2.23.2",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -61,7 +61,7 @@
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
-      "default": "1.39.1",
+      "default": "1.39.3",
       "description": "gocd/gocd"
     },
     "helm_grafana": {
