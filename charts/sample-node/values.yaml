@@ -17,7 +17,7 @@ app:
     strategy:
       canary:
         canaryService: sample-node-preview
-        stableService: sample-node
+        stableService: sample-node-stable
         steps:
         - setWeight: 25
         - pause:
@@ -41,6 +41,8 @@ app:
     targetPort: 3000
     preview:
       enabled: true
+    stable:
+      enabled: true
 
   ingress:
     enabled: false
@@ -51,6 +53,10 @@ app:
       enabled: false
       hosts:
       - host: sample-node-preview.bruce.spic.me
+    stable:
+      enabled: false
+      hosts:
+      - host: sample-node-stable.bruce.spic.me
 
   readinessProbe:
     failureThreshold: 3
