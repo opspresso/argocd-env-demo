@@ -38,8 +38,6 @@ spec:
                 spec:
                   backendType: systemManager
                   data:
-                    - key: /k8s/common/slack-token
-                      name: slack-token
                     - key: /k8s/common/slack-hooks
                       name: slack-hooks
                   template:

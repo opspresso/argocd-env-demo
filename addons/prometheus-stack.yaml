@@ -69,15 +69,13 @@ spec:
                   group: monitoring
 
             alertmanager:
-              # enabled: false
-
               config:
                 route:
                   receiver: "slack"
-                  # routes:
-                  #   - match:
-                  #       alertname: Watchdog
-                  #     receiver: "slack"
+                  routes:
+                    - match:
+                        alertname: Watchdog
+                      receiver: "slack"
 
                 receivers:
                   - name: "null"
@@ -104,8 +102,8 @@ spec:
                         #   {{ end }}
 
               alertmanagerSpec:
-                secrets:
-                  - prometheus-alertmanager-secret
+                # secrets:
+                #   - prometheus-alertmanager-secret
 
                 storage:
                   volumeClaimTemplate:
@@ -114,7 +112,7 @@ spec:
                       accessModes: ["ReadWriteOnce"]
                       resources:
                         requests:
-                          storage: 12Gi
+                          storage: 50Gi
 
                 tolerations:
                   - key: group
