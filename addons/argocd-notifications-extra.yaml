@@ -38,7 +38,7 @@ spec:
                 spec:
                   backendType: systemManager
                   data:
-                    - key: /k8s/common/slack-token
+                    - key: /k8s/common/argocd-noti-token
                       name: slack-token
 
       syncPolicy:

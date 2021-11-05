@@ -66,10 +66,11 @@ configs:
   secret:
     createSecret: true
 
-    githubSecret: "GITHUB_WEBHOOK"
+    githubSecret: "ARGOCD_WEBHOOK"
 
     extra:
       server.secretkey: "ARGOCD_SERVER_SECRET"
+      dex.github.clientId: "ARGOCD_GITHUB_ID"
       dex.github.clientSecret: "ARGOCD_GITHUB_SECRET"
 
     # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with
