@@ -85,6 +85,37 @@ spec:
                     namespace: addon-dashboard
                     name: dashboard
 
+              # - apiVersion: networking.istio.io/v1beta1
+              #   kind: Gateway
+              #   metadata:
+              #     name: dashboard
+              #   spec:
+              #     selector:
+              #       istio: ingressgateway
+              #     servers:
+              #       - hosts:
+              #           - "dashboard.{{values.host}}"
+              #         port:
+              #           number: 80
+              #           name: http
+              #           protocol: HTTP
+
+              # - apiVersion: networking.istio.io/v1beta1
+              #   kind: VirtualService
+              #   metadata:
+              #     name: dashboard
+              #   spec:
+              #     hosts:
+              #       - "dashboard.{{values.host}}"
+              #     gateways:
+              #       - dashboard
+              #     http:
+              #       - route:
+              #           - destination:
+              #               host: dashboard
+              #               port:
+              #                 number: 80
+
       syncPolicy:
         automated:
           prune: true
