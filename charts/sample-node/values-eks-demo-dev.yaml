@@ -43,6 +43,12 @@ app:
     enabled: false
     hosts:
     - host: sample-node.bruce.spic.me
+    preview:
+      hosts:
+      - host: sample-node-preview.bruce.spic.me
+    stable:
+      hosts:
+      - host: sample-node-stable.bruce.spic.me
   istio:
     gateway:
       enabled: true
@@ -51,6 +57,11 @@ app:
   pdb:
     enabled: true
     maxUnavailable: 1
+  service:
+    preview:
+      enabled: true
+    stable:
+      enabled: true
   serviceMonitor:
     enabled: true
     selector:

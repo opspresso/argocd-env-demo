@@ -40,24 +40,6 @@ app:
   service:
     name: http
     targetPort: 3000
-    preview:
-      enabled: true
-    stable:
-      enabled: true
-
-  ingress:
-    enabled: false
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      kubernetes.io/ssl-redirect: 'true'
-    preview:
-      enabled: false
-      hosts:
-      - host: sample-node-preview.bruce.spic.me
-    stable:
-      enabled: false
-      hosts:
-      - host: sample-node-stable.bruce.spic.me
 
   readinessProbe:
     failureThreshold: 3
