@@ -26,8 +26,8 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://github.com/nalbam/istio
-        targetRevision: "1.11.4-ds"
+        repoURL: https://github.com/istio/istio
+        targetRevision: "1.11.4"
         path: manifests/charts/gateways/istio-ingress
         helm:
           values: |-
@@ -37,7 +37,6 @@ spec:
 
             gateways:
               istio-ingressgateway:
-                kind: DaemonSet
                 type: ClusterIP
 
                 # serviceAnnotations:
@@ -65,17 +64,17 @@ spec:
                 # autoscaleMin: 2
                 # autoscaleMax: 5
 
-                resources:
-                  requests:
-                    cpu: 100m
-                    memory: 128Mi
-                  limits:
-                    cpu: 1000m
-                    memory: 1024Mi
+                # resources:
+                #   requests:
+                #     cpu: 100m
+                #     memory: 128Mi
+                #   limits:
+                #     cpu: 1000m
+                #     memory: 1024Mi
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true

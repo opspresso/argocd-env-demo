@@ -165,8 +165,8 @@ spec:
                     name: "cluster-issuer-selfsigned"
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true

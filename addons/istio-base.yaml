@@ -23,13 +23,13 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://github.com/nalbam/istio
-        targetRevision: "1.11.4-ds"
+        repoURL: https://github.com/istio/istio
+        targetRevision: "1.11.4"
         path: manifests/charts/base
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true

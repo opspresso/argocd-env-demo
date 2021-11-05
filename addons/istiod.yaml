@@ -26,8 +26,8 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://github.com/nalbam/istio
-        targetRevision: "1.11.4-ds"
+        repoURL: https://github.com/istio/istio
+        targetRevision: "1.11.4"
         path: manifests/charts/istio-control/istio-discovery
         helm:
           values: |-
@@ -58,14 +58,14 @@ spec:
               enableTracing: true
               rootNamespace: istio-system
 
-            pilot:
-              resources:
-                # requests:
-                #   cpu: 500m
-                #   memory: 2048Mi
-                requests:
-                  cpu: 100m
-                  memory: 128Mi
+            # pilot:
+            #   resources:
+            #     # requests:
+            #     #   cpu: 500m
+            #     #   memory: 2048Mi
+            #     requests:
+            #       cpu: 100m
+            #       memory: 128Mi
 
       ignoreDifferences:
         - kind: MutatingWebhookConfiguration
@@ -89,8 +89,8 @@ spec:
             - /webhooks/1/failurePolicy
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
