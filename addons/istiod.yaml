@@ -58,14 +58,14 @@ spec:
               enableTracing: true
               rootNamespace: istio-system
 
-            # pilot:
-            #   resources:
-            #     # requests:
-            #     #   cpu: 500m
-            #     #   memory: 2048Mi
-            #     requests:
-            #       cpu: 100m
-            #       memory: 128Mi
+            pilot:
+              resources:
+                # requests:
+                #   cpu: 500m
+                #   memory: 2048Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
 
       ignoreDifferences:
         - kind: MutatingWebhookConfiguration
