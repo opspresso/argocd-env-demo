@@ -24,7 +24,7 @@ spec:
         namespace: addon-aws-load-balancer-controller
       source:
         repoURL: https://github.com/aws/eks-charts
-        targetRevision: HEAD
+        targetRevision: "v0.0.67"
         path: stable/aws-load-balancer-controller/crds
 
       syncPolicy:

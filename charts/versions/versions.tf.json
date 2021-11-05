@@ -61,7 +61,7 @@
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "1.4.1",
+      "default": "1.5.0",
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
@@ -69,7 +69,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.17.4",
+      "default": "6.17.5",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -93,7 +93,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "19.2.2",
+      "default": "19.2.3",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
@@ -117,7 +117,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "14.11.0",
+      "default": "14.11.1",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
