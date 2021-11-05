@@ -55,9 +55,9 @@ spec:
               # For more information: https://argocd-notifications.readthedocs.io/en/stable/subscriptions/
 
               - recipients:
-                - slack: sandbox
+                - slack:sandbox
                 triggers:
-                # - on-deployed
+                - on-deployed
                 - on-health-degraded
                 - on-sync-failed
                 - on-sync-running
