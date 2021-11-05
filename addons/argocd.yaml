@@ -34,13 +34,13 @@ spec:
             fullnameOverride: argocd
 
             controller:
-              resources:
-                requests:
-                  cpu: 300m
-                  memory: 512Mi
-                limits:
-                  cpu: 500m
-                  memory: 1024Mi
+              # resources:
+              #   requests:
+              #     cpu: 300m
+              #     memory: 512Mi
+              #   limits:
+              #     cpu: 500m
+              #     memory: 1024Mi
 
               metrics:
                 enabled: true
@@ -60,13 +60,13 @@ spec:
                 targetCPUUtilizationPercentage: 50
                 targetMemoryUtilizationPercentage: 50
 
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 128Mi
-                limits:
-                  cpu: 100m
-                  memory: 256Mi
+              # resources:
+              #   requests:
+              #     cpu: 50m
+              #     memory: 128Mi
+              #   limits:
+              #     cpu: 100m
+              #     memory: 256Mi
 
               service:
                 type: LoadBalancer
@@ -149,13 +149,13 @@ spec:
                 targetCPUUtilizationPercentage: 50
                 targetMemoryUtilizationPercentage: 50
 
-              resources:
-                requests:
-                  cpu: 300m
-                  memory: 256Mi
-                limits:
-                  cpu: 500m
-                  memory: 512Mi
+              # resources:
+              #   requests:
+              #     cpu: 300m
+              #     memory: 256Mi
+              #   limits:
+              #     cpu: 500m
+              #     memory: 512Mi
 
               metrics:
                 enabled: true
@@ -166,13 +166,13 @@ spec:
                     release: prometheus-{{cluster}}
 
             dex:
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 64Mi
-                limits:
-                  cpu: 100m
-                  memory: 128Mi
+              # resources:
+              #   requests:
+              #     cpu: 50m
+              #     memory: 64Mi
+              #   limits:
+              #     cpu: 100m
+              #     memory: 128Mi
 
               env:
                 - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
@@ -189,14 +189,14 @@ spec:
                   selector:
                     release: prometheus-{{cluster}}
 
-            redis:
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 64Mi
-                limits:
-                  cpu: 100m
-                  memory: 128Mi
+            # redis:
+            #   resources:
+            #     requests:
+            #       cpu: 50m
+            #       memory: 64Mi
+            #     limits:
+            #       cpu: 100m
+            #       memory: 128Mi
 
             configs:
               secret:

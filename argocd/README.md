@@ -10,7 +10,7 @@
 terraform apply
 ```
 
-## generate secrets
+## generate values.yaml
 
 > argocd admin password 를 잊어버리지 않기 위해, aws ssm 에 저장 합니다.
 > github 계정으로 인증학 위해 client id 와 client secret 을 저장 합니다.
@@ -25,10 +25,10 @@ GITHUB_TEAM="sre"
 ADMIN_PASSWORD="REPLACE_ME"
 ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
 ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
-ARGOCD_GITHUB_ID="REPLACE_ME" # github OAuth Apps
+ARGOCD_GITHUB_ID="REPLACE_ME" # github OAuth Apps <https://github.com/organizations/opspresso/settings/applications>
 ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
 ARGOCD_WEBHOOK="REPLACE_ME" # random string
-ARGOCD_NOTI_TOKEN="REPLACE_ME" # xoxp-xxxx
+ARGOCD_NOTI_TOKEN="REPLACE_ME" # xoxp-xxxx <https://api.slack.com/apps>
 
 # put aws ssm param
 aws ssm put-parameter --name /k8s/common/admin-password --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
@@ -70,10 +70,10 @@ find . -name values.output.yaml -exec sed -i "" -e "s@AWS_ACM_CERT@${AWS_ACM_CER
 > addons 를 위해 ApplicationSet 도 함께 설치 합니다.
 
 ```bash
-kubectl create ns argocd
-
 helm repo update
 helm search repo argo-cd
+
+kubectl create ns argocd
 
 helm install argocd argo/argo-cd -n argocd -f values.output.yaml
 helm install argocd-applicationset argo/argocd-applicationset -n argocd
