@@ -64,13 +64,13 @@ spec:
                 autoscaleMin: 2
                 autoscaleMax: 5
 
-                # resources:
-                #   requests:
-                #     cpu: 100m
-                #     memory: 128Mi
-                #   limits:
-                #     cpu: 1000m
-                #     memory: 1024Mi
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                  limits:
+                    cpu: 1000m
+                    memory: 1024Mi
 
       syncPolicy:
         automated:
