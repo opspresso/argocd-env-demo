@@ -194,8 +194,8 @@ spec:
                             description: "{{ $labels.hpa }} is using HPA Max."
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
