@@ -2,7 +2,8 @@ app:
   fullnameOverride: sample-node
 
   image:
-    repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
+    # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
+    repository: nalbam/sample-node
 
   resources:
     requests:
