@@ -69,17 +69,17 @@ spec:
                   group: monitoring
 
             alertmanager:
-              # config:
-              #   route:
-              #     receiver: "slack"
-              #     routes:
-              #       - match:
-              #           alertname: Watchdog
-              #         receiver: "slack"
+              config:
+                route:
+                  receiver: "slack"
+                  routes:
+                    - match:
+                        alertname: Watchdog
+                      receiver: "slack"
 
-              #   receivers:
-              #     - name: "null"
-              #     - name: "slack"
+                receivers:
+                  - name: "null"
+                  - name: "slack"
               #       slack_configs:
               #         - channel: '#sandbox'
               #           api_url_file: /etc/alertmanager/secrets/prometheus-alertmanager-secret/slack-hooks
