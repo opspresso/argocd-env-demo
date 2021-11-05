@@ -2,6 +2,14 @@
 
 * <https://argo-cd.readthedocs.io/en/stable/getting_started/>
 
+### eks create
+
+* <https://github.com/opspresso/terraform-env-demo/tree/main/25-eks-demo>
+
+```bash
+terraform apply
+```
+
 ## generate secrets
 
 > argocd admin password 를 잊어버리지 않기 위해, aws ssm 에 저장 합니다.
@@ -13,15 +21,13 @@ ARGOCD_HOSTNAME="argocd.bruce.spic.me"
 GITHUB_ORG="daangn"
 GITHUB_TEAM="sre"
 
+# replaceable values
 ADMIN_PASSWORD="REPLACE_ME"
-
 ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
 ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
 ARGOCD_GITHUB_ID="REPLACE_ME" # github OAuth Apps
 ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
-
 GITHUB_WEBHOOK="REPLACE_ME" # random string
-
 SLACK_TOKEN="REPLACE_ME"
 
 # put aws ssm param
@@ -41,6 +47,7 @@ ARGOCD_SERVER_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-server-se
 ARGOCD_GITHUB_ID=$(aws ssm get-parameter --name /k8s/common/argocd-github-id --with-decryption | jq .Parameter.Value -r)
 ARGOCD_GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-github-secret --with-decryption | jq .Parameter.Value -r)
 GITHUB_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/github-webhook --with-decryption | jq .Parameter.Value -r)
+SLACK_TOKEN=$(aws ssm get-parameter --name /k8s/common/slack-token --with-decryption | jq .Parameter.Value -r)
 
 AWS_ACM_CERT="$(aws acm list-certificates --query "CertificateSummaryList[].{CertificateArn:CertificateArn,DomainName:DomainName}[?contains(DomainName,'${ARGOCD_HOSTNAME}')] | [0].CertificateArn" | jq . -r)"
 
@@ -126,13 +133,12 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 
 ## 삭제
 
-### service  및 lb 삭제
+### service 및 aws elb 삭제
 
 > service 를 삭제 하여, LoadBalancer 로 생성한 elb 를 삭제 합니다.
 
 ```bash
 kubectl delete svc -n argocd argocd-server
-kubectl delete svc -n istio-system istio-ingressgateway
 ```
 
 ### terraform destory
