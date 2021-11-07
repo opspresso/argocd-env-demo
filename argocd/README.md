@@ -101,6 +101,7 @@ argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com  
 ```
 
 Load Balancer Protocol | Load Balancer Port | Instance Protocol | Instance Port | Cipher
+--- | --- | --- | --- | ---
 HTTPS                  | 443                | HTTP              | 31020         | ACM
 HTTP                   | 80                 | HTTP              | 31020         | N/A
 
