@@ -65,7 +65,7 @@
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
-      "default": "1.39.3",
+      "default": "1.39.4",
       "description": "gocd/gocd"
     },
     "helm_grafana": {
@@ -105,7 +105,7 @@
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
-      "default": "2.7.0",
+      "default": "2.8.0",
       "description": "grafana/loki"
     },
     "helm_loki_stack": {
