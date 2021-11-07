@@ -32,10 +32,10 @@ spec:
           values: |-
             fullnameOverride: aws-node-termination-handler
 
-            serviceAccount:
-              create: false
-              annotations:
-                eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+            # serviceAccount:
+            #   create: true
+            #   annotations:
+            #     eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
             enableRebalanceDraining: true
             enableScheduledEventDraining: true
