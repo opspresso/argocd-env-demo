@@ -88,6 +88,7 @@ helm upgrade argocd-applicationset argo/argocd-applicationset -n argocd
 ## Change the argocd-server service type to LoadBalancer
 
 > aws 에 elb 가 생성 되었습니다. route53 에서 argocd.demo.spic.me 와 연결해 줍니다.
+> aws elb 에서 HTTPS 의 Instance Port 를 HTTP 의 Instance Port 로 변경 합니다.
 
 ```bash
 kubectl get pod -n argocd
@@ -98,6 +99,10 @@ kubectl get svc argocd-server -n argocd
 NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                       PORT(S)                      AGE
 argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30080/TCP,443:30443/TCP   64m
 ```
+
+Load Balancer Protocol | Load Balancer Port | Instance Protocol | Instance Port | Cipher
+HTTPS                  | 443                | HTTP              | 31020         | ACM
+HTTP                   | 80                 | HTTP              | 31020         | N/A
 
 * https://console.aws.amazon.com/route53/v2/hostedzones#
 * https://argocd.demo.spic.me
