@@ -39,11 +39,11 @@ spec:
                   policy:
                     statement:
                     - action:
-                        - "autoscaling:DescribeAutoScalingGroups",
-                        - "autoscaling:DescribeAutoScalingInstances",
-                        - "autoscaling:DescribeLaunchConfigurations",
-                        - "autoscaling:DescribeTags",
-                        - "autoscaling:SetDesiredCapacity",
+                        - "autoscaling:DescribeAutoScalingGroups"
+                        - "autoscaling:DescribeAutoScalingInstances"
+                        - "autoscaling:DescribeLaunchConfigurations"
+                        - "autoscaling:DescribeTags"
+                        - "autoscaling:SetDesiredCapacity"
                         - "autoscaling:TerminateInstanceInAutoScalingGroup"
                       resource: "*"
 
