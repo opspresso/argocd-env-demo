@@ -13,7 +13,7 @@ app:
     tag: latest
   ingress:
     hosts:
-    - host: sample-grpc.bruce.spic.me
+    - host: sample-grpc.demo.spic.me
   istio:
     gateway:
       enabled: true

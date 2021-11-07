@@ -15,7 +15,7 @@ app:
     tag: v0.8.59
   ingress:
     hosts:
-    - host: sample-spring.bruce.spic.me
+    - host: sample-spring.demo.spic.me
   istio:
     gateway:
       enabled: true

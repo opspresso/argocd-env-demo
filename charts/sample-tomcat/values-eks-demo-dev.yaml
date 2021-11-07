@@ -14,7 +14,7 @@ app:
     tag: v0.8.30
   ingress:
     hosts:
-    - host: sample-tomcat.bruce.spic.me
+    - host: sample-tomcat.demo.spic.me
   istio:
     gateway:
       enabled: true

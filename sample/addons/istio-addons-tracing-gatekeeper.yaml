@@ -30,7 +30,7 @@ spec:
           values: |-
             fullnameOverride: tracing-gatekeeper
 
-            discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
+            discoveryURL: https://keycloak.demo.spic.me/auth/realms/demo
 
             upstreamURL: http://tracing.istio-system.svc.cluster.local:80
 

@@ -153,10 +153,10 @@ spec:
                 metadata:
                   name: istio-cert-bruce-spic-me
                 spec:
-                  commonName: bruce.spic.me
+                  commonName: demo.spic.me
                   dnsNames:
-                    - "*.bruce.spic.me"
-                    - "*.istio.bruce.spic.me"
+                    - "*.demo.spic.me"
+                    - "*.istio.demo.spic.me"
                   secretName: "istio-cert-bruce-spic-me"
                   duration: "87600h0m0s"
                   renewBefore: "70080h0m0s"

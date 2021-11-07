@@ -13,7 +13,7 @@ app:
     tag: v0.7.4
   ingress:
     hosts:
-    - host: sample-web.bruce.spic.me
+    - host: sample-web.demo.spic.me
   istio:
     gateway:
       enabled: true

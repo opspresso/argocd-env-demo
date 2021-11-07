@@ -17,7 +17,7 @@ terraform apply
 > github org (opspresso) 에 team (sre) 을 만들고 권한을 부여 합니다.
 
 ```bash
-ARGOCD_HOSTNAME="argocd.bruce.spic.me"
+ARGOCD_HOSTNAME="argocd.demo.spic.me"
 GITHUB_ORG="daangn"
 GITHUB_TEAM="sre"
 
@@ -87,7 +87,7 @@ helm upgrade argocd-applicationset argo/argocd-applicationset -n argocd
 
 ## Change the argocd-server service type to LoadBalancer
 
-> aws 에 elb 가 생성 되었습니다. route53 에서 argocd.bruce.spic.me 와 연결해 줍니다.
+> aws 에 elb 가 생성 되었습니다. route53 에서 argocd.demo.spic.me 와 연결해 줍니다.
 
 ```bash
 kubectl get pod -n argocd
@@ -100,7 +100,7 @@ argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com  
 ```
 
 * https://console.aws.amazon.com/route53/v2/hostedzones#
-* https://argocd.bruce.spic.me
+* https://argocd.demo.spic.me
 
 ## argocd login
 
@@ -108,7 +108,7 @@ argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com  
 > cluster 를 add 합니다.
 
 ```bash
-argocd login argocd.bruce.spic.me --grpc-web
+argocd login argocd.demo.spic.me --grpc-web
 
 argocd cluster list
 argocd cluster add eks-demo

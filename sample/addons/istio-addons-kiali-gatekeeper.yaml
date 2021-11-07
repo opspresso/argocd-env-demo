@@ -30,7 +30,7 @@ spec:
           values: |-
             fullnameOverride: kiali-gatekeeper
 
-            discoveryURL: https://keycloak.bruce.spic.me/auth/realms/demo
+            discoveryURL: https://keycloak.demo.spic.me/auth/realms/demo
 
             upstreamURL: http://kiali.istio-system.svc.cluster.local:20001
 

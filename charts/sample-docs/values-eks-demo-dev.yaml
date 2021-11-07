@@ -13,7 +13,7 @@ app:
     tag: v0.3.41
   ingress:
     hosts:
-    - host: docs.bruce.spic.me
+    - host: docs.demo.spic.me
   istio:
     gateway:
       enabled: true

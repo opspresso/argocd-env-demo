@@ -42,13 +42,13 @@ app:
       kubernetes.io/ssl-redirect: 'true'
     enabled: false
     hosts:
-    - host: sample-node.bruce.spic.me
+    - host: sample-node.demo.spic.me
     preview:
       hosts:
-      - host: sample-node-preview.bruce.spic.me
+      - host: sample-node-preview.demo.spic.me
     stable:
       hosts:
-      - host: sample-node-stable.bruce.spic.me
+      - host: sample-node-stable.demo.spic.me
   istio:
     gateway:
       enabled: true
