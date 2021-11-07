@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f"
               host: "demo.spic.me"
 
   template:
