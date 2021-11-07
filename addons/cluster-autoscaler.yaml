@@ -60,7 +60,7 @@ spec:
               create: true
               serviceAccount:
                 create: false
-                name: cluster-autoscaler
+                name: cluster-autoscaler-irsa
                 annotations:
                   eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 

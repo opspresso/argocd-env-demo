@@ -34,7 +34,7 @@ spec:
 
             serviceAccount:
               create: false
-              name: aws-node-termination-handler
+              name: aws-node-termination-handler-irsa
               annotations:
                 eks.amazonaws.com/role-arn: "{{values.rolearn}}"
 
