@@ -131,6 +131,40 @@ spec:
                     - group: "*"
                       kind: "*"
 
+              # additionalApplications:
+              #   - name: addons-demo
+              #     namespace: argocd
+              #     additionalLabels:
+              #       krmt.io/group: addons
+              #     project: addons
+              #     source:
+              #       repoURL: https://github.com/opspresso/argocd-env-demo
+              #       targetRevision: HEAD
+              #       path: addons
+              #     destination:
+              #       name: in-cluster
+              #       namespace: argocd
+              #     syncPolicy:
+              #       automated:
+              #         prune: true
+              #         selfHeal: true
+              #   - name: apps-demo
+              #     namespace: argocd
+              #     additionalLabels:
+              #       krmt.io/group: apps
+              #     project: apps
+              #     source:
+              #       repoURL: https://github.com/opspresso/argocd-env-demo
+              #       targetRevision: HEAD
+              #       path: apps
+              #     destination:
+              #       name: in-cluster
+              #       namespace: argocd
+              #     syncPolicy:
+              #       automated:
+              #         prune: true
+              #         selfHeal: true
+
               metrics:
                 enabled: true
                 serviceMonitor:
