@@ -36,12 +36,23 @@ spec:
               - apiVersion: elbv2.k8s.aws/v1beta1
                 kind: TargetGroupBinding
                 metadata:
-                  name: istio-ingressgateway
+                  name: istio-public
                 spec:
                   serviceRef:
                     name: istio-ingressgateway
                     port: http2
-                  targetGroupARN: "{{istio.target_group_arn}}"
+                  targetGroupARN: "{{istio.public_tg_arn}}"
+                  targetType: ip
+
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-internal
+                spec:
+                  serviceRef:
+                    name: istio-ingressgateway
+                    port: http2
+                  targetGroupARN: "{{istio.internal_tg_arn}}"
                   targetType: ip
 
               - apiVersion: v1

@@ -3,13 +3,13 @@
   "aws_region": "ap-northeast-2",
   "cluster": "eks-demo",
   "cluster_env": "alpha",
-  "cluster_oidc_arn": "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/691225A5218983CA26CD546BF8F03D85",
   "istio": {
     "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369",
     "hostname": "demo.spic.me",
     "internal": "demo.internal",
     "sampling": "10",
-    "target_group_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-0/da1c2a2cb9ca9191"
+    "public_tg_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-0/f0a427475785838f",
+    "internal_tg_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-0/37a45f9b359e3768"
   },
   "cluster-autoscaler": {
     "scan-interval": "6m",
