@@ -159,11 +159,11 @@ spec:
 
                 aws-ce:
                   url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/aws-costs-exporter.json
-                  datasource: Prometheus
+                  # datasource: Prometheus
 
                 jvm:
                   url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/jvm.json
-                  datasource: Prometheus
+                  # datasource: Prometheus
 
                 nginx-ingress:
                   url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
