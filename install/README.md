@@ -120,6 +120,14 @@ argocd cluster list
 argocd cluster add eks-demo
 ```
 
+## argocd
+
+> argocd 를 등록 합니다.
+
+```bash
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/argocd.yaml
+```
+
 ## addons
 
 > addons 를 등록 합니다.

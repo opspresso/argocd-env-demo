@@ -102,6 +102,18 @@ spec:
                   g, {{values.github_org}}:{{values.github_team}}, role:admin
 
               additionalProjects:
+                - name: argocd
+                  namespace: argocd
+                  description: argocd project
+                  sourceRepos:
+                    - "*"
+                  destinations:
+                    - namespace: "*"
+                      server: "*"
+                  clusterResourceWhitelist:
+                    - group: "*"
+                      kind: "*"
+
                 - name: addons
                   namespace: argocd
                   description: addons project

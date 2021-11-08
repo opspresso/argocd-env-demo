@@ -35,6 +35,18 @@ server:
       g, GITHUB_ORG:GITHUB_TEAM, role:admin
 
   additionalProjects:
+    - name: argocd
+      namespace: argocd
+      description: argocd project
+      sourceRepos:
+        - "*"
+      destinations:
+        - namespace: "*"
+          server: "*"
+      clusterResourceWhitelist:
+        - group: "*"
+          kind: "*"
+
     - name: addons
       namespace: argocd
       description: addons project
