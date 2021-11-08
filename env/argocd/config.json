@@ -6,13 +6,5 @@
   "hostname": "demo.spic.me",
   "argocd": {
     "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f"
-  },
-  "cluster-overprovisioner": {
-    "replicas": "1"
-  },
-  "istio": {
-    "sampling": "10",
-    "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369",
-    "target_group_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-0/da1c2a2cb9ca9191"
   }
 }

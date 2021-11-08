@@ -4,11 +4,9 @@ metadata:
   name: argocd-extra
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
-        revision: HEAD
-        files:
-          - path: "env/**/config.json"
+    - list:
+        elements:
+          - cluster: in-cluster
 
   template:
     metadata:
@@ -58,37 +56,6 @@ spec:
                       name: dex.google.clientSecret
                     - key: /k8s/common/argo-workflows-client-secret
                       name: argo-workflows-client-secret
-
-              - apiVersion: networking.istio.io/v1beta1
-                kind: Gateway
-                metadata:
-                  name: argocd
-                spec:
-                  selector:
-                    istio: ingressgateway
-                  servers:
-                    - hosts:
-                        - "argocd.{{hostname}}"
-                      port:
-                        number: 80
-                        name: http
-                        protocol: HTTP
-
-              - apiVersion: networking.istio.io/v1beta1
-                kind: VirtualService
-                metadata:
-                  name: argocd
-                spec:
-                  hosts:
-                    - "argocd.{{hostname}}"
-                  gateways:
-                    - argocd
-                  http:
-                    - route:
-                        - destination:
-                            host: argocd-server
-                            port:
-                              number: 80
 
       syncPolicy:
         # automated:

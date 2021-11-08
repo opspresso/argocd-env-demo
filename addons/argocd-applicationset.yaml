@@ -4,11 +4,9 @@ metadata:
   name: argocd-applicationset
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
-        revision: HEAD
-        files:
-          - path: "env/**/config.json"
+    - list:
+        elements:
+          - cluster: in-cluster
 
   template:
     metadata:

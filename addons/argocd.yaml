@@ -4,11 +4,12 @@ metadata:
   name: argocd
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
-        revision: HEAD
-        files:
-          - path: "env/**/config.json"
+    - list:
+        elements:
+          - cluster: in-cluster
+            values:
+              hostname: "argocd.demo.spic.me"
+              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f"
 
   template:
     metadata:
@@ -70,17 +71,17 @@ spec:
               service:
                 type: LoadBalancer
                 annotations:
-                  external-dns.alpha.kubernetes.io/hostname: "argocd.{{hostname}}"
+                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{argocd.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
               extraArgs:
                 - --insecure
 
               config:
-                url: https://argocd.{{hostname}}
+                url: https://{{values.hostname}}
 
                 dex.config: |
                   connectors:
@@ -92,12 +93,6 @@ spec:
                       clientSecret: $dex.github.clientSecret
                       orgs:
                         - name: daangn
-                  staticClients:
-                  - id: argo-workflows-sso
-                    name: Argo Workflow
-                    redirectURIs:
-                      - https://argo-workflows.{{hostname}}/oauth2/callback
-                    secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
                 policy.default: "role:readonly"
@@ -206,13 +201,6 @@ spec:
                 limits:
                   cpu: 100m
                   memory: 128Mi
-
-              env:
-                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: argocd-secret
-                      key: argo-workflows-client-secret
 
               metrics:
                 enabled: true
