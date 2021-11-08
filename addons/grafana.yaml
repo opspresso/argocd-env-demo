@@ -110,11 +110,11 @@ spec:
                   access: proxy
                 - name: demo-a
                   type: prometheus
-                  url: http://prometheus.demo-a.internal
+                  url: http://prometheus.in.demo-a.spic.me
                   access: proxy
                 - name: demo-b
                   type: prometheus
-                  url: http://prometheus.demo-b.internal
+                  url: http://prometheus.in.demo-b.spic.me
                   access: proxy
 
             dashboardProviders:
