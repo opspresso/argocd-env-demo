@@ -14,7 +14,7 @@ spec:
     metadata:
       name: "cluster-overprovisioner-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
@@ -37,11 +37,11 @@ spec:
                 replicaCount: {{cluster-overprovisioner.replicas}}
                 resources:
                   requests:
-                    cpu: "1"
-                    memory: "1Gi"
+                    cpu: "{{cluster-overprovisioner.cpu}}"
+                    memory: "{{cluster-overprovisioner.memory}}"
                   limits:
-                    cpu: "1"
-                    memory: "1Gi"
+                    cpu: "{{cluster-overprovisioner.cpu}}"
+                    memory: "{{cluster-overprovisioner.memory}}"
 
       syncPolicy:
         automated:

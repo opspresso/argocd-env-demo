@@ -8,14 +8,14 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-efs-csi-driver"
+              rolearn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-efs-csi-driver"
               efsid: "fs-61cd4101"
 
   template:
     metadata:
       name: "aws-efs-csi-driver-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"

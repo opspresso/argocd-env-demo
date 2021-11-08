@@ -144,6 +144,10 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 
 ```bash
 kubectl delete svc -n argocd argocd-server
+
+# helm uninstall argocd -n argocd
+# helm uninstall argocd-applicationset -n argocd
+# kubectl delete ns argocd
 ```
 
 ### terraform destory

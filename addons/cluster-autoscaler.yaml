@@ -14,7 +14,7 @@ spec:
     metadata:
       name: "cluster-autoscaler-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
@@ -47,10 +47,10 @@ spec:
               logtostderr: true
               stderrthreshold: info
               v: 4
-              scan-interval: 6m
+              scan-interval: {{cluster-autoscaler.scan-interval}}
               scale-down-enabled: true
-              scale-down-delay-after-delete: 10m
-              scale-down-utilization-threshold: 0.6
+              scale-down-delay-after-delete: {{cluster-autoscaler.scale-down-delay-after-delete}}
+              scale-down-utilization-threshold: {{cluster-autoscaler.scale-down-utilization-threshold}}
               skip-nodes-with-local-storage: false
               skip-nodes-with-system-pods: false
               expander: least-waste
@@ -60,7 +60,7 @@ spec:
                 # create: false
                 # name: cluster-autoscaler-irsa
                 annotations:
-                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--eks-demo--cluster-autoscaler"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--cluster-autoscaler"
 
             # tolerations:
             #   - key: group

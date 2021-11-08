@@ -8,14 +8,14 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
+              acm_arn: "arn:aws:acm:ap-northeast-2:{{aws_account_id}}:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
               hostname: "*.demo.spic.me"
 
   template:
     metadata:
       name: "ingress-nginx-http-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"

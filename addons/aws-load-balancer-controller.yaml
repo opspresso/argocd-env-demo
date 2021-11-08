@@ -14,7 +14,7 @@ spec:
     metadata:
       name: "aws-load-balancer-controller-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
@@ -36,7 +36,7 @@ spec:
 
             serviceAccount:
               annotations:
-                eks.amazonaws.com/role-arn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-load-balancer-controller"
+                eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-load-balancer-controller"
 
             # tolerations:
             #   - key: group

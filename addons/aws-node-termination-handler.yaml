@@ -14,7 +14,7 @@ spec:
     metadata:
       name: "aws-node-termination-handler-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-alpha-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
@@ -36,7 +36,7 @@ spec:
               # create: false
               # name: aws-node-termination-handler-irsa
               annotations:
-                eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--eks-demo--aws-node-termination-handler"
+                eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-node-termination-handler"
 
             enableRebalanceDraining: true
             enableScheduledEventDraining: true
