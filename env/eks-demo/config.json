@@ -3,7 +3,7 @@
   "aws_region": "ap-northeast-2",
   "cluster": "eks-demo",
   "cluster_env": "alpha",
-  "cluster_oidc_arn": "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/EB05973A6591B8D28B88A131317732CA",
+  "cluster_oidc_arn": "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/691225A5218983CA26CD546BF8F03D85",
   "hostname": "demo.spic.me",
   "istio": {
     "sampling": "10",
