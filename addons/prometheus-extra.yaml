@@ -195,6 +195,37 @@ spec:
                             summary: "HPA Max Usage"
                             description: "{{ $labels.hpa }} is using HPA Max."
 
+              - apiVersion: networking.istio.io/v1beta1
+                kind: Gateway
+                metadata:
+                  name: prometheus
+                spec:
+                  selector:
+                    istio: ingressgateway
+                  servers:
+                    - hosts:
+                        - "prometheus.{{istio.internal}}"
+                      port:
+                        number: 80
+                        name: http
+                        protocol: HTTP
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: prometheus
+                spec:
+                  hosts:
+                    - "prometheus.{{istio.internal}}"
+                  gateways:
+                    - prometheus
+                  http:
+                    - route:
+                        - destination:
+                            host: prometheus-prometheus
+                            port:
+                              number: 9090
+
       syncPolicy:
         automated:
           prune: true
