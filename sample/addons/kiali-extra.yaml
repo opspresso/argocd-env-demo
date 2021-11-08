@@ -52,7 +52,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "kiali.{{values.host}}"
+                        - "kiali.{{hostname}}"
                       port:
                         number: 80
                         name: http
@@ -64,7 +64,7 @@ spec:
                   name: kiali
                 spec:
                   hosts:
-                    - "kiali.{{values.host}}"
+                    - "kiali.{{hostname}}"
                   gateways:
                     - kiali
                   http:

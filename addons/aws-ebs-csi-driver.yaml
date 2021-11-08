@@ -4,11 +4,11 @@ metadata:
   name: aws-ebs-csi-driver
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-ebs-csi-driver"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -42,7 +42,7 @@ spec:
 
               serviceAccount:
                 annotations:
-                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--eks-demo--aws-ebs-csi-driver"
 
               # tolerations:
               #   - key: group

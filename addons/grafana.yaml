@@ -4,11 +4,11 @@ metadata:
   name: grafana
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              host: "demo.spic.me"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -46,7 +46,7 @@ spec:
 
             grafana.ini:
               server:
-                root_url: "https://grafana.{{values.host}}/"
+                root_url: "https://grafana.{{hostname}}/"
 
               auth:
                 disable_login_form: false
@@ -82,9 +82,9 @@ spec:
               #   client_id: "grafana"
               #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
               #   scopes: "openid email profile roles"
-              #   auth_url: "https://keycloak.{{values.host}}/auth/realms/demo/protocol/openid-connect/auth"
-              #   token_url: "https://keycloak.{{values.host}}/auth/realms/demo/protocol/openid-connect/token"
-              #   api_url: "https://keycloak.{{values.host}}/auth/realms/demo/protocol/openid-connect/userinfo"
+              #   auth_url: "https://keycloak.{{hostname}}/auth/realms/demo/protocol/openid-connect/auth"
+              #   token_url: "https://keycloak.{{hostname}}/auth/realms/demo/protocol/openid-connect/token"
+              #   api_url: "https://keycloak.{{hostname}}/auth/realms/demo/protocol/openid-connect/userinfo"
               #   # role_attribute_path = role
 
             ingress:
@@ -93,7 +93,7 @@ spec:
                 kubernetes.io/ingress.class: nginx
                 nginx.ingress.kubernetes.io/ssl-redirect: "true"
               hosts:
-                - "grafana.{{values.host}}"
+                - "grafana.{{hostname}}"
 
             datasources:
               datasources.yaml:

@@ -4,11 +4,11 @@ metadata:
   name: aws-load-balancer-controller
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-load-balancer-controller"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -36,7 +36,7 @@ spec:
 
             serviceAccount:
               annotations:
-                eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+                eks.amazonaws.com/role-arn: "arn:aws:iam::082867736673:role/irsa--eks-demo--aws-load-balancer-controller"
 
             # tolerations:
             #   - key: group

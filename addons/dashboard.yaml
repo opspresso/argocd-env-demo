@@ -4,11 +4,11 @@ metadata:
   name: dashboard
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              host: "demo.spic.me"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -47,7 +47,7 @@ spec:
                 kubernetes.io/ingress.class: nginx
                 nginx.ingress.kubernetes.io/ssl-redirect: "true"
               hosts:
-                - "dashboard.{{values.host}}"
+                - "dashboard.{{hostname}}"
 
             # tolerations:
             #   - key: group

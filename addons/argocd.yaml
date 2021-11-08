@@ -4,12 +4,11 @@ metadata:
   name: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f"
-              host: "demo.spic.me"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -71,17 +70,17 @@ spec:
               service:
                 type: LoadBalancer
                 annotations:
-                  external-dns.alpha.kubernetes.io/hostname: "argocd.{{values.host}}"
+                  external-dns.alpha.kubernetes.io/hostname: "argocd.{{hostname}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{argocd.acm_arn}}"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
               extraArgs:
                 - --insecure
 
               config:
-                url: https://argocd.{{values.host}}
+                url: https://argocd.{{hostname}}
 
                 dex.config: |
                   connectors:
@@ -97,7 +96,7 @@ spec:
                   - id: argo-workflows-sso
                     name: Argo Workflow
                     redirectURIs:
-                      - https://argo-workflows.{{values.host}}/oauth2/callback
+                      - https://argo-workflows.{{hostname}}/oauth2/callback
                     secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:

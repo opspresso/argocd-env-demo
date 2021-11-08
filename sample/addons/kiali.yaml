@@ -34,7 +34,7 @@ spec:
 
             server:
               web_schema: https
-              web_fqdn: "kiali.{{values.host}}"
+              web_fqdn: "kiali.{{hostname}}"
 
             istio_namespace: "istio-system"
 
@@ -68,7 +68,7 @@ spec:
             external_services:
               grafana:
                 in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
-                url: "https://grafana.{{values.host}}"
+                url: "https://grafana.{{hostname}}"
 
               prometheus:
                 url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"

@@ -4,9 +4,11 @@ metadata:
   name: cluster-issuer-selfsigned
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:

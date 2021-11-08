@@ -46,7 +46,7 @@ spec:
                 - --auth-mode=sso
 
               sso:
-                issuer: https://argocd.{{values.host}}/api/dex
+                issuer: https://argocd.{{hostname}}/api/dex
                 # sessionExpiry defines how long your login is valid for in hours. (optional, default: 10h)
                 # sessionExpiry: 240h
                 clientId:
@@ -55,7 +55,7 @@ spec:
                 clientSecret:
                   name: argo-workflows-secret
                   key: client-secret
-                redirectUrl: https://argo-workflows.{{values.host}}/oauth2/callback
+                redirectUrl: https://argo-workflows.{{hostname}}/oauth2/callback
 
                 rbac:
                   enabled: true

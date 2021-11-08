@@ -4,12 +4,11 @@ metadata:
   name: cluster-autoscaler
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              region: "ap-northeast-2"
-              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--cluster-autoscaler"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -35,7 +34,7 @@ spec:
 
             cloudProvider: aws
 
-            awsRegion: "{{values.region}}"
+            awsRegion: "{{aws_region}}"
 
             autoDiscovery:
               enabled: true
@@ -61,7 +60,7 @@ spec:
                 # create: false
                 # name: cluster-autoscaler-irsa
                 annotations:
-                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--eks-demo--cluster-autoscaler"
 
             # tolerations:
             #   - key: group

@@ -4,12 +4,11 @@ metadata:
   name: istiod
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              sampling: "10"
-              zipkin: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -46,12 +45,12 @@ spec:
 
               tracer:
                 zipkin:
-                  address: "{{values.zipkin}}"
+                  address: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
 
             meshConfig:
               defaultConfig:
                 tracing:
-                  sampling: {{values.sampling}}
+                  sampling: {{istio.sampling}}
                 gatewayTopology:
                   numTrustedProxies: 1
                 holdApplicationUntilProxyStarts: true

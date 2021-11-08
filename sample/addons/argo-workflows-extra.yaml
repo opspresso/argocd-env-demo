@@ -54,7 +54,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "argo-workflows.{{values.host}}"
+                        - "argo-workflows.{{hostname}}"
                       port:
                         number: 80
                         name: http
@@ -66,7 +66,7 @@ spec:
                   name: argo-workflows
                 spec:
                   hosts:
-                    - "argo-workflows.{{values.host}}"
+                    - "argo-workflows.{{hostname}}"
                   gateways:
                     - argo-workflows
                   http:

@@ -4,12 +4,11 @@ metadata:
   name: irsa-operator
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              rolearn: "arn:aws:iam::082867736673:role/irsa--eks-demo--irsa-operator"
-              oidcarn: "arn:aws:iam::082867736673:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/EB05973A6591B8D28B88A131317732CA"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -34,8 +33,8 @@ spec:
             fullnameOverride: irsa-operator
 
             clusterName: "{{cluster}}"
-            oidcProviderARN: "{{values.oidcarn}}"
-            roleARN: "{{values.rolearn}}"
+            oidcProviderARN: "{{cluster_oidc_arn}}"
+            roleARN: "arn:aws:iam::{{aws_account_id}}:role/irsa--eks-demo--irsa-operator"
 
             podSecurityContext:
               runAsNonRoot: false

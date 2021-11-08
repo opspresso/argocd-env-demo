@@ -4,11 +4,11 @@ metadata:
   name: istio-extra
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              tgarn: "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-0/da1c2a2cb9ca9191"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/**/config.json"
 
   template:
     metadata:
@@ -41,7 +41,7 @@ spec:
                   serviceRef:
                     name: istio-ingressgateway
                     port: http2
-                  targetGroupARN: "{{values.tgarn}}"
+                  targetGroupARN: "{{istio.target_group_arn}}"
                   targetType: ip
 
               - apiVersion: v1
@@ -151,13 +151,12 @@ spec:
               - apiVersion: cert-manager.io/v1
                 kind: Certificate
                 metadata:
-                  name: istio-cert-bruce-spic-me
+                  name: istio-cert
                 spec:
-                  commonName: demo.spic.me
+                  commonName: "{{hostname}}"
                   dnsNames:
-                    - "*.demo.spic.me"
-                    - "*.istio.demo.spic.me"
-                  secretName: "istio-cert-bruce-spic-me"
+                    - "*.{{hostname}}"
+                  secretName: "istio-cert"
                   duration: "87600h0m0s"
                   renewBefore: "70080h0m0s"
                   issuerRef:
