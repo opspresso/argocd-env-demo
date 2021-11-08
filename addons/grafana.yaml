@@ -99,15 +99,11 @@ spec:
               datasources.yaml:
                 apiVersion: 1
                 datasources:
-                - name: Prometheus
+                - name: demo
                   type: prometheus
                   url: http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090
                   access: proxy
                   isDefault: true
-                - name: Loki
-                  type: loki
-                  url: http://loki.addon-loki.svc.cluster.local:3100
-                  access: proxy
                 - name: demo-a
                   type: prometheus
                   url: http://prometheus.in.demo-a.spic.me
@@ -115,6 +111,10 @@ spec:
                 - name: demo-b
                   type: prometheus
                   url: http://prometheus.in.demo-b.spic.me
+                  access: proxy
+                - name: Loki
+                  type: loki
+                  url: http://loki.in.demo.spic.me
                   access: proxy
 
             dashboardProviders:
