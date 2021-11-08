@@ -1,0 +1,11 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: eks-demo-a
+  ingress:
+    hosts:
+    - host: sample-spring.demo.spic.me
+    - host: sample-spring.demo-a.spic.me
+  serviceMonitor:
+    selector:
+      release: prometheus-eks-demo-a
