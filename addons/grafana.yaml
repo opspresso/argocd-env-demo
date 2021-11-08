@@ -108,6 +108,14 @@ spec:
                   type: loki
                   url: http://loki.addon-loki.svc.cluster.local:3100
                   access: proxy
+                - name: demo-a
+                  type: prometheus
+                  url: http://prometheus.demo-a.internal
+                  access: proxy
+                - name: demo-b
+                  type: prometheus
+                  url: http://prometheus.demo-b.internal
+                  access: proxy
 
             dashboardProviders:
               dashboardproviders.yaml:
