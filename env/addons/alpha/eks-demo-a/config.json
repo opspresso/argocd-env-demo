@@ -6,7 +6,7 @@
   "istio": {
     "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/5c4bf3d7-b269-4c1e-9b1b-5a73dea3fa4b",
     "hostname": "demo-a.spic.me",
-    "internal": "demo-a.internal",
+    "internal": "in.demo-a.spic.me",
     "sampling": "10",
     "public_tg_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-a/5597c366a88bdc1a",
     "internal_tg_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-a/3ae8453b35d2b5bd"
