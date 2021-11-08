@@ -70,17 +70,17 @@ spec:
               service:
                 type: LoadBalancer
                 annotations:
-                  external-dns.alpha.kubernetes.io/hostname: "{{hostname}}"
+                  external-dns.alpha.kubernetes.io/hostname: "{{argocd.hostname}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{argocd.acm_arn}}"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
               extraArgs:
                 - --insecure
 
               config:
-                url: https://{{hostname}}
+                url: https://{{argocd.hostname}}
 
                 dex.config: |
                   connectors:

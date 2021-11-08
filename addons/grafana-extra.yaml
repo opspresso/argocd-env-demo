@@ -62,7 +62,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "grafana.{{hostname}}"
+                        - "grafana.{{istio.hostname}}"
                       port:
                         number: 80
                         name: http
@@ -74,7 +74,7 @@ spec:
                   name: grafana
                 spec:
                   hosts:
-                    - "grafana.{{hostname}}"
+                    - "grafana.{{istio.hostname}}"
                   gateways:
                     - grafana
                   http:

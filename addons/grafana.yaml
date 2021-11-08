@@ -46,7 +46,7 @@ spec:
 
             grafana.ini:
               server:
-                root_url: "https://grafana.{{hostname}}/"
+                root_url: "https://grafana.{{istio.hostname}}/"
 
               auth:
                 disable_login_form: false
@@ -82,9 +82,9 @@ spec:
               #   client_id: "grafana"
               #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
               #   scopes: "openid email profile roles"
-              #   auth_url: "https://keycloak.{{hostname}}/auth/realms/demo/protocol/openid-connect/auth"
-              #   token_url: "https://keycloak.{{hostname}}/auth/realms/demo/protocol/openid-connect/token"
-              #   api_url: "https://keycloak.{{hostname}}/auth/realms/demo/protocol/openid-connect/userinfo"
+              #   auth_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/auth"
+              #   token_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/token"
+              #   api_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/userinfo"
               #   # role_attribute_path = role
 
             ingress:
@@ -93,7 +93,7 @@ spec:
                 kubernetes.io/ingress.class: nginx
                 nginx.ingress.kubernetes.io/ssl-redirect: "true"
               hosts:
-                - "grafana.{{hostname}}"
+                - "grafana.{{istio.hostname}}"
 
             datasources:
               datasources.yaml:

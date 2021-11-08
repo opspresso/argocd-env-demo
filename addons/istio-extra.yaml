@@ -153,9 +153,9 @@ spec:
                 metadata:
                   name: istio-cert
                 spec:
-                  commonName: "{{hostname}}"
+                  commonName: "{{istio.hostname}}"
                   dnsNames:
-                    - "*.{{hostname}}"
+                    - "*.{{istio.hostname}}"
                   secretName: "istio-cert"
                   duration: "87600h0m0s"
                   renewBefore: "70080h0m0s"
