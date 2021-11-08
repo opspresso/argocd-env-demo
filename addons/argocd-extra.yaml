@@ -6,7 +6,7 @@ spec:
   generators:
     - list:
         elements:
-          - cluster: in-cluster
+          - cluster: eks-demo
 
   template:
     metadata:
