@@ -19,7 +19,7 @@ terraform apply
 ```bash
 ARGOCD_HOSTNAME="argocd.demo.spic.me"
 GITHUB_ORG="daangn"
-GITHUB_TEAM="sre"
+GITHUB_TEAM="deploy"
 
 # replaceable values
 ADMIN_PASSWORD="REPLACE_ME"
