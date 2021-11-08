@@ -14,7 +14,7 @@ spec:
     metadata:
       name: "kiali-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_alpha}}-addon
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
         app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
