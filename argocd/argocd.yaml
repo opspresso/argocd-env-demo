@@ -91,12 +91,12 @@ spec:
                       clientID: $dex.github.clientId
                       clientSecret: $dex.github.clientSecret
                       orgs:
-                        - name: {{github.org}}
+                        - name: {{argocd.github.org}}
 
               rbacConfig:
                 policy.default: "role:readonly"
                 policy.csv: |
-                  g, {{github.org}}:{{github.team}}, role:admin
+                  g, {{argocd.github.org}}:{{argocd.github.team}}, role:admin
 
               additionalProjects:
                 - name: argocd
