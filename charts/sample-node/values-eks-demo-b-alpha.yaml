@@ -19,7 +19,7 @@ app:
     minReplicas: 2
   configmap:
     data:
-      CLUSTER_NAME: eks-demo
+      CLUSTER_NAME: eks-demo-b
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       PROFILE: alpha
@@ -43,12 +43,13 @@ app:
     enabled: false
     hosts:
     - host: sample-node.demo.spic.me
+    - host: sample-node.demo-b.spic.me
     preview:
       hosts:
-      - host: sample-node-preview.demo.spic.me
+      - host: sample-node-preview.demo-b.spic.me
     stable:
       hosts:
-      - host: sample-node-stable.demo.spic.me
+      - host: sample-node-stable.demo-b.spic.me
   istio:
     gateway:
       enabled: true
@@ -65,7 +66,7 @@ app:
   serviceMonitor:
     enabled: true
     selector:
-      release: prometheus-eks-demo
+      release: prometheus-eks-demo-b
 redis:
   istio:
     sidecar:

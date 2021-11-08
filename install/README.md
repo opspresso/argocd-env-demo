@@ -118,6 +118,9 @@ argocd login argocd.demo.spic.me --grpc-web
 
 argocd cluster list
 argocd cluster add eks-demo
+
+# argocd cluster add eks-demo-a
+# argocd cluster add eks-demo-b
 ```
 
 ## argocd

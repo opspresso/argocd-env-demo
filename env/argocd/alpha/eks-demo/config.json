@@ -1,0 +1,12 @@
+{
+  "aws_account_id": "082867736673",
+  "aws_region": "ap-northeast-2",
+  "cluster": "eks-demo",
+  "cluster_env": "alpha",
+  "hostname": "argocd.demo.spic.me",
+  "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f",
+  "github": {
+    "org": "daangn",
+    "team": "deploy"
+  }
+}

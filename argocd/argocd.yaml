@@ -4,14 +4,11 @@ metadata:
   name: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              hostname: "argocd.demo.spic.me"
-              acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f"
-              github_org: daangn
-              github_team: deploy
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/argocd/alpha/**/config.json"
 
   template:
     metadata:
@@ -73,17 +70,17 @@ spec:
               service:
                 type: LoadBalancer
                 annotations:
-                  external-dns.alpha.kubernetes.io/hostname: "{{values.hostname}}"
+                  external-dns.alpha.kubernetes.io/hostname: "{{hostname}}"
                   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
                   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
-                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{values.acm_arn}}"
+                  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "{{acm_arn}}"
                   service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 
               extraArgs:
                 - --insecure
 
               config:
-                url: https://{{values.hostname}}
+                url: https://{{hostname}}
 
                 dex.config: |
                   connectors:
@@ -94,12 +91,12 @@ spec:
                       clientID: $dex.github.clientId
                       clientSecret: $dex.github.clientSecret
                       orgs:
-                        - name: {{values.github_org}}
+                        - name: {{github.org}}
 
               rbacConfig:
                 policy.default: "role:readonly"
                 policy.csv: |
-                  g, {{values.github_org}}:{{values.github_team}}, role:admin
+                  g, {{github.org}}:{{github.team}}, role:admin
 
               additionalProjects:
                 - name: argocd
