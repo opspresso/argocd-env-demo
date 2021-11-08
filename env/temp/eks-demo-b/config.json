@@ -7,7 +7,7 @@
   "hostname": "demo-b.spic.me",
   "istio": {
     "sampling": "10",
-    "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/5c4bf3d7-b269-4c1e-9b1b-5a73dea3fa4b",
+    "acm_arn": "arn:aws:acm:ap-northeast-2:082867736673:certificate/3f1df202-c3aa-4404-8ac8-2dfbc8354427",
     "target_group_arn": "arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-b/7f375d90e6ad166e"
   },
   "cluster-autoscaler": {
