@@ -133,24 +133,24 @@ spec:
             dashboards:
               default:
                 kube-cluster:
-                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-cluster.json
-                  # gnetId: 9797
-                  # revision: 17
+                  # url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-cluster.json
+                  gnetId: 9797
+                  revision: 18
                   datasource: Prometheus
                 kube-deploy:
-                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-deployment.json
-                  # gnetId: 9679
-                  # revision: 13
+                  # url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-deployment.json
+                  gnetId: 9679
+                  revision: 14
                   datasource: Prometheus
                 kube-sts:
-                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-statefulset.json
-                  # gnetId: 14902
-                  # revision: 3
+                  # url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-statefulset.json
+                  gnetId: 14902
+                  revision: 4
                   datasource: Prometheus
                 kube-dms:
-                  url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-daemonset.json
-                  # gnetId: 14982
-                  # revision: 1
+                  # url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/kube-daemonset.json
+                  gnetId: 14982
+                  revision: 2
                   datasource: Prometheus
 
                 aws-ce:
