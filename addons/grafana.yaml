@@ -104,6 +104,10 @@ spec:
                   url: http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090
                   access: proxy
                   isDefault: true
+                - name: demo
+                  type: prometheus
+                  url: http://prometheus.in.demo.spic.me
+                  access: proxy
                 - name: demo-a
                   type: prometheus
                   url: http://prometheus.in.demo-a.spic.me
