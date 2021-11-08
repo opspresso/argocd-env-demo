@@ -20,5 +20,8 @@
     "replicas": "0",
     "cpu": "1",
     "memory": "1Gi"
+  },
+  "promtail": {
+    "lokiAddress": "http://loki.in.demo.spic.me"
   }
 }
