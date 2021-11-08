@@ -10,6 +10,8 @@ spec:
             values:
               hostname: "argocd.demo.spic.me"
               acm_arn: "arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f"
+              github_org: daangn
+              github_team: sre
 
   template:
     metadata:
@@ -92,13 +94,12 @@ spec:
                       clientID: $dex.github.clientId
                       clientSecret: $dex.github.clientSecret
                       orgs:
-                        - name: daangn
+                        - name: {{values.github_org}}
 
               rbacConfig:
                 policy.default: "role:readonly"
                 policy.csv: |
-                  g, daangn:sre, role:admin
-                  g, daangn:deploy, role:admin
+                  g, {{values.github_org}}:{{values.github_team}}, role:admin
 
               additionalProjects:
                 - name: addons
@@ -124,40 +125,6 @@ spec:
                   clusterResourceWhitelist:
                     - group: "*"
                       kind: "*"
-
-              # additionalApplications:
-              #   - name: addons-demo
-              #     namespace: argocd
-              #     additionalLabels:
-              #       krmt.io/group: addons
-              #     project: addons
-              #     source:
-              #       repoURL: https://github.com/opspresso/argocd-env-demo
-              #       targetRevision: HEAD
-              #       path: addons
-              #     destination:
-              #       name: in-cluster
-              #       namespace: argocd
-              #     syncPolicy:
-              #       automated:
-              #         prune: true
-              #         selfHeal: true
-              #   - name: apps-demo
-              #     namespace: argocd
-              #     additionalLabels:
-              #       krmt.io/group: apps
-              #     project: apps
-              #     source:
-              #       repoURL: https://github.com/opspresso/argocd-env-demo
-              #       targetRevision: HEAD
-              #       path: apps
-              #     destination:
-              #       name: in-cluster
-              #       namespace: argocd
-              #     syncPolicy:
-              #       automated:
-              #         prune: true
-              #         selfHeal: true
 
               metrics:
                 enabled: true
