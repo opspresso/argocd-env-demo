@@ -1,0 +1,8 @@
+{
+  "cluster": {
+    "name": "eks-demo"
+  },
+  "cluster-overprovisioner": {
+    "replicas": "0"
+  }
+}
