@@ -1,6 +1,7 @@
 # argocd
 
 * <https://argo-cd.readthedocs.io/en/stable/getting_started/>
+* <https://argocd-applicationset.readthedocs.io/en/stable/Getting-Started/>
 
 ### eks create
 
@@ -81,7 +82,7 @@ helm install argocd-applicationset argo/argocd-applicationset -n argocd
 helm upgrade argocd argo/argo-cd -n argocd -f values.output.yaml
 helm upgrade argocd-applicationset argo/argocd-applicationset -n argocd
 
-# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.1.0/manifests/install.yaml
+# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/applicationset/v0.2.0/manifests/install.yaml
 ```
 
@@ -95,18 +96,23 @@ kubectl get pod -n argocd
 kubectl get svc argocd-server -n argocd
 ```
 
-```
-NAME            TYPE           CLUSTER-IP      EXTERNAL-IP                       PORT(S)                      AGE
-argocd-server   LoadBalancer   172.20.41.157   xxx-000.apne2.elb.amazonaws.com   80:30080/TCP,443:30443/TCP   64m
-```
+NAME          | TYPE         | CLUSTER-IP    | EXTERNAL-IP                     | PORT(S)                    | AGE
+------------- | ------------ | ------------- | ------------------------------- | -------------------------- | ---
+argocd-server | LoadBalancer | 172.20.41.157 | xxx-000.apne2.elb.amazonaws.com | 80:30080/TCP,443:30443/TCP | 64m
+
+* <https://ap-northeast-2.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-2#LoadBalancers:>
 
 Load Balancer Protocol | Load Balancer Port | Instance Protocol | Instance Port | Cipher
---- | --- | --- | --- | ---
+---------------------- | ------------------ | ----------------- | ------------- | ------
 HTTPS                  | 443                | HTTP              | 30080         | ACM
 HTTP                   | 80                 | HTTP              | 30080         | N/A
 
-* https://console.aws.amazon.com/route53/v2/hostedzones#
-* https://argocd.demo.spic.me
+* <https://console.aws.amazon.com/route53/v2/hostedzones>
+* <https://argocd.demo.spic.me>
+
+## external-dns
+
+* See <External-DNS|https://github.com/opspresso/argocd-env-demo/tree/main/install/external-dns>
 
 ## argocd login
 
@@ -114,6 +120,8 @@ HTTP                   | 80                 | HTTP              | 30080         
 > cluster 를 add 합니다.
 
 ```bash
+# echo $(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
+
 argocd login argocd.demo.spic.me --grpc-web
 
 argocd cluster list
