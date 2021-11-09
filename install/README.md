@@ -112,7 +112,7 @@ HTTP                   | 80                 | HTTP              | 30080         
 
 ## external-dns
 
-* See <External-DNS|https://github.com/opspresso/argocd-env-demo/tree/main/install/external-dns>
+* See <https://github.com/opspresso/argocd-env-demo/tree/main/install/external-dns>
 
 ## argocd login
 
@@ -120,9 +120,9 @@ HTTP                   | 80                 | HTTP              | 30080         
 > cluster 를 add 합니다.
 
 ```bash
-# echo $(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
+ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
 
-argocd login argocd.demo.spic.me --grpc-web
+argocd login argocd.demo.spic.me --grpc-web --username admin --password $ADMIN_PASSWORD
 
 argocd cluster list
 argocd cluster add eks-demo
