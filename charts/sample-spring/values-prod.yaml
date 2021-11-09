@@ -4,13 +4,13 @@ app:
       CLUSTER_NAME: eks-demo
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      PROFILE: prod
+      PROFILE: alpha
       PROTOCOL: http
       VERSION: v0.8.59
     enabled: true
   env:
   - name: ENV_HASH
-    value: 34f4fe6b435a96787dbe1cba679b2e5a
+    value: 4b034754a5b6eb9fd9fadcbd9c3cc54f
   image:
     tag: v0.8.59
   ingress:

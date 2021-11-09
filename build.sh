@@ -159,7 +159,7 @@ _phase_action() {
     for V in ${LIST}; do
         PHASE=${V:7}
 
-        _result "${PHASE} helm"
+        _result "[${PHASE}] helm"
 
         _hook_action ${PHASE} helm
     done
@@ -168,7 +168,7 @@ _phase_action() {
     LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
 
     for PHASE in ${LIST}; do
-        _result "${PHASE} kustomize"
+        _result "[${PHASE}] kustomize"
 
         if [ "${PHASE}" != "base" ]; then
             _hook_action ${PHASE} kustomize
@@ -191,7 +191,7 @@ _phase_circleci() {
     for V in ${LIST}; do
         PHASE=${V:7}
 
-        _result "${PHASE} helm"
+        _result "[${PHASE}] helm"
 
         _hook_circleci ${PHASE} helm
     done
@@ -200,7 +200,7 @@ _phase_circleci() {
     LIST=$(ls -d */kustomization.yaml | cut -d'/' -f1)
 
     for PHASE in ${LIST}; do
-        _result "${PHASE} kustomize"
+        _result "[${PHASE}] kustomize"
 
         if [ "${PHASE}" != "base" ]; then
             _hook_circleci ${PHASE} kustomize
@@ -272,8 +272,8 @@ _build() {
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
     # pr or merge
-    HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
-    # HAS_DEV=0
+    # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
+    HAS_DEV=1
 
     if [ "x${HAS_DEV}" == "x0" ]; then
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
