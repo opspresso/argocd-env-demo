@@ -106,19 +106,19 @@ spec:
                   isDefault: true
                 - name: demo
                   type: prometheus
-                  url: http://prometheus.in.demo.spic.me
+                  url: http://prom.in.demo.spic.me
                   access: proxy
                 - name: demo-a
                   type: prometheus
-                  url: http://prometheus.in.demo-a.spic.me
+                  url: http://prom.in.demo-a.spic.me
                   access: proxy
                 - name: demo-b
                   type: prometheus
-                  url: http://prometheus.in.demo-b.spic.me
+                  url: http://prom.in.demo-b.spic.me
                   access: proxy
                 - name: Loki
                   type: loki
-                  url: http://{{loki.hostname}}
+                  url: http://loki.in.demo.spic.me
                   access: proxy
 
             dashboardProviders:

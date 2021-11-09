@@ -204,7 +204,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "prometheus.{{istio.internal}}"
+                        - "prom.{{istio.internal}}"
                       port:
                         number: 80
                         name: http
@@ -216,7 +216,7 @@ spec:
                   name: prometheus
                 spec:
                   hosts:
-                    - "prometheus.{{istio.internal}}"
+                    - "prom.{{istio.internal}}"
                   gateways:
                     - prometheus
                   http:
