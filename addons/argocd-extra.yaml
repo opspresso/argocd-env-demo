@@ -8,19 +8,19 @@ spec:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
         files:
-          - path: "env/argocd/alpha/**/config.json"
+          - path: "env/ops/alpha/**/config.json"
 
   template:
     metadata:
       name: "argocd-extra"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-argocd
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
-        app.kubernetes.io/instance: "argocd-{{cluster}}"
+        app.kubernetes.io/instance: "addons-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
-        krmt.io/group: "argocd"
+        krmt.io/group: "addons"
     spec:
-      project: argocd
+      project: addons
       destination:
         name: "{{cluster}}"
         namespace: argocd

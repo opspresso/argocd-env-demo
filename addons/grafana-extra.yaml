@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: loki-extra
+  name: grafana-extra
 spec:
   generators:
     - git:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
         files:
-          - path: "env/argocd/alpha/**/config.json"
+          - path: "env/ops/alpha/**/config.json"
 
   template:
     metadata:
-      name: "loki-extra-{{cluster}}"
+      name: "grafana-extra-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
@@ -23,26 +23,46 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: addon-loki
+        namespace: addon-grafana
       source:
         repoURL: https://charts.helm.sh/incubator
         targetRevision: "0.2.5"
         chart: raw
         helm:
           values: |-
-            fullnameOverride: loki-extra
+            fullnameOverride: grafana-extra
 
             resources:
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: grafana-secret
+                spec:
+                  backendType: systemManager
+                  data:
+                    - key: /k8s/common/admin-user
+                      name: admin-user
+                    - key: /k8s/common/admin-password
+                      name: admin-password
+                    - key: /k8s/common/grafana-github-id
+                      name: github-id
+                    - key: /k8s/common/grafana-github-secret
+                      name: github-secret
+                    - key: /k8s/common/google-id
+                      name: google-id
+                    - key: /k8s/common/google-secret
+                      name: google-secret
+
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway
                 metadata:
-                  name: loki
+                  name: grafana
                 spec:
                   selector:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "loki.{{istio.internal}}"
+                        - "{{grafana.hostname}}"
                       port:
                         number: 80
                         name: http
@@ -51,18 +71,18 @@ spec:
               - apiVersion: networking.istio.io/v1beta1
                 kind: VirtualService
                 metadata:
-                  name: loki
+                  name: grafana
                 spec:
                   hosts:
-                    - "loki.{{istio.internal}}"
+                    - "{{grafana.hostname}}"
                   gateways:
-                    - loki
+                    - grafana
                   http:
                     - route:
                         - destination:
-                            host: loki
+                            host: grafana
                             port:
-                              number: 3100
+                              number: 80
 
       syncPolicy:
         automated:

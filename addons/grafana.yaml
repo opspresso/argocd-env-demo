@@ -8,7 +8,7 @@ spec:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
         files:
-          - path: "env/argocd/alpha/**/config.json"
+          - path: "env/ops/alpha/**/config.json"
 
   template:
     metadata:
@@ -46,14 +46,14 @@ spec:
 
             grafana.ini:
               server:
-                root_url: "https://grafana.{{istio.hostname}}/"
+                root_url: "https://{{grafana.hostname}}/"
 
               auth:
                 disable_login_form: false
 
               # https://grafana.com/docs/grafana/latest/auth/github/
               auth.github:
-                enabled: true
+                enabled: {{grafana.auth.github}}
                 allow_sign_up: true
                 client_id: $__file{/etc/secrets/grafana-secret/github-id}
                 client_secret: $__file{/etc/secrets/grafana-secret/github-secret}
@@ -66,7 +66,7 @@ spec:
 
               # https://grafana.com/docs/grafana/latest/auth/google/
               auth.google:
-                enabled: true
+                enabled: {{grafana.auth.google}}
                 allow_sign_up: true
                 client_id: $__file{/etc/secrets/grafana-secret/google-id}
                 client_secret: $__file{/etc/secrets/grafana-secret/google-secret}
@@ -75,17 +75,17 @@ spec:
                 token_url: https://accounts.google.com/o/oauth2/token
                 allowed_domains: nalbam.com daangn.com
 
-              # # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
-              # auth.generic_oauth:
-              #   enabled: false
-              #   allow_sign_up: true
-              #   client_id: "grafana"
-              #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
-              #   scopes: "openid email profile roles"
-              #   auth_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/auth"
-              #   token_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/token"
-              #   api_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/userinfo"
-              #   # role_attribute_path = role
+              # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
+              auth.generic_oauth:
+                enabled: {{grafana.auth.keycloak}}
+                allow_sign_up: true
+                client_id: "grafana"
+                client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
+                scopes: "openid email profile roles"
+                auth_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/auth"
+                token_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/token"
+                api_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/userinfo"
+                # role_attribute_path = role
 
             ingress:
               enabled: false
@@ -93,7 +93,7 @@ spec:
                 kubernetes.io/ingress.class: nginx
                 nginx.ingress.kubernetes.io/ssl-redirect: "true"
               hosts:
-                - "grafana.{{istio.hostname}}"
+                - "{{grafana.hostname}}"
 
             datasources:
               datasources.yaml:
@@ -118,7 +118,7 @@ spec:
                   access: proxy
                 - name: Loki
                   type: loki
-                  url: http://loki.in.demo.spic.me
+                  url: http://{{loki.hostname}}
                   access: proxy
 
             dashboardProviders:
