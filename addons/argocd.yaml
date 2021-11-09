@@ -196,8 +196,8 @@ spec:
                   url: https://opspresso.github.io/helm-charts
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
