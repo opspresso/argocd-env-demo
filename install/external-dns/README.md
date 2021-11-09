@@ -20,7 +20,7 @@ helm search repo external-dns
 
 kubectl create ns addon-external-dns
 
-helm install external-dns-${CLUSTER_NAME} external-dns/external-dns -n addon-external-dns -f values.output.yaml
+helm install external-dns-eks-demo external-dns/external-dns -n addon-external-dns -f values.output.yaml
 
-helm upgrade external-dns-${CLUSTER_NAME} external-dns/external-dns -n addon-external-dns -f values.output.yaml
+helm upgrade external-dns-eks-demo external-dns/external-dns -n addon-external-dns -f values.output.yaml
 ```
