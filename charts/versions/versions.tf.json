@@ -5,7 +5,7 @@
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.3.0",
+      "default": "2.4.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_applicationset": {
@@ -57,7 +57,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.23.4",
+      "default": "2.23.5",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -93,7 +93,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "19.2.3",
+      "default": "20.0.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
@@ -105,7 +105,7 @@
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
-      "default": "2.8.0",
+      "default": "2.8.1",
       "description": "grafana/loki"
     },
     "helm_loki_stack": {
@@ -125,7 +125,7 @@
       "description": "prometheus/prometheus-adapter"
     },
     "helm_promtail": {
-      "default": "3.8.2",
+      "default": "3.9.1",
       "description": "grafana/promtail"
     },
     "helm_raw": {
