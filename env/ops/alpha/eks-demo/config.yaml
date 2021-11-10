@@ -7,15 +7,15 @@ argocd:
   acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f
   hostname: argocd.demo.spic.me
   github:
-    org: daangn
-    team: deploy
+    org: opspresso
+    team: sre
 
 grafana:
   hostname: grafana.demo.spic.me
   auth:
     github:
       enabled: true
-      allowed_organizations: daangn
+      allowed_organizations: opspresso
     google:
       enabled: false
       allowed_domains: nalbam.com daangn.com
