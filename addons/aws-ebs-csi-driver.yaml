@@ -56,7 +56,7 @@ spec:
               tolerateAllTaints: true
               serviceAccount:
                 annotations:
-                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-ebs-csi-driver"
 
             storageClasses:
               - name: gp3
