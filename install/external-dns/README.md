@@ -15,12 +15,14 @@ find . -name values.output.yaml -exec sed -i "" -e "s/CLUSTER_NAME/${CLUSTER_NAM
 ## Install External DNS
 
 ```bash
-helm repo update
-helm search repo external-dns
+# helm repo update
+# helm search repo external-dns
 
 kubectl create ns addon-external-dns
 
 helm install external-dns-eks-demo external-dns/external-dns -n addon-external-dns -f values.output.yaml
 
-helm upgrade external-dns-eks-demo external-dns/external-dns -n addon-external-dns -f values.output.yaml
+# helm upgrade external-dns-eks-demo external-dns/external-dns -n addon-external-dns -f values.output.yaml
 ```
+
+* <https://console.aws.amazon.com/route53/v2/hostedzones>
