@@ -53,7 +53,7 @@ spec:
 
               # https://grafana.com/docs/grafana/latest/auth/github/
               auth.github:
-                enabled: {{grafana.auth.github}}
+                enabled: {{grafana.auth.github.enabled}}
                 allow_sign_up: true
                 client_id: $__file{/etc/secrets/grafana-secret/github-id}
                 client_secret: $__file{/etc/secrets/grafana-secret/github-secret}
@@ -61,31 +61,31 @@ spec:
                 auth_url: https://github.com/login/oauth/authorize
                 token_url: https://github.com/login/oauth/access_token
                 api_url: https://api.github.com/user
-                allowed_organizations: opspresso
-                # team_ids: sre
+                allowed_organizations: {{grafana.auth.github.allowed_organizations}}
+                # team_ids: {{grafana.auth.github.team_ids}}
 
               # https://grafana.com/docs/grafana/latest/auth/google/
               auth.google:
-                enabled: {{grafana.auth.google}}
+                enabled: {{grafana.auth.google.enabled}}
                 allow_sign_up: true
                 client_id: $__file{/etc/secrets/grafana-secret/google-id}
                 client_secret: $__file{/etc/secrets/grafana-secret/google-secret}
                 scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
                 auth_url: https://accounts.google.com/o/oauth2/auth
                 token_url: https://accounts.google.com/o/oauth2/token
-                allowed_domains: nalbam.com daangn.com
+                allowed_domains: {{grafana.auth.google.allowed_domains}}
 
-              # # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
-              # auth.generic_oauth:
-              #   enabled: {{grafana.auth.keycloak}}
-              #   allow_sign_up: true
-              #   client_id: "grafana"
-              #   client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
-              #   scopes: "openid email profile roles"
-              #   auth_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/auth"
-              #   token_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/token"
-              #   api_url: "https://keycloak.{{istio.hostname}}/auth/realms/demo/protocol/openid-connect/userinfo"
-              #   # role_attribute_path = role
+              # https://grafana.com/docs/grafana/latest/auth/generic-oauth/
+              auth.generic_oauth:
+                enabled: {{grafana.auth.keycloak.enabled}}
+                allow_sign_up: true
+                client_id: "grafana"
+                client_secret: "df7d395f-e833-49b6-b19c-eea8a54fb06a"
+                scopes: "openid email profile roles"
+                auth_url: "https://{{grafana.auth.keycloak.hostname}}/auth/realms/{{grafana.auth.keycloak.realm}}/protocol/openid-connect/auth"
+                token_url: "https://{{grafana.auth.keycloak.hostname}}/auth/realms/{{grafana.auth.keycloak.realm}}/protocol/openid-connect/token"
+                api_url: "https://{{grafana.auth.keycloak.hostname}}/auth/realms/{{grafana.auth.keycloak.realm}}/protocol/openid-connect/userinfo"
+                # role_attribute_path = role
 
             ingress:
               enabled: false
@@ -106,19 +106,19 @@ spec:
                   isDefault: true
                 - name: demo
                   type: prometheus
-                  url: http://prom.in.demo.spic.me
+                  url: {{grafana.datasource.demo}}
                   access: proxy
                 - name: demo-a
                   type: prometheus
-                  url: http://prom.in.demo-a.spic.me
+                  url: {{grafana.datasource.demo-a}}
                   access: proxy
                 - name: demo-b
                   type: prometheus
-                  url: http://prom.in.demo-b.spic.me
+                  url: {{grafana.datasource.demo-b}}
                   access: proxy
                 - name: Loki
                   type: loki
-                  url: http://loki.in.demo.spic.me
+                  url: {{grafana.datasource.loki}}
                   access: proxy
 
             dashboardProviders:

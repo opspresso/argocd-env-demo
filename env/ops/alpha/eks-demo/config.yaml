@@ -13,9 +13,21 @@ argocd:
 grafana:
   hostname: grafana.demo.spic.me
   auth:
-    github: true
-    google: false
-    keycloak: false
+    github:
+      enabled: true
+      allowed_organizations: opspresso
+    google:
+      enabled: false
+      allowed_domains: nalbam.com daangn.com
+    keycloak:
+      enabled: false
+      hostname: keycloak.demo.spic.me
+      realm: demo
+  datasource:
+    demo: http://prom.in.demo.spic.me
+    demo-a: http://prom.in.demo-a.spic.me
+    demo-b: http://prom.in.demo-b.spic.me
+    loki: http://loki.in.demo.spic.me
 
 loki:
   hostname: loki.in.demo.spic.me
