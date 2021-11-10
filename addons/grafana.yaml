@@ -8,7 +8,7 @@ spec:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
         files:
-          - path: "env/ops/alpha/**/config.json"
+          - path: "env/ops/alpha/**/config.yaml"
 
   template:
     metadata:

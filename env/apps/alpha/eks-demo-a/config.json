@@ -1,7 +1,0 @@
-{
-  "aws_account_id": "082867736673",
-  "aws_region": "ap-northeast-2",
-  "cluster": "eks-demo-a",
-  "cluster_env": "alpha",
-  "hostname": "demo-a.spic.me"
-}
