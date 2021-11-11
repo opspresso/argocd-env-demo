@@ -262,6 +262,9 @@ _build() {
 
     _command "replace ${TG_VERSION}"
 
+    _command "git pull"
+    git pull --rebase origin ${BRANCH}
+
     # replace
     _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION}"
     python ${TG_TYPE}.py -r charts/${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION}
@@ -288,9 +291,6 @@ _build() {
     else
         # _command "git checkout ${BRANCH}"
         # git checkout ${BRANCH}
-
-        _command "git pull"
-        git pull --rebase origin ${BRANCH}
 
         # _command "git merge ${NEW_BRANCH}"
         # git merge ${NEW_BRANCH}
