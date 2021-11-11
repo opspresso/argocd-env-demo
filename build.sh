@@ -154,7 +154,8 @@ _phase_action() {
     pushd ${SHELL_DIR}/charts/${TG_PROJECT}
 
     # find helm chart
-    LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
+    # LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
+    LIST=$(ls | grep -E 'values-([a-z]+).yaml' | cut -d'.' -f1)
 
     for V in ${LIST}; do
         PHASE=${V:7}
@@ -186,7 +187,8 @@ _phase_circleci() {
     pushd ${SHELL_DIR}/charts/${TG_PROJECT}
 
     # find helm chart
-    LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
+    # LIST=$(ls | grep 'values-' | grep '.yaml' | cut -d'.' -f1)
+    LIST=$(ls | grep -E 'values-([a-z]+).yaml' | cut -d'.' -f1)
 
     for V in ${LIST}; do
         PHASE=${V:7}
