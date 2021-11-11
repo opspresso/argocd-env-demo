@@ -285,7 +285,7 @@ _build() {
         git checkout ${BRANCH}
 
         _command "git pull"
-        git pull
+        git pull --rebase
 
         _command "git merge ${NEW_BRANCH}"
         git merge ${NEW_BRANCH}
