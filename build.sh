@@ -254,11 +254,11 @@ _build() {
         _success "${NEW_BRANCH}"
     fi
 
-    _command "git branch ${NEW_BRANCH} ${BRANCH}"
-    git branch ${NEW_BRANCH} ${BRANCH}
+    # # has alpha or dev
+    # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
 
-    _command "git checkout ${NEW_BRANCH}"
-    git checkout ${NEW_BRANCH}
+    # has prod
+    [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
 
     _command "replace ${TG_VERSION}"
 
@@ -272,39 +272,38 @@ _build() {
     _command "git commit -m ${MESSAGE}"
     git commit -m "${MESSAGE}"
 
-    _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
-
-    # has alpha or dev
-    # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
-    # HAS_DEV=1
-
-    # has prod
-    # [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
-
     # pr or merge
     if [ "x${HAS_DEV}" == "x0" ] || [ "x${HAS_PROD}" == "x1" ]; then
+        _command "git branch ${NEW_BRANCH} ${BRANCH}"
+        git branch ${NEW_BRANCH} ${BRANCH}
+
+        _command "git checkout ${NEW_BRANCH}"
+        git checkout ${NEW_BRANCH}
+
+        _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
+        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
+
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
         hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
     else
-        _command "git checkout ${BRANCH}"
-        git checkout ${BRANCH}
+        # _command "git checkout ${BRANCH}"
+        # git checkout ${BRANCH}
 
         _command "git pull"
-        git pull --rebase
+        git pull --rebase origin ${BRANCH}
 
-        _command "git merge ${NEW_BRANCH}"
-        git merge ${NEW_BRANCH}
+        # _command "git merge ${NEW_BRANCH}"
+        # git merge ${NEW_BRANCH}
 
-        _error_check
+        # _error_check
 
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
 
-        _error_check
+        # _error_check
 
-        _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH} --delete ${NEW_BRANCH}"
-        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git --delete ${NEW_BRANCH}
+        # _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH} --delete ${NEW_BRANCH}"
+        # git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git --delete ${NEW_BRANCH}
     fi
 
     _error_check

@@ -1,0 +1,72 @@
+app:
+  autoscaling:
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 25
+        stabilizationWindowSeconds: 600
+    enabled: true
+    maxReplicas: 20
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 50
+          type: Utilization
+      type: Resource
+    minReplicas: 2
+  configmap:
+    data:
+      CLUSTER_NAME: eks-demo
+      HOSTNAME: sample.svc.cluster.local
+      MESSAGE: hello world
+      PROFILE: alpha
+      REDIS_URL: redis://sample-redis:6379
+      VERSION: v0.8.82
+    enabled: true
+  env:
+  - name: ENV_HASH
+    value: f5418a41674e55a48083e6711be75621
+  externalSecrets:
+    data:
+    - key: /k8s/common/slack-hooks
+      name: slack-hooks
+    enabled: true
+  image:
+    tag: v0.8.82
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ssl-redirect: 'true'
+    enabled: false
+    hosts:
+    - host: sample-node.demo.spic.me
+    preview:
+      hosts:
+      - host: sample-node-preview.demo.spic.me
+    stable:
+      hosts:
+      - host: sample-node-stable.demo.spic.me
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  service:
+    preview:
+      enabled: true
+    stable:
+      enabled: true
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus-eks-demo
+redis:
+  istio:
+    sidecar:
+      inject: true
