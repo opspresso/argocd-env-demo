@@ -13,14 +13,17 @@ app:
       cpu: 1000m
       memory: 1Gi
 
-  # controller:
-  #   kind: Rollout
-  #   strategy:
-  #     blueGreen:
-  #       activeService: sample-spring
-  #       autoPromotionEnabled: true
-  #       autoPromotionSeconds: 30
-  #       previewService: sample-spring-preview
+  controller:
+    # kind: Rollout
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 0
+      # blueGreen:
+      #   activeService: sample-spring
+      #   autoPromotionEnabled: true
+      #   autoPromotionSeconds: 30
+      #   previewService: sample-spring-preview
 
   service:
     name: http
