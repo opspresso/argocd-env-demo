@@ -226,6 +226,8 @@ _build() {
     git config --global user.name "${GIT_USERNAME}"
     git config --global user.email "${GIT_USEREMAIL}"
 
+    git config pull.rebase true
+
     NEW_BRANCH="${TG_PROJECT}-${TG_PHASE}-${TG_VERSION}"
     MESSAGE="Deploy ${TG_PROJECT} ${TG_PHASE} ${TG_VERSION}"
 
@@ -283,7 +285,7 @@ _build() {
         git checkout ${BRANCH}
 
         _command "git pull"
-        git pull --ff only
+        git pull
 
         _command "git merge ${NEW_BRANCH}"
         git merge ${NEW_BRANCH}
