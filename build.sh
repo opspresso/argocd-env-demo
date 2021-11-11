@@ -260,10 +260,10 @@ _build() {
     # has prod
     [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
 
-    _command "replace ${TG_VERSION}"
-
     _command "git pull"
     git pull --rebase origin ${BRANCH}
+
+    _command "replace ${TG_VERSION}"
 
     # replace
     _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION}"
@@ -286,24 +286,13 @@ _build() {
         _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
+        _error_check
+
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
         hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
     else
-        # _command "git checkout ${BRANCH}"
-        # git checkout ${BRANCH}
-
-        # _command "git merge ${NEW_BRANCH}"
-        # git merge ${NEW_BRANCH}
-
-        # _error_check
-
         _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
-
-        # _error_check
-
-        # _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH} --delete ${NEW_BRANCH}"
-        # git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git --delete ${NEW_BRANCH}
     fi
 
     _error_check
