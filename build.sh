@@ -281,7 +281,7 @@ _build() {
 
     [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
 
-    if [ "x${HAS_DEV}" == "x0" ] || [ "x${HAS_PROD}" != "x0" ]; then
+    if [ "x${HAS_DEV}" == "x0" ] || [ "x${HAS_PROD}" == "x1" ]; then
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
         hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
     else
