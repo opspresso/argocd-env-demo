@@ -275,12 +275,14 @@ _build() {
     _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
-    # pr or merge
+    # has alpha or dev
     # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
     # HAS_DEV=1
 
-    [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
+    # has prod
+    # [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
 
+    # pr or merge
     if [ "x${HAS_DEV}" == "x0" ] || [ "x${HAS_PROD}" == "x1" ]; then
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
         hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
