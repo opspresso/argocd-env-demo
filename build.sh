@@ -277,9 +277,11 @@ _build() {
 
     # pr or merge
     # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
-    HAS_DEV=1
+    # HAS_DEV=1
 
-    if [ "x${HAS_DEV}" == "x0" ]; then
+    [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
+
+    if [ "x${HAS_DEV}" == "x0" ] || [ "x${HAS_PROD}" != "x0" ]; then
         _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
         hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
     else
