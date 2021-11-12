@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.26.5",
+      "default": "3.26.8",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -57,7 +57,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.23.5",
+      "default": "2.23.6",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -93,7 +93,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "20.0.0",
+      "default": "20.0.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {

@@ -48,6 +48,7 @@ ARGOCD_SERVER_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-server-se
 ARGOCD_GITHUB_ID=$(aws ssm get-parameter --name /k8s/common/argocd-github-id --with-decryption | jq .Parameter.Value -r)
 ARGOCD_GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-github-secret --with-decryption | jq .Parameter.Value -r)
 ARGOCD_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/argocd-webhook --with-decryption | jq .Parameter.Value -r)
+ARGOCD_NOTI_TOKEN=$(aws ssm get-parameter --name /k8s/common/argocd-noti-token --with-decryption | jq .Parameter.Value -r)
 
 AWS_ACM_CERT="$(aws acm list-certificates --query "CertificateSummaryList[].{CertificateArn:CertificateArn,DomainName:DomainName}[?contains(DomainName,'${ARGOCD_HOSTNAME}')] | [0].CertificateArn" | jq . -r)"
 
