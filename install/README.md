@@ -72,6 +72,8 @@ find . -name values.output.yaml -exec sed -i "" -e "s@AWS_ACM_CERT@${AWS_ACM_CER
 > addons 를 위해 ApplicationSet 도 함께 설치 합니다.
 
 ```bash
+# helm repo add argo https://argoproj.github.io/argo-helm
+
 # helm repo update
 # helm search repo argo-cd
 

@@ -15,6 +15,8 @@ find . -name values.output.yaml -exec sed -i "" -e "s/CLUSTER_NAME/${CLUSTER_NAM
 ## Install External DNS
 
 ```bash
+# helm repo add external-dns https://kubernetes-sigs.github.io/external-dns
+
 # helm repo update
 # helm search repo external-dns
 
