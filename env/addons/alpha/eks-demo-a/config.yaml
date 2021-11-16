@@ -1,7 +1,8 @@
-aws_account_id: '082867736673'
-aws_region: ap-northeast-2
 cluster: eks-demo-a
 cluster_env: alpha
+
+aws_account_id: '082867736673'
+aws_region: ap-northeast-2
 
 istio:
   acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/5c4bf3d7-b269-4c1e-9b1b-5a73dea3fa4b
