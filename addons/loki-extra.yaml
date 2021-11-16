@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "loki-extra-{{cluster}}"
+      name: "loki-extra"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:

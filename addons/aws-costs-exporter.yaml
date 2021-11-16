@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "aws-costs-exporter-{{cluster}}"
+      name: "aws-costs-exporter"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
