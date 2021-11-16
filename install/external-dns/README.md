@@ -3,8 +3,8 @@
 ## generate values.yaml
 
 ```bash
-ACCOUNT_ID=$(aws sts get-caller-identity | grep "Account" | cut -d'"' -f4)
-CLUSTER_NAME="eks-demo"
+export ACCOUNT_ID=$(aws sts get-caller-identity | grep "Account" | cut -d'"' -f4)
+export CLUSTER_NAME="eks-demo"
 
 # replace values.yaml
 cp values.yaml values.output.yaml

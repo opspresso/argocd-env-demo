@@ -3,7 +3,7 @@
 * <https://argo-cd.readthedocs.io/en/stable/getting_started/>
 * <https://argocd-applicationset.readthedocs.io/en/stable/Getting-Started/>
 
-### eks create
+## create eks cluster
 
 * <https://github.com/opspresso/terraform-env-demo/tree/main/25-eks-demo>
 
@@ -18,18 +18,18 @@ terraform apply
 > github org (opspresso) 에 team (sre) 을 만들고 권한을 부여 합니다.
 
 ```bash
-ARGOCD_HOSTNAME="argocd.demo.spic.me"
-GITHUB_ORG="opspresso"
-GITHUB_TEAM="sre"
+export ARGOCD_HOSTNAME="argocd.demo.spic.me"
+export GITHUB_ORG="opspresso"
+export GITHUB_TEAM="sre"
 
 # replaceable values
-ADMIN_PASSWORD="REPLACE_ME"
-ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
-ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
-ARGOCD_GITHUB_ID="REPLACE_ME" # github OAuth Apps <https://github.com/organizations/opspresso/settings/applications>
-ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
-ARGOCD_WEBHOOK="REPLACE_ME" # random string
-ARGOCD_NOTI_TOKEN="REPLACE_ME" # xoxp-xxxx <https://api.slack.com/apps>
+export ADMIN_PASSWORD="REPLACE_ME"
+export ARGOCD_PASSWORD="$(htpasswd -nbBC 10 "" ${ADMIN_PASSWORD} | tr -d ':\n' | sed 's/$2y/$2a/')"
+export ARGOCD_SERVER_SECRET="REPLACE_ME" # random string
+export ARGOCD_GITHUB_ID="REPLACE_ME" # github OAuth Apps <https://github.com/organizations/opspresso/settings/applications>
+export ARGOCD_GITHUB_SECRET="REPLACE_ME" # github OAuth Apps
+export ARGOCD_WEBHOOK="REPLACE_ME" # random string
+export ARGOCD_NOTI_TOKEN="REPLACE_ME" # xoxp-xxxx <https://api.slack.com/apps>
 
 # put aws ssm param
 aws ssm put-parameter --name /k8s/common/admin-password --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
@@ -41,16 +41,16 @@ aws ssm put-parameter --name /k8s/common/argocd-webhook --value "${ARGOCD_WEBHOO
 aws ssm put-parameter --name /k8s/common/argocd-noti-token --value "${ARGOCD_NOTI_TOKEN}" --type SecureString --overwrite | jq .
 
 # get aws ssm param
-ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
-ARGOCD_PASSWORD=$(aws ssm get-parameter --name /k8s/common/argocd-password --with-decryption | jq .Parameter.Value -r)
-ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-ARGOCD_SERVER_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-server-secret --with-decryption | jq .Parameter.Value -r)
-ARGOCD_GITHUB_ID=$(aws ssm get-parameter --name /k8s/common/argocd-github-id --with-decryption | jq .Parameter.Value -r)
-ARGOCD_GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-github-secret --with-decryption | jq .Parameter.Value -r)
-ARGOCD_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/argocd-webhook --with-decryption | jq .Parameter.Value -r)
-ARGOCD_NOTI_TOKEN=$(aws ssm get-parameter --name /k8s/common/argocd-noti-token --with-decryption | jq .Parameter.Value -r)
+export ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
+export ARGOCD_PASSWORD=$(aws ssm get-parameter --name /k8s/common/argocd-password --with-decryption | jq .Parameter.Value -r)
+export ARGOCD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+export ARGOCD_SERVER_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-server-secret --with-decryption | jq .Parameter.Value -r)
+export ARGOCD_GITHUB_ID=$(aws ssm get-parameter --name /k8s/common/argocd-github-id --with-decryption | jq .Parameter.Value -r)
+export ARGOCD_GITHUB_SECRET=$(aws ssm get-parameter --name /k8s/common/argocd-github-secret --with-decryption | jq .Parameter.Value -r)
+export ARGOCD_WEBHOOK=$(aws ssm get-parameter --name /k8s/common/argocd-webhook --with-decryption | jq .Parameter.Value -r)
+export ARGOCD_NOTI_TOKEN=$(aws ssm get-parameter --name /k8s/common/argocd-noti-token --with-decryption | jq .Parameter.Value -r)
 
-AWS_ACM_CERT="$(aws acm list-certificates --query "CertificateSummaryList[].{CertificateArn:CertificateArn,DomainName:DomainName}[?contains(DomainName,'${ARGOCD_HOSTNAME}')] | [0].CertificateArn" | jq . -r)"
+export AWS_ACM_CERT="$(aws acm list-certificates --query "CertificateSummaryList[].{CertificateArn:CertificateArn,DomainName:DomainName}[?contains(DomainName,'${ARGOCD_HOSTNAME}')] | [0].CertificateArn" | jq . -r)"
 
 # replace values.yaml
 cp values.yaml values.output.yaml
@@ -123,7 +123,7 @@ HTTP                   | 80                 | HTTP              | 30080         
 > cluster 를 add 합니다.
 
 ```bash
-ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
+export ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
 
 argocd login argocd.demo.spic.me --grpc-web --username admin --password $ADMIN_PASSWORD
 
