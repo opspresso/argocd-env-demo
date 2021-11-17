@@ -19,7 +19,7 @@ terraform apply
 
 ```bash
 # variables
-export ARGOCD_HOSTNAME="argocd.demo.spic.me"
+export ARGOCD_HOSTNAME="argocd.demo.nalbam.com"
 
 export GITHUB_ORG="opspresso"
 export GITHUB_TEAM="sre"
@@ -102,7 +102,7 @@ helm install argocd-applicationset argo/argocd-applicationset -n argocd
 
 ## Change the argocd-server service type to LoadBalancer
 
-> aws 에 elb 가 생성 되었습니다. route53 에서 argocd.demo.spic.me 와 연결해 줍니다.
+> aws 에 elb 가 생성 되었습니다. route53 에서 argocd.demo.nalbam.com 와 연결해 줍니다.
 > aws elb 에서 HTTPS 의 Instance Port 를 HTTP 의 Instance Port 로 변경 합니다.
 
 ```bash
@@ -122,7 +122,7 @@ HTTPS                  | 443                | HTTP              | 30080         
 HTTP                   | 80                 | HTTP              | 30080         | N/A
 
 * <https://console.aws.amazon.com/route53/v2/hostedzones>
-* <https://argocd.demo.spic.me>
+* <https://argocd.demo.nalbam.com>
 
 ## external-dns
 
@@ -136,7 +136,7 @@ HTTP                   | 80                 | HTTP              | 30080         
 ```bash
 export ADMIN_PASSWORD=$(aws ssm get-parameter --name /k8s/common/admin-password --with-decryption | jq .Parameter.Value -r)
 
-argocd login argocd.demo.spic.me --grpc-web --username admin --password $ADMIN_PASSWORD
+argocd login argocd.demo.nalbam.com --grpc-web --username admin --password $ADMIN_PASSWORD
 
 argocd cluster list
 argocd cluster add eks-demo

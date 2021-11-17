@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             values:
               acm_arn: "arn:aws:acm:ap-northeast-2:{{aws_account_id}}:certificate/281ab87d-f28b-43db-b4d2-b4759950c369"
-              hostname: "*.demo.spic.me"
+              hostname: "*.demo.nalbam.com"
 
   template:
     metadata:

@@ -8,7 +8,7 @@ spec:
         elements:
           - cluster: eks-demo
             values:
-              host: "demo.spic.me"
+              host: "demo.nalbam.com"
 
   template:
     metadata:

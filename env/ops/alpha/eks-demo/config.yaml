@@ -6,13 +6,13 @@ aws_region: ap-northeast-2
 
 argocd:
   acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/3a5366d6-5fcc-43a6-b764-47a8967d4d8f
-  hostname: argocd.demo.spic.me
+  hostname: argocd.demo.nalbam.com
   github:
     org: opspresso
     team: sre
 
 grafana:
-  hostname: grafana.demo.spic.me
+  hostname: grafana.demo.nalbam.com
   auth:
     github:
       enabled: true
@@ -22,13 +22,13 @@ grafana:
       allowed_domains: nalbam.com daangn.com
     keycloak:
       enabled: false
-      hostname: keycloak.demo.spic.me
+      hostname: keycloak.demo.nalbam.com
       realm: demo
   datasource:
-    demo: http://prom.in.demo.spic.me
-    demo-a: http://prom.in.demo-a.spic.me
-    demo-b: http://prom.in.demo-b.spic.me
-    loki: http://loki.in.demo.spic.me
+    demo: http://prom.in.demo.nalbam.com
+    demo-a: http://prom.in.demo-a.nalbam.com
+    demo-b: http://prom.in.demo-b.nalbam.com
+    loki: http://loki.in.demo.nalbam.com
 
 loki:
-  hostname: loki.in.demo.spic.me
+  hostname: loki.in.demo.nalbam.com

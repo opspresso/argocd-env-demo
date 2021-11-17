@@ -86,7 +86,7 @@ data:
         enabled: true
       grafana:
         in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
-        url: "https://grafana.demo.spic.me"
+        url: "https://grafana.demo.nalbam.com"
       prometheus:
         url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
     identity:
@@ -101,7 +101,7 @@ data:
       port: 20001
       web_root: /kiali
       web_schema: https
-      web_fqdn: "kiali.demo.spic.me"
+      web_fqdn: "kiali.demo.nalbam.com"
 ---
 # Source: kiali-server/templates/role-viewer.yaml
 apiVersion: rbac.authorization.k8s.io/v1

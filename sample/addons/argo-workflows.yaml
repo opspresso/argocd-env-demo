@@ -9,7 +9,7 @@ spec:
           - cluster: eks-demo
             values:
               rolearn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--argo-workflows"
-              host: "demo.spic.me"
+              host: "demo.nalbam.com"
 
   template:
     metadata:

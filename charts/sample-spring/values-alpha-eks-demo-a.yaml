@@ -4,8 +4,8 @@ app:
       CLUSTER_NAME: eks-demo-a
   ingress:
     hosts:
-    - host: sample-spring.demo.spic.me
-    - host: sample-spring.demo-a.spic.me
+    - host: sample-spring.demo.nalbam.com
+    - host: sample-spring.demo-a.nalbam.com
   serviceMonitor:
     selector:
       release: prometheus-eks-demo-a

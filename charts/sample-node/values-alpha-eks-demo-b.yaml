@@ -4,14 +4,14 @@ app:
       CLUSTER_NAME: eks-demo-b
   ingress:
     hosts:
-    - host: sample-node.demo.spic.me
-    - host: sample-node.demo-b.spic.me
+    - host: sample-node.demo.nalbam.com
+    - host: sample-node.demo-b.nalbam.com
     preview:
       hosts:
-      - host: sample-node-preview.demo-b.spic.me
+      - host: sample-node-preview.demo-b.nalbam.com
     stable:
       hosts:
-      - host: sample-node-stable.demo-b.spic.me
+      - host: sample-node-stable.demo-b.nalbam.com
   serviceMonitor:
     selector:
       release: prometheus-eks-demo-b

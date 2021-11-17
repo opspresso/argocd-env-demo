@@ -6,8 +6,8 @@ aws_region: ap-northeast-2
 
 istio:
   acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/5c4bf3d7-b269-4c1e-9b1b-5a73dea3fa4b
-  hostname: demo-a.spic.me
-  internal: in.demo-a.spic.me
+  hostname: demo-a.nalbam.com
+  internal: in.demo-a.nalbam.com
   sampling: 10
   public_tg_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-a/5597c366a88bdc1a
   internal_tg_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-a/3ae8453b35d2b5bd
@@ -23,4 +23,4 @@ cluster-overprovisioner:
   memory: 1Gi
 
 promtail:
-  lokiAddress: http://loki.in.demo.spic.me/loki/api/v1/push
+  lokiAddress: http://loki.in.demo.nalbam.com/loki/api/v1/push
