@@ -19,7 +19,7 @@ cluster-autoscaler:
 
 cluster-overprovisioner:
   replicas: 0
-  cpu: 1
+  cpu: '1'
   memory: 1Gi
 
 promtail:
