@@ -1,11 +1,11 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.26.8",
+      "default": "3.26.9",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.4.0",
+      "default": "2.5.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_applicationset": {
@@ -13,7 +13,7 @@
       "description": "argo/argocd-applicationset"
     },
     "helm_argocd_notifications": {
-      "default": "1.5.1",
+      "default": "1.5.2",
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
@@ -57,11 +57,11 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.23.6",
+      "default": "2.25.0",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "1.5.0",
+      "default": "1.6.0",
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
@@ -69,11 +69,11 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.17.5",
+      "default": "6.17.6",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "4.0.6",
+      "default": "4.0.8",
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_irsa_operator": {
@@ -81,7 +81,7 @@
       "description": "irsa-operator/irsa-operator"
     },
     "helm_jaeger": {
-      "default": "0.50.0",
+      "default": "0.51.3",
       "description": "jaegertracing/jaeger"
     },
     "helm_keycloak": {
@@ -89,7 +89,7 @@
       "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
-      "default": "1.42.0",
+      "default": "1.43.0",
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
@@ -101,7 +101,7 @@
       "description": "dashboard/kubernetes-dashboard"
     },
     "helm_kubernetes_external_secrets": {
-      "default": "8.3.2",
+      "default": "8.4.0",
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
