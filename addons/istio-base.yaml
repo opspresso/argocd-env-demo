@@ -29,9 +29,15 @@ spec:
         targetRevision: "1.12.0"
         path: manifests/charts/base
 
+      # ignoreDifferences:
+      #   - kind: ValidatingWebhookConfiguration
+      #     group: admissionregistration.k8s.io
+      #     jsonPointers:
+      #       - /webhooks/0/clientConfig/caBundle
+
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
