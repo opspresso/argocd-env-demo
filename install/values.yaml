@@ -70,6 +70,7 @@ configs:
 
     extra:
       server.secretkey: "ARGOCD_SERVER_SECRET"
+
       dex.github.clientId: "ARGOCD_GITHUB_ID"
       dex.github.clientSecret: "ARGOCD_GITHUB_SECRET"
 

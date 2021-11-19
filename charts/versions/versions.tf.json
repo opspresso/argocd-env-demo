@@ -57,7 +57,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.25.0",
+      "default": "2.26.0",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -81,7 +81,7 @@
       "description": "irsa-operator/irsa-operator"
     },
     "helm_jaeger": {
-      "default": "0.51.3",
+      "default": "0.51.4",
       "description": "jaegertracing/jaeger"
     },
     "helm_keycloak": {
