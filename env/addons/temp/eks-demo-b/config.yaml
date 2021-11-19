@@ -5,7 +5,7 @@ aws_account_id: '082867736673'
 aws_region: ap-northeast-2
 
 istio:
-  acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/3f1df202-c3aa-4404-8ac8-2dfbc8354427
+  acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/59754d7a-b7f8-4843-96bd-8c1f530e939b
   hostname: demo-b.nalbam.com
   internal: in.demo-b.nalbam.com
   sampling: 10
