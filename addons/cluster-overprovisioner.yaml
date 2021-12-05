@@ -26,7 +26,7 @@ spec:
         namespace: addon-cluster-overprovisioner
       source:
         repoURL: https://charts.deliveryhero.io
-        targetRevision: "0.7.3"
+        targetRevision: "0.7.5"
         chart: cluster-overprovisioner
         helm:
           values: |-
@@ -44,8 +44,8 @@ spec:
                     memory: "{{cluster-overprovisioner.memory}}"
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true

@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.26.9",
+      "default": "3.27.1",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -13,11 +13,11 @@
       "description": "argo/argocd-applicationset"
     },
     "helm_argocd_notifications": {
-      "default": "1.5.2",
+      "default": "1.6.0",
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
-      "default": "2.4.0",
+      "default": "2.4.1",
       "description": "aws-ebs-csi-driver/aws-ebs-csi-driver"
     },
     "helm_aws_efs_csi_driver": {
@@ -45,19 +45,19 @@
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
-      "default": "0.7.3",
+      "default": "0.7.5",
       "description": "deliveryhero/cluster-overprovisioner"
     },
     "helm_cortex": {
-      "default": "0.7.0",
+      "default": "1.1.0",
       "description": "cortex/cortex"
     },
     "helm_crossplane": {
-      "default": "1.5.0",
+      "default": "1.5.1",
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.26.0",
+      "default": "2.27.2",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -69,11 +69,11 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.17.6",
+      "default": "6.18.1",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "4.0.8",
+      "default": "4.0.12",
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_irsa_operator": {
@@ -84,16 +84,20 @@
       "default": "0.51.4",
       "description": "jaegertracing/jaeger"
     },
+    "helm_karpenter": {
+      "default": "0.5.1",
+      "description": "karpenter/karpenter"
+    },
     "helm_keycloak": {
       "default": "15.1.0",
       "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
-      "default": "1.43.0",
+      "default": "1.44.0",
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "20.0.1",
+      "default": "21.0.3",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
@@ -117,7 +121,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "14.11.1",
+      "default": "15.0.1",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {

@@ -26,7 +26,7 @@ spec:
         namespace: addon-prometheus
       source:
         repoURL: https://prometheus-community.github.io/helm-charts
-        targetRevision: "19.3.0"
+        targetRevision: "21.0.3"
         chart: kube-prometheus-stack
         helm:
           values: |-
@@ -157,8 +157,8 @@ spec:
             - /webhooks/0/failurePolicy
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
