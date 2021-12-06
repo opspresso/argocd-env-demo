@@ -36,12 +36,12 @@ spec:
               - apiVersion: karpenter.sh/v1alpha5
                 kind: Provisioner
                 metadata:
-                  name: workers-v1
+                  name: workers-v2
                 spec:
                   labels:
                     group: workers
-                    subgroup: workers-v1
-                    instancegroup: workers-v1
+                    subgroup: workers-v2
+                    instancegroup: workers-v2
 
                   requirements:
                     - key: karpenter.sh/capacity-type
@@ -63,9 +63,9 @@ spec:
                   #   - key: example.com/special-taint
                   #     effect: NoSchedule
 
-                  provider:
-                    instanceProfile: {{cluster}}-workers-v1
-                    launchTemplate: {{cluster}}-workers-v1
+                  # provider:
+                  #   instanceProfile: {{cluster}}-workers-v2
+                  #   launchTemplate: {{cluster}}-workers-v2
 
       syncPolicy:
         # automated:
