@@ -32,8 +32,8 @@ spec:
           values: |-
             fullnameOverride: karpenter
 
-            serviceAccount:
-              create: false
+            # serviceAccount:
+            #   create: false
 
             controller:
               env:
