@@ -41,10 +41,15 @@ spec:
                   requirements:
                     - key: karpenter.sh/capacity-type
                       operator: In
-                      values: ["spot"]
+                      values:
+                        - spot
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                        - amd64
                   limits:
                     resources:
-                      cpu: 2000
+                      cpu: 4k
                   provider:
                     instanceProfile: {{cluster}}-workers-v1
                   ttlSecondsAfterEmpty: 30
