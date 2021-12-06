@@ -73,7 +73,7 @@
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "4.0.12",
+      "default": "4.0.13",
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_irsa_operator": {
@@ -97,7 +97,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "21.0.3",
+      "default": "22.0.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubernetes_dashboard": {
