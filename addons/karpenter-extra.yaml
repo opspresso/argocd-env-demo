@@ -38,10 +38,10 @@ spec:
                 metadata:
                   name: workers-v1
                 spec:
-                  # labels:
-                  #   krmt.io/group: workers
-                  #   krmt.io/subgroup: workers-v1
-                  #   krmt.io/instancegroup: workers-v1
+                  labels:
+                    group: workers
+                    subgroup: workers-v1
+                    instancegroup: workers-v1
 
                   requirements:
                     - key: karpenter.sh/capacity-type
