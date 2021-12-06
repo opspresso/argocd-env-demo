@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: karpenter-extra
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/ops/alpha/**/config.yaml"
+
+  template:
+    metadata:
+      name: "karpenter-extra"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-karpenter
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: karpenter-extra
+
+            resources:
+              - apiVersion: karpenter.sh/v1alpha5
+                kind: Provisioner
+                metadata:
+                  name: workers-v1
+                spec:
+                  requirements:
+                    - key: karpenter.sh/capacity-type
+                      operator: In
+                      values: ["spot"]
+                  limits:
+                    resources:
+                      cpu: 2000
+                  provider:
+                    instanceProfile: {{cluster}}-workers-v1
+                  ttlSecondsAfterEmpty: 30
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
