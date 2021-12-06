@@ -1,0 +1,16 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: eks-demo-a
+  ingress:
+    hosts:
+    - host: sample-node.demo.nalbam.com
+    preview:
+      hosts:
+      - host: sample-node-preview.demo.nalbam.com
+    stable:
+      hosts:
+      - host: sample-node-stable.demo.nalbam.com
+  serviceMonitor:
+    selector:
+      release: prometheus-eks-demo
