@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: karpenter
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/**/config.yaml"
+
+  template:
+    metadata:
+      name: "karpenter-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: addon-karpenter
+      source:
+        repoURL: https://charts.karpenter.sh
+        targetRevision: "0.5.1"
+        chart: karpenter
+        helm:
+          values: |-
+            fullnameOverride: karpenter
+
+            serviceAccount:
+              create: false
+
+            controller:
+              env:
+                - name: AWS_REGION
+                  value: "{{aws_region}}"
+
+              clusterName: "{{cluster}}"
+              clusterEndpoint: "{{cluster_end}}"
+
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: graviton
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: graviton
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

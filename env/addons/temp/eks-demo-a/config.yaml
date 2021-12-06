@@ -1,5 +1,6 @@
 cluster: eks-demo-a
 cluster_env: alpha
+cluster_end: https://xxxxx.yl4.ap-northeast-2.eks.amazonaws.com
 
 aws_account_id: '082867736673'
 aws_region: ap-northeast-2
