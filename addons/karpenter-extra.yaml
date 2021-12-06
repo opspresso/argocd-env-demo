@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "karpenter-extra"
+      name: "karpenter-extra-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
