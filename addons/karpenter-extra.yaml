@@ -38,10 +38,10 @@ spec:
                 metadata:
                   name: workers-v1
                 spec:
-                  labels:
-                    krmt.io/group: workers
-                    krmt.io/subgroup: workers-v1
-                    krmt.io/instancegroup: workers-v1
+                  # labels:
+                  #   krmt.io/group: workers
+                  #   krmt.io/subgroup: workers-v1
+                  #   krmt.io/instancegroup: workers-v1
 
                   requirements:
                     - key: karpenter.sh/capacity-type
@@ -57,14 +57,15 @@ spec:
                     resources:
                       cpu: 4k
 
-                  provider:
-                    instanceProfile: {{cluster}}-workers-v1
-
                   ttlSecondsAfterEmpty: 30
 
                   # taints:
                   #   - key: example.com/special-taint
                   #     effect: NoSchedule
+
+                  provider:
+                    instanceProfile: {{cluster}}-workers-v1
+                    launchTemplate: {{cluster}}-workers-v1
 
       syncPolicy:
         automated:
