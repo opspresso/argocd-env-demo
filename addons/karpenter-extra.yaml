@@ -50,7 +50,7 @@ spec:
                       values:
                         - c5.large
                         - c5.xlarge
-                        - c5.2xlarge
+                        # - c5.2xlarge
 
                     # # If not included, all zones are considered
                     # - key: topology.kubernetes.io/zone
