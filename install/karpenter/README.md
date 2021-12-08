@@ -50,7 +50,21 @@ kubectl create deployment inflate \
 
 kubectl scale deployment inflate --replicas 10
 
+kubectl patch configmap config-logging -n addon-karpenter --patch '{"data":{"loglevel.controller":"debug"}}'
+
 kubectl logs -f -n addon-karpenter $(kubectl get pods -n addon-karpenter -l karpenter=controller -o name)
 
 # kubectl delete deployment inflate
+```
+
+
+
+```bash
+TEMPOUT=$(mktemp)
+curl -fsSL https://karpenter.sh/docs/getting-started/cloudformation.yaml > $TEMPOUT \
+&& aws cloudformation deploy \
+  --stack-name Karpenter-${CLUSTER_NAME} \
+  --template-file ${TEMPOUT} \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameter-overrides ClusterName=${CLUSTER_NAME}
 ```
