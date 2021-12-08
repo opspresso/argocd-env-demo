@@ -32,5 +32,5 @@ spec:
         - spot
         - on-demand
   provider:
-    instanceProfile: eks-demo-default
+    instanceProfile: eks-demo-workers-v1
   ttlSecondsAfterEmpty: 30

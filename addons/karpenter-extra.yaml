@@ -59,13 +59,13 @@ spec:
 
                   ttlSecondsAfterEmpty: 30
 
+                  provider:
+                    instanceProfile: {{cluster}}-workers-v1
+                    launchTemplate: {{cluster}}-workers-v1
+
                   # taints:
                   #   - key: example.com/special-taint
                   #     effect: NoSchedule
-
-                  # provider:
-                  #   instanceProfile: {{cluster}}-workers-v2
-                  #   launchTemplate: {{cluster}}-workers-v2
 
       syncPolicy:
         # automated:
