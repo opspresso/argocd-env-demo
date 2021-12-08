@@ -7,29 +7,30 @@ spec:
 # 연산자 { In, NotIn }은 값을 포함하거나 제외할 수 있도록 하기 위해 지원됨
   requirements:
     # If not included, all instance types are considered
-    - key: node.k8s.aws/instance-type
+    - key: node.kubernetes.io/instance-type
       operator: In
       values:
         - c5.large
         - c5.2xlarge
     # If not included, all zones are considered
-    - key: "topology.kubernetes.io/zone"
+    - key: topology.kubernetes.io/zone
       operator: In
       values:
         - ap-northeast-2a
         - ap-northeast-2b
         - ap-northeast-2c
     # If not included, all architectures are considered
-    - key: "kubernetes.io/arch"
+    - key: kubernetes.io/arch
+      operator: In
       values:
         - arm64
         - amd64
     # If not included, the webhook for the AWS cloud provider will default to on-demand
-    - key: "karpenter.sh/capacity-type"
+    - key: karpenter.sh/capacity-type
       operator: In
       values:
         - spot
         - on-demand
   provider:
-    instanceProfile: KarpenterNodeInstanceProfile-eks-demo-default
+    instanceProfile: eks-demo-default
   ttlSecondsAfterEmpty: 30

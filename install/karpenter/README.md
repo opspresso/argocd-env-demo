@@ -38,8 +38,24 @@ helm upgrade --install karpenter karpenter/karpenter \
 
 ```bash
 
-kubectl apply -f provisioner.yaml
+kubectl apply -f provisioner.yaml --validate=false
 ```
+
+## create app
+
+```bash
+kubectl create deployment inflate \
+  --image=public.ecr.aws/eks-distro/kubernetes/pause:3.2
+
+kubectl scale deployment inflate --replicas 10
+
+kubectl logs -f -n addon-karpenter $(kubectl get pods -n addon-karpenter -l karpenter=controller -o name)
+```
+
+
+
+
+
 
 
 
