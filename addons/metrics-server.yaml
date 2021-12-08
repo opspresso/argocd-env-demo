@@ -32,8 +32,8 @@ spec:
           values: |-
             fullnameOverride: metrics-server
 
-            image:
-              repository: k8s.gcr.io/metrics-server-arm64
+            # image:
+            #   repository: k8s.gcr.io/metrics-server-arm64
 
             args:
               - --kubelet-insecure-tls
@@ -42,13 +42,13 @@ spec:
             # apiService:
             #   create: false
 
-            tolerations:
-              - key: group
-                operator: Equal
-                value: monitoring
-                effect: NoSchedule
-            nodeSelector:
-              group: monitoring
+            # tolerations:
+            #   - key: group
+            #     operator: Equal
+            #     value: monitoring
+            #     effect: NoSchedule
+            # nodeSelector:
+            #   group: monitoring
 
       syncPolicy:
         automated:
