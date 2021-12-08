@@ -44,21 +44,21 @@ spec:
                     instancegroup: workers-v2
 
                   requirements:
-                    # # If not included, all instance types are considered
-                    # - key: node.kubernetes.io/instance-type
-                    #   operator: In
-                    #   values:
-                    #     - c5.large
-                    #     - c5.xlarge
-                    #     - c5.2xlarge
+                    # If not included, all instance types are considered
+                    - key: node.kubernetes.io/instance-type
+                      operator: In
+                      values:
+                        - c5.large
+                        - c5.xlarge
+                        - c5.2xlarge
 
-                    # # If not included, all zones are considered
-                    # - key: topology.kubernetes.io/zone
-                    #   operator: In
-                    #   values:
-                    #     - ap-northeast-2a
-                    #     - ap-northeast-2b
-                    #     - ap-northeast-2c
+                    # If not included, all zones are considered
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - ap-northeast-2a
+                        - ap-northeast-2b
+                        - ap-northeast-2c
 
                     # If not included, all architectures are considered
                     - key: kubernetes.io/arch
@@ -82,7 +82,7 @@ spec:
 
                   provider:
                     instanceProfile: {{cluster}}-worker
-                    # launchTemplate: {{cluster}}-workers-v1
+                    # launchTemplate: {{cluster}}-worker
 
                   # taints:
                   #   - key: example.com/special-taint
