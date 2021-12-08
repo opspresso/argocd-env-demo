@@ -56,15 +56,3 @@ kubectl logs -f -n addon-karpenter $(kubectl get pods -n addon-karpenter -l karp
 
 # kubectl delete deployment inflate
 ```
-
-
-
-```bash
-TEMPOUT=$(mktemp)
-curl -fsSL https://karpenter.sh/docs/getting-started/cloudformation.yaml > $TEMPOUT \
-&& aws cloudformation deploy \
-  --stack-name Karpenter-${CLUSTER_NAME} \
-  --template-file ${TEMPOUT} \
-  --capabilities CAPABILITY_NAMED_IAM \
-  --parameter-overrides ClusterName=${CLUSTER_NAME}
-```

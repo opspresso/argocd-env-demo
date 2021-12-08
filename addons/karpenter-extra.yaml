@@ -43,15 +43,36 @@ spec:
                     subgroup: workers-v2
                     instancegroup: workers-v2
 
-                  # requirements:
-                  #   - key: karpenter.sh/capacity-type
-                  #     operator: In
-                  #     values:
-                  #       - spot
-                  #   - key: kubernetes.io/arch
-                  #     operator: In
-                  #     values:
-                  #       - amd64
+                  requirements:
+                    # If not included, all instance types are considered
+                    - key: node.kubernetes.io/instance-type
+                      operator: In
+                      values:
+                        - c5.large
+                        - c5.xlarge
+                        - c5.2xlarge
+
+                    # # If not included, all zones are considered
+                    # - key: topology.kubernetes.io/zone
+                    #   operator: In
+                    #   values:
+                    #     - ap-northeast-2a
+                    #     - ap-northeast-2b
+                    #     - ap-northeast-2c
+
+                    # If not included, all architectures are considered
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                        - amd64
+                        - arm64
+
+                    # If not included, the webhook for the AWS cloud provider will default to on-demand
+                    - key: karpenter.sh/capacity-type
+                      operator: In
+                      values:
+                        - spot
+                        # - on-demand
 
                   # limits:
                   #   resources:
@@ -61,8 +82,6 @@ spec:
 
                   provider:
                     instanceProfile: {{cluster}}-worker
-
-                    # instanceProfile: KarpenterNodeInstanceProfile-{{cluster}}
                     # launchTemplate: {{cluster}}-workers-v1
 
                   # taints:
