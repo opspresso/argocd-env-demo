@@ -60,7 +60,9 @@ spec:
                   ttlSecondsAfterEmpty: 30
 
                   provider:
-                    instanceProfile: {{cluster}}-worker
+                    instanceProfile: KarpenterNodeInstanceProfile-{{cluster}}
+
+                    # instanceProfile: {{cluster}}-worker
                     # launchTemplate: {{cluster}}-workers-v1
 
                   # taints:
