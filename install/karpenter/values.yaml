@@ -12,3 +12,20 @@ controller:
 
   clusterName: "CLUSTER_NAME"
   clusterEndpoint: "CLUSTER_ENDPOINT"
+
+  tolerations:
+    - key: group
+      operator: Equal
+      value: karpenter
+      effect: NoSchedule
+  nodeSelector:
+    group: karpenter
+
+webhook:
+  tolerations:
+    - key: group
+      operator: Equal
+      value: karpenter
+      effect: NoSchedule
+  nodeSelector:
+    group: karpenter

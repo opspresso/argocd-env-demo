@@ -53,6 +53,15 @@ spec:
               nodeSelector:
                 group: karpenter
 
+            webhook:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: karpenter
+                  effect: NoSchedule
+              nodeSelector:
+                group: karpenter
+
       syncPolicy:
         # automated:
         #   prune: true
