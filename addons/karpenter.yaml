@@ -45,26 +45,26 @@ spec:
               clusterName: "{{cluster}}"
               clusterEndpoint: "{{cluster_end}}"
 
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: karpenter
-                  effect: NoSchedule
-              nodeSelector:
-                group: karpenter
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: karpenter
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: karpenter
 
-            webhook:
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: karpenter
-                  effect: NoSchedule
-              nodeSelector:
-                group: karpenter
+            # webhook:
+            #   tolerations:
+            #     - key: group
+            #       operator: Equal
+            #       value: karpenter
+            #       effect: NoSchedule
+            #   nodeSelector:
+            #     group: karpenter
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
