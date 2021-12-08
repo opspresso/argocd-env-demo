@@ -60,8 +60,8 @@ spec:
                   ttlSecondsAfterEmpty: 30
 
                   provider:
-                    instanceProfile: {{cluster}}-workers-v1
-                    launchTemplate: {{cluster}}-workers-v1
+                    instanceProfile: {{cluster}}-worker
+                    # launchTemplate: {{cluster}}-workers-v1
 
                   # taints:
                   #   - key: example.com/special-taint
