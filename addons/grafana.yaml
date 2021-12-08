@@ -194,26 +194,26 @@ spec:
                   url: https://raw.githubusercontent.com/nalbam/kubernetes/master/grafana/istio-pilot-dashboard.json
                   datasource: Prometheus
 
-            persistence:
-              enabled: true
-              accessModes:
-                - ReadWriteOnce
-              size: 5Gi
-              storageClassName: gp3
+            # persistence:
+            #   enabled: true
+            #   accessModes:
+            #     - ReadWriteOnce
+            #   size: 5Gi
+            #   storageClassName: gp3
 
             serviceMonitor:
               enabled: true
               labels:
                 release: prometheus-{{cluster}}
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: monitoring
-            #     effect: NoSchedule
-            nodeSelector:
-              # group: monitoring
-              topology.kubernetes.io/zone: {{aws_region}}c
+            # # tolerations:
+            # #   - key: group
+            # #     operator: Equal
+            # #     value: monitoring
+            # #     effect: NoSchedule
+            # nodeSelector:
+            #   # group: monitoring
+            #   topology.kubernetes.io/zone: {{aws_region}}c
 
       syncPolicy:
         automated:
