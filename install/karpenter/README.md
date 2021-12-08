@@ -2,11 +2,47 @@
 
 * <https://karpenter.sh/docs/getting-started/>
 
+## generate values.yaml
+
 ```bash
+export AWS_DEFAULT_REGION="ap-northeast-2"
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export CLUSTER_NAME="eks-demo"
-export AWS_DEFAULT_REGION='ap-northeast-2'
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export CLUSTER_ENDPOINT=$(aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.endpoint" --output text)
+
+# replace values.yaml
+cp values.yaml values.output.yaml
+find . -name values.output.yaml -exec sed -i "" -e "s/ACCOUNT_ID/${ACCOUNT_ID}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/AWS_DEFAULT_REGION/${AWS_DEFAULT_REGION}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s/CLUSTER_NAME/${CLUSTER_NAME}/g" {} \;
+find . -name values.output.yaml -exec sed -i "" -e "s@CLUSTER_ENDPOINT@${CLUSTER_ENDPOINT}@g" {} \;
 ```
+
+## Install Karpenter
+
+```bash
+# helm repo add karpenter https://charts.karpenter.sh
+
+# helm repo update
+# helm search repo karpenter
+
+helm upgrade --install karpenter karpenter/karpenter \
+  -n addon-karpenter --create-namespace \
+  -f values.output.yaml \
+  --wait # wait for webhook
+
+# helm uninstall karpenter -n addon-karpenter
+```
+
+## Install Karpenter Provisioner
+
+```bash
+
+kubectl apply -f provisioner.yaml
+```
+
+
+
 
 ## Create the KarpenterNode IAM Role
 

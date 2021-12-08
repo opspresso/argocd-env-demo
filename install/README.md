@@ -88,13 +88,8 @@ find . -name values.output.yaml -exec sed -i "" -e "s@AWS_ACM_CERT@${AWS_ACM_CER
 # helm repo update
 # helm search repo argo-cd
 
-kubectl create ns argocd
-
-helm install argocd argo/argo-cd -n argocd -f values.output.yaml
-helm install argocd-applicationset argo/argocd-applicationset -n argocd
-
-# helm upgrade argocd argo/argo-cd -n argocd -f values.output.yaml
-# helm upgrade argocd-applicationset argo/argocd-applicationset -n argocd
+helm upgrade --install argocd argo/argo-cd -n argocd --create-namespace -f values.output.yaml
+helm upgrade --install argocd-applicationset argo/argocd-applicationset -n argocd
 
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 # kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/applicationset/v0.2.0/manifests/install.yaml

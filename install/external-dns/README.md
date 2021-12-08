@@ -3,7 +3,7 @@
 ## generate values.yaml
 
 ```bash
-export ACCOUNT_ID=$(aws sts get-caller-identity | grep "Account" | cut -d'"' -f4)
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export CLUSTER_NAME="eks-demo"
 
 # replace values.yaml
@@ -20,11 +20,11 @@ find . -name values.output.yaml -exec sed -i "" -e "s/CLUSTER_NAME/${CLUSTER_NAM
 # helm repo update
 # helm search repo external-dns
 
-kubectl create ns addon-external-dns
+helm upgrade --install external-dns external-dns/external-dns \
+  -n addon-external-dns --create-namespace \
+  -f values.output.yaml
 
-helm install external-dns external-dns/external-dns -n addon-external-dns -f values.output.yaml
-
-# helm upgrade external-dns external-dns/external-dns -n addon-external-dns -f values.output.yaml
+# helm uninstall external-dns -n addon-external-dns
 ```
 
 * <https://console.aws.amazon.com/route53/v2/hostedzones>

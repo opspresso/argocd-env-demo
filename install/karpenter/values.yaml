@@ -1,0 +1,14 @@
+fullnameOverride: karpenter
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT_ID:role/irsa--CLUSTER_NAME--karpenter"
+
+controller:
+  env:
+    - name: AWS_REGION
+      value: "AWS_DEFAULT_REGION"
+
+  clusterName: "CLUSTER_NAME"
+  clusterEndpoint: "CLUSTER_ENDPOINT"
