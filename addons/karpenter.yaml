@@ -45,13 +45,13 @@ spec:
               clusterName: "{{cluster}}"
               clusterEndpoint: "{{cluster_end}}"
 
-              # tolerations:
-              #   - key: group
-              #     operator: Equal
-              #     value: graviton
-              #     effect: NoSchedule
-              # nodeSelector:
-              #   group: graviton
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: karpenter
+                  effect: NoSchedule
+              nodeSelector:
+                group: karpenter
 
       syncPolicy:
         # automated:
