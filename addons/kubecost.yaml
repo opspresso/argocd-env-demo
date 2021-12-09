@@ -27,7 +27,7 @@ spec:
       source:
         repoURL: https://kubecost.github.io/cost-analyzer
         targetRevision: "1.88.1"
-        chart: kubecost
+        chart: cost-analyzer
         helm:
           values: |-
             fullnameOverride: kubecost
