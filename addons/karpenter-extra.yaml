@@ -44,13 +44,13 @@ spec:
                     instancegroup: workers-v2
 
                   requirements:
-                    # # If not included, all instance types are considered
-                    # - key: node.kubernetes.io/instance-type
-                    #   operator: In
-                    #   values:
-                    #     - c5.large
-                    #     - c5.xlarge
-                    #     - c5.2xlarge
+                    # If not included, all instance types are considered
+                    - key: node.kubernetes.io/instance-type
+                      operator: In
+                      values:
+                        - c5.large
+                        - c5.xlarge
+                        - c5.2xlarge
 
                     # # If not included, all zones are considered
                     # - key: topology.kubernetes.io/zone
@@ -81,8 +81,8 @@ spec:
                   ttlSecondsAfterEmpty: 30
 
                   provider:
-                    instanceProfile: {{cluster}}-worker
-                    # launchTemplate: {{cluster}}-graviton-v1
+                    instanceProfile: eks-demo-worker
+                    launchTemplate: eks-demo-workers-v1-20211208100054291900000001
 
                   # taints:
                   #   - key: example.com/special-taint
