@@ -13,6 +13,10 @@ istio:
   public_tg_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-a/5597c366a88bdc1a
   internal_tg_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-a/3ae8453b35d2b5bd
 
+karpenter:
+  instanceProfile: eks-demo-a-worker
+  launchTemplate: eks-demo-a-workers-v1-20211208100054291900000001
+
 cluster-autoscaler:
   scan-interval: 6m
   scale-down-delay-after-delete: 10m

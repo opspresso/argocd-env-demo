@@ -8,7 +8,7 @@ spec:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
         files:
-          - path: "env/ops/alpha/**/config.yaml"
+          - path: "env/addons/alpha/**/config.yaml"
 
   template:
     metadata:
@@ -81,8 +81,8 @@ spec:
                   ttlSecondsAfterEmpty: 30
 
                   provider:
-                    instanceProfile: eks-demo-worker
-                    launchTemplate: eks-demo-workers-v1-20211208100054291900000001
+                    instanceProfile: "{{karpenter.instanceProfile}}"
+                    launchTemplate: "{{karpenter.launchTemplate}}"
 
                   # taints:
                   #   - key: example.com/special-taint
