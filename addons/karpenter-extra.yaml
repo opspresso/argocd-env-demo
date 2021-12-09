@@ -82,7 +82,7 @@ spec:
 
                   provider:
                     instanceProfile: {{cluster}}-worker
-                    launchTemplate: {{cluster}}-graviton-v1
+                    # launchTemplate: {{cluster}}-graviton-v1
 
                   # taints:
                   #   - key: example.com/special-taint
