@@ -36,12 +36,12 @@ spec:
               - apiVersion: karpenter.sh/v1alpha5
                 kind: Provisioner
                 metadata:
-                  name: workers-v2
+                  name: workers
                 spec:
                   labels:
                     group: workers
-                    subgroup: workers-v2
-                    instancegroup: workers-v2
+                    subgroup: workers
+                    instancegroup: workers
 
                   requirements:
                     # # If not included, all instance types are considered
