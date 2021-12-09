@@ -29,6 +29,7 @@ helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
 helm repo add jetstack https://charts.jetstack.io
 helm repo add karpenter https://charts.karpenter.sh
 helm repo add kiali https://kiali.org/helm-charts
+helm repo add kubecost https://kubecost.github.io/cost-analyzer
 helm repo add opspresso https://opspresso.github.io/helm-charts
 helm repo add prometheus https://prometheus-community.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
