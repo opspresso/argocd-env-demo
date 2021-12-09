@@ -60,12 +60,12 @@ spec:
                     #     - ap-northeast-2b
                     #     - ap-northeast-2c
 
-                    # # If not included, all architectures are considered
-                    # - key: kubernetes.io/arch
-                    #   operator: In
-                    #   values:
-                    #     - amd64
-                    #     - arm64
+                    # If not included, all architectures are considered
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                        - amd64
+                        # - arm64
 
                     # If not included, the webhook for the AWS cloud provider will default to on-demand
                     - key: karpenter.sh/capacity-type
