@@ -1,36 +1,54 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: default
+  name: workers
 spec:
-# 프로비저닝된 노드의 파라미터를 제한하는 요구 사항
-# 연산자 { In, NotIn }은 값을 포함하거나 제외할 수 있도록 하기 위해 지원됨
+  labels:
+    group: workers
+    subgroup: workers
+    instancegroup: workers
+
   requirements:
-    # If not included, all instance types are considered
-    - key: node.kubernetes.io/instance-type
-      operator: In
-      values:
-        - c5.large
-        - c5.2xlarge
-    # If not included, all zones are considered
-    - key: topology.kubernetes.io/zone
-      operator: In
-      values:
-        - ap-northeast-2a
-        - ap-northeast-2b
-        - ap-northeast-2c
+    # # If not included, all instance types are considered
+    # - key: node.kubernetes.io/instance-type
+    #   operator: In
+    #   values:
+    #     - c5.large
+    #     - c5.xlarge
+    #     - c5.2xlarge
+
+    # # If not included, all zones are considered
+    # - key: topology.kubernetes.io/zone
+    #   operator: In
+    #   values:
+    #     - ap-northeast-2a
+    #     - ap-northeast-2b
+    #     - ap-northeast-2c
+
     # If not included, all architectures are considered
     - key: kubernetes.io/arch
       operator: In
       values:
-        - arm64
         - amd64
+        # - arm64
+
     # If not included, the webhook for the AWS cloud provider will default to on-demand
     - key: karpenter.sh/capacity-type
       operator: In
       values:
         - spot
-        - on-demand
+        # - on-demand
+
+  # limits:
+  #   resources:
+  #     cpu: 8k
+
+  ttlSecondsAfterEmpty: 30
+
   provider:
     instanceProfile: eks-demo-worker
-  ttlSecondsAfterEmpty: 30
+    launchTemplate: eks-demo-workers-v1-20211208100054291900000001
+
+  # taints:
+  #   - key: example.com/special-taint
+  #     effect: NoSchedule
