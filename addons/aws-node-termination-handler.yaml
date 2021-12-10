@@ -38,9 +38,9 @@ spec:
               annotations:
                 eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-node-termination-handler"
 
-            enableRebalanceDraining: true
-            enableScheduledEventDraining: true
-            enableSpotInterruptionDraining: true
+            # enableRebalanceDraining: true
+            # enableScheduledEventDraining: true
+            # enableSpotInterruptionDraining: true
 
             # webhookURL: https://hooks.slack.com/services/YOUR/SLACK/URL
 
