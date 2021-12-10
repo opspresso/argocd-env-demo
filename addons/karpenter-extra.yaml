@@ -44,13 +44,13 @@ spec:
                     instancegroup: workers
 
                   requirements:
-                    # # If not included, all instance types are considered
-                    # - key: node.kubernetes.io/instance-type
-                    #   operator: In
-                    #   values:
-                    #     - c5.large
-                    #     - c5.xlarge
-                    #     - c5.2xlarge
+                    # If not included, all instance types are considered
+                    - key: node.kubernetes.io/instance-type
+                      operator: In
+                      values:
+                        - c5.large
+                        - c5.xlarge
+                        - c5.2xlarge
 
                     # # If not included, all zones are considered
                     # - key: topology.kubernetes.io/zone
