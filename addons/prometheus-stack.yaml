@@ -32,14 +32,14 @@ spec:
           values: |-
             fullnameOverride: prometheus
 
-            # prometheusOperator:
-            #   tolerations:
-            #     - key: group
-            #       operator: Equal
-            #       value: monitoring
-            #       effect: NoSchedule
-            #   nodeSelector:
-            #     group: monitoring
+            prometheusOperator:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
 
             prometheus:
               prometheusSpec:
@@ -60,14 +60,14 @@ spec:
                     cpu: "2"
                     memory: 8Gi
 
-                # tolerations:
-                #   - key: group
-                #     operator: Equal
-                #     value: monitoring
-                #     effect: NoSchedule
+                tolerations:
+                  - key: group
+                    operator: Equal
+                    value: monitoring
+                    effect: NoSchedule
                 nodeSelector:
-                  # group: monitoring
-                  topology.kubernetes.io/zone: {{aws_region}}c
+                  group: monitoring
+                  # topology.kubernetes.io/zone: {{aws_region}}c
 
             alertmanager:
               config:
@@ -115,14 +115,14 @@ spec:
                         requests:
                           storage: 50Gi
 
-                # tolerations:
-                #   - key: group
-                #     operator: Equal
-                #     value: monitoring
-                #     effect: NoSchedule
+                tolerations:
+                  - key: group
+                    operator: Equal
+                    value: monitoring
+                    effect: NoSchedule
                 nodeSelector:
-                  # group: monitoring
-                  topology.kubernetes.io/zone: {{aws_region}}c
+                  group: monitoring
+                  # topology.kubernetes.io/zone: {{aws_region}}c
 
             kube-state-metrics:
               fullnameOverride: kube-state-metrics
@@ -131,13 +131,13 @@ spec:
               extraArgs:
                 - --metric-labels-allowlist=nodes=[*],namespaces=[*],deployments=[*],pods=[*],services=[*]
 
-              # tolerations:
-              #   - key: group
-              #     operator: Equal
-              #     value: monitoring
-              #     effect: NoSchedule
-              # nodeSelector:
-              #   group: monitoring
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              nodeSelector:
+                group: monitoring
 
             prometheus-node-exporter:
               fullnameOverride: prometheus-node-exporter
