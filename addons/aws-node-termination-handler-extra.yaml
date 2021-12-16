@@ -43,6 +43,43 @@ spec:
                     - key: /k8s/common/slack-hooks
                       name: webhookurl
 
+              - apiVersion: v1
+                kind: ConfigMap
+                metadata:
+                  name: webhook-template
+                data:
+                  template: |
+                    {
+                      "text": "{{ .Description }}",
+                      "attachments": [
+                        {
+                          "color": "warning",
+                          "fields": [
+                            {
+                              "title": "Cluster",
+                              "value": "{{cluster}}",
+                              "short": true
+                            },
+                            {
+                              "title": "Instance",
+                              "value": "{{ .InstanceID }}",
+                              "short": true
+                            },
+                            {
+                              "title": "Node",
+                              "value": "{{ .NodeName }}",
+                              "short": false
+                            },
+                            {
+                              "title": "Start Time",
+                              "value": "{{ .StartTime }}",
+                              "short": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+
               # - apiVersion: irsa.voodoo.io/v1alpha1
               #   kind: IamRoleServiceAccount
               #   metadata:

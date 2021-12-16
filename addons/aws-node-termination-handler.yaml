@@ -38,13 +38,16 @@ spec:
               annotations:
                 eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-node-termination-handler"
 
-            # enableRebalanceDraining: true
-            # enableScheduledEventDraining: true
-            # enableSpotInterruptionDraining: true
+            enableSqsTerminationDraining: true
+            queueURL: "https://sqs.{{aws_region}}.amazonaws.com/{{aws_account_id}}/{{cluster}}-worker"
 
-            # webhookURL: https://hooks.slack.com/services/YOUR/SLACK/URL
+            enableRebalanceDraining: true
+            enableSpotInterruptionDraining: true
 
             webhookURLSecretName: webhook-secret
+
+            webhookTemplateConfigMapName: webhook-template
+            webhookTemplateConfigMapKey: template
 
             # nodeSelector:
             #   lifecycle: spot
