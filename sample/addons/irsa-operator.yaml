@@ -8,7 +8,7 @@ spec:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
         files:
-          - path: "env/addons/alpha/**/config.yaml"
+          - path: "env/addons/alpha/*.yaml"
 
   template:
     metadata:
@@ -33,7 +33,9 @@ spec:
             fullnameOverride: irsa-operator
 
             clusterName: "{{cluster}}"
-            oidcProviderARN: "{{cluster_oidc_arn}}"
+
+            oidcProviderARN: "{{cluster_oidc}}"
+
             roleARN: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--irsa-operator"
 
             podSecurityContext:
