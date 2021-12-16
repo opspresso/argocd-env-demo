@@ -26,7 +26,7 @@ spec:
         namespace: addon-dashboard
       source:
         repoURL: https://kubernetes.github.io/dashboard
-        targetRevision: "5.0.4"
+        targetRevision: "5.0.5"
         chart: kubernetes-dashboard
         helm:
           values: |-

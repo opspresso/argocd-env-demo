@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: aws-ebs-csi-driver
+  name: aws-efs-csi-driver
 spec:
   generators:
     - git:
@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "aws-ebs-csi-driver-{{cluster}}"
+      name: "aws-efs-csi-driver-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
@@ -23,26 +23,19 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: addon-aws-ebs-csi-driver
+        namespace: addon-aws-efs-csi-driver
       source:
-        repoURL: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
-        targetRevision: "2.6.0"
-        chart: aws-ebs-csi-driver
+        repoURL: https://kubernetes-sigs.github.io/aws-efs-csi-driver
+        targetRevision: "2.2.1"
+        chart: aws-efs-csi-driver
         helm:
           values: |-
-            fullnameOverride: aws-ebs-csi-driver
+            fullnameOverride: aws-efs-csi-driver
 
             controller:
-              k8sTagClusterId: "{{cluster}}"
-
-              extraVolumeTags:
-                Environment: alpha
-                Role: eks
-                Service: ks
-
               serviceAccount:
                 annotations:
-                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-ebs-csi-driver"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-efs-csi-driver"
 
               # tolerations:
               #   - key: group
@@ -53,21 +46,23 @@ spec:
               #   group: graviton
 
             node:
-              tolerateAllTaints: true
               serviceAccount:
                 annotations:
-                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-ebs-csi-driver"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-efs-csi-driver"
 
-            storageClasses:
-              - name: gp3
-                annotations:
-                  storageclass.kubernetes.io/is-default-class: "true"
-                volumeBindingMode: WaitForFirstConsumer
-                parameters:
-                  type: "gp3"
-                  allowAutoIOPSPerGBIncrease: "true"
-                reclaimPolicy: Retain
-                allowVolumeExpansion: true
+            # storageClasses:
+            #   - name: efs
+            #     mountOptions:
+            #       - tls
+            #     parameters:
+            #       basePath: "/shared"
+            #       directoryPerms: "755"
+            #       fileSystemId: ""
+            #       gidRangeEnd: "2000"
+            #       gidRangeStart: "1000"
+            #       provisioningMode: efs-ap
+            #     reclaimPolicy: Retain
+            #     allowVolumeExpansion: true
 
       syncPolicy:
         automated:
