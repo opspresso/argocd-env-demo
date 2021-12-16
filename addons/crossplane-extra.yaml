@@ -4,9 +4,11 @@ metadata:
   name: crossplane-extra
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/**/config.yaml"
 
   template:
     metadata:
