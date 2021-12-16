@@ -32,6 +32,10 @@ spec:
           values: |-
             fullnameOverride: prometheus-adapter
 
+            prometheus:
+              url: http://prometheus-prometheus.addon-prometheus.svc.cluster.local
+              port: 9090
+
             tolerations:
               - key: group
                 operator: Equal
