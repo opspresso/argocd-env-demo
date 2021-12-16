@@ -26,7 +26,7 @@ spec:
         namespace: addon-prometheus
       source:
         repoURL: https://prometheus-community.github.io/helm-charts
-        targetRevision: "2.8.1"
+        targetRevision: "3.0.0"
         chart: prometheus-adapter
         helm:
           values: |-
