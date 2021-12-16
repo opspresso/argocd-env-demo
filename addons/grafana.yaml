@@ -206,14 +206,14 @@ spec:
               labels:
                 release: prometheus-{{cluster}}
 
-            # tolerations:
-            #   - key: group
-            #     operator: Equal
-            #     value: monitoring
-            #     effect: NoSchedule
-            # nodeSelector:
-            #   group: monitoring
-            #   # topology.kubernetes.io/zone: {{aws_region}}c
+            tolerations:
+              - key: group
+                operator: Equal
+                value: monitoring
+                effect: NoSchedule
+            nodeSelector:
+              group: monitoring
+              # topology.kubernetes.io/zone: {{aws_region}}c
 
       syncPolicy:
         automated:
