@@ -32,17 +32,26 @@ spec:
           values: |-
             fullnameOverride: aws-node-termination-handler
 
+            awsRegion: "{{aws_region}}"
+
+            enableSqsTerminationDraining: true
+            queueURL: "https://sqs.{{aws_region}}.amazonaws.com/{{aws_account_id}}/{{cluster}}-worker"
+
             serviceAccount:
               # create: false
               # name: aws-node-termination-handler-irsa
               annotations:
                 eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-node-termination-handler"
 
-            enableSqsTerminationDraining: true
-            queueURL: "https://sqs.{{aws_region}}.amazonaws.com/{{aws_account_id}}/{{cluster}}-worker"
-
             enableRebalanceDraining: true
             enableSpotInterruptionDraining: true
+
+            enablePrometheusServer: true
+
+            serviceMonitor:
+              create: true
+              labels:
+                release: prometheus-operator
 
             webhookURLSecretName: webhook-secret
 
