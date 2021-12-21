@@ -26,13 +26,13 @@ spec:
         namespace: istio-system
       source:
         repoURL: https://github.com/istio/istio
-        targetRevision: "1.12.0"
+        targetRevision: "1.12.1"
         path: manifests/charts/istio-control/istio-discovery
         helm:
           values: |-
             global:
-              hub: istio
-              tag: "1.12.0"
+              hub: gcr.io/istio-release
+              tag: "1.12.1"
 
               proxy:
                 lifecycle:
