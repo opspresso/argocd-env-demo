@@ -26,7 +26,7 @@ spec:
         namespace: addon-aws-efs-csi-driver
       source:
         repoURL: https://kubernetes-sigs.github.io/aws-efs-csi-driver
-        targetRevision: "2.2.1"
+        targetRevision: "2.2.2"
         chart: aws-efs-csi-driver
         helm:
           values: |-

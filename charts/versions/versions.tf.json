@@ -17,11 +17,11 @@
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
-      "default": "2.6.1",
+      "default": "2.6.2",
       "description": "aws-ebs-csi-driver/aws-ebs-csi-driver"
     },
     "helm_aws_efs_csi_driver": {
-      "default": "2.2.1",
+      "default": "2.2.2",
       "description": "aws-efs-csi-driver/aws-efs-csi-driver"
     },
     "helm_aws_load_balancer_controller": {
@@ -57,7 +57,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.28.5",
+      "default": "2.28.10",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -65,7 +65,7 @@
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
-      "default": "1.39.6",
+      "default": "1.39.7",
       "description": "gocd/gocd"
     },
     "helm_grafana": {
@@ -89,7 +89,7 @@
       "description": "karpenter/karpenter"
     },
     "helm_keycloak": {
-      "default": "16.0.4",
+      "default": "16.0.5",
       "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
@@ -97,7 +97,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "25.1.0",
+      "default": "25.2.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
