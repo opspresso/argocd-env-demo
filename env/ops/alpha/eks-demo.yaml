@@ -16,7 +16,7 @@ grafana:
   auth:
     github:
       enabled: true
-      allowed_organizations: opspresso
+      allowed_organizations: daangn
     google:
       enabled: false
       allowed_domains: nalbam.com daangn.com
