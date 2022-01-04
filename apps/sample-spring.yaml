@@ -35,8 +35,8 @@ spec:
             - values-{{cluster_env}}-{{cluster}}.yaml
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
