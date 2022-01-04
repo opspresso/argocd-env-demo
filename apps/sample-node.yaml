@@ -38,6 +38,7 @@ spec:
               configmap:
                 data:
                   CLUSTER_NAME: {{cluster}}
+                  ENV: {{cluster_env}}
               ingress:
                 hosts:
                 - host: sample-node.{{hostname}}

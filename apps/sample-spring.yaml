@@ -32,7 +32,25 @@ spec:
           valueFiles:
             - values.yaml
             - values-{{cluster_env}}.yaml
-            - values-{{cluster_env}}-{{cluster}}.yaml
+            # - values-{{cluster_env}}-{{cluster}}.yaml
+          values: |-
+            app:
+              configmap:
+                data:
+                  CLUSTER_NAME: {{cluster}}
+                  ENV: {{cluster_env}}
+              ingress:
+                hosts:
+                - host: sample-node.{{hostname}}
+                preview:
+                  hosts:
+                  - host: sample-node-preview.{{hostname}}
+                stable:
+                  hosts:
+                  - host: sample-node-stable.{{hostname}}
+              serviceMonitor:
+                selector:
+                  release: prometheus-{{cluster}}
 
       syncPolicy:
         # automated:
