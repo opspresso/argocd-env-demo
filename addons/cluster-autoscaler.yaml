@@ -53,6 +53,7 @@ spec:
               scale-down-utilization-threshold: {{cluster-autoscaler.scale-down-utilization-threshold}}
               skip-nodes-with-local-storage: false
               skip-nodes-with-system-pods: false
+              balance-similar-node-groups: true
               expander: least-waste
 
             rbac:
