@@ -9,7 +9,7 @@ argocd:
   hostname: argocd.demo.nalbam.com
   github:
     org: daangn
-    team: sre
+    team: deploy
 
 grafana:
   hostname: grafana.demo.nalbam.com
