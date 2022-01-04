@@ -8,15 +8,15 @@ argocd:
   acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/e289c376-c58b-430e-8c04-02ceb50106f0
   hostname: argocd.demo.nalbam.com
   github:
-    org: daangn
-    team: deploy
+    org: opspresso
+    team: sre
 
 grafana:
   hostname: grafana.demo.nalbam.com
   auth:
     github:
       enabled: true
-      allowed_organizations: daangn
+      allowed_organizations: opspresso
     google:
       enabled: false
       allowed_domains: nalbam.com daangn.com
