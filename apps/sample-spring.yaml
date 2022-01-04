@@ -32,7 +32,6 @@ spec:
           valueFiles:
             - values.yaml
             - values-{{cluster_env}}.yaml
-            # - values-{{cluster_env}}-{{cluster}}.yaml
           values: |-
             app:
               configmap:
@@ -42,19 +41,22 @@ spec:
               ingress:
                 hosts:
                 - host: sample-node.{{hostname}}
+                - host: sample-node.{{cluster_host}}
                 preview:
                   hosts:
                   - host: sample-node-preview.{{hostname}}
+                  - host: sample-node-preview.{{cluster_host}}
                 stable:
                   hosts:
                   - host: sample-node-stable.{{hostname}}
+                  - host: sample-node-stable.{{cluster_host}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
