@@ -48,6 +48,9 @@ spec:
 
             enablePrometheusServer: true
 
+            podTerminationGracePeriod: "180"
+            nodeTerminationGracePeriod: "180"
+
             serviceMonitor:
               create: true
               labels:
