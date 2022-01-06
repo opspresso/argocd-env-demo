@@ -7,14 +7,15 @@ cluster_oidc:
 aws_account_id: '082867736673'
 aws_region: ap-northeast-2
 
-istio:
-  acm_arn: arn:aws:acm:ap-northeast-2:082867736673:certificate/592c9e8f-c8a9-461f-a7cc-9f8179dcf32b
-  hostname: demo.nalbam.com
+hostname:
   internal: in.demo.nalbam.com
+  public: demo.nalbam.com
+
+istio:
   sampling: 10
-  internal_http_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-0/63008d9151fdc373
-  public_grpc_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-grpc-0/17705c1110a0ad3c
-  public_http_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-0/e76554ab0170a7d7
+  target_group:
+    internal: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-0/63008d9151fdc373
+    public: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-0/e76554ab0170a7d7
 
 karpenter:
   instanceProfile: eks-demo-worker

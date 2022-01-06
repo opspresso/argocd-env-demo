@@ -94,7 +94,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "dashboard.{{istio.internal}}"
+                        - "dashboard.{{hostname.internal}}"
                       port:
                         number: 80
                         name: http
@@ -106,7 +106,7 @@ spec:
                   name: dashboard
                 spec:
                   hosts:
-                    - "dashboard.{{istio.internal}}"
+                    - "dashboard.{{hostname.internal}}"
                   gateways:
                     - dashboard
                   http:
