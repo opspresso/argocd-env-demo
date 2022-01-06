@@ -16,3 +16,21 @@ app:
   service:
     name: grpc
     targetPort: 50051
+
+  readinessProbe:
+    failureThreshold: 3
+    exec:
+      command:
+        - /bin/grpc_health_probe
+        - '-addr=:50051'
+    initialDelaySeconds: 3
+    periodSeconds: 3
+
+  livenessProbe:
+    failureThreshold: 3
+    exec:
+      command:
+        - /bin/grpc_health_probe
+        - '-addr=:50051'
+    initialDelaySeconds: 3
+    periodSeconds: 3
