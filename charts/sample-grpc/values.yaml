@@ -14,5 +14,5 @@ app:
       memory: 128Mi
 
   service:
-    name: http
+    name: grpc
     targetPort: 50051
