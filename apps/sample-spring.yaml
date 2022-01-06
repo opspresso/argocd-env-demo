@@ -40,16 +40,8 @@ spec:
                   ENV: {{cluster_env}}
               ingress:
                 hosts:
-                - host: sample-node.{{hostname}}
-                - host: sample-node.{{cluster_host}}
-                preview:
-                  hosts:
-                  - host: sample-node-preview.{{hostname}}
-                  - host: sample-node-preview.{{cluster_host}}
-                stable:
-                  hosts:
-                  - host: sample-node-stable.{{hostname}}
-                  - host: sample-node-stable.{{cluster_host}}
+                - host: sample-spring.{{hostname}}
+                - host: sample-spring.{{cluster_host}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
