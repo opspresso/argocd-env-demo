@@ -1,0 +1,17 @@
+app:
+  fullnameOverride: sample-grpc
+
+  image:
+    repository: fullstorydev/grpcurl:latest
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+  service:
+    name: http
+    targetPort: 50051
