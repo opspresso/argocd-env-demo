@@ -12,9 +12,9 @@ istio:
   hostname: demo-a.nalbam.com
   internal: in.demo-a.nalbam.com
   sampling: 10
-  internal_http_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-a/63008d9151fdc373
-  public_grpc_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-grpc-a/17705c1110a0ad3c
-  public_http_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-a/e76554ab0170a7d7
+  internal_http_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-a/8145eb5b5e7a46b7
+  public_grpc_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-grpc-a/7baa6c4d716a1859
+  public_http_arn: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-a/69cf219a861230b7
 
 karpenter:
   instanceProfile: eks-demo-a-worker
