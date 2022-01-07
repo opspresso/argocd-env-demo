@@ -5,13 +5,13 @@ app:
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       PROFILE: alpha
-      VERSION: v0.1.9
+      VERSION: v0.1.10
     enabled: true
   env:
   - name: ENV_HASH
-    value: a626b8abbc481bc85ea406ed9e9f272c
+    value: 9b6138380d5f3efd9e3b3c4efa676edd
   image:
-    tag: v0.1.9
+    tag: v0.1.10
   istio:
     gateway:
       enabled: true
