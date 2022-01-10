@@ -41,7 +41,18 @@ spec:
                   serviceRef:
                     name: istio-ingressgateway
                     port: http2
-                  targetGroupARN: "{{istio.target_group.internal}}"
+                  targetGroupARN: "{{istio.target_group.internal_http}}"
+                  targetType: ip
+
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-internal-http2
+                spec:
+                  serviceRef:
+                    name: istio-ingressgateway
+                    port: http2
+                  targetGroupARN: "{{istio.target_group.internal_http2}}"
                   targetType: ip
 
               - apiVersion: elbv2.k8s.aws/v1beta1
@@ -52,7 +63,18 @@ spec:
                   serviceRef:
                     name: istio-ingressgateway
                     port: http2
-                  targetGroupARN: "{{istio.target_group.public}}"
+                  targetGroupARN: "{{istio.target_group.public_http}}"
+                  targetType: ip
+
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-public-http2
+                spec:
+                  serviceRef:
+                    name: istio-ingressgateway
+                    port: http2
+                  targetGroupARN: "{{istio.target_group.public_http2}}"
                   targetType: ip
 
               - apiVersion: v1

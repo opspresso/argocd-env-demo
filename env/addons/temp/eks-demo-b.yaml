@@ -1,6 +1,6 @@
 cluster: eks-demo-b
 cluster_env: alpha
-cluster_end: https://xxxxx.yl4.ap-northeast-2.eks.amazonaws.com
+cluster_end: https://xxxxx.yy.ap-northeast-2.eks.amazonaws.com
 
 cluster_oidc:
 
@@ -14,8 +14,10 @@ hostname:
 istio:
   sampling: 10
   target_group:
-    internal: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/7bbfed781a577f88
-    public: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-b/873e0a2e0d5b74f1
+    internal_grpc: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-b/646b1bffad5b7baf
+    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/11d28e0e882c8930
+    public_grpc: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-b/b15d23c05d5cbecb
+    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-b/3c00e24f5e5f94d9
 
 karpenter:
   instanceProfile: eks-demo-b-worker
