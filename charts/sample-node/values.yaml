@@ -34,18 +34,15 @@ app:
             templates:
             - clusterScope: true
               templateName: http-benchmark
-        - setCanaryScale:
-            weight: 25
+        - setWeight: 25
         - setCanaryScale:
             matchTrafficWeight: true
         - pause:
             duration: 10
-        - setCanaryScale:
-            weight: 50
+        - setWeight: 50
         - pause:
             duration: 10
-        - setCanaryScale:
-            weight: 75
+        - setWeight: 75
         - pause:
             duration: 10
 
