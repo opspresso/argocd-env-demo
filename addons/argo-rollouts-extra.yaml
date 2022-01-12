@@ -98,7 +98,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "argo-rollouts.{{hostname.internal}}"
+                        - "argo-rollouts.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -110,7 +110,7 @@ spec:
                   name: argo-rollouts
                 spec:
                   hosts:
-                    - "argo-rollouts.{{hostname.internal}}"
+                    - "argo-rollouts.{{hostname.public}}"
                   gateways:
                     - argo-rollouts
                   http:
