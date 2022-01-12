@@ -14,31 +14,40 @@ app:
       memory: 256Mi
 
   controller:
-    # kind: Rollout
+    kind: Rollout
     strategy:
-      rollingUpdate:
-        maxSurge: 25%
-        maxUnavailable: 0
-      # canary:
-      #   canaryService: sample-node-preview
-      #   stableService: sample-node-stable
-      #   steps:
-      #   - setWeight: 25
-      #   - pause:
-      #       duration: 10
-      #   - analysis:
-      #       args:
-      #       - name: url
-      #         value: http://sample-node-preview/success/98
-      #       templates:
-      #       - clusterScope: true
-      #         templateName: http-benchmark
-      #   - setWeight: 50
-      #   - pause:
-      #       duration: 10
-      #   - setWeight: 75
-      #   - pause:
-      #       duration: 10
+      # rollingUpdate:
+      #   maxSurge: 25%
+      #   maxUnavailable: 0
+      canary:
+        canaryService: sample-node-preview
+        stableService: sample-node-stable
+        steps:
+        - setCanaryScale:
+            replicas: 1
+        - pause:
+            duration: 10
+        - analysis:
+            args:
+            - name: url
+              value: http://sample-node-preview/success/98
+            templates:
+            - clusterScope: true
+              templateName: http-benchmark
+        - setCanaryScale:
+            weight: 25
+        - setCanaryScale:
+            matchTrafficWeight: true
+        - pause:
+            duration: 10
+        - setCanaryScale:
+            weight: 50
+        - pause:
+            duration: 10
+        - setCanaryScale:
+            weight: 75
+        - pause:
+            duration: 10
 
   service:
     name: http
