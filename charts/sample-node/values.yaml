@@ -23,8 +23,9 @@ app:
         canaryService: sample-node-preview
         stableService: sample-node-stable
         steps:
-        - setCanaryScale:
-            replicas: 1
+        - setWeight: 10
+        # - setCanaryScale:
+        #     replicas: 1
         - pause:
             duration: 10
         - analysis:
@@ -35,8 +36,8 @@ app:
             - clusterScope: true
               templateName: http-benchmark
         - setWeight: 25
-        - setCanaryScale:
-            matchTrafficWeight: true
+        # - setCanaryScale:
+        #     matchTrafficWeight: true
         - pause:
             duration: 10
         - setWeight: 50
