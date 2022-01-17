@@ -37,8 +37,8 @@
       "description": "jetstack/cert-manager"
     },
     "helm_chaoskube": {
-      "default": "3.3.2",
-      "description": "stable/chaoskube"
+      "default": "0.1.0",
+      "description": "chaoskube/chaoskube"
     },
     "helm_cluster_autoscaler": {
       "default": "9.11.0",
@@ -83,14 +83,6 @@
     "helm_jaeger": {
       "default": "0.52.0",
       "description": "jaegertracing/jaeger"
-    },
-    "helm_karpenter": {
-      "default": "0.5.3",
-      "description": "karpenter/karpenter"
-    },
-    "helm_keycloak": {
-      "default": "16.0.5",
-      "description": "codecentric/keycloak"
     },
     "helm_kiali_operator": {
       "default": "1.45.0",
