@@ -84,6 +84,10 @@
       "default": "0.52.0",
       "description": "jaegertracing/jaeger"
     },
+    "helm_karpenter": {
+      "default": "0.5.3",
+      "description": "karpenter/karpenter"
+    },
     "helm_kiali_operator": {
       "default": "1.45.0",
       "description": "kiali/kiali-operator"
