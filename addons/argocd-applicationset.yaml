@@ -26,7 +26,7 @@ spec:
         namespace: argocd
       source:
         repoURL: https://argoproj.github.io/argo-helm
-        targetRevision: "1.7.0"
+        targetRevision: "1.9.0"
         chart: argocd-applicationset
         helm:
           values: |-
@@ -41,8 +41,8 @@ spec:
                 memory: 256Mi
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true

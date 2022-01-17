@@ -26,7 +26,7 @@ spec:
         namespace: addon-argo-rollouts
       source:
         repoURL: https://argoproj.github.io/argo-helm
-        targetRevision: "2.7.0"
+        targetRevision: "2.9.1"
         chart: argo-rollouts
         helm:
           values: |-
@@ -74,8 +74,8 @@ spec:
             - /spec/preserveUnknownFields
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
