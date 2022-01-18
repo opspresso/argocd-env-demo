@@ -16,7 +16,7 @@ chaoskube | quay.io/linki/chaoskube | ✅ | ❌
 cluster-autoscaler | k8s.gcr.io/autoscaling/cluster-autoscaler | ✅ | ✅
 consul | consul | ✅ | ✅
 coredns | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/coredns | ✅ | ✅
-cortex | cortexproject/cortex | ✅ | ❌
+cortex | quay.io/cortexproject/cortex | ✅ | ❌
 crossplane | crossplane/crossplane | ✅ | ✅
 datadog | gcr.io/datadoghq/agent | ✅ | ✅
 dex | ghcr.io/dexidp/dex | ✅ | ✅
