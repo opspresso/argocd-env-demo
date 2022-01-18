@@ -14,10 +14,10 @@ hostname:
 istio:
   sampling: 10
   target_group:
-    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/11d28e0e882c8930
-    internal_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-b/646b1bffad5b7baf
-    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-b/3c00e24f5e5f94d9
-    public_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-b/b15d23c05d5cbecb
+    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/19d5366ea100126b
+    internal_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-b/f2e83f8ce1539702
+    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-b/ff6cd46e34a1bc80
+    public_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-b/66c3463833365bd6
 
 karpenter:
   instanceProfile: eks-demo-b-worker
