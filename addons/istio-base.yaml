@@ -26,7 +26,7 @@ spec:
         namespace: istio-system
       source:
         repoURL: https://github.com/istio/istio
-        targetRevision: "1.12.0"
+        targetRevision: "{{istio.version}}"
         path: manifests/charts/base
 
       ignoreDifferences:
