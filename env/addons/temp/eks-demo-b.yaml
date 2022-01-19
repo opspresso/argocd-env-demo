@@ -12,6 +12,7 @@ hostname:
   public: demo-b.nalbam.com
 
 istio:
+  version: "1.12.2"
   sampling: 10
   target_group:
     internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/19d5366ea100126b
