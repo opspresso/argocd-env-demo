@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-ingress-{{cluster}}"
+      name: "istio-ingress-tgbs-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
