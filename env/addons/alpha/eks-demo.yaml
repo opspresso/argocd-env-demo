@@ -11,6 +11,11 @@ hostname:
   internal: in.demo.nalbam.com
   public: demo.nalbam.com
 
+argo-workflows:
+  github:
+    org: opspresso
+    team: sre
+
 istio:
   version: "1.12.2"
   sampling: 10

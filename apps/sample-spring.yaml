@@ -40,8 +40,8 @@ spec:
                   ENV: {{cluster_env}}
               ingress:
                 hosts:
-                - host: sample-spring.{{hostname}}
-                - host: sample-spring.{{cluster_host}}
+                - host: sample-spring.{{hostname.this}}
+                - host: sample-spring.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}

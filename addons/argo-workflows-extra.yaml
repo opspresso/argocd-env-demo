@@ -89,7 +89,7 @@ spec:
                 metadata:
                   name: admin
                   annotations:
-                    workflows.argoproj.io/rbac-rule: "'opspresso:sre' in groups"
+                    workflows.argoproj.io/rbac-rule: "'{{argo-workflows.github.org}}:{{argo-workflows.github.team}}' in groups"
                     workflows.argoproj.io/rbac-rule-precedence: "1"
 
               - apiVersion: rbac.authorization.k8s.io/v1
