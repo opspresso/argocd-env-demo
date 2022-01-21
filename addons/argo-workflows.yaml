@@ -4,12 +4,11 @@ metadata:
   name: argo-workflows
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              rolearn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--argo-workflows"
-              host: "demo.nalbam.com"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
 
   template:
     metadata:
@@ -37,7 +36,7 @@ spec:
               serviceAccount:
                 create: true
                 annotations:
-                  eks.amazonaws.com/role-arn: "{{values.rolearn}}"
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--argo-workflows"
 
             server:
               replicas: 1
@@ -46,7 +45,7 @@ spec:
                 - --auth-mode=sso
 
               sso:
-                issuer: https://argocd.{{hostname}}/api/dex
+                issuer: https://argocd.{{hostname.public}}/api/dex
                 # sessionExpiry defines how long your login is valid for in hours. (optional, default: 10h)
                 # sessionExpiry: 240h
                 clientId:
@@ -55,7 +54,7 @@ spec:
                 clientSecret:
                   name: argo-workflows-secret
                   key: client-secret
-                redirectUrl: https://argo-workflows.{{hostname}}/oauth2/callback
+                redirectUrl: https://argo-workflows.{{hostname.public}}/oauth2/callback
 
                 rbac:
                   enabled: true

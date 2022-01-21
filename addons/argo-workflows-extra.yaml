@@ -4,11 +4,11 @@ metadata:
   name: argo-workflows-extra
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              host: "demo.nalbam.com"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
 
   template:
     metadata:
@@ -54,7 +54,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "argo-workflows.{{hostname}}"
+                        - "argo-workflows.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -66,7 +66,7 @@ spec:
                   name: argo-workflows
                 spec:
                   hosts:
-                    - "argo-workflows.{{hostname}}"
+                    - "argo-workflows.{{hostname.public}}"
                   gateways:
                     - argo-workflows
                   http:
