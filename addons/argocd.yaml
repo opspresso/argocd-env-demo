@@ -92,6 +92,12 @@ spec:
                       clientSecret: $dex.github.clientSecret
                       orgs:
                         - name: {{argocd.github.org}}
+                  staticClients:
+                  - id: argo-workflows-sso
+                    name: Argo Workflow
+                    redirectURIs:
+                      - https://argo-workflows.demo.nalbam.com/oauth2/callback
+                    secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
                 policy.default: "role:admin"
@@ -165,6 +171,13 @@ spec:
                 limits:
                   cpu: 100m
                   memory: 128Mi
+
+              env:
+                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: argocd-secret
+                      key: argo-workflows-client-secret
 
               metrics:
                 enabled: true
