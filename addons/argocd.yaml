@@ -97,7 +97,7 @@ spec:
                     name: Argo Workflow
                     redirectURIs:
                       - https://argo-workflows.{{hostname.public}}/oauth2/callback
-                    secretEnv: $argo-workflows-client-secret
+                    secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
                 policy.default: "role:admin"
@@ -171,6 +171,13 @@ spec:
                 limits:
                   cpu: 100m
                   memory: 128Mi
+
+              env:
+                - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: argocd-secret
+                      key: argo-workflows-client-secret
 
               metrics:
                 enabled: true
