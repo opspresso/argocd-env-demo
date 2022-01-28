@@ -100,7 +100,7 @@ spec:
                     secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
-                policy.default: "role:admin"
+                policy.default: "role:readonly"
                 policy.csv: |
                   g, {{argocd.github.org}}:{{argocd.github.team}}, role:admin
 
