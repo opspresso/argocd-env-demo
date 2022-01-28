@@ -44,9 +44,9 @@ spec:
                       name: admin-user
                     - key: /k8s/common/admin-password
                       name: admin-password
-                    - key: /k8s/common/grafana-github-id
+                    - key: /k8s/daangn/grafana-github-id
                       name: github-id
-                    - key: /k8s/common/grafana-github-secret
+                    - key: /k8s/daangn/grafana-github-secret
                       name: github-secret
                     - key: /k8s/common/google-id
                       name: google-id
