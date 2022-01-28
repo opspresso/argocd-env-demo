@@ -14,7 +14,7 @@ hostname:
 argo-workflows:
   github:
     org: daangn
-    team: sre
+    team: deploy
 
 istio:
   version: "1.12.2"
