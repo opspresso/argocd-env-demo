@@ -13,7 +13,7 @@ hostname:
 
 argo-workflows:
   github:
-    org: opspresso
+    org: daangn
     team: sre
 
 istio:
