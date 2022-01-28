@@ -44,9 +44,9 @@ spec:
                       name: admin.password
                     - key: /k8s/common/argocd-mtime
                       name: admin.passwordMtime
-                    - key: /k8s/common/argocd-github-id
+                    - key: /k8s/{{argocd.github.org}}/argocd-github-id
                       name: dex.github.clientId
-                    - key: /k8s/common/argocd-github-secret
+                    - key: /k8s/{{argocd.github.org}}/argocd-github-secret
                       name: dex.github.clientSecret
                     - key: /k8s/common/argocd-webhook
                       name: webhook.github.secret
