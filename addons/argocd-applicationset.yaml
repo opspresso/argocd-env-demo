@@ -32,7 +32,7 @@ spec:
           values: |-
             fullnameOverride: argocd-applicationset
 
-            replicaCount: 2
+            # replicaCount: 2
 
             resources:
               requests:
