@@ -38,31 +38,26 @@ spec:
             queueURL: "https://sqs.{{aws_region}}.amazonaws.com/{{aws_account_id}}/{{cluster}}-worker"
 
             serviceAccount:
-              # create: false
-              # name: aws-node-termination-handler-irsa
               annotations:
                 eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-node-termination-handler"
 
             enableRebalanceDraining: true
             enableSpotInterruptionDraining: true
 
-            enablePrometheusServer: true
-
             podTerminationGracePeriod: "180"
             nodeTerminationGracePeriod: "180"
 
-            serviceMonitor:
-              create: true
-              labels:
-                release: prometheus-operator
+            # enablePrometheusServer: true
+
+            # serviceMonitor:
+            #   create: true
+            #   labels:
+            #     release: prometheus-operator
 
             webhookURLSecretName: webhook-secret
 
             webhookTemplateConfigMapName: webhook-template
             webhookTemplateConfigMapKey: template
-
-            # nodeSelector:
-            #   lifecycle: spot
 
       syncPolicy:
         automated:
