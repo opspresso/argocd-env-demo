@@ -26,6 +26,7 @@ server:
         config:
           clientID: $dex.github.clientId
           clientSecret: $dex.github.clientSecret
+          teamNameField: slug
           orgs:
             - name: GITHUB_ORG
 

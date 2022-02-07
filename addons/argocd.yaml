@@ -90,6 +90,7 @@ spec:
                     config:
                       clientID: $dex.github.clientId
                       clientSecret: $dex.github.clientSecret
+                      teamNameField: slug
                       orgs:
                         - name: {{argocd.github.org}}
                   staticClients:
