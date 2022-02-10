@@ -4,7 +4,7 @@ cluster_end: https://BDE8CEF77A7E5D6C37647930733EEA5E.gr7.ap-northeast-2.eks.ama
 
 cluster_oidc:
 
-aws_account_id: '082867736673'
+aws_account_id: "082867736673"
 aws_region: ap-northeast-2
 
 hostname:
@@ -20,10 +20,8 @@ istio:
   version: "1.12.2"
   sampling: 10
   target_group:
-    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-0/3eb4eff4df206e4b
-    internal_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-0/4b7cbe007f009e4e
-    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-0/9fd4eb26ae3941da
-    public_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-0/cf43fe9153de2530
+    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-0/4b7cbe007f009e4e
+    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-0/cf43fe9153de2530
 
 karpenter:
   instanceProfile: eks-demo-worker
@@ -36,7 +34,7 @@ cluster-autoscaler:
 
 cluster-overprovisioner:
   replicas: 0
-  cpu: '1'
+  cpu: "1"
   memory: 1Gi
 
 promtail:
