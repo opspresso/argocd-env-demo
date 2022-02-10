@@ -13,8 +13,8 @@ hostname:
 
 argo-workflows:
   github:
-    org: daangn
-    team: deploy
+    org: opspresso
+    team: sre
 
 istio:
   version: "1.12.2"
