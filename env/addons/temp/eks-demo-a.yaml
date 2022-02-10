@@ -20,8 +20,10 @@ istio:
   version: "1.12.2"
   sampling: 10
   target_group:
-    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-a/7fc77fd5f0ff83db
-    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-a/b501ab171f735775
+    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-a/e3a045784903b255
+    internal_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http2-a/7fc77fd5f0ff83db
+    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-a/cf2a8d0655203def
+    public_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-a/b501ab171f735775
 
 karpenter:
   instanceProfile: eks-demo-a-worker

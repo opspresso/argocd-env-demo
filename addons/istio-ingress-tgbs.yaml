@@ -40,11 +40,25 @@ spec:
                 targetGroupARN: "{{istio.target_group.internal_http}}"
                 targetType: ip
 
+              - name: internal-http2
+                serviceRef:
+                  name: istio-ingressgateway
+                  port: http2
+                targetGroupARN: "{{istio.target_group.internal_http2}}"
+                targetType: ip
+
               - name: public-http
                 serviceRef:
                   name: istio-ingressgateway
                   port: http2
                 targetGroupARN: "{{istio.target_group.public_http}}"
+                targetType: ip
+
+              - name: public-http2
+                serviceRef:
+                  name: istio-ingressgateway
+                  port: http2
+                targetGroupARN: "{{istio.target_group.public_http2}}"
                 targetType: ip
 
       syncPolicy:
