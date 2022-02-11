@@ -57,7 +57,7 @@ spec:
                           "fields": [
                             {
                               "title": "Cluster",
-                              "value": "{{cluster}}",
+                              "value": ":flag-{{country}}: {{cluster}}",
                               "short": true
                             },
                             {
@@ -71,8 +71,8 @@ spec:
                               "short": false
                             },
                             {
-                              "title": "Start Time",
-                              "value": "{{ .StartTime }}",
+                              "title": "AutoScalingGroupName",
+                              "value": "{{ .AutoScalingGroupName }}",
                               "short": false
                             }
                           ]

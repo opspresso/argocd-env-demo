@@ -4,6 +4,8 @@ cluster_end: https://xxxxx.yy.ap-northeast-2.eks.amazonaws.com
 
 cluster_oidc:
 
+country: kr
+
 aws_account_id: "082867736673"
 aws_region: ap-northeast-2
 

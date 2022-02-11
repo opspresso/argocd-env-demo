@@ -4,6 +4,8 @@ cluster_end: https://BDE8CEF77A7E5D6C37647930733EEA5E.gr7.ap-northeast-2.eks.ama
 
 cluster_oidc:
 
+country: kr
+
 aws_account_id: "082867736673"
 aws_region: ap-northeast-2
 
