@@ -19,7 +19,7 @@ argo-workflows:
     team: sre
 
 istio:
-  version: "1.12.2"
+  version: "1.12.3"
   sampling: 10
   target_group:
     internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/6f9ad17a53a50839
