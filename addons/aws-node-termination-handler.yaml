@@ -26,7 +26,7 @@ spec:
         namespace: addon-aws-node-termination-handler
       source:
         repoURL: https://aws.github.io/eks-charts
-        targetRevision: "0.16.1"
+        targetRevision: "0.17.0"
         chart: aws-node-termination-handler
         helm:
           values: |-
@@ -60,8 +60,8 @@ spec:
             webhookTemplateConfigMapKey: template
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
