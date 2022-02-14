@@ -35,11 +35,11 @@ spec:
             controller:
               resources:
                 requests:
+                  cpu: 250m
+                  memory: 512Mi
+                limits:
                   cpu: 500m
                   memory: 1Gi
-                limits:
-                  cpu: 1000m
-                  memory: 2Gi
 
               metrics:
                 enabled: true
@@ -56,16 +56,16 @@ spec:
                 enabled: true
                 minReplicas: 2
                 maxReplicas: 3
-                targetCPUUtilizationPercentage: 50
-                targetMemoryUtilizationPercentage: 50
+                targetCPUUtilizationPercentage: 60
+                targetMemoryUtilizationPercentage: 60
 
               resources:
                 requests:
                   cpu: 100m
-                  memory: 128Mi
+                  memory: 256Mi
                 limits:
                   cpu: 200m
-                  memory: 256Mi
+                  memory: 512Mi
 
               service:
                 type: LoadBalancer
@@ -145,16 +145,16 @@ spec:
                 enabled: true
                 minReplicas: 2
                 maxReplicas: 3
-                targetCPUUtilizationPercentage: 50
-                targetMemoryUtilizationPercentage: 50
+                targetCPUUtilizationPercentage: 60
+                targetMemoryUtilizationPercentage: 60
 
               resources:
                 requests:
-                  cpu: 300m
-                  memory: 256Mi
+                  cpu: 250m
+                  memory: 512Mi
                 limits:
                   cpu: 500m
-                  memory: 512Mi
+                  memory: 1Gi
 
               metrics:
                 enabled: true
@@ -168,10 +168,10 @@ spec:
               resources:
                 requests:
                   cpu: 50m
-                  memory: 64Mi
+                  memory: 128Mi
                 limits:
                   cpu: 100m
-                  memory: 128Mi
+                  memory: 256Mi
 
               env:
                 - name: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
@@ -192,10 +192,10 @@ spec:
               resources:
                 requests:
                   cpu: 50m
-                  memory: 64Mi
+                  memory: 128Mi
                 limits:
                   cpu: 100m
-                  memory: 128Mi
+                  memory: 256Mi
 
             configs:
               secret:
