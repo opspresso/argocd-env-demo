@@ -33,7 +33,7 @@ karpenter:
 
 cluster-autoscaler:
   scan-interval: 6m
-  scale-down-delay-after-delete: 10m
+  scale-down-delay-after-delete: 5m
   scale-down-utilization-threshold: 0.6
 
 cluster-overprovisioner:
