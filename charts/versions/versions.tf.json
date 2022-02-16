@@ -53,11 +53,11 @@
       "description": "cortex/cortex"
     },
     "helm_crossplane": {
-      "default": "1.6.2",
+      "default": "1.6.3",
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.5",
+      "default": "2.30.6",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -85,7 +85,7 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.6.1",
+      "default": "0.6.2",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
@@ -93,7 +93,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "32.2.0",
+      "default": "32.2.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
@@ -105,7 +105,7 @@
       "description": "dashboard/kubernetes-dashboard"
     },
     "helm_kubernetes_external_secrets": {
-      "default": "8.5.2",
+      "default": "8.5.3",
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
@@ -131,6 +131,10 @@
     "helm_raw": {
       "default": "0.2.5",
       "description": "incubator/raw"
+    },
+    "helm_sealed_secrets": {
+      "default": "2.1.2",
+      "description": "sealed-secrets/sealed-secrets"
     }
   }
 }
