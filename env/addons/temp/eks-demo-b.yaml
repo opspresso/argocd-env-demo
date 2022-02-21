@@ -1,7 +1,7 @@
 cluster: eks-demo-b
 cluster_env: alpha
-cluster_end: https://xxxxx.yy.ap-northeast-2.eks.amazonaws.com
 
+# cluster_ep: https://xxxxx.yy.ap-northeast-2.eks.amazonaws.com
 # cluster_oidc: ""
 
 country: kr
