@@ -13,6 +13,9 @@ hostname:
   internal: in.demo-b.nalbam.com
   public: demo-b.nalbam.com
 
+argocd:
+  hostname: argocd.demo.nalbam.com
+
 argo-workflows:
   github:
     org: opspresso
