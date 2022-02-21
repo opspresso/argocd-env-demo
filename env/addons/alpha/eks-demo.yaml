@@ -2,7 +2,7 @@ cluster: eks-demo
 cluster_env: alpha
 cluster_end: https://BDE8CEF77A7E5D6C37647930733EEA5E.gr7.ap-northeast-2.eks.amazonaws.com
 
-cluster_oidc:
+# cluster_oidc: ""
 
 country: kr
 
@@ -27,9 +27,9 @@ istio:
     public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-0/9fd4eb26ae3941da
     public_http2: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http2-0/cf43fe9153de2530
 
-karpenter:
-  instanceProfile: eks-demo-worker
-  launchTemplate: eks-demo-workers-v1-2021121000100059230000000b
+# karpenter:
+#   instanceProfile: eks-demo-worker
+#   launchTemplate: eks-demo-workers-v1-2021121000100059230000000b
 
 cluster-autoscaler:
   scan-interval: 6m

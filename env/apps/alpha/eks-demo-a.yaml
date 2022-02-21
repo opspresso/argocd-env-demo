@@ -4,5 +4,7 @@ cluster_env: alpha
 aws_account_id: "082867736673"
 aws_region: ap-northeast-2
 
-hostname: demo.nalbam.com
-cluster_host: demo-a.nalbam.com
+hostname:
+  internal: in.demo.nalbam.com
+  public: demo.nalbam.com
+  this: demo-a.nalbam.com
