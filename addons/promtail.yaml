@@ -43,6 +43,10 @@ spec:
             tolerations:
               - operator: Exists
 
+            updateStrategy:
+              rollingUpdate:
+                maxUnavailable: 10%
+
       syncPolicy:
         automated:
           prune: true
