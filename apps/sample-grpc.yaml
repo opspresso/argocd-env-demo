@@ -46,6 +46,18 @@ spec:
                 selector:
                   release: prometheus-{{cluster}}
 
+              istio:
+                sidecar:
+                  inject: false
+
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: private
+                  effect: NoSchedule
+              nodeSelector:
+                group: private
+
       syncPolicy:
         automated:
           prune: true
