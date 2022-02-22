@@ -67,7 +67,6 @@ spec:
                     effect: NoSchedule
                 nodeSelector:
                   group: monitoring
-                  # topology.kubernetes.io/zone: {{aws_region}}c
 
             alertmanager:
               config:

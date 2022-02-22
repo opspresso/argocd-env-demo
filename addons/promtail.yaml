@@ -49,6 +49,10 @@ spec:
                 operator: Equal
                 value: graviton
                 effect: NoSchedule
+              - key: group
+                operator: Equal
+                value: private
+                effect: NoSchedule
 
       syncPolicy:
         automated:
