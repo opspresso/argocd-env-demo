@@ -32,6 +32,9 @@ spec:
           values: |-
             fullnameOverride: aws-ebs-csi-driver
 
+            image:
+              repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-aws/aws-ebs-csi-driver
+
             controller:
               k8sTagClusterId: "{{cluster}}"
 
@@ -70,8 +73,8 @@ spec:
                 allowVolumeExpansion: true
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
