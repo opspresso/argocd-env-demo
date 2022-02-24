@@ -32,6 +32,10 @@ spec:
           values: |-
             fullnameOverride: promtail
 
+            image:
+              registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
+              repository: mirror/grafana/promtail
+
             config:
               lokiAddress: {{promtail.lokiAddress}}
 
