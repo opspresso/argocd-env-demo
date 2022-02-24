@@ -32,6 +32,9 @@ spec:
           values: |-
             fullnameOverride: aws-efs-csi-driver
 
+            image:
+              repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-aws/aws-efs-csi-driver
+
             controller:
               serviceAccount:
                 annotations:
@@ -65,8 +68,8 @@ spec:
             #     allowVolumeExpansion: true
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
