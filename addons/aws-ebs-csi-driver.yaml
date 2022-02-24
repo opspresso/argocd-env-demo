@@ -35,6 +35,14 @@ spec:
             image:
               repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-aws/aws-ebs-csi-driver
 
+            sidecars:
+              nodeDriverRegistrar:
+                image:
+                  repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-sig-storage/csi-node-driver-registrar
+              livenessProbe:
+                image:
+                  repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-sig-storage/livenessprobe
+
             controller:
               k8sTagClusterId: "{{cluster}}"
 
