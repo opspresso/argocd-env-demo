@@ -33,11 +33,11 @@ spec:
             fullnameOverride: promtail
 
             image:
-              registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
-              repository: mirror/grafana/promtail
+              registry: {{promtail.image.registry}}
+              repository: {{promtail.image.registry}}
 
             config:
-              lokiAddress: {{promtail.lokiAddress}}
+              lokiAddress: http://{{loki.hostname}}/loki/api/v1/push
 
               snippets:
                 extraClientConfigs: |

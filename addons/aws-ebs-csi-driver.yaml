@@ -33,15 +33,15 @@ spec:
             fullnameOverride: aws-ebs-csi-driver
 
             image:
-              repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-aws/aws-ebs-csi-driver
+              repository: {{aws-ebs-csi-driver.image.registry}}
 
             sidecars:
               nodeDriverRegistrar:
                 image:
-                  repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-sig-storage/csi-node-driver-registrar
+                  repository: {{aws-ebs-csi-driver.nodeDriverRegistrar.image.registry}}
               livenessProbe:
                 image:
-                  repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-sig-storage/livenessprobe
+                  repository: {{aws-ebs-csi-driver.livenessProbe.image.registry}}
 
             controller:
               k8sTagClusterId: "{{cluster}}"
@@ -65,6 +65,7 @@ spec:
 
             node:
               tolerateAllTaints: true
+
               serviceAccount:
                 annotations:
                   eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-ebs-csi-driver"
