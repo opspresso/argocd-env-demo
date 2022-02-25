@@ -33,7 +33,7 @@ spec:
             fullnameOverride: aws-efs-csi-driver
 
             image:
-              repository: {{aws-efs-csi-driver.image.repository}}
+              repository: {{mirror.registry}}/{{aws-efs-csi-driver.image.repository}}
 
             controller:
               serviceAccount:

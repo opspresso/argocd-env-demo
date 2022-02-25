@@ -33,7 +33,7 @@ spec:
             fullnameOverride: promtail
 
             image:
-              registry: {{promtail.image.registry}}
+              registry: {{mirror.registry}}
               repository: {{promtail.image.registry}}
 
             config:
