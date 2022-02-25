@@ -1,15 +1,15 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.33.5",
+      "default": "3.33.7",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.9.3",
+      "default": "2.10.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argocd_applicationset": {
-      "default": "1.10.0",
+      "default": "1.11.0",
       "description": "argo/argocd-applicationset"
     },
     "helm_argocd_notifications": {
@@ -17,7 +17,7 @@
       "description": "argo/argocd-notifications"
     },
     "helm_aws_ebs_csi_driver": {
-      "default": "2.6.2",
+      "default": "2.6.3",
       "description": "aws-ebs-csi-driver/aws-ebs-csi-driver"
     },
     "helm_aws_efs_csi_driver": {
@@ -45,7 +45,7 @@
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
-      "default": "0.7.6",
+      "default": "0.7.7",
       "description": "deliveryhero/cluster-overprovisioner"
     },
     "helm_cortex": {
@@ -57,7 +57,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.7",
+      "default": "2.30.8",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -65,11 +65,11 @@
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
-      "default": "1.40.4",
+      "default": "1.40.8",
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.21.6",
+      "default": "6.22.0",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -93,7 +93,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "32.2.1",
+      "default": "32.4.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
@@ -109,7 +109,7 @@
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
-      "default": "2.9.1",
+      "default": "2.10.1",
       "description": "grafana/loki"
     },
     "helm_metrics_server": {
@@ -117,7 +117,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.3.0",
+      "default": "15.4.0",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
@@ -133,7 +133,7 @@
       "description": "incubator/raw"
     },
     "helm_sealed_secrets": {
-      "default": "2.1.2",
+      "default": "2.1.3",
       "description": "sealed-secrets/sealed-secrets"
     }
   }
