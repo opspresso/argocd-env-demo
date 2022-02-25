@@ -21,19 +21,22 @@ argo-workflows:
     org: opspresso
     team: sre
 
+mirror:
+  registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
+
 aws-ebs-csi-driver:
   image:
-    repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-aws/aws-ebs-csi-driver
+    repository: mirror/k8s-aws/aws-ebs-csi-driver
   nodeDriverRegistrar:
     image:
-      repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-sig-storage/csi-node-driver-registrar
+      repository: mirror/k8s-sig-storage/csi-node-driver-registrar
   livenessProbe:
     image:
-      repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-sig-storage/livenessprobe
+      repository: mirror/k8s-sig-storage/livenessprobe
 
 aws-efs-csi-driver:
   image:
-    repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/k8s-aws/aws-efs-csi-driver
+    repository: mirror/k8s-aws/aws-efs-csi-driver
 
 istio:
   version: "1.12.3"
@@ -47,12 +50,12 @@ istio:
 #   launchTemplate: eks-demo-a-workers-v1-20211208100054291900000001
 
 cluster-autoscaler:
-  scan-interval: 6m
-  scale-down-delay-after-delete: 5m
+  scan-interval: 1m
+  scale-down-delay-after-delete: 2m
   scale-down-utilization-threshold: 0.6
 
 cluster-overprovisioner:
-  replicas: 0
+  replicas: 1
   cpu: "1"
   memory: 1Gi
 
@@ -61,5 +64,4 @@ loki:
 
 promtail:
   image:
-    registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
     repository: mirror/grafana/promtail
