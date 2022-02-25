@@ -58,6 +58,10 @@ spec:
               rootNamespace: istio-system
 
             pilot:
+              autoscaleEnabled: true
+              autoscaleMin: 2
+              autoscaleMax: 5
+
               resources:
                 # requests:
                 #   cpu: 500m
