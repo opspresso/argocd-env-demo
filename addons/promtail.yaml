@@ -34,7 +34,7 @@ spec:
 
             image:
               registry: {{mirror.registry}}
-              repository: {{promtail.image.registry}}
+              repository: {{promtail.image.repository}}
 
             config:
               lokiAddress: http://{{loki.hostname}}/loki/api/v1/push
