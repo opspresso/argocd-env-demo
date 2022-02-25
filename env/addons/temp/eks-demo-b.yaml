@@ -4,10 +4,10 @@ cluster_env: alpha
 # cluster_ep: https://xxxxx.yy.ap-northeast-2.eks.amazonaws.com
 # cluster_oidc: ""
 
-country: kr
-
 aws_account_id: "082867736673"
 aws_region: ap-northeast-2
+
+country: kr
 
 hostname:
   internal: in.demo-b.nalbam.com
@@ -39,7 +39,7 @@ aws-efs-csi-driver:
     repository: mirror/k8s-aws/aws-efs-csi-driver
 
 istio:
-  version: "1.12.4"
+  version: "1.12.4" # istio
   sampling: 10
   target_group:
     internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-b/6f9ad17a53a50839
