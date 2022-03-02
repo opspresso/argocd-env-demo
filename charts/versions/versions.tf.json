@@ -1,12 +1,16 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.33.7",
+      "default": "3.35.0",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
       "default": "2.10.0",
       "description": "argo/argo-rollouts"
+    },
+    "helm_argo_workflows": {
+      "default": "0.11.0",
+      "description": "argo/argo-workflows"
     },
     "helm_argocd_applicationset": {
       "default": "1.11.0",
@@ -41,7 +45,7 @@
       "description": "chaoskube/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.15.0",
+      "default": "9.16.0",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
@@ -57,7 +61,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.8",
+      "default": "2.30.13",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -69,7 +73,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.22.0",
+      "default": "6.23.0",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -85,15 +89,15 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.6.3",
+      "default": "0.6.4",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
-      "default": "1.46.0",
+      "default": "1.47.0",
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "32.4.0",
+      "default": "33.1.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
@@ -117,7 +121,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.4.0",
+      "default": "15.5.2",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
