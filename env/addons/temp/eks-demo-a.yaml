@@ -39,7 +39,9 @@ aws-efs-csi-driver:
     repository: mirror/k8s-aws/aws-efs-csi-driver
 
 istio:
-  version: "1.12.4" # istio
+  global:
+    hub: gcr.io/istio-release
+    tag: "1.12.4" # istio
   sampling: 10
   target_group:
     internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-a/e3a045784903b255

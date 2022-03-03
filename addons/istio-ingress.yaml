@@ -31,8 +31,8 @@ spec:
         helm:
           values: |-
             global:
-              hub: gcr.io/istio-release
-              tag: "{{istio.version}}"
+              hub: {{istio.global.hub}}
+              tag: {{istio.global.tag}}
 
             gateways:
               istio-ingressgateway:
