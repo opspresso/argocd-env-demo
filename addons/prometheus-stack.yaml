@@ -142,7 +142,7 @@ spec:
               fullnameOverride: prometheus-node-exporter
 
               image:
-                repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/prometheus/node-exporter
+                repository: {{mirror.registry}}/{{prometheus.node-exporter.image.repository}}
 
             grafana:
               enabled: false
