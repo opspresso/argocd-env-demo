@@ -48,7 +48,7 @@ spec:
 
               istio:
                 sidecar:
-                  inject: false
+                  inject: true
 
               tolerations:
                 - key: group
