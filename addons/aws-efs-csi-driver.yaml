@@ -54,7 +54,11 @@ spec:
                   eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--aws-efs-csi-driver"
 
               tolerations:
-                - operator: Exists
+                # - operator: Exists
+                - key: group
+                  operator: Equal
+                  value: workers
+                  effect: NoSchedule
 
             # storageClasses:
             #   - name: efs
