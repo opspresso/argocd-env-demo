@@ -41,7 +41,7 @@ aws-efs-csi-driver:
 istio:
   version: "1.12.4" # istio
   global:
-    hub: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror
+    hub: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/istio
   sampling: 10
   target_group:
     internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-0/3eb4eff4df206e4b
