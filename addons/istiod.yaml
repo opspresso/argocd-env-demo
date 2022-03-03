@@ -32,7 +32,7 @@ spec:
           values: |-
             global:
               hub: {{istio.global.hub}}
-              tag: {{istio.global.tag}}
+              tag: {{istio.version}}
 
               proxy:
                 lifecycle:
