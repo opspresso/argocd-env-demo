@@ -80,6 +80,7 @@ spec:
                 kind: ServiceAccount
                 metadata:
                   name: viewer
+                  namespace: addon-argo-workflows
                   annotations:
                     workflows.argoproj.io/rbac-rule: "true"
                     workflows.argoproj.io/rbac-rule-precedence: "0"
@@ -88,6 +89,7 @@ spec:
                 kind: ServiceAccount
                 metadata:
                   name: admin
+                  namespace: addon-argo-workflows
                   annotations:
                     workflows.argoproj.io/rbac-rule: "'{{argo-workflows.github.org}}:{{argo-workflows.github.team}}' in groups"
                     workflows.argoproj.io/rbac-rule-precedence: "1"
