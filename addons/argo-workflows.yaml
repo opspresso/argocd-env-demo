@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: argo
+        namespace: addon-argo-workflows
       source:
         repoURL: https://argoproj.github.io/argo-helm
         targetRevision: "0.11.0"
