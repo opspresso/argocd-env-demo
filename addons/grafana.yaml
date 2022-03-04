@@ -26,13 +26,13 @@ spec:
         namespace: addon-grafana
       source:
         repoURL: https://grafana.github.io/helm-charts
-        targetRevision: "6.23.0"
+        targetRevision: "6.23.1"
         chart: grafana
         helm:
           values: |-
             fullnameOverride: grafana
 
-            revisionHistoryLimit: 1
+            revisionHistoryLimit: 2
 
             admin:
               existingSecret: "grafana-secret"

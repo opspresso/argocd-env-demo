@@ -9,7 +9,7 @@
       "description": "argo/argo-rollouts"
     },
     "helm_argo_workflows": {
-      "default": "0.11.0",
+      "default": "0.11.1",
       "description": "argo/argo-workflows"
     },
     "helm_argocd_applicationset": {
@@ -61,7 +61,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.13",
+      "default": "2.30.14",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -73,7 +73,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.23.0",
+      "default": "6.23.1",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -121,7 +121,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.5.2",
+      "default": "15.5.3",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
