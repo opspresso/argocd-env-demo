@@ -84,7 +84,7 @@ spec:
 
                 statusbadge.enabled: "true"
 
-                help.chatUrl: "https://nalbal.slack.com/argocd"
+                help.chatUrl: "https://nalbam.slack.com/argocd"
                 help.chatText: "Chat now!"
 
                 dex.config: |
