@@ -81,7 +81,7 @@ spec:
 
               config:
                 url: https://{{argocd.hostname}}
-                statusbadge.enabled: true
+                statusbadge.enabled: "true"
 
                 dex.config: |
                   connectors:
