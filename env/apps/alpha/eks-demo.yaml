@@ -8,3 +8,9 @@ hostname:
   internal: in.demo.nalbam.com
   public: demo.nalbam.com
   this: demo-0.nalbam.com
+
+dumy:
+  name: tester
+  list:
+    - name: test1
+    - name: test2
