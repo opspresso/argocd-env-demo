@@ -66,8 +66,7 @@ spec:
               nodeSelector:
                 group: private
 
-              dumy: |
-                {{dumy}}
+              dumy: {{dumy}}
 
       syncPolicy:
         automated:
