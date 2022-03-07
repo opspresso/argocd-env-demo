@@ -81,7 +81,11 @@ spec:
 
               config:
                 url: https://{{argocd.hostname}}
+
                 statusbadge.enabled: "true"
+
+                help.chatUrl: "https://nalbal.slack.com/argocd"
+                help.chatText: "Chat now!"
 
                 dex.config: |
                   connectors:
