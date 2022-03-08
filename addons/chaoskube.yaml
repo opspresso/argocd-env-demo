@@ -48,7 +48,7 @@ spec:
                 annotations: "chaos.alpha.kubernetes.io/enabled=true"
 
                 # exclude all DaemonSet pods
-                kinds: "!DaemonSet"
+                kinds: "!DaemonSet,!StatefulSet"
 
                 # exclude all pods in the kube-system namespace
                 namespaces: "!kube-system"
@@ -57,7 +57,7 @@ spec:
                 excluded-weekdays: "Sat,Sun"
 
                 # don't kill anything during the night or at lunchtime
-                excluded-times-of-day: "22:00-08:00,11:00-13:00"
+                excluded-times-of-day: "22:00-08:00,12:00-14:00"
 
                 # don't kill anything as a joke or on christmas eve
                 excluded-days-of-year: "Apr1,Dec24"
