@@ -34,7 +34,7 @@ spec:
 
             image:
               repository: quay.io/linki/chaoskube
-              tag: "v0.21.0" # "v0.21.0-arm64v8"
+              tag: "v0.22.1" # "v0.22.1-arm64v8"
 
             chaoskube:
               args:
