@@ -25,9 +25,9 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://github.com/istio/istio
+        repoURL: https://istio-release.storage.googleapis.com/charts
         targetRevision: "{{istio.version}}"
-        path: manifests/charts/istio-control/istio-discovery
+        chart: istiod
         helm:
           values: |-
             global:
@@ -81,8 +81,8 @@ spec:
             - /webhooks/3/failurePolicy
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true

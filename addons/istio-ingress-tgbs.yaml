@@ -30,7 +30,7 @@ spec:
         chart: tgbs
         helm:
           values: |-
-            fullnameOverride: istio-ingress
+            fullnameOverride: istio-ingress-tgbs
 
             tgbs:
               - name: internal-http
