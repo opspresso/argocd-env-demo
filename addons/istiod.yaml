@@ -58,7 +58,7 @@ spec:
               rootNamespace: istio-system
 
             pilot:
-              autoscaleEnabled: true
+              autoscaleEnabled: false
               autoscaleMin: 2
               autoscaleMax: 5
 
