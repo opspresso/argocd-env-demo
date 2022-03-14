@@ -10,8 +10,8 @@ aws_region: ap-northeast-2
 country: kr
 
 hostname:
-  internal: in.demo-a.nalbam.com
-  public: demo-a.nalbam.com
+  internal: in.demo.nalbam.com
+  public: demo.nalbam.com
 
 argocd:
   hostname: argocd.demo.nalbam.com
@@ -39,17 +39,17 @@ aws-efs-csi-driver:
     repository: mirror/k8s-aws/aws-efs-csi-driver
 
 istio:
+  version: "1.12.5" # istio
   global:
-    hub: gcr.io/istio-release
-    tag: "1.12.4" # istio
+    hub: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/istio
   sampling: 10
   target_group:
-    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-a/e3a045784903b255
-    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-a/7c19847b6d56eb99
+    internal_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-in-http-0/3eb4eff4df206e4b
+    public_http: arn:aws:elasticloadbalancing:ap-northeast-2:082867736673:targetgroup/demo-http-0/1ffb5af5bd613802
 
 # karpenter:
-#   instanceProfile: eks-demo-a-worker
-#   launchTemplate: eks-demo-a-workers-v1-20211208100054291900000001
+#   instanceProfile: eks-demo-worker
+#   launchTemplate: eks-demo-workers-v1-2021121000100059230000000b
 
 cluster-autoscaler:
   scan-interval: 1m
