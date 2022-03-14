@@ -39,6 +39,7 @@ spec:
                 type: ClusterIP
 
                 autoscaleEnabled: false
+                replicaCount: 2
                 autoscaleMin: 2
                 autoscaleMax: 5
 
