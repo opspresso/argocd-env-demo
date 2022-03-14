@@ -25,9 +25,9 @@ spec:
         name: "{{cluster}}"
         namespace: istio-system
       source:
-        repoURL: https://istio-release.storage.googleapis.com/charts
+        repoURL: https://github.com/istio/istio
         targetRevision: "{{istio.version}}"
-        chart: gateway
+        path: manifests/charts/gateways/istio-ingress
         helm:
           values: |-
             global:
@@ -38,7 +38,7 @@ spec:
               istio-ingressgateway:
                 type: ClusterIP
 
-                autoscaleEnabled: false
+                autoscaleEnabled: true
                 replicaCount: 2
                 autoscaleMin: 2
                 autoscaleMax: 5
