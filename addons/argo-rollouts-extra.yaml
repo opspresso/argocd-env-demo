@@ -33,6 +33,16 @@ spec:
             fullnameOverride: argo-rollouts-extra
 
             resources:
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: argo-rollouts-notification-secret
+                spec:
+                  backendType: systemManager
+                  data:
+                    - key: /k8s/common/argocd-noti-token
+                      name: slack-token
+
               - apiVersion: argoproj.io/v1alpha1
                 kind: ClusterAnalysisTemplate
                 metadata:
