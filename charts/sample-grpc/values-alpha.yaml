@@ -9,7 +9,7 @@ app:
     enabled: true
   env:
   - name: ENV_HASH
-    value: 92f28416cce20b610f6bd87da295b2ce
+    value: c5633e61b63f991cf905507a888b76d4
   image:
     tag: v0.9.6
   istio:
