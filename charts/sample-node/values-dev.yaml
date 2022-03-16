@@ -28,7 +28,7 @@ app:
     enabled: true
   env:
   - name: ENV_HASH
-    value: e1e88072d01a5f91c1378f4558af45bc
+    value: 56de78190cca7563f5e7afe0ef10814c
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
