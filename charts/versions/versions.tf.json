@@ -1,11 +1,11 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "3.35.4",
+      "default": "4.0.0",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.10.0",
+      "default": "2.11.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argo_workflows": {
@@ -29,7 +29,7 @@
       "description": "aws-efs-csi-driver/aws-efs-csi-driver"
     },
     "helm_aws_load_balancer_controller": {
-      "default": "1.4.0",
+      "default": "1.4.1",
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_aws_node_termination_handler": {
@@ -93,7 +93,7 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.6.5",
+      "default": "0.7.1",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
@@ -101,11 +101,11 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "33.2.1",
+      "default": "34.0.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
-      "default": "1.91.0",
+      "default": "1.91.2",
       "description": "kubecost/cost-analyzer"
     },
     "helm_kubernetes_dashboard": {
@@ -129,7 +129,7 @@
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
-      "default": "3.0.2",
+      "default": "3.0.3",
       "description": "prometheus/prometheus-adapter"
     },
     "helm_promtail": {
