@@ -32,14 +32,16 @@ spec:
           values: |-
             name: istio-gateway
 
-            service:
-              type: ClusterIP
+            replicaCount: 2
 
             autoscaling:
-              enabled: true
+              enabled: false
               minReplicas: 2
               maxReplicas: 5
               targetCPUUtilizationPercentage: 80
+
+            service:
+              type: ClusterIP
 
             labels:
               istio: ingressgateway
