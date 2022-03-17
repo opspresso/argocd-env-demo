@@ -28,11 +28,11 @@ spec:
         repoURL: https://istio-release.storage.googleapis.com/charts
         targetRevision: "{{istio.version}}"
         chart: gateway
-        helm:
-          values: |-
-            global:
-              hub: {{istio.global.hub}}
-              tag: {{istio.version}}
+        # helm:
+        #   values: |-
+        #     global:
+        #       hub: {{istio.global.hub}}
+        #       tag: {{istio.version}}
 
       syncPolicy:
         # automated:
