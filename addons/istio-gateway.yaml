@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-base
+  name: istio-gateway
 spec:
   generators:
     - git:
@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-base-{{cluster}}"
+      name: "istio-gateway-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
@@ -23,21 +23,20 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-system
+        namespace: istio-gateway
       source:
         repoURL: https://istio-release.storage.googleapis.com/charts
         targetRevision: "{{istio.version}}"
-        chart: base
-
-      ignoreDifferences:
-        - kind: ValidatingWebhookConfiguration
-          group: admissionregistration.k8s.io
-          jsonPointers:
-            - /webhooks/0/failurePolicy
+        chart: gateway
+        helm:
+          values: |-
+            global:
+              hub: {{istio.global.hub}}
+              tag: {{istio.version}}
 
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
           - CreateNamespace=true
