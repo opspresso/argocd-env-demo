@@ -202,6 +202,297 @@ spec:
                   cpu: 100m
                   memory: 256Mi
 
+            notifications:
+              argocdUrl: https://{{argocd.hostname}}
+
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 100m
+                  memory: 256Mi
+
+              secret:
+                create: false
+
+              subscriptions:
+                # For more information: https://argocd-notifications.readthedocs.io/en/stable/subscriptions/
+
+                - recipients:
+                  - slack:sandbox
+                  triggers:
+                  - on-deployed
+                  - on-health-degraded
+                  - on-sync-failed
+                  - on-sync-running
+                  - on-sync-status-unknown
+                  - on-sync-succeeded
+
+              templates:
+                # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/
+
+                template.app-deployed: |
+                  email:
+                    subject: Application {{.app.metadata.name}} has deployed.
+                  message: |
+                    {{if eq .serviceType "slack"}}:argocd-done:{{end}} `{{.app.metadata.name}}` has `deployed`.
+                  slack:
+                    attachments: |
+                      [{
+                        "title": "{{.app.metadata.name}}",
+                        "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                        "color": "good",
+                        "fields": [
+                        {
+                          "title": "Sync Status",
+                          "value": "{{.app.status.sync.status}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Repository",
+                          "value": "{{.app.spec.source.repoURL}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Revision",
+                          "value": "{{.app.status.sync.revision}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Images",
+                          "value": "{{ range .app.status.summary.images }}- {{.}}\n{{end}}",
+                          "short": false
+                        }
+                        {{range $index, $c := .app.status.conditions}}
+                        {{if not $index}},{{end}}
+                        {{if $index}},{{end}}
+                        {
+                          "title": "{{$c.type}}",
+                          "value": "{{$c.message}}",
+                          "short": true
+                        }
+                        {{end}}
+                        ]
+                      }]
+                template.app-health-degraded: |
+                  email:
+                    subject: Application {{.app.metadata.name}} has degraded.
+                  message: |
+                    {{if eq .serviceType "slack"}}:argocd-failed:{{end}} `{{.app.metadata.name}}` has `degraded`.
+                  slack:
+                    attachments: |-
+                      [{
+                        "title": "{{.app.metadata.name}}",
+                        "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                        "color": "danger",
+                        "fields": [
+                        {
+                          "title": "Sync Status",
+                          "value": "{{.app.status.sync.status}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Repository",
+                          "value": "{{.app.spec.source.repoURL}}",
+                          "short": true
+                        }
+                        {{range $index, $c := .app.status.conditions}}
+                        {{if not $index}},{{end}}
+                        {{if $index}},{{end}}
+                        {
+                          "title": "{{$c.type}}",
+                          "value": "{{$c.message}}",
+                          "short": true
+                        }
+                        {{end}}
+                        ]
+                      }]
+                template.app-sync-failed: |
+                  email:
+                    subject: Application {{.app.metadata.name}} sync failed.
+                  message: |
+                    {{if eq .serviceType "slack"}}:argocd-failed:{{end}} `{{.app.metadata.name}}` sync `failed` at {{.app.status.operationState.finishedAt}}
+                    with the following error: {{.app.status.operationState.message}}
+                  slack:
+                    attachments: |-
+                      [{
+                        "title": "{{.app.metadata.name}}",
+                        "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                        "color": "danger",
+                        "fields": [
+                        {
+                          "title": "Sync Status",
+                          "value": "{{.app.status.sync.status}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Repository",
+                          "value": "{{.app.spec.source.repoURL}}",
+                          "short": true
+                        }
+                        {{range $index, $c := .app.status.conditions}}
+                        {{if not $index}},{{end}}
+                        {{if $index}},{{end}}
+                        {
+                          "title": "{{$c.type}}",
+                          "value": "{{$c.message}}",
+                          "short": true
+                        }
+                        {{end}}
+                        ]
+                      }]
+                template.app-sync-running: |
+                  email:
+                    subject: Application {{.app.metadata.name}} sync running.
+                  message: |
+                    {{if eq .serviceType "slack"}}:argocd-running:{{end}} `{{.app.metadata.name}}` sync `running` at {{.app.status.operationState.startedAt}}.
+                  slack:
+                    attachments: |-
+                      [{
+                        "title": "{{.app.metadata.name}}",
+                        "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                        "color": "warning",
+                        "fields": [
+                        {
+                          "title": "Sync Status",
+                          "value": "{{.app.status.sync.status}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Repository",
+                          "value": "{{.app.spec.source.repoURL}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Images",
+                          "value": "{{ range .app.status.summary.images }}- {{.}}\n{{end}}",
+                          "short": false
+                        }
+                        {{range $index, $c := .app.status.conditions}}
+                        {{if not $index}},{{end}}
+                        {{if $index}},{{end}}
+                        {
+                          "title": "{{$c.type}}",
+                          "value": "{{$c.message}}",
+                          "short": true
+                        }
+                        {{end}}
+                        ]
+                      }]
+                template.app-sync-status-unknown: |
+                  email:
+                    subject: Application {{.app.metadata.name}} sync status is 'unknown'
+                  message: |
+                    {{if eq .serviceType "slack"}}:argocd-failed:{{end}} `{{.app.metadata.name}}` sync status is `unknown`.
+                  slack:
+                    attachments: |-
+                      [{
+                        "title": "{{.app.metadata.name}}",
+                        "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                        "color": "danger",
+                        "fields": [
+                        {
+                          "title": "Sync Status",
+                          "value": "{{.app.status.sync.status}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Repository",
+                          "value": "{{.app.spec.source.repoURL}}",
+                          "short": true
+                        }
+                        {{range $index, $c := .app.status.conditions}}
+                        {{if not $index}},{{end}}
+                        {{if $index}},{{end}}
+                        {
+                          "title": "{{$c.type}}",
+                          "value": "{{$c.message}}",
+                          "short": true
+                        }
+                        {{end}}
+                        ]
+                      }]
+                template.app-sync-succeeded: |
+                  email:
+                    subject: Application {{.app.metadata.name}} sync succeeded.
+                  message: |
+                    {{if eq .serviceType "slack"}}:argocd-done:{{end}} `{{.app.metadata.name}}` sync `succeeded` at {{.app.status.operationState.finishedAt}}.
+                  slack:
+                  slack:
+                    attachments: |-
+                      [{
+                        "title": "{{.app.metadata.name}}",
+                        "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                        "color": "good",
+                        "fields": [
+                        {
+                          "title": "Sync Status",
+                          "value": "{{.app.status.sync.status}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Repository",
+                          "value": "{{.app.spec.source.repoURL}}",
+                          "short": true
+                        },
+                        {
+                          "title": "Images",
+                          "value": "{{ range .app.status.summary.images }}- {{.}}\n{{end}}",
+                          "short": false
+                        }
+                        {{range $index, $c := .app.status.conditions}}
+                        {{if not $index}},{{end}}
+                        {{if $index}},{{end}}
+                        {
+                          "title": "{{$c.type}}",
+                          "value": "{{$c.message}}",
+                          "short": true
+                        }
+                        {{end}}
+                        ]
+                      }]
+
+              triggers:
+                # For more information: https://argocd-notifications.readthedocs.io/en/stable/triggers/
+
+                trigger.on-deployed: |
+                  - description: Application is synced and healthy. Triggered once per commit.
+                    oncePer: app.status.sync.revision
+                    send:
+                    - app-deployed
+                    when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+                trigger.on-health-degraded: |
+                  - description: Application has degraded
+                    send:
+                    - app-health-degraded
+                    when: app.status.health.status == 'Degraded'
+                trigger.on-sync-failed: |
+                  - description: Application syncing has failed
+                    send:
+                    - app-sync-failed
+                    when: app.status.operationState.phase in ['Error', 'Failed']
+                trigger.on-sync-running: |
+                  - description: Application is being synced
+                    send:
+                    - app-sync-running
+                    when: app.status.operationState.phase in ['Running']
+                trigger.on-sync-status-unknown: |
+                  - description: Application status is 'Unknown'
+                    send:
+                    - app-sync-status-unknown
+                    when: app.status.sync.status == 'Unknown'
+                trigger.on-sync-succeeded: |
+                  - description: Application syncing has succeeded
+                    send:
+                    - app-sync-succeeded
+                    when: app.status.operationState.phase in ['Succeeded']
+
+                # For more information: https://argocd-notifications.readthedocs.io/en/stable/triggers/#default-triggers
+
+                defaultTriggers: |
+                  - on-sync-status-unknown
+
             configs:
               secret:
                 createSecret: false
@@ -240,6 +531,14 @@ spec:
                       name: dex.google.clientSecret
                     - key: /k8s/common/argo-workflows-client-secret
                       name: argo-workflows-client-secret
+
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: argocd-notifications-controller-secret
+                spec:
+                  backendType: systemManager
+                  data:
                     - key: /k8s/common/argocd-noti-token
                       name: slack-token
 
