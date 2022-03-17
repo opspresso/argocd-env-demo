@@ -28,11 +28,20 @@ spec:
         repoURL: https://istio-release.storage.googleapis.com/charts
         targetRevision: "{{istio.version}}"
         chart: gateway
-        # helm:
-        #   values: |-
-        #     global:
-        #       hub: {{istio.global.hub}}
-        #       tag: {{istio.version}}
+        helm:
+          values: |-
+            # global:
+            #   hub: {{istio.global.hub}}
+            #   tag: {{istio.version}}
+
+            service:
+              type: ClusterIP
+
+            autoscaling:
+              enabled: true
+              minReplicas: 2
+              maxReplicas: 5
+              targetCPUUtilizationPercentage: 80
 
       syncPolicy:
         # automated:
