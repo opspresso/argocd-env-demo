@@ -1,0 +1,81 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: istio-gateway-extra
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
+
+  template:
+    metadata:
+      name: "istio-gateway-extra-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-gateway
+      source:
+        repoURL: https://charts.helm.sh/incubator
+        targetRevision: "0.2.5"
+        chart: raw
+        helm:
+          values: |-
+            fullnameOverride: istio-gateway-extra
+
+            resources:
+              - apiVersion: v1
+                kind: Service
+                metadata:
+                  labels:
+                    app: istio-gateway
+                    istio: ingressgateway
+                    release: prometheus-{{cluster}}
+                  name: istio-ingressgateway-metrics
+                spec:
+                  ports:
+                    - name: http-envoy-prom
+                      port: 25090
+                      protocol: TCP
+                      targetPort: 15090
+                  selector:
+                    app: istio-gateway
+                    istio: ingressgateway
+                  type: ClusterIP
+
+              - apiVersion: monitoring.coreos.com/v1
+                kind: ServiceMonitor
+                metadata:
+                  labels:
+                    app: istio-gateway
+                    release: prometheus-{{cluster}}
+                  name: istio-ingressgateway-metrics
+                spec:
+                  endpoints:
+                  - interval: 15s
+                    path: /stats/prometheus
+                    port: http-envoy-prom
+                  jobLabel: istio-ingressgateway
+                  namespaceSelector:
+                    matchNames:
+                    - istio-system
+                  selector:
+                    matchLabels:
+                      app: istio-gateway
+                      istio: ingressgateway
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
