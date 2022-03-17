@@ -33,6 +33,28 @@ spec:
             fullnameOverride: istio-gateway-extra
 
             resources:
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-gateway-public
+                spec:
+                  serviceRef:
+                    name: istio-gateway
+                    port: http2
+                  targetGroupARN: "{{istio.target_group.public_http}}"
+                  targetType: ip
+
+              - apiVersion: elbv2.k8s.aws/v1beta1
+                kind: TargetGroupBinding
+                metadata:
+                  name: istio-gateway-internal
+                spec:
+                  serviceRef:
+                    name: istio-gateway
+                    port: http2
+                  targetGroupARN: "{{istio.target_group.internal_http}}"
+                  targetType: ip
+
               - apiVersion: v1
                 kind: Service
                 metadata:
@@ -46,7 +68,7 @@ spec:
                     - name: http-envoy-prom
                       port: 25090
                       protocol: TCP
-                      targetPort: 15020
+                      targetPort: 15090
                   selector:
                     app: istio-gateway
                     istio: ingressgateway
