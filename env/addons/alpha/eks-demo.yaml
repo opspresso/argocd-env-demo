@@ -52,7 +52,7 @@ istio:
 #   launchTemplate: eks-demo-workers-v1-2021121000100059230000000b
 
 cluster-autoscaler:
-  scan-interval: 1m
+  scan-interval: 10s
   scale-down-delay-after-delete: 2m
   scale-down-utilization-threshold: 0.6
 
