@@ -30,7 +30,7 @@ spec:
         chart: gateway
         helm:
           values: |-
-            fullnameOverride: istio-gateway
+            name: istio-gateway
 
             service:
               type: ClusterIP
