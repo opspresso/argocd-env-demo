@@ -40,7 +40,7 @@ spec:
                     app: istio-gateway
                     istio: ingressgateway
                     release: prometheus-{{cluster}}
-                  name: istio-ingressgateway-metrics
+                  name: istio-gateway-metrics
                 spec:
                   ports:
                     - name: http-envoy-prom
@@ -58,13 +58,13 @@ spec:
                   labels:
                     app: istio-gateway
                     release: prometheus-{{cluster}}
-                  name: istio-ingressgateway-metrics
+                  name: istio-gateway-metrics
                 spec:
                   endpoints:
                   - interval: 15s
                     path: /stats/prometheus
                     port: http-envoy-prom
-                  jobLabel: istio-ingressgateway
+                  jobLabel: istio-gateway
                   namespaceSelector:
                     matchNames:
                     - istio-system
