@@ -46,7 +46,7 @@ spec:
                     - name: http-envoy-prom
                       port: 25090
                       protocol: TCP
-                      targetPort: 15090
+                      targetPort: 15020
                   selector:
                     app: istio-gateway
                     istio: ingressgateway
