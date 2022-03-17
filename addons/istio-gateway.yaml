@@ -41,6 +41,9 @@ spec:
               maxReplicas: 5
               targetCPUUtilizationPercentage: 80
 
+            labels:
+              istio: ingressgateway
+
       syncPolicy:
         # automated:
         #   prune: true
