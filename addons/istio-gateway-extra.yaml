@@ -89,7 +89,7 @@ spec:
                   jobLabel: istio-gateway
                   namespaceSelector:
                     matchNames:
-                    - istio-system
+                    - istio-gateway
                   selector:
                     matchLabels:
                       app: istio-gateway
