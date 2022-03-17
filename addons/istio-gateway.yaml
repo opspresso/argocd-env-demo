@@ -30,9 +30,7 @@ spec:
         chart: gateway
         helm:
           values: |-
-            # global:
-            #   hub: {{istio.global.hub}}
-            #   tag: {{istio.version}}
+            fullnameOverride: istio-gateway
 
             service:
               type: ClusterIP

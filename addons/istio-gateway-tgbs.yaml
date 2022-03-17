@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: istio-gateway-tgbs
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
+
+  template:
+    metadata:
+      name: "istio-gateway-tgbs-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
+      labels:
+        app.kubernetes.io/instance: "addons-{{cluster}}"
+        krmt.io/cluster: "{{cluster}}"
+        krmt.io/group: "addons"
+    spec:
+      project: addons
+      destination:
+        name: "{{cluster}}"
+        namespace: istio-gateway
+      source:
+        repoURL: https://opspresso.github.io/helm-charts
+        targetRevision: "v0.1.0"
+        chart: tgbs
+        helm:
+          values: |-
+            fullnameOverride: istio-gateway-tgbs
+
+            tgbs:
+              - name: internal-http
+                serviceRef:
+                  name: istio-gateway
+                  port: http2
+                targetGroupARN: "{{istio.target_group.internal_http}}"
+                targetType: ip
+
+              - name: public-http
+                serviceRef:
+                  name: istio-gateway
+                  port: http2
+                targetGroupARN: "{{istio.target_group.public_http}}"
+                targetType: ip
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
