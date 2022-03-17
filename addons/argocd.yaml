@@ -214,6 +214,83 @@ spec:
                   type: helm
                   url: https://opspresso.github.io/helm-charts
 
+            extraObjects:
+              - apiVersion: kubernetes-client.io/v1
+                kind: ExternalSecret
+                metadata:
+                  name: argocd-secret
+                spec:
+                  backendType: systemManager
+                  data:
+                    - key: /k8s/common/argocd-password
+                      name: admin.password
+                    - key: /k8s/common/argocd-mtime
+                      name: admin.passwordMtime
+                    - key: /k8s/{{argocd.github.org}}/argocd-github-id
+                      name: dex.github.clientId
+                    - key: /k8s/{{argocd.github.org}}/argocd-github-secret
+                      name: dex.github.clientSecret
+                    - key: /k8s/common/argocd-webhook
+                      name: webhook.github.secret
+                    - key: /k8s/common/argocd-server-secret
+                      name: server.secretkey
+                    - key: /k8s/common/google-id
+                      name: dex.google.clientId
+                    - key: /k8s/common/google-secret
+                      name: dex.google.clientSecret
+                    - key: /k8s/common/argo-workflows-client-secret
+                      name: argo-workflows-client-secret
+                    - key: /k8s/common/argocd-noti-token
+                      name: slack-token
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: Gateway
+                metadata:
+                  name: argocd
+                spec:
+                  selector:
+                    istio: ingressgateway
+                  servers:
+                    - hosts:
+                        - "{{argocd.hostname}}"
+                        - "argocd-applicationset.{{hostname.public}}"
+                      port:
+                        number: 80
+                        name: http
+                        protocol: HTTP
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: argocd
+                spec:
+                  hosts:
+                    - "{{argocd.hostname}}"
+                  gateways:
+                    - argocd
+                  http:
+                    - route:
+                        - destination:
+                            host: argocd-server
+                            port:
+                              number: 80
+
+              - apiVersion: networking.istio.io/v1beta1
+                kind: VirtualService
+                metadata:
+                  name: argocd-applicationset
+                spec:
+                  hosts:
+                    - "argocd-applicationset.{{hostname.public}}"
+                  gateways:
+                    - argocd-applicationset
+                  http:
+                    - route:
+                        - destination:
+                            host: argocd-applicationset
+                            port:
+                              number: 7000
+
       syncPolicy:
         # automated:
         #   prune: true
