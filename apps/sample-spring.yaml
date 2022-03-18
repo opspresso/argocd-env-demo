@@ -57,10 +57,10 @@ spec:
               tolerations:
                 - key: group
                   operator: Equal
-                  value: graviton
+                  value: private
                   effect: NoSchedule
               nodeSelector:
-                group: graviton
+                group: private
 
       syncPolicy:
         automated:
