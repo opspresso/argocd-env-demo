@@ -31,8 +31,7 @@ spec:
         helm:
           values: |-
             global:
-              hub: {{istio.global.hub}}
-              tag: {{istio.version}}
+              hub: "{{istio.global.hub}}"
 
               proxy:
                 lifecycle:

@@ -61,7 +61,6 @@ spec:
                   labels:
                     app: istio-gateway
                     istio: ingressgateway
-                    release: prometheus-{{cluster}}
                   name: istio-gateway-metrics
                 spec:
                   ports:
