@@ -64,6 +64,15 @@ spec:
 
               # dumy: {{dumy}}
 
+            redis:
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: intra
+                  effect: NoSchedule
+              nodeSelector:
+                group: intra
+
       syncPolicy:
         automated:
           prune: true
