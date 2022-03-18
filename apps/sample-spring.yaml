@@ -57,10 +57,10 @@ spec:
               tolerations:
                 - key: group
                   operator: Equal
-                  value: private
+                  value: intra
                   effect: NoSchedule
               nodeSelector:
-                group: private
+                group: intra
 
       syncPolicy:
         automated:
