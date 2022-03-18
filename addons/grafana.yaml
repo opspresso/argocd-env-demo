@@ -49,9 +49,9 @@ spec:
                 root_url: "https://{{grafana.hostname}}/"
 
               users:
-                allow_sign_up = false
-                auto_assign_org = true
-                auto_assign_org_role = Editor
+                allow_sign_up: false
+                auto_assign_org: true
+                auto_assign_org_role: Editor
 
               auth:
                 disable_login_form: false
