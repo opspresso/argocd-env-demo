@@ -87,10 +87,10 @@ spec:
                 api_url: "https://{{grafana.auth.keycloak.hostname}}/auth/realms/{{grafana.auth.keycloak.realm}}/protocol/openid-connect/userinfo"
                 # role_attribute_path = role
 
-              users:
-                allow_sign_up = false
-                auto_assign_org = true
-                auto_assign_org_role = Editor
+              # users:
+              #   allow_sign_up = false
+              #   auto_assign_org = true
+              #   auto_assign_org_role = Editor
 
             ingress:
               enabled: false
