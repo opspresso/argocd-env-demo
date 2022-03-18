@@ -3,9 +3,8 @@
 name | image | amd64 | arm64
 --- | --- | --- | ---
 argo-rollouts | quay.io/argoproj/argo-rollouts | ✅ | ✅
-argocd | quay.io/argoproj/argocd | ✅ | ❌  [PR](https://github.com/argoproj/argo-cd/pull/6758)
+argocd | quay.io/argoproj/argocd | ✅ | ✅
 argocd-applicationset | quay.io/argoproj/argocd-applicationset | ✅ | ❌
-argocd-notifications | argoprojlabs/argocd-notifications | ✅ | ✅
 aws-ebs-csi-driver | amazon/aws-ebs-csi-driver | ✅ | ✅
 aws-efs-csi-driver | amazon/aws-efs-csi-driver | ✅ | ✅
 aws-load-balancer-controller | 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-load-balancer-controller | ✅ | ✅
@@ -22,13 +21,11 @@ datadog | gcr.io/datadoghq/agent | ✅ | ✅
 dex | ghcr.io/dexidp/dex | ✅ | ✅
 external-dns | k8s.gcr.io/external-dns/external-dns | ✅ | ✅
 external-secrets | ghcr.io/external-secrets/kubernetes-external-secrets | ✅ | ✅
-gocd | gocd/gocd-server | ✅ | ❌
 grafana | grafana/grafana | ✅ | ✅
 ingress-nginx | quay.io/kubernetes-ingress-controller/nginx-ingress-controller | ✅ | ✅
 irsa-operator | ghcr.io/voodooteam/irsa-operator | ✅ | ❌
 istio | gcr.io/istio-testing/pilot / querycapistio/pilot | ✅ | ✅
 jaeger | jaegertracing/jaeger-agent >= 1.24 | ✅ | ✅
-keycloak | jboss/keycloak | ✅ | ❌
 kiali | quay.io/kiali/kiali | ✅ | ✅
 kube-proxy | 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com/eks/kube-proxy | ✅ | ✅
 kube-state-metrics | k8s.gcr.io/kube-state-metrics/kube-state-metrics | ✅ | ✅
