@@ -54,17 +54,13 @@ spec:
                 selector:
                   release: prometheus-{{cluster}}
 
-              istio:
-                sidecar:
-                  inject: true
-
               tolerations:
                 - key: group
                   operator: Equal
-                  value: private
+                  value: graviton
                   effect: NoSchedule
               nodeSelector:
-                group: private
+                group: graviton
 
               # dumy: {{dumy}}
 

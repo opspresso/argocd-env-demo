@@ -54,17 +54,13 @@ spec:
                 selector:
                   release: prometheus-{{cluster}}
 
-              istio:
-                sidecar:
-                  inject: false
-
               tolerations:
                 - key: group
                   operator: Equal
-                  value: private
+                  value: graviton
                   effect: NoSchedule
               nodeSelector:
-                group: private
+                group: graviton
 
       syncPolicy:
         automated:
