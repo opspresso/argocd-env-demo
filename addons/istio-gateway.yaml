@@ -32,12 +32,12 @@ spec:
           values: |-
             name: istio-gateway
 
-            replicaCount: 2
+            replicaCount: {{istio.gateway.min}}
 
             autoscaling:
-              enabled: false
-              minReplicas: 2
-              maxReplicas: 5
+              enabled: {{istio.gateway.autoscale}}
+              minReplicas: {{istio.gateway.min}}
+              maxReplicas: {{istio.gateway.max}}
               targetCPUUtilizationPercentage: 80
 
             service:

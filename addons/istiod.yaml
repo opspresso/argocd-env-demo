@@ -58,10 +58,10 @@ spec:
               rootNamespace: istio-system
 
             pilot:
-              autoscaleEnabled: false
-              replicaCount: 2
-              autoscaleMin: 2
-              autoscaleMax: 5
+              autoscaleEnabled: {{istio.pilot.autoscale}}
+              replicaCount: {{istio.pilot.min}}
+              autoscaleMin: {{istio.pilot.min}}
+              autoscaleMax: {{istio.pilot.max}}
 
               resources:
                 requests:
