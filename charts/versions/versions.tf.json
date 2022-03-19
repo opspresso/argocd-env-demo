@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "4.0.0",
+      "default": "4.2.1",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -61,7 +61,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.16",
+      "default": "2.30.17",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -97,11 +97,11 @@
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
-      "default": "1.47.0",
+      "default": "1.48.0",
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "34.0.0",
+      "default": "34.1.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
@@ -109,7 +109,7 @@
       "description": "kubecost/cost-analyzer"
     },
     "helm_kubernetes_dashboard": {
-      "default": "5.3.0",
+      "default": "5.3.1",
       "description": "dashboard/kubernetes-dashboard"
     },
     "helm_kubernetes_external_secrets": {
