@@ -45,7 +45,7 @@
       "description": "chaoskube/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.16.1",
+      "default": "9.16.2",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
@@ -93,7 +93,7 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.7.1",
+      "default": "0.7.2",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
