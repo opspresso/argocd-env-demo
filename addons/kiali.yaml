@@ -56,6 +56,8 @@ spec:
               ingress_enabled: false
 
               accessible_namespaces:
+                - 'istio-gateway'
+                - 'istio-system'
                 - 'sample'
 
               # tolerations:
