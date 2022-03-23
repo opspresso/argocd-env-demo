@@ -39,17 +39,17 @@ spec:
             istio_namespace: "istio-system"
 
             auth:
-              # strategy: anonymous
-              strategy: openid
-              openid:
-                client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
-                disable_rbac: true
-                issuer_uri: "https://accounts.google.com"
-                scopes: ["openid", "email"]
-                username_claim: "email"
-                allowed_domains: # https://github.com/kiali/kiali/pull/4296
-                  - nalbam.com
-                  - daangn.com
+              strategy: anonymous
+              # strategy: openid
+              # openid:
+              #   client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
+              #   disable_rbac: true
+              #   issuer_uri: "https://accounts.google.com"
+              #   scopes: ["openid", "email"]
+              #   username_claim: "email"
+              #   allowed_domains: # https://github.com/kiali/kiali/pull/4296
+              #     - nalbam.com
+              #     - daangn.com
 
             deployment:
               ingress_enabled: false
@@ -65,16 +65,16 @@ spec:
             login_token:
               signing_key: eks-demo-kiali-token
 
-            external_services:
-              grafana:
-                in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
-                url: "https://grafana.{{hostname}}"
+            # external_services:
+            #   grafana:
+            #     in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
+            #     url: "https://grafana.{{hostname}}"
 
-              prometheus:
-                url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
+            #   prometheus:
+            #     url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
-              tracing:
-                in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
+            #   tracing:
+            #     in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
 
       syncPolicy:
         automated:
