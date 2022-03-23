@@ -2,10 +2,10 @@ apiVersion: v2
 name: sample-grpc
 description: A Helm chart for Kubernetes
 type: application
-version: v0.8.7
-appVersion: v0.8.7
+version: v0.9.0
+appVersion: v0.9.0
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: v0.8.7
+    version: v0.9.0
