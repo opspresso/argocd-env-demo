@@ -74,7 +74,7 @@ spec:
             external_services:
               istio:
                 root_namespace: "istio-system"
-                # url_service_version: "{{istio.version}}"
+                url_service_version: http://istiod.istio-system:15014/version
 
               grafana:
                 in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
