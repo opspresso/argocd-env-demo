@@ -43,7 +43,7 @@ app:
     gateway:
       enabled: true
     canary:
-      subsets: true
+      subsets: false
     trafficPolicy:
       connectionPool:
         tcp:
