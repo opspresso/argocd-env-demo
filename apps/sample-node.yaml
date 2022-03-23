@@ -38,7 +38,9 @@ spec:
                 data:
                   CLUSTER_NAME: {{cluster}}
                   ENV: {{cluster_env}}
-                  BUMP: 1
+              env:
+              - name: BUMP
+                value: bump-1
               ingress:
                 hosts:
                 - host: sample-node.{{hostname.this}}
