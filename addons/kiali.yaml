@@ -37,6 +37,7 @@ spec:
               web_fqdn: "kiali.{{hostname.public}}"
 
             istio_namespace: "istio-system"
+            url_service_version: "1.12.4"
 
             auth:
               strategy: anonymous
@@ -68,8 +69,8 @@ spec:
               # nodeSelector:
               #   group: graviton
 
-            login_token:
-              signing_key: eks-demo-kiali-token
+            # login_token:
+            #   signing_key: eks-demo-kiali-token
 
             external_services:
               grafana:
