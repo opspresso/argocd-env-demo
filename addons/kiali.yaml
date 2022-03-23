@@ -4,11 +4,11 @@ metadata:
   name: kiali
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              host: "demo.nalbam.com"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
 
   template:
     metadata:
@@ -26,7 +26,7 @@ spec:
         namespace: addon-tracing
       source:
         repoURL: https://kiali.org/helm-charts
-        targetRevision: "1.39.0"
+        targetRevision: "1.48.0"
         chart: kiali-server
         helm:
           values: |-
@@ -34,7 +34,7 @@ spec:
 
             server:
               web_schema: https
-              web_fqdn: "kiali.{{hostname}}"
+              web_fqdn: "kiali.{{hostname.public}}"
 
             istio_namespace: "istio-system"
 

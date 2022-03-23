@@ -4,11 +4,11 @@ metadata:
   name: kiali-extra
 spec:
   generators:
-    - list:
-        elements:
-          - cluster: eks-demo
-            values:
-              host: "demo.nalbam.com"
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/addons/alpha/*.yaml"
 
   template:
     metadata:
@@ -52,7 +52,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "kiali.{{hostname}}"
+                        - "kiali.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -64,7 +64,7 @@ spec:
                   name: kiali
                 spec:
                   hosts:
-                    - "kiali.{{hostname}}"
+                    - "kiali.{{hostname.public}}"
                   gateways:
                     - kiali
                   http:
