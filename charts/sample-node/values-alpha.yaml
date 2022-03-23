@@ -29,12 +29,12 @@ app:
     enabled: false
     hosts:
     - host: sample-node.demo.nalbam.com
-    # preview:
-    #   hosts:
-    #   - host: sample-node-preview.demo.nalbam.com
-    # stable:
-    #   hosts:
-    #   - host: sample-node-stable.demo.nalbam.com
+    preview:
+      hosts:
+      - host: sample-node-preview.demo.nalbam.com
+    stable:
+      hosts:
+      - host: sample-node-stable.demo.nalbam.com
   istio:
     gateway:
       enabled: true
@@ -55,11 +55,11 @@ app:
   pdb:
     enabled: true
     maxUnavailable: 1
-  # service:
-  #   preview:
-  #     enabled: true
-  #   stable:
-  #     enabled: true
+  service:
+    preview:
+      enabled: true
+    stable:
+      enabled: true
   serviceMonitor:
     enabled: true
     selector:
