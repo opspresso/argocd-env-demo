@@ -42,14 +42,6 @@ spec:
                 hosts:
                 - host: sample-node.{{hostname.this}}
                 - host: sample-node.{{hostname.public}}
-                preview:
-                  hosts:
-                  - host: sample-node-preview.{{hostname.this}}
-                  - host: sample-node-preview.{{hostname.public}}
-                stable:
-                  hosts:
-                  - host: sample-node-stable.{{hostname.this}}
-                  - host: sample-node-stable.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}

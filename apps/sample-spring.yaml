@@ -42,14 +42,6 @@ spec:
                 hosts:
                 - host: sample-spring.{{hostname.this}}
                 - host: sample-spring.{{hostname.public}}
-                preview:
-                  hosts:
-                  - host: sample-spring-preview.{{hostname.this}}
-                  - host: sample-spring-preview.{{hostname.public}}
-                stable:
-                  hosts:
-                  - host: sample-spring-stable.{{hostname.this}}
-                  - host: sample-spring-stable.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
