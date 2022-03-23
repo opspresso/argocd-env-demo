@@ -37,7 +37,7 @@ spec:
               web_fqdn: "kiali.{{hostname.public}}"
 
             istio_namespace: "istio-system"
-            url_service_version: "1.12.4"
+            url_service_version: "{{istio.version}}"
 
             auth:
               strategy: anonymous
