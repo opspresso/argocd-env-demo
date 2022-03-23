@@ -37,7 +37,6 @@ spec:
               web_fqdn: "kiali.{{hostname.public}}"
 
             istio_namespace: "istio-system"
-            url_service_version: "{{istio.version}}"
 
             auth:
               strategy: anonymous
@@ -73,6 +72,9 @@ spec:
             #   signing_key: eks-demo-kiali-token
 
             external_services:
+              istio:
+                url_service_version: "{{istio.version}}"
+
               grafana:
                 in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
                 url: "https://grafana.{{hostname.public}}"
