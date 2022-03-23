@@ -66,10 +66,10 @@ spec:
             #     group: intra
 
       ignoreDifferences:
-      - group: networking.istio.io
-        kind: VirtualService
-        jqPathExpressions:
-        - .spec.http[].route[].weight
+        - group: networking.istio.io
+          kind: VirtualService
+          jqPathExpressions:
+            - .spec.http[].route[].weight
 
       syncPolicy:
         automated:
