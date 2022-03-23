@@ -73,7 +73,8 @@ spec:
 
             external_services:
               istio:
-                url_service_version: "{{istio.version}}"
+                root_namespace: "istio-system"
+                # url_service_version: "{{istio.version}}"
 
               grafana:
                 in_cluster_url: "http://grafana.addon-grafana.svc.cluster.local"
