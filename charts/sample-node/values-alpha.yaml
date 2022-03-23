@@ -29,14 +29,14 @@ app:
     enabled: false
     hosts:
     - host: sample-node.demo.nalbam.com
-    preview:
-      enabled: true
-      hosts:
-      - host: sample-node-preview.demo.nalbam.com
-    stable:
-      enabled: true
-      hosts:
-      - host: sample-node-stable.demo.nalbam.com
+    # preview:
+    #   enabled: true
+    #   hosts:
+    #   - host: sample-node-preview.demo.nalbam.com
+    # stable:
+    #   enabled: true
+    #   hosts:
+    #   - host: sample-node-stable.demo.nalbam.com
   istio:
     gateway:
       enabled: true
