@@ -20,8 +20,14 @@ app:
       #   maxSurge: 25%
       #   maxUnavailable: 0
       canary:
-        canaryService: sample-node-preview
-        stableService: sample-node-stable
+        # canaryService: sample-node-preview
+        # stableService: sample-node-stable
+        trafficRouting:
+          istio:
+            virtualService:
+              name: sample-node
+              routes:
+              - primary
         steps:
         - setWeight: 10
         # - setCanaryScale:
