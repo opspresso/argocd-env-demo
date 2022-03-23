@@ -14,7 +14,7 @@ app:
     enabled: true
   env:
   - name: ENV_HASH
-    value: 5fe1aea656ad937107fc52e5411d60a7
+    value: 5fe1aea656ad937107fc52e5411d60a7-2
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
@@ -30,16 +30,20 @@ app:
     hosts:
     - host: sample-node.demo.nalbam.com
     preview:
+      enabled: true
       hosts:
       - host: sample-node-preview.demo.nalbam.com
     stable:
+      enabled: true
       hosts:
       - host: sample-node-stable.demo.nalbam.com
   istio:
-    gateway:
-      enabled: true
     sidecar:
       inject: true
+    gateway:
+      enabled: true
+    canary:
+      subsets: false
     trafficPolicy:
       connectionPool:
         tcp:
@@ -55,11 +59,11 @@ app:
   pdb:
     enabled: true
     maxUnavailable: 1
-  service:
-    preview:
-      enabled: true
-    stable:
-      enabled: true
+  # service:
+  #   preview:
+  #     enabled: true
+  #   stable:
+  #     enabled: true
   serviceMonitor:
     enabled: true
     selector:

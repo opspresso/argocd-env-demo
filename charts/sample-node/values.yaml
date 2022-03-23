@@ -60,7 +60,7 @@ app:
         - analysis:
             args:
             - name: url
-              value: http://sample-node/success/98
+              value: http://sample-node-preview/success/98
             templates:
             - clusterScope: true
               templateName: http-benchmark
@@ -70,9 +70,6 @@ app:
         - pause:
             duration: 10
         - setWeight: 50
-        - pause:
-            duration: 10
-        - setWeight: 75
         - pause:
             duration: 10
 
