@@ -39,18 +39,18 @@ app:
       #   maxSurge: 25%
       #   maxUnavailable: 0
       canary:
-        canaryService: sample-node-preview
-        stableService: sample-node-stable
+        # canaryService: sample-node-preview
+        # stableService: sample-node-stable
         trafficRouting:
           istio:
             virtualService:
               name: sample-node
               routes:
               - primary
-            # destinationRule:
-            #   name: sample-node
-            #   canarySubsetName: canary
-            #   stableSubsetName: stable
+            destinationRule:
+              name: sample-node
+              canarySubsetName: canary
+              stableSubsetName: stable
         steps:
         - setWeight: 10
         # - setCanaryScale:
@@ -60,7 +60,7 @@ app:
         - analysis:
             args:
             - name: url
-              value: http://sample-node-preview/success/98
+              value: http://sample-node/success/98
             templates:
             - clusterScope: true
               templateName: http-benchmark
@@ -95,7 +95,7 @@ app:
 
   istio:
     canary:
-      subsets: false
+      subsets: true
 
     trafficPolicy:
       connectionPool:
