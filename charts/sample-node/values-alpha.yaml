@@ -40,6 +40,18 @@ app:
       enabled: true
     sidecar:
       inject: true
+    trafficPolicy:
+      connectionPool:
+        tcp:
+          maxConnections: 1
+        http:
+          http1MaxPendingRequests: 1
+          maxRequestsPerConnection: 1
+      outlierDetection:
+        consecutive5xxErrors: 1
+        interval: 1s
+        baseEjectionTime: 3m
+        maxEjectionPercent: 100
   pdb:
     enabled: true
     maxUnavailable: 1
