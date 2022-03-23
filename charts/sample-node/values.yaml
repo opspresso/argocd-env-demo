@@ -5,6 +5,25 @@ app:
     repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
     # repository: nalbam/sample-node
 
+  autoscaling:
+    enabled: true
+    maxReplicas: 5
+    minReplicas: 1
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 25
+        stabilizationWindowSeconds: 600
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 50
+          type: Utilization
+      type: Resource
+
   resources:
     requests:
       cpu: 250m
