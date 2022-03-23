@@ -40,6 +40,7 @@ spec:
 
             auth:
               strategy: anonymous
+              # # https://github.com/kiali/kiali/pull/4296
               # strategy: openid
               # openid:
               #   client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
@@ -47,12 +48,15 @@ spec:
               #   issuer_uri: "https://accounts.google.com"
               #   scopes: ["openid", "email"]
               #   username_claim: "email"
-              #   allowed_domains: # https://github.com/kiali/kiali/pull/4296
+              #   allowed_domains:
               #     - nalbam.com
               #     - daangn.com
 
             deployment:
               ingress_enabled: false
+
+              accessible_namespaces:
+                - 'sample'
 
               # tolerations:
               #   - key: group
