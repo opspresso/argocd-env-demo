@@ -93,6 +93,27 @@ app:
     initialDelaySeconds: 3
     periodSeconds: 3
 
+  istio:
+    canary:
+      subsets: false
+
+    trafficPolicy:
+      connectionPool:
+        tcp:
+          maxConnections: 1
+        http:
+          http1MaxPendingRequests: 1
+          maxRequestsPerConnection: 1
+      outlierDetection:
+        consecutive5xxErrors: 1
+        interval: 1s
+        baseEjectionTime: 3m
+        maxEjectionPercent: 100
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+
 redis:
   fullnameOverride: sample-redis
 

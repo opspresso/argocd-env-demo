@@ -37,37 +37,18 @@ app:
       enabled: true
       hosts:
       - host: sample-node-stable.demo.nalbam.com
+
   istio:
     sidecar:
       inject: true
     gateway:
       enabled: true
-    canary:
-      subsets: false
-    trafficPolicy:
-      connectionPool:
-        tcp:
-          maxConnections: 1
-        http:
-          http1MaxPendingRequests: 1
-          maxRequestsPerConnection: 1
-      outlierDetection:
-        consecutive5xxErrors: 1
-        interval: 1s
-        baseEjectionTime: 3m
-        maxEjectionPercent: 100
-  pdb:
-    enabled: true
-    maxUnavailable: 1
-  # service:
-  #   preview:
-  #     enabled: true
-  #   stable:
-  #     enabled: true
+
   serviceMonitor:
     enabled: true
     selector:
       release: prometheus-eks-demo
+
 redis:
   istio:
     sidecar:

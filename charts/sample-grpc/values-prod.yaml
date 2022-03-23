@@ -12,6 +12,7 @@ app:
     value: f27e1935223c357ec49c7fc0a9fc4e83
   image:
     tag: v0.9.4
+
   istio:
     gateway:
       enabled: true

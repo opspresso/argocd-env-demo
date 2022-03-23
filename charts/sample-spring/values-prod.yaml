@@ -16,11 +16,13 @@ app:
   ingress:
     hosts:
     - host: sample-spring.demo.nalbam.com
+
   istio:
-    gateway:
-      enabled: true
     sidecar:
       inject: true
+    gateway:
+      enabled: true
+
   serviceMonitor:
     enabled: true
     endpoints:
