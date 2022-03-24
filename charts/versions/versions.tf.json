@@ -1,15 +1,15 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "4.2.1",
+      "default": "4.2.2",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.11.0",
+      "default": "2.12.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argo_workflows": {
-      "default": "0.13.0",
+      "default": "0.13.1",
       "description": "argo/argo-workflows"
     },
     "helm_argocd_applicationset": {
@@ -37,7 +37,7 @@
       "description": "eks/aws-node-termination-handler"
     },
     "helm_cert_manager": {
-      "default": "v1.7.1",
+      "default": "v1.7.2",
       "description": "jetstack/cert-manager"
     },
     "helm_chaoskube": {
@@ -57,11 +57,11 @@
       "description": "cortex/cortex"
     },
     "helm_crossplane": {
-      "default": "1.6.4",
+      "default": "1.7.0",
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.17",
+      "default": "2.30.19",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -69,7 +69,7 @@
       "description": "external-dns/external-dns"
     },
     "helm_gocd": {
-      "default": "1.40.8",
+      "default": "1.41.0",
       "description": "gocd/gocd"
     },
     "helm_grafana": {
@@ -113,7 +113,7 @@
       "description": "dashboard/kubernetes-dashboard"
     },
     "helm_kubernetes_external_secrets": {
-      "default": "8.5.4",
+      "default": "8.5.5",
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
@@ -125,7 +125,7 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.5.3",
+      "default": "15.5.4",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
