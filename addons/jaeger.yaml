@@ -85,7 +85,7 @@ spec:
 
             cassandra:
               config:
-                cluster_size: 2
+                cluster_size: 1
 
               persistence:
                 enabled: true
