@@ -43,6 +43,7 @@ spec:
                   servers:
                     - hosts:
                         - "jaeger.{{hostname.internal}}"
+                        - "jaeger.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -55,6 +56,7 @@ spec:
                 spec:
                   hosts:
                     - "jaeger.{{hostname.internal}}"
+                    - "jaeger.{{hostname.public}}"
                   gateways:
                     - jaeger
                   http:
