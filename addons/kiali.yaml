@@ -68,8 +68,8 @@ spec:
               # nodeSelector:
               #   group: graviton
 
-            # login_token:
-            #   signing_key: eks-demo-kiali-token
+            login_token:
+              signing_key: "kiali-token-{{cluster}}"
 
             external_services:
               istio:
