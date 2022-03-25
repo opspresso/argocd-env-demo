@@ -93,7 +93,7 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.7.2",
+      "default": "0.7.3",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
@@ -125,12 +125,16 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.5.4",
+      "default": "15.6.0",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
       "default": "3.0.3",
       "description": "prometheus/prometheus-adapter"
+    },
+    "helm_prometheus_stack": {
+      "default": "34.1.1",
+      "description": "prometheus/kube-prometheus-stack"
     },
     "helm_promtail": {
       "default": "3.11.0",
