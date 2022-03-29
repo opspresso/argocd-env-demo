@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "4.2.2",
+      "default": "4.2.4",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -101,7 +101,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "34.1.1",
+      "default": "34.5.1",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
@@ -117,7 +117,7 @@
       "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
-      "default": "2.10.1",
+      "default": "2.10.2",
       "description": "grafana/loki"
     },
     "helm_metrics_server": {
@@ -131,10 +131,6 @@
     "helm_prometheus_adapter": {
       "default": "3.0.3",
       "description": "prometheus/prometheus-adapter"
-    },
-    "helm_prometheus_stack": {
-      "default": "34.1.1",
-      "description": "prometheus/kube-prometheus-stack"
     },
     "helm_promtail": {
       "default": "3.11.0",
