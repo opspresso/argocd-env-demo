@@ -4,7 +4,7 @@
 
 ```bash
 export TG_USERNAME="nalbam"
-export TG_PROJECT="sample-dov"
+export TG_PROJECT="sample-grpc"
 export TG_VERSION="v0.0.0"
 export TG_PHASE="demo"
 export TG_TYPE="helm"
