@@ -40,7 +40,7 @@ app:
       #   maxUnavailable: 0
       canary:
         canaryService: sample-node-preview
-        stableService: sample-node-stable
+        stableService: sample-node
         # trafficRouting:
         #   istio:
         #     virtualService:
@@ -105,7 +105,7 @@ app:
       #     http1MaxPendingRequests: 1
       #     maxRequestsPerConnection: 1
       outlierDetection:
-        consecutive5xxErrors: 1
+        consecutive5xxErrors: 3
         interval: 1s
         baseEjectionTime: 3m
         maxEjectionPercent: 100
