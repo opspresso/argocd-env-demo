@@ -16,6 +16,10 @@ app:
   ingress:
     hosts:
     - host: sample-spring.demo.nalbam.com
+    preview:
+      enabled: true
+      hosts:
+      - host: sample-spring-preview.demo.nalbam.com
 
   istio:
     sidecar:

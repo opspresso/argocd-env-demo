@@ -14,16 +14,15 @@ app:
       memory: 1Gi
 
   controller:
-    # kind: Rollout
+    kind: Rollout
     strategy:
-      rollingUpdate:
-        maxSurge: 25%
-        maxUnavailable: 0
-      # blueGreen:
-      #   activeService: sample-spring
-      #   autoPromotionEnabled: true
-      #   autoPromotionSeconds: 30
-      #   previewService: sample-spring-preview
+      type: BlueGreen
+      # rollingUpdate:
+      #   maxSurge: 25%
+      #   maxUnavailable: 0
+      blueGreen:
+        autoPromotionEnabled: true
+        autoPromotionSeconds: 30
 
   service:
     name: http
@@ -44,3 +43,24 @@ app:
       port: 8080
     initialDelaySeconds: 20
     periodSeconds: 10
+
+  istio:
+    canary:
+      subsets: false
+
+    trafficPolicy:
+      # connectionPool:
+      #   tcp:
+      #     maxConnections: 10
+      #   http:
+      #     http1MaxPendingRequests: 10
+      #     maxRequestsPerConnection: 10
+      outlierDetection:
+        consecutive5xxErrors: 3
+        interval: 1s
+        baseEjectionTime: 3m
+        maxEjectionPercent: 100
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
