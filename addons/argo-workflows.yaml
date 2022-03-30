@@ -54,7 +54,7 @@ spec:
                 clientSecret:
                   name: argo-workflows-secret
                   key: client-secret
-                redirectUrl: https://argo-workflows.{{hostname.public}}/oauth2/callback
+                redirectUrl: https://workflows.{{hostname.public}}/oauth2/callback
 
                 rbac:
                   enabled: true

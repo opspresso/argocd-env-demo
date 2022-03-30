@@ -102,7 +102,7 @@ spec:
                   - id: argo-workflows-sso
                     name: Argo Workflow
                     redirectURIs:
-                      - https://argo-workflows.{{hostname.public}}/oauth2/callback
+                      - https://workflows.{{hostname.public}}/oauth2/callback
                     secretEnv: ARGO_WORKFLOWS_SSO_CLIENT_SECRET
 
               rbacConfig:
@@ -552,7 +552,7 @@ spec:
                   servers:
                     - hosts:
                         - "{{argocd.hostname}}"
-                        - "argocd-applicationset.{{hostname.public}}"
+                        - "applicationset.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -580,7 +580,7 @@ spec:
                   name: argocd-applicationset
                 spec:
                   hosts:
-                    - "argocd-applicationset.{{hostname.public}}"
+                    - "applicationset.{{hostname.public}}"
                   gateways:
                     - argocd-applicationset
                   http:
