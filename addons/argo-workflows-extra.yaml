@@ -45,36 +45,36 @@ spec:
                     - key: /k8s/common/argo-workflows-client-secret
                       name: client-secret
 
-              - apiVersion: networking.istio.io/v1beta1
-                kind: Gateway
-                metadata:
-                  name: argo-workflows
-                spec:
-                  selector:
-                    istio: ingressgateway
-                  servers:
-                    - hosts:
-                        - "argo-workflows.{{hostname.public}}"
-                      port:
-                        number: 80
-                        name: http
-                        protocol: HTTP
+              # - apiVersion: networking.istio.io/v1beta1
+              #   kind: Gateway
+              #   metadata:
+              #     name: argo-workflows
+              #   spec:
+              #     selector:
+              #       istio: ingressgateway
+              #     servers:
+              #       - hosts:
+              #           - "workflows.{{hostname.public}}"
+              #         port:
+              #           number: 80
+              #           name: http
+              #           protocol: HTTP
 
-              - apiVersion: networking.istio.io/v1beta1
-                kind: VirtualService
-                metadata:
-                  name: argo-workflows
-                spec:
-                  hosts:
-                    - "argo-workflows.{{hostname.public}}"
-                  gateways:
-                    - argo-workflows
-                  http:
-                    - route:
-                        - destination:
-                            host: argo-workflows-server
-                            port:
-                              number: 2746
+              # - apiVersion: networking.istio.io/v1beta1
+              #   kind: VirtualService
+              #   metadata:
+              #     name: argo-workflows
+              #   spec:
+              #     hosts:
+              #       - "workflows.{{hostname.public}}"
+              #     gateways:
+              #       - argo-workflows
+              #     http:
+              #       - route:
+              #           - destination:
+              #               host: argo-workflows-server
+              #               port:
+              #                 number: 2746
 
               - apiVersion: v1
                 kind: ServiceAccount

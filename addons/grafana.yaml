@@ -94,11 +94,6 @@ spec:
 
             ingress:
               enabled: false
-              annotations:
-                kubernetes.io/ingress.class: nginx
-                nginx.ingress.kubernetes.io/ssl-redirect: "true"
-              hosts:
-                - "{{grafana.hostname}}"
 
             datasources:
               datasources.yaml:
