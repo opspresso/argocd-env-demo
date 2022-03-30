@@ -35,22 +35,23 @@ app:
   controller:
     kind: Rollout
     strategy:
+      type: Canary
       # rollingUpdate:
       #   maxSurge: 25%
       #   maxUnavailable: 0
       canary:
-        canaryService: sample-node-preview
-        stableService: sample-node
-        # trafficRouting:
-        #   istio:
-        #     virtualService:
-        #       name: sample-node
-        #       routes:
-        #       - primary
-        #     destinationRule:
-        #       name: sample-node
-        #       canarySubsetName: canary
-        #       stableSubsetName: stable
+        # canaryService: sample-node-preview
+        # stableService: sample-node
+        # # trafficRouting:
+        # #   istio:
+        # #     virtualService:
+        # #       name: sample-node
+        # #       routes:
+        # #       - primary
+        # #     destinationRule:
+        # #       name: sample-node
+        # #       canarySubsetName: canary
+        # #       stableSubsetName: stable
         steps:
         - setWeight: 10
         # - setCanaryScale:
@@ -100,10 +101,10 @@ app:
     trafficPolicy:
       # connectionPool:
       #   tcp:
-      #     maxConnections: 1
+      #     maxConnections: 10
       #   http:
-      #     http1MaxPendingRequests: 1
-      #     maxRequestsPerConnection: 1
+      #     http1MaxPendingRequests: 10
+      #     maxRequestsPerConnection: 10
       outlierDetection:
         consecutive5xxErrors: 3
         interval: 1s
