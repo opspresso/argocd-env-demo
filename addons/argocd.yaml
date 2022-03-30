@@ -552,7 +552,7 @@ spec:
                   servers:
                     - hosts:
                         - "{{argocd.hostname}}"
-                        - "applicationset.{{hostname.public}}"
+                        - "appset.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -580,7 +580,7 @@ spec:
                   name: argocd-applicationset
                 spec:
                   hosts:
-                    - "applicationset.{{hostname.public}}"
+                    - "appset.{{hostname.public}}"
                   gateways:
                     - argocd-applicationset
                   http:
