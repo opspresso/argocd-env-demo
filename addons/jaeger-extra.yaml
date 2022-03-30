@@ -42,7 +42,7 @@ spec:
                     istio: ingressgateway
                   servers:
                     - hosts:
-                        - "jaeger.{{hostname.internal}}"
+                        - "jaeger.{{hostname.public}}"
                       port:
                         number: 80
                         name: http
@@ -54,7 +54,7 @@ spec:
                   name: jaeger
                 spec:
                   hosts:
-                    - "jaeger.{{hostname.internal}}"
+                    - "jaeger.{{hostname.public}}"
                   gateways:
                     - jaeger
                   http:

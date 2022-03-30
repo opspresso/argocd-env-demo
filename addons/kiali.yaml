@@ -34,7 +34,7 @@ spec:
 
             server:
               web_schema: https
-              web_fqdn: "kiali.{{hostname.internal}}"
+              web_fqdn: "kiali.{{hostname.public}}"
 
             istio_namespace: "istio-system"
 
