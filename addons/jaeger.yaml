@@ -83,6 +83,27 @@ spec:
                   value: graviton
                   effect: NoSchedule
 
+            provisionDataStore:
+              cassandra: false
+              elasticsearch: false
+              kafka: true
+
+            kafka:
+              replicaCount: 1
+
+              persistence:
+                enabled: true
+                storageClass: gp3
+
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              selector:
+                nodeSelector:
+                  group: monitoring
+
             cassandra:
               config:
                 cluster_size: 1
