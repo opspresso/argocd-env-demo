@@ -68,7 +68,11 @@ spec:
                   gateways:
                     - kiali
                   http:
-                    - route:
+                    - headers:
+                        request:
+                          set:
+                            X-Forwarded-Port: "443"
+                      route:
                         - destination:
                             host: kiali
                             port:
