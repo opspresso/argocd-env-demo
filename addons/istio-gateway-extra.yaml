@@ -88,7 +88,7 @@ spec:
                   jobLabel: istio-ingressgateway
                   namespaceSelector:
                     matchNames:
-                    - istio-ingressgateway
+                    - istio-system
                   selector:
                     matchLabels:
                       app: istio-ingressgateway
