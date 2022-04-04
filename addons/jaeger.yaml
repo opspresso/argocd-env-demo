@@ -41,6 +41,15 @@ spec:
                   cpu: "1"
                   memory: 1Gi
 
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              selector:
+                nodeSelector:
+                  group: monitoring
+
               service:
                 zipkin:
                   port: 9411
@@ -86,6 +95,15 @@ spec:
                   cpu: 500m
                   memory: 512Mi
 
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              selector:
+                nodeSelector:
+                  group: monitoring
+
             ingester:
               enabled: false
 
@@ -96,6 +114,15 @@ spec:
                 limits:
                   cpu: "1"
                   memory: 1Gi
+
+              tolerations:
+                - key: group
+                  operator: Equal
+                  value: monitoring
+                  effect: NoSchedule
+              selector:
+                nodeSelector:
+                  group: monitoring
 
             agent:
               tolerations:
