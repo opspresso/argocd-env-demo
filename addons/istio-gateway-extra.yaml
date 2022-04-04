@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-gateway-extra
+  name: istio-ingressgateway-extra
 spec:
   generators:
     - git:
@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-gateway-extra-{{cluster}}"
+      name: "istio-ingressgateway-extra-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
@@ -23,23 +23,23 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-gateway
+        namespace: istio-ingressgateway
       source:
         repoURL: https://charts.helm.sh/incubator
         targetRevision: "0.2.5"
         chart: raw
         helm:
           values: |-
-            fullnameOverride: istio-gateway-extra
+            fullnameOverride: istio-ingressgateway-extra
 
             resources:
               - apiVersion: elbv2.k8s.aws/v1beta1
                 kind: TargetGroupBinding
                 metadata:
-                  name: istio-gateway-public
+                  name: istio-ingressgateway-public
                 spec:
                   serviceRef:
-                    name: istio-gateway
+                    name: istio-ingressgateway
                     port: http2
                   targetGroupARN: "{{istio.target_group.public_http}}"
                   targetType: ip
@@ -47,10 +47,10 @@ spec:
               - apiVersion: elbv2.k8s.aws/v1beta1
                 kind: TargetGroupBinding
                 metadata:
-                  name: istio-gateway-internal
+                  name: istio-ingressgateway-internal
                 spec:
                   serviceRef:
-                    name: istio-gateway
+                    name: istio-ingressgateway
                     port: http2
                   targetGroupARN: "{{istio.target_group.internal_http}}"
                   targetType: ip
@@ -59,9 +59,9 @@ spec:
                 kind: Service
                 metadata:
                   labels:
-                    app: istio-gateway
+                    app: istio-ingressgateway
                     istio: ingressgateway
-                  name: istio-gateway-metrics
+                  name: istio-ingressgateway-metrics
                 spec:
                   ports:
                     - name: http-envoy-prom
@@ -69,7 +69,7 @@ spec:
                       protocol: TCP
                       targetPort: 15090
                   selector:
-                    app: istio-gateway
+                    app: istio-ingressgateway
                     istio: ingressgateway
                   type: ClusterIP
 
@@ -77,21 +77,21 @@ spec:
                 kind: ServiceMonitor
                 metadata:
                   labels:
-                    app: istio-gateway
+                    app: istio-ingressgateway
                     release: prometheus-{{cluster}}
-                  name: istio-gateway-metrics
+                  name: istio-ingressgateway-metrics
                 spec:
                   endpoints:
                   - interval: 15s
                     path: /stats/prometheus
                     port: http-envoy-prom
-                  jobLabel: istio-gateway
+                  jobLabel: istio-ingressgateway
                   namespaceSelector:
                     matchNames:
-                    - istio-gateway
+                    - istio-ingressgateway
                   selector:
                     matchLabels:
-                      app: istio-gateway
+                      app: istio-ingressgateway
                       istio: ingressgateway
 
       syncPolicy:

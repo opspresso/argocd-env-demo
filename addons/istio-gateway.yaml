@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-gateway
+  name: istio-ingressgateway
 spec:
   generators:
     - git:
@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "istio-gateway-{{cluster}}"
+      name: "istio-ingressgateway-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}-addon
       labels:
@@ -23,14 +23,14 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-gateway
+        namespace: istio-ingressgateway
       source:
         repoURL: https://istio-release.storage.googleapis.com/charts
         targetRevision: "{{istio.version}}"
         chart: gateway
         helm:
           values: |-
-            name: istio-gateway
+            name: istio-ingressgateway
 
             replicaCount: {{istio.gateway.min}}
 
