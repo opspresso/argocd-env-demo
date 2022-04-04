@@ -35,7 +35,7 @@ spec:
             collector:
               resources:
                 requests:
-                  cpu: "500m"
+                  cpu: 500m
                   memory: 512Mi
                 limits:
                   cpu: "1"
@@ -91,7 +91,7 @@ spec:
 
               resources:
                 requests:
-                  cpu: "500m"
+                  cpu: 500m
                   memory: 512Mi
                 limits:
                   cpu: "1"
