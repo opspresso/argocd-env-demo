@@ -92,21 +92,13 @@ spec:
               config:
                 cluster_size: 1
 
-              persistence:
-                enabled: true
-                storageClass: gp3
-
-              tolerations:
-                - key: group
-                  operator: Equal
-                  value: monitoring
-                  effect: NoSchedule
-              selector:
-                nodeSelector:
-                  group: monitoring
-
-            kafka:
-              replicaCount: 1
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 2Gi
+                limits:
+                  cpu: "2"
+                  memory: 6Gi
 
               persistence:
                 enabled: true
