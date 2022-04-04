@@ -84,12 +84,13 @@ spec:
                   effect: NoSchedule
 
             provisionDataStore:
-              cassandra: false
+              cassandra: true
               elasticsearch: false
-              kafka: true
+              kafka: false
 
-            kafka:
-              replicaCount: 1
+            cassandra:
+              config:
+                cluster_size: 1
 
               persistence:
                 enabled: true
@@ -104,9 +105,8 @@ spec:
                 nodeSelector:
                   group: monitoring
 
-            cassandra:
-              config:
-                cluster_size: 1
+            kafka:
+              replicaCount: 1
 
               persistence:
                 enabled: true
