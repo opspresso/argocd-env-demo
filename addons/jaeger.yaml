@@ -33,6 +33,14 @@ spec:
             fullnameOverride: jaeger
 
             collector:
+              resources:
+                requests:
+                  cpu: "500m"
+                  memory: 512Mi
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+
               service:
                 zipkin:
                   port: 9411
@@ -69,8 +77,25 @@ spec:
               #     }
               #   }
 
-            # ingester:
-            #   enabled: true
+            query:
+              resources:
+                requests:
+                  cpu: 256m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+
+            ingester:
+              enabled: false
+
+              resources:
+                requests:
+                  cpu: "500m"
+                  memory: 512Mi
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
 
             agent:
               tolerations:
