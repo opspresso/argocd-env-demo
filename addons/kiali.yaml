@@ -52,6 +52,9 @@ spec:
                   - nalbam.com
                   - daangn.com
 
+            login_token:
+              signing_key: "kiali-token-5bmnq8a96khc" # FTL signing key for sessions must be 16, 24 or 32 bytes length
+
             deployment:
               ingress_enabled: false
 
@@ -67,9 +70,6 @@ spec:
               #     effect: NoSchedule
               # nodeSelector:
               #   group: graviton
-
-            login_token:
-              signing_key: "kiali-token-5bmnq8a96khc"
 
             external_services:
               istio:
