@@ -40,7 +40,7 @@ spec:
                 spec:
                   backendType: systemManager
                   data:
-                    - key: /k8s/common/google-secret
+                    - key: /k8s/common/kiali-google-secret
                       name: oidc-secret
 
               - apiVersion: networking.istio.io/v1beta1

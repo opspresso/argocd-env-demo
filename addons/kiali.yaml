@@ -40,10 +40,10 @@ spec:
 
             auth:
               # strategy: anonymous
-              # https://github.com/kiali/kiali/pull/4296
+              # https://kiali.io/docs/configuration/authentication/openid/
               strategy: openid
               openid:
-                client_id: "661360902815-i61mqbplqaerrsurepuu8r5cbqm6uuhh.apps.googleusercontent.com"
+                client_id: "661360902815-010nu4v15bm8a96khcmqdgljfe8nqgqa.apps.googleusercontent.com"
                 disable_rbac: true
                 issuer_uri: "https://accounts.google.com"
                 scopes: ["openid", "email"]
