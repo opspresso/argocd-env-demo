@@ -59,9 +59,9 @@ spec:
               ingress_enabled: false
 
               accessible_namespaces:
-                - '**'
-                # - 'istio-system'
-                # - 'sample'
+                # - '**'
+                - 'istio-system'
+                - 'sample'
 
               # tolerations:
               #   - key: group
