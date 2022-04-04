@@ -87,8 +87,8 @@ spec:
                 in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
 
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
