@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: addon-tracing
+        namespace: istio-system
       source:
         repoURL: https://kiali.org/helm-charts
         targetRevision: "1.48.0"
@@ -84,7 +84,7 @@ spec:
                 url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
               tracing:
-                in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
+                in_cluster_url: "http://jaeger-query.istio-system.svc.cluster.local"
 
       syncPolicy:
         # automated:
