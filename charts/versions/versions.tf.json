@@ -1,11 +1,11 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "4.2.4",
+      "default": "4.5.0",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
-      "default": "2.12.0",
+      "default": "2.13.0",
       "description": "argo/argo-rollouts"
     },
     "helm_argo_workflows": {
@@ -61,7 +61,7 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.30.19",
+      "default": "2.30.20",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
@@ -73,11 +73,11 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.24.1",
+      "default": "6.25.1",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
-      "default": "4.0.18",
+      "default": "4.0.19",
       "description": "ingress-nginx/ingress-nginx"
     },
     "helm_irsa_operator": {
@@ -93,7 +93,7 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.7.3",
+      "default": "0.8.0",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
@@ -101,7 +101,7 @@
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "34.5.1",
+      "default": "34.8.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
@@ -125,11 +125,11 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.6.0",
+      "default": "15.8.0",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
-      "default": "3.0.3",
+      "default": "3.2.0",
       "description": "prometheus/prometheus-adapter"
     },
     "helm_promtail": {
