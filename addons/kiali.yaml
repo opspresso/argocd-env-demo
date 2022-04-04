@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-system
+        namespace: addon-tracing
       source:
         repoURL: https://kiali.org/helm-charts
         targetRevision: "1.48.0"
@@ -69,7 +69,7 @@ spec:
               #   group: graviton
 
             login_token:
-              signing_key: "kiali-token-{{cluster}}"
+              signing_key: "kiali-token-5bmnq8a96khc"
 
             external_services:
               istio:
@@ -84,7 +84,7 @@ spec:
                 url: "http://prometheus-prometheus.addon-prometheus.svc.cluster.local:9090"
 
               tracing:
-                in_cluster_url: "http://jaeger-query.istio-system.svc.cluster.local"
+                in_cluster_url: "http://jaeger-query.addon-tracing.svc.cluster.local"
 
       syncPolicy:
         # automated:

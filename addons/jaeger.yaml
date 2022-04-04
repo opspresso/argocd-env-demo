@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-system
+        namespace: addon-tracing
       source:
         repoURL: https://jaegertracing.github.io/helm-charts
         targetRevision: "0.55.0"
