@@ -17,7 +17,8 @@ helm repo add deliveryhero https://charts.deliveryhero.io
 helm repo add devtron https://helm.devtron.ai
 helm repo add eks https://aws.github.io/eks-charts
 helm repo add external-dns https://kubernetes-sigs.github.io/external-dns
-helm repo add external-secrets https://external-secrets.github.io/kubernetes-external-secrets
+helm repo add kubernetes-external-secrets https://external-secrets.github.io/kubernetes-external-secrets
+helm repo add external-secrets https://charts.external-secrets.io
 helm repo add flagger https://flagger.app
 helm repo add fluxcd https://charts.fluxcd.io
 helm repo add gocd https://gocd.github.io/helm-chart

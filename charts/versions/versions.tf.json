@@ -68,6 +68,10 @@
       "default": "1.7.1",
       "description": "external-dns/external-dns"
     },
+    "helm_external_secrets": {
+      "default": "0.5.1",
+      "description": "external-secrets/external-secrets"
+    },
     "helm_gocd": {
       "default": "1.41.0",
       "description": "gocd/gocd"
@@ -111,10 +115,6 @@
     "helm_kubernetes_dashboard": {
       "default": "5.4.1",
       "description": "dashboard/kubernetes-dashboard"
-    },
-    "helm_kubernetes_external_secrets": {
-      "default": "8.5.5",
-      "description": "external-secrets/kubernetes-external-secrets"
     },
     "helm_loki": {
       "default": "2.10.3",
