@@ -60,7 +60,7 @@ spec:
                     - secretKey: google-id
                       remoteRef:
                         key: /k8s/common/google-id
-                    - secretKey: google-id
+                    - secretKey: google-secret
                       remoteRef:
                         key: /k8s/common/google-secret
 
