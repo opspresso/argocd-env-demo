@@ -33,7 +33,7 @@ spec:
             fullnameOverride: external-dns
 
             sources:
-              # - ingress
+              - ingress
               - service
 
             serviceAccount:

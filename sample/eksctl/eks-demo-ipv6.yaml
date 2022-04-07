@@ -10,6 +10,13 @@ metadata:
 kubernetesNetworkConfig:
   ipFamily: IPv6
 
+vpc:
+  subnets:
+    private:
+      ap-northeast-2a: { id: subnet-051160ac50cda4330 }
+      ap-northeast-2b: { id: subnet-00beefb3c31504caf }
+      ap-northeast-2c: { id: subnet-08c44905fdc66885d }
+
 addons:
   - name: vpc-cni
     version: latest
@@ -24,3 +31,4 @@ iam:
 managedNodeGroups:
   - name: workers
     instanceType: t3.medium
+    volumeSize: 30
