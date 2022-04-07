@@ -33,19 +33,35 @@ spec:
             fullnameOverride: prometheus-extra
 
             resources:
-              - apiVersion: kubernetes-client.io/v1
+              - apiVersion: external-secrets.io/v1beta1
                 kind: ExternalSecret
                 metadata:
                   name: prometheus-alertmanager-secret
                 spec:
-                  backendType: systemManager
+                  refreshInterval: 1h
+                  secretStoreRef:
+                    kind: ClusterSecretStore
+                    name: parameter-store
+                  target:
+                    name: prometheus-alertmanager-secret
                   data:
-                    - key: /k8s/common/slack-hooks
-                      name: slack-hooks
-                  template:
-                    metadata:
-                      labels:
-                        release: prometheus-{{cluster}}
+                    - secretKey: slack-hooks
+                      remoteRef:
+                        key: /k8s/common/slack-hooks
+
+              # - apiVersion: kubernetes-client.io/v1
+              #   kind: ExternalSecret
+              #   metadata:
+              #     name: prometheus-alertmanager-secret
+              #   spec:
+              #     backendType: systemManager
+              #     data:
+              #       - key: /k8s/common/slack-hooks
+              #         name: slack-hooks
+              #     template:
+              #       metadata:
+              #         labels:
+              #           release: prometheus-{{cluster}}
 
               # - apiVersion: monitoring.coreos.com/v1
               #   kind: PrometheusRule
