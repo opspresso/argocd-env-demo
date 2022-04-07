@@ -33,6 +33,7 @@ spec:
         - kind: ValidatingWebhookConfiguration
           group: admissionregistration.k8s.io
           jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
             - /webhooks/0/failurePolicy
 
       syncPolicy:
