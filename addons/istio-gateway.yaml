@@ -23,7 +23,7 @@ spec:
       project: addons
       destination:
         name: "{{cluster}}"
-        namespace: istio-system
+        namespace: istio-ingressgateway
       source:
         repoURL: https://istio-release.storage.googleapis.com/charts
         targetRevision: "{{istio.version}}"
