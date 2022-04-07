@@ -33,15 +33,37 @@ spec:
             fullnameOverride: argo-rollouts-extra
 
             resources:
+              # - apiVersion: external-secrets.io/v1beta1
+              #   kind: ExternalSecret
+              #   metadata:
+              #     name: argo-rollouts-notification-secret
+              #   spec:
+              #     data:
+              #     - secretKey: slack-token
+              #       remoteRef:
+              #         key: /k8s/common/argocd-noti-token
+
               - apiVersion: external-secrets.io/v1beta1
                 kind: ExternalSecret
                 metadata:
                   name: argo-rollouts-notification-secret
                 spec:
+                  refreshInterval: 1h
+                  # secretStoreRef:
+                  #   name: secretstore-sample
+                  #   kind: SecretStore
+                  target:
+                    name: argo-rollouts-notification-secret
+                    creationPolicy: Owner
                   data:
                   - secretKey: slack-token
                     remoteRef:
                       key: /k8s/common/argocd-noti-token
+                      # version: provider-key-version
+                      # property: provider-key-property
+                  # dataFrom:
+                  # - extract:
+                  #     key: remote-key-in-the-provider
 
               # - apiVersion: kubernetes-client.io/v1
               #   kind: ExternalSecret
