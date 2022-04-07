@@ -41,19 +41,13 @@ spec:
                   refreshInterval: 1h
                   secretStoreRef:
                     kind: ClusterSecretStore
-                    name: secretstore
+                    name: parameter-store
                   target:
                     name: argo-rollouts-notification-secret
-                    creationPolicy: Owner
                   data:
                   - secretKey: slack-token
                     remoteRef:
                       key: /k8s/common/argocd-noti-token
-                      # version: provider-key-version
-                      # property: provider-key-property
-                  # dataFrom:
-                  # - extract:
-                  #     key: remote-key-in-the-provider
 
               # - apiVersion: kubernetes-client.io/v1
               #   kind: ExternalSecret
