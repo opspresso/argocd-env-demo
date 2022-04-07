@@ -42,7 +42,7 @@ app:
     enabled: true
     selector:
       release: prometheus-eks-demo
-redis:
-  istio:
-    sidecar:
-      inject: true
+# redis:
+#   istio:
+#     sidecar:
+#       inject: true
