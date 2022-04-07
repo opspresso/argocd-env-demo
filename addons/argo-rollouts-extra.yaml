@@ -45,9 +45,9 @@ spec:
                   target:
                     name: argo-rollouts-notification-secret
                   data:
-                  - secretKey: slack-token
-                    remoteRef:
-                      key: /k8s/common/argocd-noti-token
+                    - secretKey: slack-token
+                      remoteRef:
+                        key: /k8s/common/argocd-noti-token
 
               # - apiVersion: kubernetes-client.io/v1
               #   kind: ExternalSecret

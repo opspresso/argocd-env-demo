@@ -33,17 +33,36 @@ spec:
             fullnameOverride: argo-workflows-extra
 
             resources:
-              - apiVersion: kubernetes-client.io/v1
+              - apiVersion: external-secrets.io/v1beta1
                 kind: ExternalSecret
                 metadata:
                   name: argo-workflows-secret
                 spec:
-                  backendType: systemManager
+                  refreshInterval: 1h
+                  secretStoreRef:
+                    kind: ClusterSecretStore
+                    name: parameter-store
+                  target:
+                    name: argo-workflows-secret
                   data:
-                    - key: /k8s/common/argo-workflows-client-id
-                      name: client-id
-                    - key: /k8s/common/argo-workflows-client-secret
-                      name: client-secret
+                    - secretKey: client-id
+                      remoteRef:
+                        key: /k8s/common/argo-workflows-client-id
+                    - secretKey: client-secret
+                      remoteRef:
+                        key: /k8s/common/argo-workflows-client-secret
+
+              # - apiVersion: kubernetes-client.io/v1
+              #   kind: ExternalSecret
+              #   metadata:
+              #     name: argo-workflows-secret
+              #   spec:
+              #     backendType: systemManager
+              #     data:
+              #       - key: /k8s/common/argo-workflows-client-id
+              #         name: client-id
+              #       - key: /k8s/common/argo-workflows-client-secret
+              #         name: client-secret
 
               # - apiVersion: networking.istio.io/v1beta1
               #   kind: Gateway
