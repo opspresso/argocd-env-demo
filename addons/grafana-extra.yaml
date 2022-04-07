@@ -33,25 +33,56 @@ spec:
             fullnameOverride: grafana-extra
 
             resources:
-              - apiVersion: kubernetes-client.io/v1
+              - apiVersion: external-secrets.io/v1beta1
                 kind: ExternalSecret
                 metadata:
                   name: grafana-secret
                 spec:
-                  backendType: systemManager
+                  refreshInterval: 1h
+                  secretStoreRef:
+                    kind: ClusterSecretStore
+                    name: parameter-store
+                  target:
+                    name: grafana-secret
                   data:
-                    - key: /k8s/common/admin-user
-                      name: admin-user
-                    - key: /k8s/common/admin-password
-                      name: admin-password
-                    - key: /k8s/{{grafana.auth.github.org}}/grafana-github-id
-                      name: github-id
-                    - key: /k8s/{{grafana.auth.github.org}}/grafana-github-secret
-                      name: github-secret
-                    - key: /k8s/common/google-id
-                      name: google-id
-                    - key: /k8s/common/google-secret
-                      name: google-secret
+                    - secretKey: admin-user
+                      remoteRef:
+                        key: /k8s/common/admin-user
+                    - secretKey: admin-password
+                      remoteRef:
+                        key: /k8s/common/admin-password
+                    - secretKey: github-id
+                      remoteRef:
+                        key: /k8s/{{grafana.auth.github.org}}/grafana-github-id
+                    - secretKey: github-secret
+                      remoteRef:
+                        key: /k8s/{{grafana.auth.github.org}}/grafana-github-secret
+                    - secretKey: google-id
+                      remoteRef:
+                        key: /k8s/common/google-id
+                    - secretKey: google-id
+                      remoteRef:
+                        key: /k8s/common/google-secret
+
+              # - apiVersion: kubernetes-client.io/v1
+              #   kind: ExternalSecret
+              #   metadata:
+              #     name: grafana-secret
+              #   spec:
+              #     backendType: systemManager
+              #     data:
+              #       - key: /k8s/common/admin-user
+              #         name: admin-user
+              #       - key: /k8s/common/admin-password
+              #         name: admin-password
+              #       - key: /k8s/{{grafana.auth.github.org}}/grafana-github-id
+              #         name: github-id
+              #       - key: /k8s/{{grafana.auth.github.org}}/grafana-github-secret
+              #         name: github-secret
+              #       - key: /k8s/common/google-id
+              #         name: google-id
+              #       - key: /k8s/common/google-secret
+              #         name: google-secret
 
               - apiVersion: networking.istio.io/v1beta1
                 kind: Gateway

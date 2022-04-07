@@ -33,15 +33,31 @@ spec:
             fullnameOverride: aws-node-termination-handler-extra
 
             resources:
-              - apiVersion: kubernetes-client.io/v1
+              - apiVersion: external-secrets.io/v1beta1
                 kind: ExternalSecret
                 metadata:
                   name: webhook-secret
                 spec:
-                  backendType: systemManager
+                  refreshInterval: 1h
+                  secretStoreRef:
+                    kind: ClusterSecretStore
+                    name: parameter-store
+                  target:
+                    name: webhook-secret
                   data:
-                    - key: /k8s/common/slack-hooks
-                      name: webhookurl
+                    - secretKey: webhookurl
+                      remoteRef:
+                        key: /k8s/common/slack-hooks
+
+              # - apiVersion: kubernetes-client.io/v1
+              #   kind: ExternalSecret
+              #   metadata:
+              #     name: webhook-secret
+              #   spec:
+              #     backendType: systemManager
+              #     data:
+              #       - key: /k8s/common/slack-hooks
+              #         name: webhookurl
 
               - apiVersion: v1
                 kind: ConfigMap
