@@ -49,9 +49,9 @@ spec:
                   name: argo-rollouts-notification-secret
                 spec:
                   refreshInterval: 1h
-                  # secretStoreRef:
-                  #   name: secretstore-sample
-                  #   kind: SecretStore
+                  secretStoreRef:
+                    name: secretstore
+                    kind: SecretStore
                   target:
                     name: argo-rollouts-notification-secret
                     creationPolicy: Owner
