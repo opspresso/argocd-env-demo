@@ -40,7 +40,7 @@ spec:
                 spec:
                   refreshInterval: 1h
                   secretStoreRef:
-                    kind: SecretStore
+                    kind: ClusterSecretStore
                     name: secretstore
                   target:
                     name: argo-rollouts-notification-secret
