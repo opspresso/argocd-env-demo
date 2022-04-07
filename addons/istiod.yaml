@@ -34,8 +34,8 @@ spec:
               hub: "{{istio.global.hub}}"
 
               proxy:
+                excludeIPRanges: '0.0.0.0/0'
                 lifecycle:
-                  excludeIPRanges: '0.0.0.0/0'
                   preStop:
                     exec:
                       command:
