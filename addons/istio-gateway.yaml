@@ -34,6 +34,9 @@ spec:
 
             replicaCount: {{istio.gateway.min}}
 
+            annotations:
+              sidecar.istio.io/inject: 'true'
+
             autoscaling:
               enabled: {{istio.gateway.autoscale}}
               minReplicas: {{istio.gateway.min}}
