@@ -19,7 +19,7 @@ app:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
-    enabled: true
+    enabled: false
   image:
     tag: v0.9.7
   ingress:
