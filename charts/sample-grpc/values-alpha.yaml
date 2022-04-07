@@ -16,5 +16,5 @@ app:
   istio:
     gateway:
       enabled: true
-    sidecar:
-      inject: true
+    # sidecar:
+    #   inject: true
