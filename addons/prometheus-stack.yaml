@@ -142,7 +142,7 @@ spec:
               fullnameOverride: prometheus-node-exporter
 
               image:
-                repository: {{mirror.registry}}/{{prometheus.node-exporter.image.repository}}
+                repository: {{prometheus.node-exporter.image.registry}}/{{prometheus.node-exporter.image.repository}}
 
             grafana:
               enabled: false

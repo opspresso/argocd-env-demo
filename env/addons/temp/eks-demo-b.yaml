@@ -21,11 +21,9 @@ argo-workflows:
     org: daangn
     team: sre
 
-mirror:
-  registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
-
 aws-ebs-csi-driver:
   image:
+    registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
     repository: mirror/k8s-aws/aws-ebs-csi-driver
   nodeDriverRegistrar:
     image:
@@ -33,10 +31,6 @@ aws-ebs-csi-driver:
   livenessProbe:
     image:
       repository: mirror/k8s-sig-storage/livenessprobe
-
-aws-efs-csi-driver:
-  image:
-    repository: mirror/k8s-aws/aws-efs-csi-driver
 
 istio:
   version: "1.12.6" # istio
@@ -75,8 +69,10 @@ loki:
 prometheus:
   node-exporter:
     image:
+      registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
       repository: mirror/prometheus/node-exporter
 
 promtail:
   image:
+    registry: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com
     repository: mirror/grafana/promtail

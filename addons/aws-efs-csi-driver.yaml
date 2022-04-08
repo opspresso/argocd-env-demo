@@ -32,9 +32,6 @@ spec:
           values: |-
             fullnameOverride: aws-efs-csi-driver
 
-            image:
-              repository: {{mirror.registry}}/{{aws-efs-csi-driver.image.repository}}
-
             controller:
               serviceAccount:
                 annotations:
