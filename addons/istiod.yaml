@@ -34,28 +34,28 @@ spec:
               hub: "{{istio.global.hub}}"
 
               proxy:
-                excludeIPRanges: '0.0.0.0/0'
-                # lifecycle:
-                #   preStop:
-                #     exec:
-                #       command:
-                #       - "/bin/sh"
-                #       - "-c"
-                #       - "while [ $(netstat -plunt | grep tcp | grep -v envoy | wc -l | xargs) -ne 0 ]; do sleep 1; done"
+                # excludeIPRanges: '0.0.0.0/0'
+                lifecycle:
+                  preStop:
+                    exec:
+                      command:
+                      - "/bin/sh"
+                      - "-c"
+                      - "while [ $(netstat -plunt | grep tcp | grep -v envoy | wc -l | xargs) -ne 0 ]; do sleep 1; done"
 
-              # tracer:
-              #   zipkin:
-              #     address: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
+              tracer:
+                zipkin:
+                  address: "jaeger-collector.addon-tracing.svc.cluster.local:9411"
 
-            # meshConfig:
-            #   defaultConfig:
-            #     tracing:
-            #       sampling: {{istio.sampling}}
-            #     gatewayTopology:
-            #       numTrustedProxies: 1
-            #     holdApplicationUntilProxyStarts: true
-            #   enableTracing: true
-            #   rootNamespace: istio-system
+            meshConfig:
+              defaultConfig:
+                tracing:
+                  sampling: {{istio.sampling}}
+                gatewayTopology:
+                  numTrustedProxies: 1
+                holdApplicationUntilProxyStarts: true
+              enableTracing: true
+              rootNamespace: istio-system
 
             pilot:
               autoscaleEnabled: {{istio.pilot.autoscale}}
