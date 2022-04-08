@@ -38,7 +38,6 @@ spec:
               enabled: {{istio.gateway.autoscale}}
               minReplicas: {{istio.gateway.min}}
               maxReplicas: {{istio.gateway.max}}
-              targetCPUUtilizationPercentage: 80
 
             service:
               type: ClusterIP
