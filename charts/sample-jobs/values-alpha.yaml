@@ -33,8 +33,8 @@ job2:
 
   command:
     - "aws"
-    - "ec2"
-    - "describe-instances"
+    - "s3"
+    - "list"
 
   configmap:
     data:
