@@ -19,12 +19,12 @@ job1:
   - name: ENV_HASH
     value: 154af082beafe8
 
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "ec2:Describe*"
-        resource: "*"
+  # irsa:
+  #   enabled: true
+  #   statement:
+  #     - action:
+  #         - "ec2:Describe*"
+  #       resource: "*"
 
 job2:
   image:
@@ -47,10 +47,10 @@ job2:
   - name: ENV_HASH
     value: 154af082beafe8
 
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "s3:Get*"
-          - "s3:List*"
-        resource: "arn:aws:s3:::aws-deepracer-bruce"
+  # irsa:
+  #   enabled: true
+  #   statement:
+  #     - action:
+  #         - "s3:Get*"
+  #         - "s3:List*"
+  #       resource: "arn:aws:s3:::aws-deepracer-bruce"
