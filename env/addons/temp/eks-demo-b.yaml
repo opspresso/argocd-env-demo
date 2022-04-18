@@ -33,7 +33,7 @@ aws-ebs-csi-driver:
       repository: mirror/k8s-sig-storage/livenessprobe
 
 istio:
-  version: "1.12.6" # istio
+  version: "1.12.6" # istio eks-demo-b
   global:
     hub: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/mirror/istio
   pilot:

@@ -1,7 +1,7 @@
 {
   "variable": {
     "helm_argo_cd": {
-      "default": "4.5.0",
+      "default": "4.5.3",
       "description": "argo/argo-cd"
     },
     "helm_argo_rollouts": {
@@ -33,7 +33,7 @@
       "description": "eks/aws-load-balancer-controller"
     },
     "helm_aws_node_termination_handler": {
-      "default": "0.18.0",
+      "default": "0.18.1",
       "description": "eks/aws-node-termination-handler"
     },
     "helm_cert_manager": {
@@ -45,11 +45,11 @@
       "description": "chaoskube/chaoskube"
     },
     "helm_cluster_autoscaler": {
-      "default": "9.16.2",
+      "default": "9.17.1",
       "description": "autoscaler/cluster-autoscaler"
     },
     "helm_cluster_overprovisioner": {
-      "default": "0.7.7",
+      "default": "0.7.8",
       "description": "deliveryhero/cluster-overprovisioner"
     },
     "helm_cortex": {
@@ -61,11 +61,11 @@
       "description": "crossplane/crossplane"
     },
     "helm_datadog": {
-      "default": "2.31.0",
+      "default": "2.32.3",
       "description": "datadog/datadog"
     },
     "helm_external_dns": {
-      "default": "1.7.1",
+      "default": "1.8.0",
       "description": "external-dns/external-dns"
     },
     "helm_external_secrets": {
@@ -77,7 +77,7 @@
       "description": "gocd/gocd"
     },
     "helm_grafana": {
-      "default": "6.26.0",
+      "default": "6.26.3",
       "description": "grafana/grafana"
     },
     "helm_ingress_nginx": {
@@ -97,19 +97,19 @@
       "description": "jaegertracing/jaeger"
     },
     "helm_karpenter": {
-      "default": "0.8.1",
+      "default": "0.8.2",
       "description": "karpenter/karpenter"
     },
     "helm_kiali_operator": {
-      "default": "1.48.0",
+      "default": "1.49.0",
       "description": "kiali/kiali-operator"
     },
     "helm_kube_prometheus_stack": {
-      "default": "34.9.0",
+      "default": "34.10.0",
       "description": "prometheus/kube-prometheus-stack"
     },
     "helm_kubecost": {
-      "default": "1.91.2",
+      "default": "1.92.0",
       "description": "kubecost/cost-analyzer"
     },
     "helm_kubernetes_dashboard": {
@@ -117,7 +117,7 @@
       "description": "dashboard/kubernetes-dashboard"
     },
     "helm_loki": {
-      "default": "2.10.3",
+      "default": "2.11.0",
       "description": "grafana/loki"
     },
     "helm_metrics_server": {
@@ -125,15 +125,15 @@
       "description": "stable/metrics-server"
     },
     "helm_prometheus": {
-      "default": "15.8.0",
+      "default": "15.8.4",
       "description": "prometheus/prometheus"
     },
     "helm_prometheus_adapter": {
-      "default": "3.2.0",
+      "default": "3.2.1",
       "description": "prometheus/prometheus-adapter"
     },
     "helm_promtail": {
-      "default": "3.11.0",
+      "default": "4.2.0",
       "description": "grafana/promtail"
     },
     "helm_raw": {
