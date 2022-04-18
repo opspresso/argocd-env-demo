@@ -15,7 +15,7 @@ def get_charts(chart):
 
 
 def replace():
-    filepath = "versions.tf.json"
+    filepath = "versions.json"
 
     if os.path.exists(filepath):
         # print("filepath : {}".format(filepath))
