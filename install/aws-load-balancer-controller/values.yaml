@@ -1,7 +1,0 @@
-fullnameOverride: aws-load-balancer-controller
-
-clusterName: "CLUSTER_NAME"
-
-serviceAccount:
-  annotations:
-    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT_ID:role/irsa--CLUSTER_NAME--aws-load-balancer-controller"

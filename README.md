@@ -1,5 +1,15 @@
 # argocd-env-demo
 
+## apps
+
+> apps 를 등록 합니다.
+
+```bash
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
+```
+
+## gitops
+
 * <https://github.com/argoproj/argo-cd>
 
 ```bash
@@ -12,7 +22,7 @@ export TG_TYPE="helm"
 ./build.sh
 ```
 
-## github action repository_dispatch
+### github action repository_dispatch
 
 ```bash
 PAYLOAD="{\"event_type\":\"gitops\","
@@ -31,7 +41,7 @@ curl -sL -X POST \
   https://api.github.com/repos/opspresso/argocd-env-demo/dispatches
 ```
 
-## circle-ci api v2
+### circle-ci api v2
 
 ```bash
 PAYLOAD="{\"parameters\":{"
