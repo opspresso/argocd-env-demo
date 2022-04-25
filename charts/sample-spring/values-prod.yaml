@@ -6,13 +6,13 @@ app:
       MESSAGE: hello world
       PROFILE: prod
       PROTOCOL: http
-      VERSION: v0.9.6
+      VERSION: v0.9.9
     enabled: true
   env:
   - name: ENV_HASH
-    value: 6929aec568e48d0bcba41df3eb43708f
+    value: 80d9e0422aa6d9671805b41f20161c14
   image:
-    tag: v0.9.6
+    tag: v0.9.9
   ingress:
     hosts:
     - host: sample-spring.demo.nalbam.com
