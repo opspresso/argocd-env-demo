@@ -45,7 +45,9 @@ def replace_values(args):
 
             # secret
             if "secret" in doc["app"]:
-                doc["app"]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(args.version.encode('utf-8'))
+                doc["app"]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(
+                    args.version.encode("utf-8")
+                )
 
         if doc != None:
             with open(filepath, "w") as file:
