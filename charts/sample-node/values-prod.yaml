@@ -10,22 +10,19 @@ app:
       MESSAGE: hello world
       PROFILE: prod
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.9.10
+      VERSION: v0.9.11
     enabled: true
   env:
   - name: ENV_HASH
-    value: f17d2262c2fb094de39d90d1dc497af4
+    value: d389bea4159b4f405255020557a2d44f
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
     enabled: false
   image:
-    tag: v0.9.10
+    tag: v0.9.11
   ingress:
-    # annotations:
-    #   # kubernetes.io/ingress.class: nginx
-    #   kubernetes.io/ssl-redirect: 'true'
     enabled: false
     hosts:
     - host: sample-node.demo.nalbam.com
