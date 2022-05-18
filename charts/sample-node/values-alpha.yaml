@@ -24,7 +24,7 @@ app:
     tag: v0.9.10
   ingress:
     annotations:
-      kubernetes.io/ingress.class: nginx
+      # kubernetes.io/ingress.class: nginx
       kubernetes.io/ssl-redirect: 'true'
     enabled: false
     hosts:
