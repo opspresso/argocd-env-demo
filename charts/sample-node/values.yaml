@@ -32,47 +32,47 @@ app:
       cpu: 250m
       memory: 256Mi
 
-  controller:
-    kind: Rollout
-    strategy:
-      type: Canary
-      # rollingUpdate:
-      #   maxSurge: 25%
-      #   maxUnavailable: 0
-      canary:
-        # canaryService: sample-node-preview
-        # stableService: sample-node
-        # # trafficRouting:
-        # #   istio:
-        # #     virtualService:
-        # #       name: sample-node
-        # #       routes:
-        # #       - primary
-        # #     destinationRule:
-        # #       name: sample-node
-        # #       canarySubsetName: canary
-        # #       stableSubsetName: stable
-        steps:
-        - setWeight: 10
-        # - setCanaryScale:
-        #     replicas: 1
-        - pause:
-            duration: 10
-        - analysis:
-            args:
-            - name: url
-              value: http://sample-node-preview/success/98
-            templates:
-            - clusterScope: true
-              templateName: http-benchmark
-        - setWeight: 25
-        # - setCanaryScale:
-        #     matchTrafficWeight: true
-        - pause:
-            duration: 10
-        - setWeight: 50
-        - pause:
-            duration: 10
+  # controller:
+  #   kind: Rollout
+  #   strategy:
+  #     type: Canary
+  #     # rollingUpdate:
+  #     #   maxSurge: 25%
+  #     #   maxUnavailable: 0
+  #     canary:
+  #       # canaryService: sample-node-preview
+  #       # stableService: sample-node
+  #       # # trafficRouting:
+  #       # #   istio:
+  #       # #     virtualService:
+  #       # #       name: sample-node
+  #       # #       routes:
+  #       # #       - primary
+  #       # #     destinationRule:
+  #       # #       name: sample-node
+  #       # #       canarySubsetName: canary
+  #       # #       stableSubsetName: stable
+  #       steps:
+  #       - setWeight: 10
+  #       # - setCanaryScale:
+  #       #     replicas: 1
+  #       - pause:
+  #           duration: 10
+  #       - analysis:
+  #           args:
+  #           - name: url
+  #             value: http://sample-node-preview/success/98
+  #           templates:
+  #           - clusterScope: true
+  #             templateName: http-benchmark
+  #       - setWeight: 25
+  #       # - setCanaryScale:
+  #       #     matchTrafficWeight: true
+  #       - pause:
+  #           duration: 10
+  #       - setWeight: 50
+  #       - pause:
+  #           duration: 10
 
   service:
     name: http

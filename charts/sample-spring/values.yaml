@@ -13,16 +13,16 @@ app:
       cpu: 1000m
       memory: 1Gi
 
-  controller:
-    kind: Rollout
-    strategy:
-      type: BlueGreen
-      # rollingUpdate:
-      #   maxSurge: 25%
-      #   maxUnavailable: 0
-      blueGreen:
-        autoPromotionEnabled: true
-        autoPromotionSeconds: 30
+  # controller:
+  #   kind: Rollout
+  #   strategy:
+  #     type: BlueGreen
+  #     # rollingUpdate:
+  #     #   maxSurge: 25%
+  #     #   maxUnavailable: 0
+  #     blueGreen:
+  #       autoPromotionEnabled: true
+  #       autoPromotionSeconds: 30
 
   service:
     name: http
