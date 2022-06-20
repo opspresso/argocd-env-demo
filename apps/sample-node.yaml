@@ -52,6 +52,9 @@ spec:
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
+              podLabels:
+                krmt.io/cluster: "{{cluster}}"
+                krmt.io/group: "apps"
 
               # tolerations:
               #   - key: group
@@ -61,14 +64,18 @@ spec:
               # nodeSelector:
               #   group: intra
 
-            # redis:
-            #   tolerations:
-            #     - key: group
-            #       operator: Equal
-            #       value: intra
-            #       effect: NoSchedule
-            #   nodeSelector:
-            #     group: intra
+            redis:
+              podLabels:
+                krmt.io/cluster: "{{cluster}}"
+                krmt.io/group: "apps"
+
+              # tolerations:
+              #   - key: group
+              #     operator: Equal
+              #     value: intra
+              #     effect: NoSchedule
+              # nodeSelector:
+              #   group: intra
 
       ignoreDifferences:
         - group: networking.istio.io
