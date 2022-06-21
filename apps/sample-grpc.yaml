@@ -48,9 +48,9 @@ spec:
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
-              podLabels:
-                krmt.io/cluster: "{{cluster}}"
-                krmt.io/group: "apps"
+              additionalLabels:
+                owner: "{{cluster}}"
+                department: "apps"
 
               # tolerations:
               #   - key: group
