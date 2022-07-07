@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: sample-job
+  name: sample-jobs
 spec:
   generators:
     - git:
@@ -14,7 +14,7 @@ spec:
 
   template:
     metadata:
-      name: "sample-job-{{cluster}}"
+      name: "sample-jobs-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}
       labels:
@@ -29,7 +29,7 @@ spec:
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
-        path: charts/sample-job
+        path: charts/sample-jobs
         helm:
           valueFiles:
             - values.yaml
