@@ -34,7 +34,7 @@ job2:
   command:
     - "aws"
     - "s3"
-    - "list"
+    - "ls"
 
   configmap:
     data:
