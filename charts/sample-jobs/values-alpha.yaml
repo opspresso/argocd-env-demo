@@ -1,5 +1,5 @@
 job1:
-  schedule: "* * * * *"
+  schedule: "0/10 * * * *"
 
   # successfulJobsHistoryLimit: 3
   # failedJobsHistoryLimit: 1
@@ -32,7 +32,7 @@ job1:
         resource: "*"
 
 job2:
-  schedule: "* * * * *"
+  schedule: "0/10 * * * *"
 
   # successfulJobsHistoryLimit: 3
   # failedJobsHistoryLimit: 1
