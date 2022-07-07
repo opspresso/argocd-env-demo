@@ -7,10 +7,10 @@ appVersion: v0.2.5
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
-    name: job
+    name: cronjob
     version: v0.2.5
     alias: job1
   - repository: https://opspresso.github.io/helm-charts
-    name: job
+    name: cronjob
     version: v0.2.5
     alias: job2
