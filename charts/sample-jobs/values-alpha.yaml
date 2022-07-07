@@ -10,8 +10,8 @@ job1:
 
   command:
     - "aws"
-    - "ec2"
-    - "describe-instances"
+    - "s3"
+    - "ls"
 
   configmap:
     data:
@@ -28,7 +28,8 @@ job1:
     enabled: true
     statement:
       - action:
-          - "ec2:Describe*"
+          - "s3:Get*"
+          - "s3:List*"
         resource: "*"
 
 job2:
@@ -61,6 +62,5 @@ job2:
     enabled: true
     statement:
       - action:
-          - "s3:Get*"
-          - "s3:List*"
-        resource: "arn:aws:s3:::aws-deepracer-bruce"
+          - "ec2:Describe*"
+        resource: "*"
