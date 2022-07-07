@@ -1,4 +1,9 @@
 job1:
+  schedule: "0/10 * * * *"
+
+  # successfulJobsHistoryLimit: 3
+  # failedJobsHistoryLimit: 1
+
   image:
     repository: amazon/aws-cli
     tag: latest
@@ -27,6 +32,11 @@ job1:
         resource: "*"
 
 job2:
+  schedule: "0/10 * * * *"
+
+  # successfulJobsHistoryLimit: 3
+  # failedJobsHistoryLimit: 1
+
   image:
     repository: amazon/aws-cli
     tag: latest
