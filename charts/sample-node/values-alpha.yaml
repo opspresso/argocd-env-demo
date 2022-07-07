@@ -10,18 +10,18 @@ app:
       MESSAGE: hello world
       PROFILE: alpha
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.10.1
+      VERSION: v0.10.2
     enabled: true
   env:
   - name: ENV_HASH
-    value: f3afb3ae2f4f35a62822e193e4e2e099
+    value: e8510a7de6fbb6114f9340f9321de1c4
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
     enabled: false
   image:
-    tag: v0.10.1
+    tag: v0.10.2
   ingress:
     enabled: false
     hosts:
