@@ -19,4 +19,19 @@ app:
 
   persistence:
     enabled: true
+    mountPath: /piston/packages
     storageClassName: efs
+
+  extraVolumes:
+    - name: jobs
+      emptyDir:
+        medium: Memory
+    - name: tmp
+      emptyDir:
+        medium: Memory
+
+  extraVolumeMounts:
+    - mountPath: /piston/jobs
+      name: jobs
+    - mountPath: /tmp
+      name: tmp
