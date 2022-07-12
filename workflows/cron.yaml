@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: delightful-whale
+spec:
+  schedule: '* * * * *'
+  workflowMetadata:
+    creationTimestamp: null
+    labels:
+      example: "true"
+  workflowSpec:
+    arguments:
+      parameters:
+        - name: message
+          value: hello argo
+    entrypoint: argosay
+    podGC:
+      strategy: OnPodCompletion
+    templates:
+      - container:
+          args:
+            - echo
+            - '{{inputs.parameters.message}}'
+          command:
+            - /argosay
+          image: argoproj/argosay:v2
+          name: main
+          resources: {}
+        inputs:
+          parameters:
+            - name: message
+              value: '{{workflow.parameters.message}}'
+        metadata: {}
+        name: argosay
+        outputs: {}
+    ttlStrategy:
+      secondsAfterCompletion: 300

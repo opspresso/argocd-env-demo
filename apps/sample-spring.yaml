@@ -16,7 +16,7 @@ spec:
     metadata:
       name: "sample-spring-{{cluster}}"
       annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{cluster_env}}
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
       labels:
         app.kubernetes.io/instance: "apps-{{cluster}}"
         krmt.io/cluster: "{{cluster}}"
@@ -33,13 +33,13 @@ spec:
         helm:
           valueFiles:
             - values.yaml
-            - values-{{cluster_env}}.yaml
+            - values-{{env}}.yaml
           values: |-
             app:
               configmap:
                 data:
                   CLUSTER_NAME: {{cluster}}
-                  ENV: {{cluster_env}}
+                  ENV: {{env}}
                   NAMESPACE: sample
               ingress:
                 hosts:
