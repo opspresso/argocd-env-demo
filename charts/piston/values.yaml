@@ -1,0 +1,23 @@
+app:
+  fullnameOverride: piston
+
+  image:
+    repository: ghcr.io/engineer-man/piston
+    tag: latest
+
+  # resources:
+  #   requests:
+  #     cpu: 100m
+  #     memory: 128Mi
+  #   limits:
+  #     cpu: 100m
+  #     memory: 128Mi
+
+  service:
+    name: http
+    targetPort: 2000
+
+  persistence:
+    enabled: true
+    persistentVolumeClaim:
+      storageClass: efs
