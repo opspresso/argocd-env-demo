@@ -5,13 +5,13 @@ app:
     repository: ghcr.io/engineer-man/piston
     tag: latest
 
-  # resources:
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
   service:
     name: http
