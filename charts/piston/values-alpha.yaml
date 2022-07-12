@@ -1,3 +1,12 @@
 app:
   image:
     tag: latest
+
+  ingress:
+    enabled: false
+    hosts:
+    - host: piston.demo.nalbam.com
+
+  istio:
+    gateway:
+      enabled: true
