@@ -1,5 +1,8 @@
 cluster: eks-demo-b
-cluster_env: alpha
+
+country: kr
+env: alpha
+role: svc
 
 aws_account_id: "082867736673"
 aws_region: ap-northeast-2
