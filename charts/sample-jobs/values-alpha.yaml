@@ -1,8 +1,8 @@
 job1:
   schedule: "* * * * *"
 
-  # successfulJobsHistoryLimit: 3
-  # failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
 
   image:
     repository: amazon/aws-cli
@@ -35,8 +35,8 @@ job1:
 job2:
   schedule: "* * * * *"
 
-  # successfulJobsHistoryLimit: 3
-  # failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
 
   image:
     repository: amazon/aws-cli
