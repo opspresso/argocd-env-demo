@@ -5,6 +5,8 @@ metadata:
 spec:
   schedule: '* * * * *'
   timezone: 'Asia/Seoul'
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   workflowMetadata:
     labels:
       example: "true"
