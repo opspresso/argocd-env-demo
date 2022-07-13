@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
 metadata:
-  name: delightful-whale
+  name: koster-trigger
 spec:
   schedule: '* * * * *'
+  timezone: 'Asia/Seoul'
   workflowMetadata:
-    creationTimestamp: null
     labels:
       example: "true"
   workflowSpec:
@@ -14,24 +14,20 @@ spec:
         - name: message
           value: hello argo
     entrypoint: argosay
-    podGC:
-      strategy: OnPodCompletion
     templates:
-      - container:
+      - name: argosay
+        container:
+          name: main
+          image: argoproj/argosay:v2
+          command:
+            - /argosay
           args:
             - echo
             - '{{inputs.parameters.message}}'
-          command:
-            - /argosay
-          image: argoproj/argosay:v2
-          name: main
           resources: {}
         inputs:
           parameters:
             - name: message
               value: '{{workflow.parameters.message}}'
-        metadata: {}
-        name: argosay
-        outputs: {}
     ttlStrategy:
       secondsAfterCompletion: 300
