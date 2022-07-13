@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: CronWorkflow
 metadata:
-  name: koster-trigger
+  name: trigger
 spec:
   schedule: '* * * * *'
   timezone: 'Asia/Seoul'
