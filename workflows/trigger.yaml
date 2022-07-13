@@ -3,19 +3,19 @@ kind: CronWorkflow
 metadata:
   name: trigger
 spec:
-  schedule: '* * * * *'
-  timezone: 'Asia/Seoul'
+  schedule: "* * * * *"
+  timezone: "Asia/Seoul"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   workflowMetadata:
     labels:
       example: "true"
   workflowSpec:
+    entrypoint: argosay
     arguments:
       parameters:
         - name: message
           value: hello argo
-    entrypoint: argosay
     templates:
       - name: argosay
         container:
@@ -25,11 +25,11 @@ spec:
             - /argosay
           args:
             - echo
-            - '{{inputs.parameters.message}}'
+            - "{{inputs.parameters.message}}"
           resources: {}
         inputs:
           parameters:
             - name: message
-              value: '{{workflow.parameters.message}}'
+              value: "{{workflow.parameters.message}}"
     ttlStrategy:
       secondsAfterCompletion: 300
