@@ -6,7 +6,7 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      HOSTNAME: sample-node.demo.nalbam.com
+      HOSTNAME: demo.nalbam.com
       MESSAGE: hello world
       PROFILE: alpha
       PROTOCOL: https
