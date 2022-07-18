@@ -53,8 +53,6 @@ app:
               canarySubsetName: canary
               stableSubsetName: stable
         steps:
-        # - setCanaryScale:
-        #     replicas: 1
         - setWeight: 10
         - pause:
             duration: 10
@@ -66,10 +64,15 @@ app:
             - clusterScope: true
               templateName: http-benchmark
         - setWeight: 25
-        # - setCanaryScale:
-        #     matchTrafficWeight: true
         - pause:
             duration: 10
+        - analysis:
+            args:
+            - name: url
+              value: http://sample-node-preview/success/98
+            templates:
+            - clusterScope: true
+              templateName: http-benchmark
         - setWeight: 50
         - pause:
             duration: 10
