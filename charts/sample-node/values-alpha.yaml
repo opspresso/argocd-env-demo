@@ -10,30 +10,30 @@ app:
       MESSAGE: hello world
       PROFILE: alpha
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.10.4
+      VERSION: v0.10.5
     enabled: true
   env:
   - name: ENV_HASH
-    value: 7f95d0b89bd9e349199bbc3d849158ac
+    value: 60447c67872bb95c87afeb7b3e3606a0
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
     enabled: false
   image:
-    tag: v0.10.4
+    tag: v0.10.5
   ingress:
     enabled: false
     hosts:
     - host: sample-node.demo.nalbam.com
-    stable:
-      enabled: true
-      hosts:
-      - host: sample-node-stable.demo.nalbam.com
     preview:
       enabled: true
       hosts:
       - host: sample-node-preview.demo.nalbam.com
+    stable:
+      enabled: true
+      hosts:
+      - host: sample-node-stable.demo.nalbam.com
   istio:
     gateway:
       enabled: true
