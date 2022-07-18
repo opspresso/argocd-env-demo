@@ -84,7 +84,7 @@ app:
   readinessProbe:
     failureThreshold: 3
     httpGet:
-      path: /
+      path: /read
       port: 3000
     initialDelaySeconds: 3
     periodSeconds: 3
@@ -92,7 +92,7 @@ app:
   livenessProbe:
     failureThreshold: 3
     httpGet:
-      path: /
+      path: /live
       port: 3000
     initialDelaySeconds: 3
     periodSeconds: 3
