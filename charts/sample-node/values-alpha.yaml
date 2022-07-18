@@ -6,9 +6,10 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      HOSTNAME: sample.svc.cluster.local
+      HOSTNAME: sample-node.demo.nalbam.com
       MESSAGE: hello world
       PROFILE: alpha
+      PROTOCOL: https
       REDIS_URL: redis://sample-redis:6379
       VERSION: v0.10.6
     enabled: true
