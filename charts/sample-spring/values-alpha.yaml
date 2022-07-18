@@ -5,14 +5,14 @@ app:
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       PROFILE: alpha
-      VERSION: v0.9.12
       PROTOCOL: http
+      VERSION: v0.9.13
     enabled: true
   env:
   - name: ENV_HASH
-    value: 02fc95d92894d6d327045e5375493378
+    value: d1812f448e36ab046242b57d557456b2
   image:
-    tag: v0.9.12
+    tag: v0.9.13
   ingress:
     hosts:
     - host: sample-spring.demo.nalbam.com
