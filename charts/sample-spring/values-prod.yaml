@@ -2,10 +2,10 @@ app:
   configmap:
     data:
       CLUSTER_NAME: eks-demo
-      HOSTNAME: sample.svc.cluster.local
+      HOSTNAME: demo.nalbam.com
       MESSAGE: hello world
       PROFILE: prod
-      PROTOCOL: http
+      PROTOCOL: https
       VERSION: v0.9.9
     enabled: true
   env:
