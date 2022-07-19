@@ -2,7 +2,7 @@ app:
   autoscaling:
     enabled: true
     maxReplicas: 10
-    minReplicas: 2
+    minReplicas: 5
   configmap:
     data:
       CLUSTER_NAME: eks-demo
