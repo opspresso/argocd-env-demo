@@ -76,6 +76,13 @@ app:
         - setWeight: 50
         - pause:
             duration: 10
+        - analysis:
+            args:
+            - name: url
+              value: http://sample-node-preview/success/98
+            templates:
+            - clusterScope: true
+              templateName: http-benchmark
 
   service:
     name: http
