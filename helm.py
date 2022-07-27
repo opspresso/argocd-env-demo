@@ -8,10 +8,10 @@ import os
 import yaml
 
 
-REPONAME = "sample-docs"
-PHASE = "demo-dev"
+REPONAME = "sample"
+PHASE = "alpha"
 
-IMAGENAME = "nalbam/docs"
+IMAGENAME = "nalbam/sample"
 VERSION = "v0.0.0"
 
 
@@ -21,6 +21,7 @@ def parse_args():
     p.add_argument("-p", "--phase", default=PHASE, help="phase")
     p.add_argument("-n", "--imagename", default=IMAGENAME, help="imagename")
     p.add_argument("-v", "--version", default=VERSION, help="version")
+    p.add_argument("-c", "--container", default="app", help="container")
     return p.parse_args()
 
 
@@ -37,15 +38,15 @@ def replace_values(args):
             doc = yaml.load(file, Loader=yaml.FullLoader)
 
             # image tag
-            doc["app"]["image"]["tag"] = args.version
+            doc[args.container]["image"]["tag"] = args.version
 
             # configmap
-            if "configmap" in doc["app"]:
-                doc["app"]["configmap"]["data"]["VERSION"] = args.version
+            if "configmap" in doc[args.container]:
+                doc[args.container]["configmap"]["data"]["VERSION"] = args.version
 
             # secret
-            if "secret" in doc["app"]:
-                doc["app"]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(
+            if "secret" in doc[args.container]:
+                doc[args.container]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(
                     args.version.encode("utf-8")
                 )
 
@@ -71,8 +72,8 @@ def replace_hash(args, hash):
         with open(filepath, "r") as file:
             doc = yaml.load(file, Loader=yaml.FullLoader)
 
-            if "env" in doc["app"]:
-                for i, env in enumerate(doc["app"]["env"]):
+            if "env" in doc[args.container]:
+                for i, env in enumerate(doc[args.container]["env"]):
                     if env["name"] == "ENV_HASH":
                         env["value"] = hash
 

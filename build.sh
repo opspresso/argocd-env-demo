@@ -14,10 +14,9 @@ BRANCH=${CIRCLE_BRANCH:-main}
 # TG_USERNAME="${TG_USERNAME:-opspresso}"
 # TG_PROJECT="${TG_PROJECT:-sample}"
 # TG_VERSION="${TG_VERSION:-v0.0.0}"
-
-# TG_PHASE="${TG_PHASE:-eks-demo}"
-
+# TG_PHASE="${TG_PHASE:-alpha}"
 # TG_TYPE="${TG_TYPE:-helm}"
+# TG_CONTAINER="${TG_CONTAINER:-app}"
 
 GIT_USERNAME="bot"
 GIT_USEREMAIL="bot@nalbam.com"
@@ -78,6 +77,7 @@ _prepare() {
   _result "TG_USERNAME=${TG_USERNAME}"
   _result "TG_PROJECT=${TG_PROJECT}"
   _result "TG_VERSION=${TG_VERSION}"
+  _result "TG_CONTAINER=${TG_CONTAINER}"
 
   _result "TG_PHASE=${TG_PHASE}"
   _result "TG_TYPE=${TG_TYPE}"
@@ -107,6 +107,7 @@ _hook_action() {
   PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
   PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
   PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+  PAYLOAD="${PAYLOAD}\"container\":\"${TG_CONTAINER}\","
   PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
   PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
   PAYLOAD="${PAYLOAD}}}"
@@ -133,6 +134,7 @@ _hook_circleci() {
   PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
   PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
   PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
+  PAYLOAD="${PAYLOAD}\"container\":\"${TG_CONTAINER}\","
   PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
   PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
   PAYLOAD="${PAYLOAD}}}"
@@ -266,8 +268,8 @@ _build() {
   _command "replace ${TG_VERSION}"
 
   # replace
-  _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION}"
-  python ${TG_TYPE}.py -r charts/${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION}
+  _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER}"
+  python ${TG_TYPE}.py -r charts/${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER}
 
   _command "git add --all"
   git add --all

@@ -23,5 +23,6 @@ jobs:
           TG_VERSION: ${{ github.event.client_payload.version }}
           TG_PHASE: ${{ github.event.client_payload.phase }}
           TG_TYPE: ${{ github.event.client_payload.type }}
+          TG_CONTAINER: ${{ github.event.client_payload.container }}
         run: |
           bash ./build.sh action
