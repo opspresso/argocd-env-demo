@@ -1,4 +1,6 @@
 app:
+  additionalLabels:
+    department: apps
   configmap:
     data:
       CLUSTER_NAME: eks-demo
@@ -6,13 +8,13 @@ app:
       MESSAGE: hello world
       PROFILE: alpha
       PROTOCOL: http
-      VERSION: v0.9.13
+      VERSION: v0.9.14
     enabled: true
   env:
   - name: ENV_HASH
-    value: d1812f448e36ab046242b57d557456b2
+    value: 5de7681d9fcd8e970ded65182b3963db
   image:
-    tag: v0.9.13
+    tag: v0.9.14
   ingress:
     hosts:
     - host: sample-spring.demo.nalbam.com
@@ -33,5 +35,3 @@ app:
       port: http
     selector:
       release: prometheus-eks-demo
-  additionalLabels:
-    department: "apps"
