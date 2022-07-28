@@ -11,18 +11,18 @@ app:
       PROFILE: alpha
       PROTOCOL: http
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.10.12
+      VERSION: v0.10.13
     enabled: true
   env:
   - name: ENV_HASH
-    value: 9ed9c66a57ed3f1d22d2a659d5263e7d
+    value: 069b3475706b2d4225eaebccf6b2cbec
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
     enabled: false
   image:
-    tag: v0.10.12
+    tag: v0.10.13
   ingress:
     enabled: false
     hosts:
