@@ -2,15 +2,15 @@ apiVersion: v2
 name: sample-jobs
 description: A Helm chart for Kubernetes
 type: application
-version: v0.4.0
-appVersion: v0.4.0
+version: v0.4.1
+appVersion: v0.4.1
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: cronjob
-    version: v0.4.0
+    version: v0.4.1
     alias: job1
   - repository: https://opspresso.github.io/helm-charts
     name: cronjob
-    version: v0.4.0
+    version: v0.4.1
     alias: job2
