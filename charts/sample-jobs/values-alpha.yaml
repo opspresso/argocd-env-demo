@@ -13,12 +13,12 @@ job1:
     - "s3"
     - "ls"
 
-  configmap:
-    data:
-      CLUSTER_NAME: eks-demo
-      MESSAGE: hello world
-      PROFILE: dev
-    enabled: true
+  # configmap:
+  #   data:
+  #     CLUSTER_NAME: eks-demo
+  #     MESSAGE: hello world
+  #     PROFILE: dev
+  #   enabled: true
 
   env:
   - name: ENV_HASH
@@ -47,12 +47,12 @@ job2:
     - "s3"
     - "ls"
 
-  configmap:
-    data:
-      CLUSTER_NAME: eks-demo
-      MESSAGE: hello world
-      PROFILE: dev
-    enabled: true
+  # configmap:
+  #   data:
+  #     CLUSTER_NAME: eks-demo
+  #     MESSAGE: hello world
+  #     PROFILE: dev
+  #   enabled: true
 
   env:
   - name: ENV_HASH
