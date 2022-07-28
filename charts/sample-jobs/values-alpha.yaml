@@ -24,6 +24,12 @@ job1:
   - name: ENV_HASH
     value: 154af082beafe8
 
+  externalSecrets:
+    enabled: true
+    data:
+    - key: /k8s/common/slack-hooks
+      name: slack-hooks
+
   irsa:
     enabled: true
     statement:
