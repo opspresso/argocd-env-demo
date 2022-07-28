@@ -18,3 +18,5 @@ app:
       enabled: true
     sidecar:
       inject: true
+  additionalLabels:
+    department: "apps"

@@ -30,6 +30,9 @@ job1:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
 
+  additionalLabels:
+    department: "jobs"
+
   irsa:
     enabled: true
     statement:

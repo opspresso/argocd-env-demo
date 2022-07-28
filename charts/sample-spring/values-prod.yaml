@@ -33,3 +33,5 @@ app:
       port: http
     selector:
       release: prometheus-eks-demo
+  additionalLabels:
+    department: "apps"

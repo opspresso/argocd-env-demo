@@ -44,6 +44,8 @@ app:
     enabled: true
     selector:
       release: prometheus-eks-demo
+  additionalLabels:
+    department: "apps"
 redis:
   istio:
     sidecar:
