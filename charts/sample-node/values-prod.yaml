@@ -1,4 +1,6 @@
 app:
+  additionalLabels:
+    department: apps
   autoscaling:
     enabled: true
     maxReplicas: 20
@@ -11,18 +13,18 @@ app:
       PROFILE: prod
       PROTOCOL: http
       REDIS_URL: redis://sample-redis:6379
-      VERSION: v0.10.3
+      VERSION: v0.10.14
     enabled: true
   env:
   - name: ENV_HASH
-    value: fab3c4a3344f69b983d54f48fe646bb4
+    value: 534947c431332870e20c60dbcfd199ab
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
     enabled: false
   image:
-    tag: v0.10.3
+    tag: v0.10.14
   ingress:
     enabled: false
     hosts:
@@ -40,8 +42,6 @@ app:
     enabled: true
     selector:
       release: prometheus-eks-demo
-  additionalLabels:
-    department: "apps"
 redis:
   istio:
     sidecar:
