@@ -49,12 +49,12 @@ spec:
                   hosts:
                   - host: sample-node-preview.{{hostname.this}}
                   - host: sample-node-preview.{{hostname.public}}
-              serviceMonitor:
-                selector:
-                  release: prometheus-{{cluster}}
-              additionalLabels:
-                owner: "{{cluster}}"
-                department: "apps"
+              # serviceMonitor:
+              #   selector:
+              #     release: prometheus-{{cluster}}
+              # additionalLabels:
+              #   owner: "{{cluster}}"
+              #   department: "apps"
 
               # tolerations:
               #   - key: group
@@ -64,18 +64,18 @@ spec:
               # nodeSelector:
               #   group: intra
 
-            redis:
-              additionalLabels:
-                owner: "{{cluster}}"
-                department: "apps"
+            # redis:
+            #   additionalLabels:
+            #     owner: "{{cluster}}"
+            #     department: "apps"
 
-              # tolerations:
-              #   - key: group
-              #     operator: Equal
-              #     value: intra
-              #     effect: NoSchedule
-              # nodeSelector:
-              #   group: intra
+            #   # tolerations:
+            #   #   - key: group
+            #   #     operator: Equal
+            #   #     value: intra
+            #   #     effect: NoSchedule
+            #   # nodeSelector:
+            #   #   group: intra
 
       ignoreDifferences:
         - group: networking.istio.io
