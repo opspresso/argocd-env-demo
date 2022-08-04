@@ -17,10 +17,9 @@ app:
           value: 25
         stabilizationWindowSeconds: 600
     metrics:
-    - type: ContainerResource
-      containerResource:
+    - type: resource
+      resource:
         name: cpu
-        container: app
         target:
           type: Utilization
           averageUtilization: 50
