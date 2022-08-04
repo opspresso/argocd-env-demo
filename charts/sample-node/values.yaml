@@ -17,7 +17,7 @@ app:
           value: 25
         stabilizationWindowSeconds: 600
     metrics:
-    - type: resource
+    - type: Resource
       resource:
         name: cpu
         target:
