@@ -127,21 +127,11 @@ app:
     maxUnavailable: 1
 
 redis:
-  fullnameOverride: sample-redis
+  fullnameOverride: redis
 
-  image:
-    repository: redis
-    tag: alpine
+  master:
+    persistence:
+      storageClass: "gp3"
 
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-
-  service:
-    name: redis
-    port: 6379
-    targetPort: 6379
+  replica:
+      replicaCount: 0

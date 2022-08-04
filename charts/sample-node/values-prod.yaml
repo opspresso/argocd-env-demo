@@ -12,7 +12,7 @@ app:
       MESSAGE: hello world
       PROFILE: prod
       PROTOCOL: http
-      REDIS_URL: redis://sample-redis:6379
+      REDIS_URL: redis://redis:6379
       VERSION: v0.11.2
     enabled: true
   env:
