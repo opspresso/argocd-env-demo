@@ -14,7 +14,6 @@ app:
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
-      REDIS_PASS: password
       VERSION: v0.11.3
     enabled: true
   env:

@@ -130,8 +130,6 @@ redis:
   fullnameOverride: redis
 
   global:
-    redis:
-      password: "password"
     storageClass: "gp3"
 
   architecture: standalone
