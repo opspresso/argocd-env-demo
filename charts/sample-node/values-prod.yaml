@@ -12,7 +12,9 @@ app:
       MESSAGE: hello world
       PROFILE: prod
       PROTOCOL: http
-      REDIS_URL: redis://redis-master:6379
+      REDIS_HOST: redis-master
+      REDIS_PORT: '6379'
+      REDIS_PASS: password
       VERSION: v0.11.2
     enabled: true
   env:
