@@ -129,9 +129,7 @@ app:
 redis:
   fullnameOverride: redis
 
-  master:
-    persistence:
-      storageClass: "gp3"
+  global:
+    storageClass: "gp3"
 
-  replica:
-      replicaCount: 0
+  architecture: standalone
