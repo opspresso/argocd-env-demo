@@ -14,18 +14,18 @@ app:
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
-      VERSION: v0.11.2
+      VERSION: v0.12.1
     enabled: true
   env:
   - name: ENV_HASH
-    value: 9a355b0b69f11d012818b84c42c1e6cd
+    value: d3be62fedbf1366412b8691491552341
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
     enabled: false
   image:
-    tag: v0.11.2
+    tag: v0.12.1
   ingress:
     enabled: false
     hosts:
