@@ -10,6 +10,9 @@ job1:
     - "s3"
     - "ls"
 
+  additionalLabels:
+    department: "jobs"
+
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
 
@@ -28,9 +31,6 @@ job1:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
-
-  additionalLabels:
-    department: "jobs"
 
   irsa:
     enabled: true
@@ -51,6 +51,9 @@ job2:
     - "aws"
     - "s3"
     - "ls"
+
+  additionalLabels:
+    department: "jobs"
 
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
