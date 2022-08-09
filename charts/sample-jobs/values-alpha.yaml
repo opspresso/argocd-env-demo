@@ -1,18 +1,6 @@
 job1:
   schedule: "* * * * *"
 
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 1
-
-  image:
-    repository: amazon/aws-cli
-    tag: latest
-
-  command:
-    - "aws"
-    - "s3"
-    - "ls"
-
   configmap:
     enabled: true
     data:
@@ -23,46 +11,10 @@ job1:
   env:
   - name: ENV_HASH
     value: 154af082beafe8
-
-  rbac:
-    create: true
-    rules:
-      - apiGroups: [""]
-        resources: ["nodes", pods]
-        verbs: ["get", "watch", "list"]
-
-  externalSecrets:
-    enabled: true
-    data:
-    - key: /k8s/common/slack-hooks
-      name: slack-hooks
-
-  additionalLabels:
-    department: "jobs"
-
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "s3:Get*"
-          - "s3:List*"
-        resource: "*"
 
 job2:
   schedule: "* * * * *"
 
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 1
-
-  image:
-    repository: amazon/aws-cli
-    tag: latest
-
-  command:
-    - "aws"
-    - "s3"
-    - "ls"
-
   configmap:
     enabled: true
     data:
@@ -73,10 +25,3 @@ job2:
   env:
   - name: ENV_HASH
     value: 154af082beafe8
-
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "ec2:Describe*"
-        resource: "*"

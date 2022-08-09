@@ -1,5 +1,63 @@
 job1:
   fullnameOverride: sample-success-job
 
+  image:
+    repository: amazon/aws-cli
+    tag: latest
+
+  command:
+    - "aws"
+    - "s3"
+    - "ls"
+
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  serviceAccount:
+    create: true
+
+  rbac:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["nodes", pods]
+        verbs: ["get", "watch", "list"]
+
+  externalSecrets:
+    enabled: true
+    data:
+    - key: /k8s/common/slack-hooks
+      name: slack-hooks
+
+  additionalLabels:
+    department: "jobs"
+
+  irsa:
+    enabled: true
+    statement:
+      - action:
+          - "s3:Get*"
+          - "s3:List*"
+        resource: "*"
+
 job2:
   fullnameOverride: sample-failed-job
+
+  image:
+    repository: amazon/aws-cli
+    tag: latest
+
+  command:
+    - "aws"
+    - "s3"
+    - "ls"
+
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  irsa:
+    enabled: true
+    statement:
+      - action:
+          - "ec2:Describe*"
+        resource: "*"
