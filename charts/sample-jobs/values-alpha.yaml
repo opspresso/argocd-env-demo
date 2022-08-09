@@ -24,6 +24,13 @@ job1:
   - name: ENV_HASH
     value: 154af082beafe8
 
+  rbac:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["nodes", pods]
+        verbs: ["get", "watch", "list"]
+
   externalSecrets:
     enabled: true
     data:
