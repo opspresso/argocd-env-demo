@@ -23,7 +23,7 @@ app:
       command:
         - /bin/grpc_health_probe
         - '-addr=:50051'
-    initialDelaySeconds: 3
+    initialDelaySeconds: 1
     periodSeconds: 3
 
   livenessProbe:
@@ -32,7 +32,7 @@ app:
       command:
         - /bin/grpc_health_probe
         - '-addr=:50051'
-    initialDelaySeconds: 3
+    initialDelaySeconds: 1
     periodSeconds: 3
 
   istio:

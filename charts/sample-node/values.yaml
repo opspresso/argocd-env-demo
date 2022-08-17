@@ -93,7 +93,7 @@ app:
     httpGet:
       path: /read
       port: 3000
-    initialDelaySeconds: 3
+    initialDelaySeconds: 1
     periodSeconds: 3
 
   livenessProbe:
@@ -101,7 +101,7 @@ app:
     httpGet:
       path: /live
       port: 3000
-    initialDelaySeconds: 3
+    initialDelaySeconds: 1
     periodSeconds: 3
 
   istio:
