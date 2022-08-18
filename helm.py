@@ -11,7 +11,7 @@ import yaml
 REPONAME = "sample"
 PHASE = "alpha"
 
-IMAGENAME = "nalbam/sample"
+IMAGENAME = "org/sample"
 VERSION = "v0.0.0"
 
 
@@ -21,7 +21,7 @@ def parse_args():
     p.add_argument("-p", "--phase", default=PHASE, help="phase")
     p.add_argument("-n", "--imagename", default=IMAGENAME, help="imagename")
     p.add_argument("-v", "--version", default=VERSION, help="version")
-    p.add_argument("-c", "--container", default="app", help="container")
+    p.add_argument("-c", "--container", default=None, help="container")
     return p.parse_args()
 
 
@@ -30,29 +30,36 @@ def replace_values(args):
     filehash = ""
 
     if os.path.exists(filepath):
-        print("replace", filepath)
+        print("replace_values", filepath)
 
-        doc = None
+        docs = None
 
         with open(filepath, "r") as file:
-            doc = yaml.load(file, Loader=yaml.FullLoader)
+            docs = yaml.load(file, Loader=yaml.FullLoader)
 
-            # image tag
-            doc[args.container]["image"]["tag"] = args.version
+            for i, doc in enumerate(docs):
+                if args.container != None and doc != args.container:
+                    continue
 
-            # configmap
-            if "configmap" in doc[args.container]:
-                doc[args.container]["configmap"]["data"]["VERSION"] = args.version
+                print("replace_values", doc)
 
-            # secret
-            if "secret" in doc[args.container]:
-                doc[args.container]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(
-                    args.version.encode("utf-8")
-                )
+                # image tag
+                if "image" in docs[doc]:
+                    docs[doc]["image"]["tag"] = args.version
 
-        if doc != None:
+                # configmap
+                if "configmap" in docs[doc]:
+                    docs[doc]["configmap"]["data"]["VERSION"] = args.version
+
+                # secret
+                if "secret" in docs[doc]:
+                    docs[doc]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(
+                        args.version.encode("utf-8")
+                    )
+
+        if docs != None:
             with open(filepath, "w") as file:
-                yaml.dump(doc, file)
+                yaml.dump(docs, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()
@@ -65,21 +72,25 @@ def replace_hash(args, hash):
     filehash = ""
 
     if os.path.exists(filepath):
-        print("replace", filepath)
+        print("replace_hash", filepath)
 
-        doc = None
+        docs = None
 
         with open(filepath, "r") as file:
-            doc = yaml.load(file, Loader=yaml.FullLoader)
+            docs = yaml.load(file, Loader=yaml.FullLoader)
 
-            if "env" in doc[args.container]:
-                for i, env in enumerate(doc[args.container]["env"]):
-                    if env["name"] == "ENV_HASH":
-                        env["value"] = hash
+            for i, doc in enumerate(docs):
+                if args.container != None and doc != args.container:
+                    continue
 
-        if doc != None:
+                if "env" in docs[doc]:
+                    for i, env in enumerate(docs[doc]["env"]):
+                        if env["name"] == "ENV_HASH":
+                            env["value"] = hash
+
+        if docs != None:
             with open(filepath, "w") as file:
-                yaml.dump(doc, file)
+                yaml.dump(docs, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()
