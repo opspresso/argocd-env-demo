@@ -21,7 +21,7 @@ def parse_args():
     p.add_argument("-p", "--phase", default=PHASE, help="phase")
     p.add_argument("-n", "--imagename", default=IMAGENAME, help="imagename")
     p.add_argument("-v", "--version", default=VERSION, help="version")
-    p.add_argument("-c", "--container", default=None, help="container")
+    p.add_argument("-c", "--container", default="", help="container")
     return p.parse_args()
 
 
@@ -38,7 +38,7 @@ def replace_values(args):
             docs = yaml.load(file, Loader=yaml.FullLoader)
 
             for i, doc in enumerate(docs):
-                if args.container != None and doc != args.container:
+                if args.container != "" and doc != args.container:
                     continue
 
                 print("replace_values", doc)
@@ -80,7 +80,7 @@ def replace_hash(args, hash):
             docs = yaml.load(file, Loader=yaml.FullLoader)
 
             for i, doc in enumerate(docs):
-                if args.container != None and doc != args.container:
+                if args.container != "" and doc != args.container:
                     continue
 
                 if "env" in docs[doc]:
