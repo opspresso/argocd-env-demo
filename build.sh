@@ -16,7 +16,7 @@ BRANCH=${CIRCLE_BRANCH:-main}
 # TG_VERSION="${TG_VERSION:-v0.0.0}"
 # TG_PHASE="${TG_PHASE:-alpha}"
 # TG_TYPE="${TG_TYPE:-helm}"
-# TG_CONTAINER="${TG_CONTAINER:-app}"
+# TG_CONTAINER="${TG_CONTAINER}"
 
 GIT_USERNAME="bot"
 GIT_USEREMAIL="bot@nalbam.com"
@@ -260,7 +260,7 @@ _build() {
   # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
 
   # has prod
-  [ "${TG_PHASE}" == "prod" ] && HAS_PROD=1
+  HAS_PROD=$(echo "${TG_PHASE}" | grep -E '\-prod$' | wc -l | xargs)
 
   _command "git pull"
   git pull --rebase origin ${BRANCH}
@@ -269,7 +269,7 @@ _build() {
 
   # replace
   _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER}"
-  python ${TG_TYPE}.py -r charts/${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER}
+  python ${TG_TYPE}.py -r "charts/${TG_PROJECT}" -p "${TG_PHASE}" -n "${TG_USERNAME}/${TG_PROJECT}" -v "${TG_VERSION}" -c "${TG_CONTAINER}"
 
   _command "git add --all"
   git add --all
