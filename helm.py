@@ -26,7 +26,7 @@ def parse_args():
 
 
 def replace_values(args):
-    filepath = "{}/values-{}.yaml".format(args.reponame, args.phase)
+    filepath = "charts/{}/values-{}.yaml".format(args.reponame, args.phase)
     filehash = ""
 
     if os.path.exists(filepath):
@@ -68,7 +68,7 @@ def replace_values(args):
 
 
 def replace_hash(args, hash):
-    filepath = "{}/values-{}.yaml".format(args.reponame, args.phase)
+    filepath = "charts/{}/values-{}.yaml".format(args.reponame, args.phase)
     filehash = ""
 
     if os.path.exists(filepath):
