@@ -15,7 +15,7 @@ BRANCH=${CIRCLE_BRANCH:-main}
 # TG_PROJECT="${TG_PROJECT:-sample}"
 # TG_VERSION="${TG_VERSION:-v0.0.0}"
 # TG_PHASE="${TG_PHASE:-alpha}"
-# TG_TYPE="${TG_TYPE:-helm}"
+TG_TYPE="${TG_TYPE:-helm}"
 # TG_CONTAINER="${TG_CONTAINER}"
 
 GIT_USERNAME="bot"
@@ -80,7 +80,7 @@ _prepare() {
   _result "TG_CONTAINER=${TG_CONTAINER}"
 
   _result "TG_PHASE=${TG_PHASE}"
-  _result "TG_TYPE=${TG_TYPE:-helm}"
+  _result "TG_TYPE=${TG_TYPE}"
 
   if [ "${TG_USERNAME}" == "" ] || [ "${TG_PROJECT}" == "" ] || [ "${TG_VERSION}" == "" ]; then
     _success
