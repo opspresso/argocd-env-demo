@@ -80,7 +80,7 @@ _prepare() {
   _result "TG_CONTAINER=${TG_CONTAINER}"
 
   _result "TG_PHASE=${TG_PHASE}"
-  _result "TG_TYPE=${TG_TYPE}"
+  _result "TG_TYPE=${TG_TYPE:-helm}"
 
   if [ "${TG_USERNAME}" == "" ] || [ "${TG_PROJECT}" == "" ] || [ "${TG_VERSION}" == "" ]; then
     _success
