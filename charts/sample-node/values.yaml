@@ -130,6 +130,6 @@ redis:
   fullnameOverride: redis
 
   global:
-    storageClass: "gp3"
+    storageClass: gp2
 
   architecture: standalone
