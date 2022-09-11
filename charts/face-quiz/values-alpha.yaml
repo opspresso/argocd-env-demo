@@ -7,13 +7,13 @@ app:
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
       PROFILE: prod
-      VERSION: v0.1.12
+      VERSION: v0.1.13
     enabled: true
   env:
   - name: ENV_HASH
-    value: 56b2d0792a83df1e937347820665d0ea
+    value: 649e7155edf44c3441a2805cfce053e1
   image:
-    tag: v0.1.12
+    tag: v0.1.13
   istio:
     gateway:
       enabled: true
