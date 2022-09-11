@@ -1,0 +1,21 @@
+app:
+  additionalLabels:
+    department: apps
+  configmap:
+    data:
+      CLUSTER_NAME: eks-demo
+      HOSTNAME: sample.svc.cluster.local
+      MESSAGE: hello world
+      PROFILE: alpha
+      VERSION: v0.10.1
+    enabled: true
+  env:
+  - name: ENV_HASH
+    value: 1b75ce6bb05ffc8535038670519a4c7e
+  image:
+    tag: v0.10.1
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
