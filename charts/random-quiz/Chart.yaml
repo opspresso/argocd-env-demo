@@ -1,5 +1,5 @@
 apiVersion: v2
-name: quiz
+name: random-quiz
 description: A Helm chart for Kubernetes
 type: application
 version: v0.12.15

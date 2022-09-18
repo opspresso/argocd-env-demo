@@ -1,9 +1,9 @@
 app:
-  fullnameOverride: quiz
+  fullnameOverride: random-quiz
 
   image:
-    # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/quiz
-    repository: nalbam/quiz
+    # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/random-quiz
+    repository: nalbam/random-quiz
 
   resources:
     requests:
