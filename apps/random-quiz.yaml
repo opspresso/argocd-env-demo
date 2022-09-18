@@ -43,8 +43,8 @@ spec:
                   NAMESPACE: sample
               ingress:
                 hosts:
-                - host: random-quiz.{{hostname.this}}
-                - host: random-quiz.{{hostname.public}}
+                - host: quiz.{{hostname.this}}
+                - host: quiz.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
