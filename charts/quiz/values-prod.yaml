@@ -21,7 +21,7 @@ app:
       inject: true
 
 irsa:
-  enabled: false
+  enabled: true
   statement:
     - resource:
         - "arn:aws:s3:::repo.demo.nalbam.com"
