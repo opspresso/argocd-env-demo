@@ -54,3 +54,16 @@ app:
   pdb:
     enabled: true
     maxUnavailable: 1
+
+  serviceAccount:
+    create: true
+
+  irsa:
+    enabled: true
+    statement:
+      - resource:
+          - "arn:aws:s3:::repo.demo.nalbam.com"
+          - "arn:aws:s3:::repo.demo.nalbam.com/*"
+        action:
+          - "s3:Get*"
+          - "s3:List*"
