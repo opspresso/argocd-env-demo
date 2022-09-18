@@ -61,7 +61,8 @@ app:
   irsa:
     enabled: true
     statement:
-      - resource: "arn:aws:s3:::repo.demo.nalbam.com"
+      - resources:
+          - "arn:aws:s3:::repo.demo.nalbam.com/*"
         action:
           - "s3:Get*"
           - "s3:List*"
