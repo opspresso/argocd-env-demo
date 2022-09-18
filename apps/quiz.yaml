@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: face-quiz
+  name: quiz
 spec:
   generators:
     - git:
@@ -14,7 +14,7 @@ spec:
 
   template:
     metadata:
-      name: "face-quiz-{{cluster}}"
+      name: "quiz-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
       labels:
@@ -29,7 +29,7 @@ spec:
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
-        path: charts/face-quiz
+        path: charts/quiz
         helm:
           valueFiles:
             - values.yaml
@@ -43,8 +43,8 @@ spec:
                   NAMESPACE: sample
               ingress:
                 hosts:
-                - host: face-quiz.{{hostname.this}}
-                - host: face-quiz.{{hostname.public}}
+                - host: quiz.{{hostname.this}}
+                - host: quiz.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}

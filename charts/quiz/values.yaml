@@ -1,0 +1,56 @@
+app:
+  fullnameOverride: quiz
+
+  image:
+    # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/quiz
+    repository: nalbam/quiz
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+  service:
+    name: http
+    targetPort: 8000
+
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /healthz
+      port: 8000
+    initialDelaySeconds: 1
+    periodSeconds: 3
+
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /healthz
+      port: 8000
+    initialDelaySeconds: 1
+    periodSeconds: 3
+
+  istio:
+    canary:
+      subsets: false
+
+    trafficPolicy:
+      connectionPool:
+        tcp:
+          maxConnections: 10
+        http:
+          http1MaxPendingRequests: 10
+          http2MaxRequests: 10
+          maxRequestsPerConnection: 10
+      outlierDetection:
+        consecutive5xxErrors: 3
+        interval: 1s
+        baseEjectionTime: 3m
+        maxEjectionPercent: 100
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
