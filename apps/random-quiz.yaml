@@ -45,6 +45,8 @@ spec:
                 hosts:
                 - host: quiz.{{hostname.this}}
                 - host: quiz.{{hostname.public}}
+                - host: face-quiz.{{hostname.public}}
+                - host: music-quiz.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
