@@ -5,14 +5,6 @@ app:
     # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-spring
     repository: nalbam/sample-spring
 
-  resources:
-    requests:
-      cpu: 500m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-
   # controller:
   #   kind: Rollout
   #   strategy:
@@ -24,9 +16,13 @@ app:
   #       autoPromotionEnabled: true
   #       autoPromotionSeconds: 30
 
-  service:
-    name: http
-    targetPort: 8080
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
 
   readinessProbe:
     failureThreshold: 3
@@ -43,6 +39,10 @@ app:
       port: 8080
     initialDelaySeconds: 20
     periodSeconds: 10
+
+  service:
+    name: http
+    targetPort: 8080
 
   istio:
     canary:

@@ -5,33 +5,6 @@ app:
     # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
     repository: nalbam/sample-node
 
-  autoscaling:
-    enabled: true
-    maxReplicas: 5
-    minReplicas: 1
-    behavior:
-      scaleDown:
-        policies:
-        - periodSeconds: 60
-          type: Percent
-          value: 25
-        stabilizationWindowSeconds: 600
-    metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
-
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-
   controller:
     kind: Rollout
     strategy:
@@ -84,9 +57,34 @@ app:
             - clusterScope: true
               templateName: http-benchmark
 
-  service:
-    name: http
-    targetPort: 3000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+  autoscaling:
+    enabled: true
+
+    minReplicas: 1
+    maxReplicas: 5
+
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 25
+        stabilizationWindowSeconds: 600
+    metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
 
   readinessProbe:
     failureThreshold: 3
@@ -103,6 +101,10 @@ app:
       port: 3000
     initialDelaySeconds: 1
     periodSeconds: 3
+
+  service:
+    name: http
+    targetPort: 3000
 
   istio:
     canary:

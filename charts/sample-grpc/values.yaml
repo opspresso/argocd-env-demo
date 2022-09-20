@@ -13,10 +13,6 @@ app:
       cpu: 100m
       memory: 128Mi
 
-  service:
-    name: grpc
-    targetPort: 50051
-
   readinessProbe:
     failureThreshold: 3
     exec:
@@ -34,6 +30,10 @@ app:
         - '-addr=:50051'
     initialDelaySeconds: 1
     periodSeconds: 3
+
+  service:
+    name: grpc
+    targetPort: 50051
 
   istio:
     canary:
