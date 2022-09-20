@@ -15,7 +15,7 @@ job1:
     value: 154af082beafe8
 
 job2:
-  enabled: false
+  enabled: true
 
   schedule: "* * * * *"
 
