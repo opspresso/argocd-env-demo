@@ -1,4 +1,6 @@
 job1:
+  enabled: true
+
   schedule: "* * * * *"
 
   configmap:
@@ -13,6 +15,8 @@ job1:
     value: 154af082beafe8
 
 job2:
+  enabled: false
+
   schedule: "* * * * *"
 
   configmap:
