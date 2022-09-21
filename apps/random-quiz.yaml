@@ -43,7 +43,6 @@ spec:
                   NAMESPACE: sample
               ingress:
                 hosts:
-                - host: quiz.{{hostname.this}}
                 - host: quiz.{{hostname.public}}
                 - host: face-quiz.{{hostname.public}}
                 - host: music-quiz.{{hostname.public}}
@@ -53,6 +52,15 @@ spec:
               additionalLabels:
                 owner: "{{cluster}}"
                 department: "apps"
+              irsa:
+                statement:
+                  - resource: "arn:aws:s3:::repo.demo.nalbam.com"
+                    action:
+                      - "s3:Get*"
+                      - "s3:List*"
+                  - resource: "arn:aws:dynamodb:{{aws_region}}:{{aws_account_id}}:table/random-quiz"
+                    action:
+                      - "dynamodb:*"
 
       syncPolicy:
         automated:
