@@ -30,7 +30,7 @@ app:
       name: slack-hooks
     - key: /k8s/prod/sample-node/redis-password
       name: REDIS_PASS
-    enabled: false
+    enabled: true
   image:
     tag: v0.12.3
   ingress:
