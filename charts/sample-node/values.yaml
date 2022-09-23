@@ -128,10 +128,21 @@ app:
     enabled: true
     maxUnavailable: 1
 
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
+
 redis:
   fullnameOverride: redis
 
   global:
     storageClass: gp2
+
+  auth:
+    existingSecret: sample-node-external
+    existingSecretPasswordKey: REDIS_PASS
 
   architecture: standalone

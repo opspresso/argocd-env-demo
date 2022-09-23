@@ -17,17 +17,19 @@ app:
       VERSION: v0.12.3
     enabled: true
   env:
-  - name: REDIS_PASS
-    valueFrom:
-      secretKeyRef:
-        key: redis-password
-        name: redis
+  # - name: REDIS_PASS
+  #   valueFrom:
+  #     secretKeyRef:
+  #       key: redis-password
+  #       name: redis
   - name: ENV_HASH
     value: 00d6280a1c6e7768166829b3b046c7e5
   externalSecrets:
     data:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
+    - key: /k8s/prod/sample-node/redis-password
+      name: REDIS_PASS
     enabled: false
   image:
     tag: v0.12.3
