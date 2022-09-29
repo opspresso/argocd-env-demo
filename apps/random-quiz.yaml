@@ -43,9 +43,9 @@ spec:
                   NAMESPACE: sample
               ingress:
                 hosts:
-                - host: quiz.{{hostname.public}}
-                - host: face-quiz.{{hostname.public}}
-                - host: music-quiz.{{hostname.public}}
+                - quiz.{{hostname.public}}
+                - face-quiz.{{hostname.public}}
+                - music-quiz.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}

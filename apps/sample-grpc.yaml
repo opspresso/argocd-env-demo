@@ -43,8 +43,8 @@ spec:
                   NAMESPACE: sample
               ingress:
                 hosts:
-                - host: sample-grpc.{{hostname.this}}
-                - host: sample-grpc.{{hostname.public}}
+                - sample-grpc.{{hostname.this}}
+                - sample-grpc.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}

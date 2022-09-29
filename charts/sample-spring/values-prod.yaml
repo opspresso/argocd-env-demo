@@ -17,11 +17,11 @@ app:
     tag: v0.9.14
   ingress:
     hosts:
-    - host: sample-spring.demo.nalbam.com
+    - sample-spring.demo.nalbam.com
     preview:
       enabled: true
       hosts:
-      - host: sample-spring-preview.demo.nalbam.com
+      - sample-spring-preview.demo.nalbam.com
   istio:
     gateway:
       enabled: true

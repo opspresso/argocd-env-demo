@@ -36,11 +36,11 @@ app:
   ingress:
     enabled: false
     hosts:
-    - host: sample-node.demo.nalbam.com
+    - sample-node.demo.nalbam.com
     preview:
       enabled: true
       hosts:
-      - host: sample-node-preview.demo.nalbam.com
+      - sample-node-preview.demo.nalbam.com
   istio:
     gateway:
       enabled: true
