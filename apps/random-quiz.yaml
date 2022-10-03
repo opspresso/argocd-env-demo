@@ -60,6 +60,9 @@ spec:
                   - resource: "arn:aws:dynamodb:{{aws_region}}:{{aws_account_id}}:table/random-quiz"
                     action:
                       - "dynamodb:*"
+                  - resource: "arn:aws:dynamodb:{{aws_region}}:{{aws_account_id}}:table/random-quiz/*"
+                    action:
+                      - "dynamodb:*"
 
       syncPolicy:
         automated:
