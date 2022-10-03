@@ -56,8 +56,7 @@ spec:
                 statement:
                   - resource: "arn:aws:s3:::repo.demo.nalbam.com"
                     action:
-                      - "s3:Get*"
-                      - "s3:List*"
+                      - "s3:*"
                   - resource: "arn:aws:dynamodb:{{aws_region}}:{{aws_account_id}}:table/random-quiz"
                     action:
                       - "dynamodb:*"
