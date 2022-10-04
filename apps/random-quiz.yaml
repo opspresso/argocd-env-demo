@@ -52,17 +52,6 @@ spec:
               additionalLabels:
                 owner: "{{cluster}}"
                 department: "apps"
-              irsa:
-                statement:
-                  - resource: "arn:aws:s3:::repo.demo.nalbam.com"
-                    action:
-                      - "s3:*"
-                  - resource: "arn:aws:dynamodb:{{aws_region}}:{{aws_account_id}}:table/random-quiz"
-                    action:
-                      - "dynamodb:*"
-                  - resource: "arn:aws:dynamodb:{{aws_region}}:{{aws_account_id}}:table/random-quiz/*"
-                    action:
-                      - "dynamodb:*"
 
       syncPolicy:
         automated:

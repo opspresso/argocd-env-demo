@@ -32,14 +32,6 @@ job1:
     - key: /k8s/common/slack-hooks
       name: slack-hooks
 
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "s3:Get*"
-          - "s3:List*"
-        resource: "*"
-
 job2:
   fullnameOverride: sample-failed-job
 
@@ -57,10 +49,3 @@ job2:
 
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
-
-  irsa:
-    enabled: true
-    statement:
-      - action:
-          - "ec2:Describe*"
-        resource: "*"
