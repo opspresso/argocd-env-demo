@@ -139,7 +139,7 @@ redis:
   fullnameOverride: redis
 
   global:
-    storageClass: gp2
+    storageClass: gp2 # aws-ebs-sc
 
   auth:
     existingSecret: sample-node-external
