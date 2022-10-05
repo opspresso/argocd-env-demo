@@ -143,10 +143,31 @@ redis:
 
   master:
     persistence:
-      size: 9Gi
+      existingClaim: sample-redis-master-0
+      # size: 9Gi
 
   auth:
     existingSecret: sample-node-external
     existingSecretPasswordKey: REDIS_PASS
 
   architecture: standalone
+
+raw:
+  resources:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        labels:
+          app.kubernetes.io/component: master
+          app.kubernetes.io/instance: sample-node-eks-demo
+          app.kubernetes.io/name: redis
+        name: sample-redis-master-0
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: gp2
+        volumeMode: Filesystem
+        volumeName: pvc-5d0eeea7-3f8f-406e-ab7d-c114a7bcc81a

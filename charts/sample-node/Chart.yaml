@@ -12,3 +12,6 @@ dependencies:
   - repository: https://charts.bitnami.com/bitnami
     name: redis
     version: 17.0.7
+  - repository: https://charts.helm.sh/incubator
+    name: raw
+    version: 0.2.5
