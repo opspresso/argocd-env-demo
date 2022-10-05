@@ -141,6 +141,10 @@ redis:
   global:
     storageClass: gp2 # aws-ebs-sc
 
+  master:
+    persistence:
+      size: 9Gi
+
   auth:
     existingSecret: sample-node-external
     existingSecretPasswordKey: REDIS_PASS
