@@ -141,10 +141,10 @@ redis:
   global:
     storageClass: gp2 # aws-ebs-sc
 
-  master:
-    persistence:
-      existingClaim: sample-redis-master-0
-      # size: 9Gi
+  # master:
+  #   persistence:
+  #     existingClaim: sample-redis-master-0
+  #     # size: 9Gi
 
   auth:
     existingSecret: sample-node-external
@@ -153,6 +153,8 @@ redis:
   architecture: standalone
 
 raw:
+  enabled: false
+
   resources:
     - apiVersion: v1
       kind: PersistentVolumeClaim
