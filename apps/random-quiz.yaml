@@ -44,8 +44,6 @@ spec:
               ingress:
                 hosts:
                 - quiz.{{hostname.public}}
-                - face-quiz.{{hostname.public}}
-                - music-quiz.{{hostname.public}}
               serviceMonitor:
                 selector:
                   release: prometheus-{{cluster}}
