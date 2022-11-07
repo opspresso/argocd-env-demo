@@ -139,7 +139,7 @@ redis:
   fullnameOverride: redis
 
   global:
-    storageClass: gp2 # aws-ebs-sc
+    storageClass: gp3 # aws-ebs-sc
 
   # master:
   #   persistence:
@@ -170,6 +170,6 @@ raw:
         resources:
           requests:
             storage: 10Gi
-        storageClassName: gp2 # aws-ebs-sc
+        storageClassName: gp3 # aws-ebs-sc
         volumeMode: Filesystem
         volumeName: pvc-5d0eeea7-3f8f-406e-ab7d-c114a7bcc81a
