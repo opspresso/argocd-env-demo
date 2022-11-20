@@ -50,6 +50,9 @@ spec:
               additionalLabels:
                 owner: "{{cluster}}"
                 department: "apps"
+              serviceAccount:
+                annotations:
+                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--random-quiz"
 
       syncPolicy:
         automated:
