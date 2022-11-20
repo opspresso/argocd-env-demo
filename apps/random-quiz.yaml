@@ -25,7 +25,7 @@ spec:
       project: apps
       destination:
         name: "{{cluster}}"
-        namespace: sample
+        namespace: random-quiz
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
