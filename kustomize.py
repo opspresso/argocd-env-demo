@@ -34,7 +34,7 @@ def replace_deployment(args, cm_hasg, sec_hash):
         doc = None
 
         with open(filepath, "r") as file:
-            doc = yaml.load(file, Loader=yaml.FullLoader)
+            doc = yaml.safe_load(file)
 
             # pod
             doc["spec"]["template"]["metadata"]["labels"]["version"] = args.version
@@ -57,7 +57,7 @@ def replace_deployment(args, cm_hasg, sec_hash):
 
         if doc != None:
             with open(filepath, "w") as file:
-                yaml.dump(doc, file)
+                yaml.safe_dump(doc, file)
 
     return filehash
 
@@ -72,14 +72,14 @@ def replace_service_preview(args):
         doc = None
 
         with open(filepath, "r") as file:
-            doc = yaml.load(file, Loader=yaml.FullLoader)
+            doc = yaml.safe_load(file)
 
             # replace
             doc["spec"]["selector"]["version"] = args.version
 
         if doc != None:
             with open(filepath, "w") as file:
-                yaml.dump(doc, file)
+                yaml.safe_dump(doc, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()
@@ -97,14 +97,14 @@ def replace_configmap(args):
         doc = None
 
         with open(filepath, "r") as file:
-            doc = yaml.load(file, Loader=yaml.FullLoader)
+            doc = yaml.safe_load(file)
 
             # replace
             doc["data"]["VERSION"] = args.version
 
         if doc != None:
             with open(filepath, "w") as file:
-                yaml.dump(doc, file)
+                yaml.safe_dump(doc, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()
@@ -122,7 +122,7 @@ def replace_secret(args):
         doc = None
 
         with open(filepath, "r") as file:
-            doc = yaml.load(file, Loader=yaml.FullLoader)
+            doc = yaml.safe_load(file)
 
             # replace
             doc["data"]["SECRET_VERSION"] = base64.b64encode(
@@ -131,7 +131,7 @@ def replace_secret(args):
 
         if doc != None:
             with open(filepath, "w") as file:
-                yaml.dump(doc, file)
+                yaml.safe_dump(doc, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()

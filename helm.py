@@ -35,7 +35,7 @@ def replace_values(args):
         docs = None
 
         with open(filepath, "r") as file:
-            docs = yaml.load(file, Loader=yaml.FullLoader)
+            docs = yaml.safe_load(file)
 
             for i, doc in enumerate(docs):
                 if args.container != "" and doc != args.container:
@@ -59,7 +59,7 @@ def replace_values(args):
 
         if docs != None:
             with open(filepath, "w") as file:
-                yaml.dump(docs, file)
+                yaml.safe_dump(docs, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()
@@ -77,7 +77,7 @@ def replace_hash(args, hash):
         docs = None
 
         with open(filepath, "r") as file:
-            docs = yaml.load(file, Loader=yaml.FullLoader)
+            docs = yaml.safe_load(file)
 
             for i, doc in enumerate(docs):
                 if args.container != "" and doc != args.container:
@@ -90,7 +90,7 @@ def replace_hash(args, hash):
 
         if docs != None:
             with open(filepath, "w") as file:
-                yaml.dump(docs, file)
+                yaml.safe_dump(docs, file)
 
             with open(filepath, "rb") as file:
                 filehash = hashlib.md5(file.read()).hexdigest()
