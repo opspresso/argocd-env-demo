@@ -18,7 +18,7 @@ BRANCH=${CIRCLE_BRANCH:-main}
 TG_TYPE="${TG_TYPE:-helm}"
 # TG_CONTAINER="${TG_CONTAINER}"
 
-GIT_USERNAME="bot"
+GIT_USERNAME="nalbam-bot"
 GIT_USEREMAIL="bot@nalbam.com"
 
 ################################################################################
