@@ -148,6 +148,8 @@ _hook_circleci() {
     -H "Content-Type: application/json" \
     -d "${PAYLOAD}" \
     https://circleci.com/api/v2/project/gh/${USERNAME}/${REPONAME}/pipeline
+
+  sleep 2
 }
 
 _phase_action() {
