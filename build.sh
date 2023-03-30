@@ -14,9 +14,10 @@ BRANCH=${CIRCLE_BRANCH:-main}
 # TG_USERNAME="${TG_USERNAME:-opspresso}"
 # TG_PROJECT="${TG_PROJECT:-sample}"
 # TG_VERSION="${TG_VERSION:-v0.0.0}"
+# TG_CONTAINER="${TG_CONTAINER}"
+# TG_ACTION="${TG_ACTION}"
 # TG_PHASE="${TG_PHASE:-alpha}"
 TG_TYPE="${TG_TYPE:-helm}"
-# TG_CONTAINER="${TG_CONTAINER}"
 
 GIT_USERNAME="nalbam-bot"
 GIT_USEREMAIL="bot@nalbam.com"
@@ -78,7 +79,7 @@ _prepare() {
   _result "TG_PROJECT=${TG_PROJECT}"
   _result "TG_VERSION=${TG_VERSION}"
   _result "TG_CONTAINER=${TG_CONTAINER}"
-
+  _result "TG_ACTION=${TG_ACTION}"
   _result "TG_PHASE=${TG_PHASE}"
   _result "TG_TYPE=${TG_TYPE}"
 
@@ -99,7 +100,7 @@ _hook_action() {
 
   # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
 
-  _command "github dispatches : ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
+  _command "github dispatches : ${TG_PROJECT} ${TG_VERSION} ${PHASE} ${TG_ACTION}"
 
   # build_parameters
   PAYLOAD="{\"event_type\":\"gitops\","
@@ -108,6 +109,7 @@ _hook_action() {
   PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
   PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
   PAYLOAD="${PAYLOAD}\"container\":\"${TG_CONTAINER}\","
+  PAYLOAD="${PAYLOAD}\"action\":\"${TG_ACTION}\","
   PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
   PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
   PAYLOAD="${PAYLOAD}}}"
@@ -129,7 +131,7 @@ _hook_circleci() {
 
   # https://circleci.com/docs/api/v2/#operation/listPipelinesForProject
 
-  _command "circleci pipeline : ${TG_PROJECT} ${TG_VERSION} ${PHASE}"
+  _command "circleci pipeline : ${TG_PROJECT} ${TG_VERSION} ${PHASE} ${TG_ACTION}"
 
   # build_parameters
   PAYLOAD="{\"parameters\":{"
@@ -137,6 +139,7 @@ _hook_circleci() {
   PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
   PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
   PAYLOAD="${PAYLOAD}\"container\":\"${TG_CONTAINER}\","
+  PAYLOAD="${PAYLOAD}\"action\":\"${TG_ACTION}\","
   PAYLOAD="${PAYLOAD}\"phase\":\"${PHASE}\","
   PAYLOAD="${PAYLOAD}\"type\":\"${TYPE}\""
   PAYLOAD="${PAYLOAD}}}"
@@ -263,8 +266,8 @@ _build() {
   # # has alpha or dev
   # HAS_DEV=$(echo "${TG_PHASE}" | grep -E '\-alpha$|\-dev$' | wc -l | xargs)
 
-  # has prod
-  HAS_PROD=$(echo "${TG_PHASE}" | grep -E '\-prod$' | wc -l | xargs)
+  # # has prod
+  # HAS_PROD=$(echo "${TG_PHASE}" | grep -E '\-prod$' | wc -l | xargs)
 
   _command "git pull"
   git pull --rebase origin ${BRANCH}
@@ -272,8 +275,8 @@ _build() {
   _command "replace ${TG_VERSION}"
 
   # replace
-  _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER}"
-  python ${TG_TYPE}.py -r "${TG_PROJECT}" -p "${TG_PHASE}" -n "${TG_USERNAME}/${TG_PROJECT}" -v "${TG_VERSION}" -c "${TG_CONTAINER}"
+  _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER} -a ${TG_ACTION}"
+  python ${TG_TYPE}.py -r "${TG_PROJECT}" -p "${TG_PHASE}" -n "${TG_USERNAME}/${TG_PROJECT}" -v "${TG_VERSION}" -c "${TG_CONTAINER} -a ${TG_ACTION}"
 
   _command "git add --all"
   git add --all
@@ -281,25 +284,29 @@ _build() {
   _command "git commit -m ${MESSAGE}"
   git commit -m "${MESSAGE}"
 
-  # pr or merge
-  if [ "x${HAS_DEV}" == "x0" ] || [ "x${HAS_PROD}" == "x1" ]; then
-    _command "git branch ${NEW_BRANCH} ${BRANCH}"
-    git branch ${NEW_BRANCH} ${BRANCH}
+  # push
+  _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
+  git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
 
-    _command "git checkout ${NEW_BRANCH}"
-    git checkout ${NEW_BRANCH}
+  # # pr or push
+  # if [ "${TG_PHASE}" == "prod" ]; then
+  #   _command "git branch ${NEW_BRANCH} ${BRANCH}"
+  #   git branch ${NEW_BRANCH} ${BRANCH}
 
-    _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
+  #   _command "git checkout ${NEW_BRANCH}"
+  #   git checkout ${NEW_BRANCH}
 
-    _error_check
+  #   _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
+  #   git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
-    _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
-    hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
-  else
-    _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
-  fi
+  #   _error_check
+
+  #   _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
+  #   hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
+  # else
+  #   _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
+  #   git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
+  # fi
 
   _error_check
 }
