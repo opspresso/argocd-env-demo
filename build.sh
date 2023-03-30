@@ -119,6 +119,8 @@ _hook_action() {
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
     -d "${PAYLOAD}" \
     https://api.github.com/repos/${USERNAME}/${REPONAME}/dispatches
+
+  sleep 2
 }
 
 _hook_circleci() {
