@@ -24,7 +24,7 @@ def parse_args():
     p.add_argument("-n", "--imagename", default=IMAGENAME, help="imagename")
     p.add_argument("-v", "--version", default=VERSION, help="version")
     p.add_argument("-c", "--container", default="", help="container")
-    p.add_argument("-c", "--approved", default=False, help="approved")
+    p.add_argument("-a", "--approved", default=False, help="approved")
     return p.parse_args()
 
 
