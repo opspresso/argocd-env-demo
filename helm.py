@@ -122,8 +122,19 @@ def replace_hash(args, hash):
 
                 if "env" in docs[doc]:
                     for i, env in enumerate(docs[doc]["env"]):
-                        if env["name"] == "ENV_HASH":
-                            env["value"] = hash
+                        has_env_hash = False
+                        has_env_version = False
+                        for i, env in enumerate(docs[doc]["env"]):
+                            if env["name"] == "ENV_HASH":
+                                env["value"] = hash
+                                has_env_hash = True
+                            if env["name"] == "VERSION":
+                                env["value"] = args.version
+                                has_env_version = True
+                        if not has_env_hash:
+                            docs[doc]["env"].append({"name": "ENV_HASH", "value": hash})
+                        if not has_env_version:
+                            docs[doc]["env"].append({"name": "VERSION", "value": args.version})
 
     if docs != None:
         with open(filepath, "w") as file:
