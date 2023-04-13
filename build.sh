@@ -284,29 +284,29 @@ _build() {
   _command "git commit -m ${MESSAGE}"
   git commit -m "${MESSAGE}"
 
-  # push
-  _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
-  git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
+  # # push
+  # _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
+  # git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
 
-  # # pr or push
-  # if [ "${TG_PHASE}" == "prod" ]; then
-  #   _command "git branch ${NEW_BRANCH} ${BRANCH}"
-  #   git branch ${NEW_BRANCH} ${BRANCH}
+  # pr or push
+  if [ "${TG_PHASE}" == "prod" ]; then
+    _command "git branch ${NEW_BRANCH} ${BRANCH}"
+    git branch ${NEW_BRANCH} ${BRANCH}
 
-  #   _command "git checkout ${NEW_BRANCH}"
-  #   git checkout ${NEW_BRANCH}
+    _command "git checkout ${NEW_BRANCH}"
+    git checkout ${NEW_BRANCH}
 
-  #   _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
-  #   git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
+    _command "git push github.com/${USERNAME}/${REPONAME} ${NEW_BRANCH}"
+    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${NEW_BRANCH}
 
-  #   _error_check
+    _error_check
 
-  #   _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
-  #   hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
-  # else
-  #   _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
-  #   git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
-  # fi
+    _command "hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit"
+    hub pull-request -f -b ${USERNAME}:${BRANCH} -h ${USERNAME}:${NEW_BRANCH} --no-edit
+  else
+    _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
+    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
+  fi
 
   _error_check
 }
