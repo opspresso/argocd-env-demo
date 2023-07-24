@@ -5,57 +5,57 @@ app:
     # repository: 082867736673.dkr.ecr.ap-northeast-2.amazonaws.com/nalbam/sample-node
     repository: nalbam/sample-node
 
-  controller:
-    kind: Rollout
-    strategy:
-      type: Canary
-      # rollingUpdate:
-      #   maxSurge: 25%
-      #   maxUnavailable: 0
-      canary:
-        canaryService: sample-node-preview
-        stableService: sample-node
-        trafficRouting:
-          istio:
-            virtualService:
-              name: sample-node
-              routes:
-              - primary
-            destinationRule:
-              name: sample-node
-              canarySubsetName: canary
-              stableSubsetName: stable
-        steps:
-        - setWeight: 10
-        - pause:
-            duration: 10
-        - analysis:
-            args:
-            - name: url
-              value: http://sample-node-preview/success/98
-            templates:
-            - clusterScope: true
-              templateName: http-benchmark
-        - setWeight: 25
-        - pause:
-            duration: 10
-        - analysis:
-            args:
-            - name: url
-              value: http://sample-node-preview/success/98
-            templates:
-            - clusterScope: true
-              templateName: http-benchmark
-        - setWeight: 50
-        - pause:
-            duration: 10
-        - analysis:
-            args:
-            - name: url
-              value: http://sample-node-preview/success/98
-            templates:
-            - clusterScope: true
-              templateName: http-benchmark
+  # controller:
+  #   kind: Rollout
+  #   strategy:
+  #     type: Canary
+  #     # rollingUpdate:
+  #     #   maxSurge: 25%
+  #     #   maxUnavailable: 0
+  #     canary:
+  #       canaryService: sample-node-preview
+  #       stableService: sample-node
+  #       trafficRouting:
+  #         istio:
+  #           virtualService:
+  #             name: sample-node
+  #             routes:
+  #             - primary
+  #           destinationRule:
+  #             name: sample-node
+  #             canarySubsetName: canary
+  #             stableSubsetName: stable
+  #       steps:
+  #       - setWeight: 10
+  #       - pause:
+  #           duration: 10
+  #       - analysis:
+  #           args:
+  #           - name: url
+  #             value: http://sample-node-preview/success/98
+  #           templates:
+  #           - clusterScope: true
+  #             templateName: http-benchmark
+  #       - setWeight: 25
+  #       - pause:
+  #           duration: 10
+  #       - analysis:
+  #           args:
+  #           - name: url
+  #             value: http://sample-node-preview/success/98
+  #           templates:
+  #           - clusterScope: true
+  #             templateName: http-benchmark
+  #       - setWeight: 50
+  #       - pause:
+  #           duration: 10
+  #       - analysis:
+  #           args:
+  #           - name: url
+  #             value: http://sample-node-preview/success/98
+  #           templates:
+  #           - clusterScope: true
+  #             templateName: http-benchmark
 
   resources:
     requests:
