@@ -9,6 +9,9 @@ app:
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
 
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: "https://sample-node.{{hostname.hostname}}"
+
   ingress:
     enabled: false
     hosts:
