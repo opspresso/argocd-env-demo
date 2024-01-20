@@ -1,0 +1,34 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Uses Container
+        uses: opspresso/action-kube@master
+
+      - name: Generate Values
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash ./build.sh
+
+      - name: Commit & Push
+        uses: opspresso/action-builder@master
+        with:
+          args: --commit
+        env:
+          GIT_BRANCH: main
+          GIT_USEREMAIL: bot@nalbam.com
+          GIT_USERNAME: nalbam-bot
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE_PATH: ./target/commit_message.txt

@@ -1,19 +1,10 @@
 app:
-  additionalLabels:
-    department: apps
   autoscaling:
     enabled: true
     maxReplicas: 10
     minReplicas: 2
   configmap:
     data:
-      CLUSTER_NAME: eks-demo
-      HOSTNAME: sample.svc.cluster.local
-      MESSAGE: hello world
-      PROFILE: alpha
-      PROTOCOL: http
-      REDIS_HOST: redis-master
-      REDIS_PORT: '6379'
       VERSION: v0.12.10
     enabled: true
   env:
@@ -28,28 +19,3 @@ app:
     enabled: true
   image:
     tag: v0.12.10
-  ingress:
-    enabled: false
-    hosts:
-    - sample-node.demo.nalbam.com
-    preview:
-      enabled: true
-      hosts:
-      - sample-node-preview.demo.nalbam.com
-    stable:
-      enabled: true
-      hosts:
-      - sample-node-stable.demo.nalbam.com
-  istio:
-    gateway:
-      enabled: true
-    sidecar:
-      inject: true
-  serviceMonitor:
-    enabled: true
-    selector:
-      release: prometheus-eks-demo
-redis:
-  istio:
-    sidecar:
-      inject: true

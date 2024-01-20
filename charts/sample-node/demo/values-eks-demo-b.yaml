@@ -1,0 +1,29 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: "eks-demo-b"
+      HOSTNAME: sample.svc.cluster.local
+      MESSAGE: hello world
+      PROFILE: alpha
+      PROTOCOL: http
+      REDIS_HOST: redis-master
+      REDIS_PORT: '6379'
+
+  ingress:
+    enabled: false
+    hosts:
+    - "sample-node.demo.opspresso.com"
+    preview:
+      enabled: true
+      hosts:
+      - "sample-node-preview.demo.opspresso.com"
+    stable:
+      enabled: true
+      hosts:
+      - "sample-node-stable.demo.opspresso.com"
+
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true

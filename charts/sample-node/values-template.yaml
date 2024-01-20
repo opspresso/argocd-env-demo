@@ -1,0 +1,39 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: "{{cluster}}"
+      HOSTNAME: sample.svc.cluster.local
+      MESSAGE: hello world
+      PROFILE: "{{env}}"
+      PROTOCOL: http
+      REDIS_HOST: redis-master
+      REDIS_PORT: '6379'
+
+  ingress:
+    enabled: false
+    hosts:
+    - "sample-node.{{hostname.public}}"
+    preview:
+      enabled: true
+      hosts:
+      - "sample-node-preview.{{hostname.public}}"
+    stable:
+      enabled: true
+      hosts:
+      - "sample-node-stable.{{hostname.public}}"
+
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus-eks-demo
+
+redis:
+  istio:
+    sidecar:
+      inject: true
