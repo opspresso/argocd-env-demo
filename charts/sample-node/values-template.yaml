@@ -10,7 +10,7 @@ app:
       REDIS_PORT: '6379'
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: "https://sample-node.{{hostname.hostname}}"
+    link.argocd.argoproj.io/external-link: "https://sample-node.{{hostname.public}}"
 
   ingress:
     enabled: false
