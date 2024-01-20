@@ -1,8 +1,8 @@
 cluster: eks-demo
 
 country: kr
-env: alpha
-role: mgt
+env: demo
+role: mgmt
 
 aws_account_id: "082867736673"
 aws_region: ap-northeast-2
