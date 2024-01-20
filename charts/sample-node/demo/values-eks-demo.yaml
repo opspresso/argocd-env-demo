@@ -4,7 +4,7 @@ app:
       CLUSTER_NAME: "eks-demo"
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      PROFILE: "alpha"
+      PROFILE: "demo"
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
