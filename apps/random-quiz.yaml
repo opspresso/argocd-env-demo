@@ -7,8 +7,8 @@ spec:
     - git:
         repoURL: https://github.com/opspresso/argocd-env-demo.git
         revision: HEAD
-        files:
-          - path: "env/eks-demo.yaml"
+        files: []
+          # - path: "env/eks-demo.yaml"
           # - path: "env/eks-demo-a.yaml"
           # - path: "env/eks-demo-b.yaml"
 
