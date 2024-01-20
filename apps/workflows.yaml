@@ -1,39 +1,39 @@
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: workflows
-spec:
-  generators:
-    - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
-        revision: HEAD
-        files: []
-          # - path: "env/eks-demo.yaml"
-          # - path: "env/eks-demo-a.yaml"
-          # - path: "env/eks-demo-b.yaml"
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: workflows
+# spec:
+#   generators:
+#     - git:
+#         repoURL: https://github.com/opspresso/argocd-env-demo.git
+#         revision: HEAD
+#         files: []
+#           # - path: "env/eks-demo.yaml"
+#           # - path: "env/eks-demo-a.yaml"
+#           # - path: "env/eks-demo-b.yaml"
 
-  template:
-    metadata:
-      name: "workflows-{{cluster}}"
-      annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
-      labels:
-        app.kubernetes.io/instance: "apps-{{cluster}}"
-        krmt.io/cluster: "{{cluster}}"
-        krmt.io/group: "apps"
-    spec:
-      project: apps
-      destination:
-        name: "{{cluster}}"
-        namespace: sample
-      source:
-        repoURL: https://github.com/opspresso/argocd-env-demo
-        targetRevision: HEAD
-        path: workflows
+#   template:
+#     metadata:
+#       name: "workflows-{{cluster}}"
+#       annotations:
+#         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
+#       labels:
+#         app.kubernetes.io/instance: "apps-{{cluster}}"
+#         krmt.io/cluster: "{{cluster}}"
+#         krmt.io/group: "apps"
+#     spec:
+#       project: apps
+#       destination:
+#         name: "{{cluster}}"
+#         namespace: sample
+#       source:
+#         repoURL: https://github.com/opspresso/argocd-env-demo
+#         targetRevision: HEAD
+#         path: workflows
 
-      syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
+#       syncPolicy:
+#         # automated:
+#         #   prune: true
+#         #   selfHeal: true
+#         syncOptions:
+#           - CreateNamespace=true

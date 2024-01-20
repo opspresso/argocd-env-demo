@@ -1,62 +1,62 @@
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: random-quiz
-spec:
-  generators:
-    - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
-        revision: HEAD
-        files: []
-          # - path: "env/eks-demo.yaml"
-          # - path: "env/eks-demo-a.yaml"
-          # - path: "env/eks-demo-b.yaml"
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: random-quiz
+# spec:
+#   generators:
+#     - git:
+#         repoURL: https://github.com/opspresso/argocd-env-demo.git
+#         revision: HEAD
+#         files: []
+#           # - path: "env/eks-demo.yaml"
+#           # - path: "env/eks-demo-a.yaml"
+#           # - path: "env/eks-demo-b.yaml"
 
-  template:
-    metadata:
-      name: "random-quiz-{{cluster}}"
-      annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
-      labels:
-        app.kubernetes.io/instance: "apps-{{cluster}}"
-        krmt.io/cluster: "{{cluster}}"
-        krmt.io/group: "apps"
-    spec:
-      project: apps
-      destination:
-        name: "{{cluster}}"
-        namespace: random-quiz
-      source:
-        repoURL: https://github.com/opspresso/argocd-env-demo
-        targetRevision: HEAD
-        path: charts/random-quiz
-        helm:
-          valueFiles:
-            - values.yaml
-            - values-{{env}}.yaml
-          values: |-
-            app:
-              configmap:
-                data:
-                  CLUSTER_NAME: {{cluster}}
-                  ENV: {{env}}
-                  NAMESPACE: sample
-              ingress:
-                hosts:
-                - quiz.{{hostname.public}}
-              serviceMonitor:
-                selector:
-                  release: prometheus-{{cluster}}
-              additionalLabels:
-                owner: "{{cluster}}"
-                department: "apps"
-              serviceAccount:
-                annotations:
-                  eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--random-quiz"
+#   template:
+#     metadata:
+#       name: "random-quiz-{{cluster}}"
+#       annotations:
+#         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
+#       labels:
+#         app.kubernetes.io/instance: "apps-{{cluster}}"
+#         krmt.io/cluster: "{{cluster}}"
+#         krmt.io/group: "apps"
+#     spec:
+#       project: apps
+#       destination:
+#         name: "{{cluster}}"
+#         namespace: random-quiz
+#       source:
+#         repoURL: https://github.com/opspresso/argocd-env-demo
+#         targetRevision: HEAD
+#         path: charts/random-quiz
+#         helm:
+#           valueFiles:
+#             - values.yaml
+#             - values-{{env}}.yaml
+#           values: |-
+#             app:
+#               configmap:
+#                 data:
+#                   CLUSTER_NAME: {{cluster}}
+#                   ENV: {{env}}
+#                   NAMESPACE: sample
+#               ingress:
+#                 hosts:
+#                 - quiz.{{hostname.public}}
+#               serviceMonitor:
+#                 selector:
+#                   release: prometheus-{{cluster}}
+#               additionalLabels:
+#                 owner: "{{cluster}}"
+#                 department: "apps"
+#               serviceAccount:
+#                 annotations:
+#                   eks.amazonaws.com/role-arn: "arn:aws:iam::{{aws_account_id}}:role/irsa--{{cluster}}--random-quiz"
 
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
+#       syncPolicy:
+#         automated:
+#           prune: true
+#           selfHeal: true
+#         syncOptions:
+#           - CreateNamespace=true
