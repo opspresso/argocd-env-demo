@@ -4,7 +4,7 @@ app:
       CLUSTER_NAME: "eks-demo-a"
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      PROFILE: alpha
+      PROFILE: "alpha"
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
@@ -25,5 +25,15 @@ app:
   istio:
     gateway:
       enabled: true
+    sidecar:
+      inject: true
+
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus-eks-demo
+
+redis:
+  istio:
     sidecar:
       inject: true
