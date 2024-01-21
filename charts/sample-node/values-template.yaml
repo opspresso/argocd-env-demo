@@ -1,41 +1,36 @@
 app:
   configmap:
     data:
-      CLUSTER_NAME: "{{cluster}}"
+      CLUSTER_NAME: '{{cluster}}'
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      PROFILE: "{{env}}"
+      PROFILE: '{{env}}'
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
-
-  podAnnotations:
-    link.argocd.argoproj.io/external-link: "https://sample-node.{{hostname.public}}"
-
   ingress:
     enabled: false
     hosts:
-    - "sample-node.{{hostname.public}}"
+    - sample-node.{{hostname.public}}
     preview:
       enabled: true
       hosts:
-      - "sample-node-preview.{{hostname.public}}"
+      - sample-node-preview.{{hostname.public}}
     stable:
       enabled: true
       hosts:
-      - "sample-node-stable.{{hostname.public}}"
-
+      - sample-node-stable.{{hostname.public}}
   istio:
     gateway:
       enabled: true
     sidecar:
       inject: true
-
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://sample-node.{{hostname.public}}
   serviceMonitor:
     enabled: true
     selector:
       release: prometheus-eks-demo
-
 redis:
   istio:
     sidecar:
