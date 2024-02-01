@@ -1,41 +1,36 @@
 app:
   configmap:
     data:
-      CLUSTER_NAME: "eks-demo-a"
+      CLUSTER_NAME: 'eks-demo-a'
       HOSTNAME: sample.svc.cluster.local
       MESSAGE: hello world
-      PROFILE: "demo"
+      PROFILE: 'demo'
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
-
-  podAnnotations:
-    link.argocd.argoproj.io/external-link: "https://sample-node.demo.opspresso.com"
-
   ingress:
     enabled: false
     hosts:
-    - "sample-node.demo.opspresso.com"
+    - sample-node.demo.opspresso.com
     preview:
       enabled: true
       hosts:
-      - "sample-node-preview.demo.opspresso.com"
+      - sample-node-preview.demo.opspresso.com
     stable:
       enabled: true
       hosts:
-      - "sample-node-stable.demo.opspresso.com"
-
+      - sample-node-stable.demo.opspresso.com
   istio:
     gateway:
       enabled: true
     sidecar:
       inject: true
-
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://sample-node.demo.opspresso.com
   serviceMonitor:
     enabled: true
     selector:
       release: prometheus-eks-demo
-
 redis:
   istio:
     sidecar:
