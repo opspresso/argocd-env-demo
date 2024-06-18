@@ -19,6 +19,7 @@ VERSION = "v0.0.0"
 CONTAINER = "app"
 ACTION = ""
 
+
 def parse_args():
     p = argparse.ArgumentParser(description="GitOps")
     p.add_argument("-r", "--reponame", default=REPONAME, help="reponame")
@@ -59,7 +60,9 @@ def update_versions(args):
             break
 
     if isExists == False:
-        docs["items"].append({"version": args.version, "updated": current_time.isoformat()})
+        docs["items"].append(
+            {"version": args.version, "updated": current_time.isoformat()}
+        )
 
     if docs != None:
         with open(filepath, "w") as file:
@@ -79,8 +82,6 @@ def replace_values(args):
             docs = yaml.safe_load(file)
 
             for i, doc in enumerate(docs):
-                print("replace_values", doc, args.container)
-
                 if args.container != "" and doc != args.container:
                     continue
 
@@ -96,7 +97,9 @@ def replace_values(args):
 
                 # secret
                 if "secret" in docs[doc]:
-                    docs[doc]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(args.version.encode("utf-8"))
+                    docs[doc]["secret"]["data"]["SECRET_VERSION"] = base64.b64encode(
+                        args.version.encode("utf-8")
+                    )
 
     if docs != None:
         with open(filepath, "w") as file:
@@ -129,6 +132,8 @@ def replace_hash(args, hash):
                         has_env_hash = False
                         has_env_version = False
                         for i, env in enumerate(docs[doc]["env"]):
+                            print("replace_hash", doc, hash)
+
                             if env["name"] == "ENV_HASH":
                                 env["value"] = hash
                                 has_env_hash = True
@@ -138,7 +143,9 @@ def replace_hash(args, hash):
                         if not has_env_hash:
                             docs[doc]["env"].append({"name": "ENV_HASH", "value": hash})
                         if not has_env_version:
-                            docs[doc]["env"].append({"name": "VERSION", "value": args.version})
+                            docs[doc]["env"].append(
+                                {"name": "VERSION", "value": args.version}
+                            )
 
     if docs != None:
         with open(filepath, "w") as file:

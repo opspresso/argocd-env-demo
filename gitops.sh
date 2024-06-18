@@ -276,7 +276,7 @@ _build() {
 
   # replace
   _command "${TG_TYPE}.py -r ${TG_PROJECT} -p ${TG_PHASE} -n ${TG_USERNAME}/${TG_PROJECT} -v ${TG_VERSION} -c ${TG_CONTAINER} -a ${TG_ACTION}"
-  python ${TG_TYPE}.py -r "${TG_PROJECT}" -p "${TG_PHASE}" -n "${TG_USERNAME}/${TG_PROJECT}" -v "${TG_VERSION}" -c "${TG_CONTAINER} -a ${TG_ACTION}"
+  python ${TG_TYPE}.py -r "${TG_PROJECT}" -p "${TG_PHASE}" -n "${TG_USERNAME}/${TG_PROJECT}" -v "${TG_VERSION}" -c "${TG_CONTAINER}" -a "${TG_ACTION}"
 
   _command "git add --all"
   git add --all
