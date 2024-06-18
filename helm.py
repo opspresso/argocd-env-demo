@@ -77,10 +77,12 @@ def replace_values(args):
             docs = yaml.safe_load(file)
 
             for i, doc in enumerate(docs):
+                print("replace_values", doc)
+
                 if args.container != "" and doc != args.container:
                     continue
 
-                print("replace_values", doc)
+                print("replace_values", doc, args.version)
 
                 # image tag
                 if "image" in docs[doc]:
