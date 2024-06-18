@@ -16,6 +16,8 @@ PHASE = "alpha"
 IMAGENAME = "org/sample"
 VERSION = "v0.0.0"
 
+CONTAINER = "app"
+ACTION = ""
 
 def parse_args():
     p = argparse.ArgumentParser(description="GitOps")
@@ -23,8 +25,8 @@ def parse_args():
     p.add_argument("-p", "--phase", default=PHASE, help="phase")
     p.add_argument("-n", "--imagename", default=IMAGENAME, help="imagename")
     p.add_argument("-v", "--version", default=VERSION, help="version")
-    p.add_argument("-c", "--container", default="", help="container")
-    p.add_argument("-a", "--action", default="", help="action")
+    p.add_argument("-c", "--container", default=CONTAINER, help="container")
+    p.add_argument("-a", "--action", default=ACTION, help="action")
     return p.parse_args()
 
 
