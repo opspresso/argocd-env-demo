@@ -14,8 +14,8 @@ app:
     value: v0.12.23
   externalSecrets:
     data:
-    - key: /k8s/common/slack-hooks
-      name: slack-hooks
+    - key: /k8s/common/slack-token
+      name: slack-token
     - key: /k8s/common/sample-node/redis-password
       name: REDIS_PASS
     enabled: true
