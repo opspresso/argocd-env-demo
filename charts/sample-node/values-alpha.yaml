@@ -9,7 +9,7 @@ app:
     enabled: true
   env:
   - name: ENV_HASH
-    value: 610a6cb2a74bc7c217933040679a7396
+    value: b3fa95997f796d412943841f082e9d30
   - name: VERSION
     value: v0.13.2
   externalSecrets:
