@@ -5,13 +5,13 @@ app:
     minReplicas: 2
   configmap:
     data:
-      VERSION: v0.13.3
+      VERSION: v0.13.10
     enabled: true
   env:
   - name: ENV_HASH
-    value: 97280bdd8bf5db2eb1932710bbdb0b41
+    value: 5466c7bae0b5a220df0b423390c7d26b
   - name: VERSION
-    value: v0.13.3
+    value: v0.13.10
   externalSecrets:
     data:
     - key: /k8s/common/slack-token
@@ -20,4 +20,4 @@ app:
       name: REDIS_PASS
     enabled: true
   image:
-    tag: v0.13.3
+    tag: v0.13.10
