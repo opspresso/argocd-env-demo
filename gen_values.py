@@ -8,7 +8,7 @@ import yaml
 from jinja2 import Environment, FileSystemLoader
 
 
-REPONAME = "cluster-role"
+REPONAME = "sample-app"
 
 
 def parse_args():
