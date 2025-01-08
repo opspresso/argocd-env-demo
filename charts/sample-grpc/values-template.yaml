@@ -1,0 +1,24 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: '{{cluster}}'
+      PROFILE: '{{env}}'
+  ingress:
+    enabled: false
+    hosts:
+    - sample-grpc.{{hostname.public}}
+    preview:
+      enabled: true
+      hosts:
+      - sample-grpc-preview.{{hostname.public}}
+    stable:
+      enabled: true
+      hosts:
+      - sample-grpc-stable.{{hostname.public}}
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://sample-grpc.{{hostname.public}}
