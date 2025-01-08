@@ -20,6 +20,9 @@ for V in ${LIST}; do
 done
 
 if [ "${GITHUB_PUSH}" == "true" ]; then
+  echo
+  echo "Pushing to GitHub..."
+
   git config --global user.name "${GIT_USERNAME}"
   git config --global user.email "${GIT_USEREMAIL}"
 
