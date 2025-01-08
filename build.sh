@@ -1,17 +1,14 @@
 #!/bin/bash
-set -eux
 
 GITHUB_PUSH=${GITHUB_PUSH:-false}
 
 SHELL_DIR=$(dirname $0)
 
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opspresso}
-REPONAME=${CIRCLE_PROJECT_REPONAME:-helm-charts}
+REPONAME=${CIRCLE_PROJECT_REPONAME:-argocd-env-demo}
 
 GIT_USERNAME="nalbam-bot"
 GIT_USEREMAIL="bot@nalbam.com"
-
-mkdir -p ${SHELL_DIR}/target
 
 # find charts
 LIST=$(ls charts)
@@ -22,12 +19,12 @@ for V in ${LIST}; do
   python3 gen_values.py -r $V
 done
 
-git diff
-git diff >${SHELL_DIR}/target/git_diff.txt
+if [ "${GITHUB_PUSH}" == "true" ]; then
+  git config --global user.name "${GIT_USERNAME}"
+  git config --global user.email "${GIT_USEREMAIL}"
 
-COUNT=$(cat ${SHELL_DIR}/target/git_diff.txt | wc -l | xargs)
+  git add .
+  git commit -m "$(date +%Y%m%d-%H%M)"
 
-if [ "x${COUNT}" != "x0" ]; then
-  # commit message
-  printf "$(date +%Y%m%d-%H%M)" >${SHELL_DIR}/target/commit_message.txt
+  git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git main
 fi

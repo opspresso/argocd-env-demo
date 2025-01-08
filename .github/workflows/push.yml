@@ -18,17 +18,9 @@ jobs:
       - name: Uses Container 🐳
         uses: opspresso/action-kube@master
 
-      - name: Generate Values 📝
+      - name: Build and Push 🚀
         run: |
           bash ./build.sh
-
-      - name: Commit & Push 🚀
-        uses: opspresso/action-builder@master
-        with:
-          args: --commit
         env:
-          GIT_BRANCH: main
-          GIT_USEREMAIL: bot@nalbam.com
-          GIT_USERNAME: nalbam-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE_PATH: ./target/commit_message.txt
+          GITHUB_PUSH: "true"
