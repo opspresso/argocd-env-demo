@@ -20,12 +20,12 @@ for V in ${LIST}; do
   python3 gen_values.py -r $V
 done
 
-if [ "${GITHUB_PUSH}" == "true" ]; then
-  git config --global user.name "${GIT_USERNAME}"
-  git config --global user.email "${GIT_USEREMAIL}"
+git diff
+git diff >${SHELL_DIR}/target/git_diff.txt
 
-  git add .
-  git commit -m "Publish addons"
+COUNT=$(cat ${SHELL_DIR}/target/git_diff.txt | wc -l | xargs)
 
-  git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git main
+if [ "x${COUNT}" != "x0" ]; then
+  # commit message
+  printf "$(date +%Y%m%d-%H%M)" >${SHELL_DIR}/target/commit_message.txt
 fi

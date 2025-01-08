@@ -18,13 +18,13 @@ jobs:
       - name: Uses Container 🐳
         uses: opspresso/action-kube@master
 
-      - name: Generate Values
+      - name: Generate Values 📝
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           bash ./build.sh
 
-      - name: Commit & Push
+      - name: Commit & Push 🚀
         uses: opspresso/action-builder@master
         with:
           args: --commit
