@@ -22,3 +22,7 @@ app:
       inject: true
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-grpc.{{hostname.public}}
+  serviceMonitor:
+    enabled: true
+    selector:
+      release: prometheus-eks-demo
