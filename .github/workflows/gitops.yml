@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: GitOps
+      - name: GitOps 🚚
         env:
           GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
           TG_USERNAME: ${{ github.event.client_payload.username }}
