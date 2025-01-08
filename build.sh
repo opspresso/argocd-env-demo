@@ -11,6 +11,8 @@ REPONAME=${CIRCLE_PROJECT_REPONAME:-helm-charts}
 GIT_USERNAME="nalbam-bot"
 GIT_USEREMAIL="bot@nalbam.com"
 
+mkdir -p ${SHELL_DIR}/target
+
 # find charts
 LIST=$(ls charts)
 
