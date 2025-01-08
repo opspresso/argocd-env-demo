@@ -2,6 +2,7 @@ app:
   configmap:
     data:
       CLUSTER_NAME: 'eks-demo'
+      MESSAGE: hello world
       PROFILE: 'demo'
   ingress:
     enabled: false
