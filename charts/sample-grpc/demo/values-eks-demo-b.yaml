@@ -1,0 +1,24 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: 'eks-demo-b'
+      PROFILE: 'demo'
+  ingress:
+    enabled: false
+    hosts:
+    - sample-grpc.demo.opspresso.com
+    preview:
+      enabled: true
+      hosts:
+      - sample-grpc-preview.demo.opspresso.com
+    stable:
+      enabled: true
+      hosts:
+      - sample-grpc-stable.demo.opspresso.com
+  istio:
+    gateway:
+      enabled: true
+    sidecar:
+      inject: true
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://sample-grpc.demo.opspresso.com
