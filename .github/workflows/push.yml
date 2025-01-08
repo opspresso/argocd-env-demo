@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout 🛎️
@@ -19,8 +19,6 @@ jobs:
         uses: opspresso/action-kube@master
 
       - name: Generate Values 📝
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           bash ./build.sh
 
