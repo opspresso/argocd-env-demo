@@ -2,6 +2,7 @@ app:
   configmap:
     data:
       CLUSTER_NAME: '{{cluster}}'
+      MESSAGE: hello world
       PROFILE: '{{env}}'
   ingress:
     enabled: false
