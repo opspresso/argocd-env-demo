@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Uses Container 🐳
-        uses: opspresso/action-kube@master
+      - name: Install Helm 📝
+        uses: azure/setup-helm@v4
 
       - name: Build and Push 🚀
         run: |
