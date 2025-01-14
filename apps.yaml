@@ -4,7 +4,7 @@ metadata:
   name: apps-demo
   namespace: argocd
   labels:
-    krmt.io/group: apps
+    opspresso.com/group: apps
 spec:
   project: apps
   source:
