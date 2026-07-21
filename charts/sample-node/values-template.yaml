@@ -31,6 +31,10 @@ app:
     enabled: true
     selector:
       release: prometheus-eks-demo
+  externalSecrets:
+    data:
+    - key: /k8s/common/sample-node/redis-password
+      name: REDIS_PASS
 redis:
   istio:
     sidecar:

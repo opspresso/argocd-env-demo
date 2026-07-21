@@ -8,7 +8,7 @@ appVersion: v0.15.1
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: "v0.15.1"
+    version: "v1.3.0"
   - repository: https://charts.bitnami.com/bitnami
     name: redis
     version: "17.0.7"

@@ -152,6 +152,9 @@ app:
 redis:
   fullnameOverride: redis
 
+  image:
+    repository: bitnamilegacy/redis
+
   global:
     storageClass: gp3 # aws-ebs-sc
 
