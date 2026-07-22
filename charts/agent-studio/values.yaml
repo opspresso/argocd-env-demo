@@ -1,0 +1,54 @@
+app:
+  fullnameOverride: agent-studio
+
+  image:
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
+    tag: v0.2.0
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+  service:
+    name: http
+    targetPort: 3000
+
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+
+  routing:
+    httpRoute:
+      parentRefs:
+        - name: istio-ingressgateway
+          namespace: istio-system
+
+  serviceAccount:
+    create: true
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store

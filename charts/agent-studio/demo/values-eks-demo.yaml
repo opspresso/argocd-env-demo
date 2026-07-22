@@ -1,0 +1,49 @@
+app:
+  configmap:
+    enabled: true
+    data:
+      STAGE: 'prod'
+      AWS_REGION: ap-northeast-2
+      DYNAMODB_TABLE_NAME: agent-studio
+      BETTER_AUTH_URL: https://agent-studio.demo.opspresso.com
+      PUBLIC_BASE_URL: https://agent-studio.demo.opspresso.com
+      LLM_BASE_URL: https://api.openai.com/v1
+      LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
+      ALLOWED_EMAIL_DOMAINS: nalbam.com
+      SLACK_DEFAULT_PROJECT: sample-assistant
+      SKILLS_REPO: opspresso/agent-skills
+      SKILLS_REPO_BRANCH: main
+  routing:
+    hosts:
+    - agent-studio.demo.opspresso.com
+    httpRoute:
+      enabled: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://agent-studio.demo.opspresso.com
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::396608815058:role/irsa--eks-demo--agent-studio
+  externalSecrets:
+    data:
+    - key: /k8s/common/agent-studio/better-auth-secret
+      name: BETTER_AUTH_SECRET
+    - key: /k8s/common/agent-studio/google-client-id
+      name: GOOGLE_CLIENT_ID
+    - key: /k8s/common/agent-studio/google-client-secret
+      name: GOOGLE_CLIENT_SECRET
+    - key: /k8s/common/agent-studio/llm-api-key
+      name: LLM_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-openai-api-key
+      name: LLM_PROVIDER_OPENAI_API_KEY
+    - key: /k8s/common/agent-studio/aes-encryption-key
+      name: AES_ENCRYPTION_KEY
+    - key: /k8s/common/agent-studio/a2a-api-key
+      name: A2A_API_KEY
+    - key: /k8s/common/agent-studio/slack-bot-token
+      name: SLACK_BOT_TOKEN
+    - key: /k8s/common/agent-studio/slack-signing-secret
+      name: SLACK_SIGNING_SECRET
+    - key: /k8s/common/agent-studio/github-token
+      name: GITHUB_TOKEN
