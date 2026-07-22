@@ -25,25 +25,3 @@ app:
   serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::396608815058:role/irsa--eks-demo-a--agent-studio
-  externalSecrets:
-    data:
-    - key: /k8s/common/agent-studio/better-auth-secret
-      name: BETTER_AUTH_SECRET
-    - key: /k8s/common/agent-studio/google-client-id
-      name: GOOGLE_CLIENT_ID
-    - key: /k8s/common/agent-studio/google-client-secret
-      name: GOOGLE_CLIENT_SECRET
-    - key: /k8s/common/agent-studio/llm-api-key
-      name: LLM_API_KEY
-    - key: /k8s/common/agent-studio/llm-provider-openai-api-key
-      name: LLM_PROVIDER_OPENAI_API_KEY
-    - key: /k8s/common/agent-studio/aes-encryption-key
-      name: AES_ENCRYPTION_KEY
-    - key: /k8s/common/agent-studio/a2a-api-key
-      name: A2A_API_KEY
-    - key: /k8s/common/agent-studio/slack-bot-token
-      name: SLACK_BOT_TOKEN
-    - key: /k8s/common/agent-studio/slack-signing-secret
-      name: SLACK_SIGNING_SECRET
-    - key: /k8s/common/agent-studio/github-token
-      name: GITHUB_TOKEN
