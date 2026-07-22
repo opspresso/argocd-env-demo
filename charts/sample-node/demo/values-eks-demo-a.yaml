@@ -8,28 +8,18 @@ app:
       PROTOCOL: http
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
-  ingress:
-    enabled: false
+  routing:
     hosts:
     - sample-node.demo.opspresso.com
-    preview:
+    httpRoute:
       enabled: true
-      hosts:
-      - sample-node-preview.demo.opspresso.com
-    stable:
-      enabled: true
-      hosts:
-      - sample-node-stable.demo.opspresso.com
-  istio:
-    gateway:
-      enabled: true
-    sidecar:
-      inject: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-node.demo.opspresso.com
   serviceMonitor:
     enabled: true
-    selector:
+    labels:
       release: prometheus-eks-demo
   externalSecrets:
     data:

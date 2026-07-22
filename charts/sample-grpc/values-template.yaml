@@ -4,26 +4,16 @@ app:
       CLUSTER_NAME: '{{cluster}}'
       MESSAGE: hello world
       PROFILE: '{{env}}'
-  ingress:
-    enabled: false
+  routing:
     hosts:
     - sample-grpc.{{hostname.public}}
-    preview:
+    httpRoute:
       enabled: true
-      hosts:
-      - sample-grpc-preview.{{hostname.public}}
-    stable:
-      enabled: true
-      hosts:
-      - sample-grpc-stable.{{hostname.public}}
-  istio:
-    gateway:
-      enabled: true
-    sidecar:
-      inject: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-grpc.{{hostname.public}}
   serviceMonitor:
     enabled: true
-    selector:
+    labels:
       release: prometheus-eks-demo

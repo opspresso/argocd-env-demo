@@ -17,15 +17,10 @@ app:
     value: v0.10.21
   image:
     tag: v0.10.21
-  ingress:
+  routing:
     hosts:
     - sample-spring.demo.nalbam.com
-    preview:
+    httpRoute:
       enabled: true
-      hosts:
-      - sample-spring-preview.demo.nalbam.com
-  istio:
-    gateway:
-      enabled: true
-    sidecar:
-      inject: true
+  podLabels:
+    sidecar.istio.io/inject: "true"

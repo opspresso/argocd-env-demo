@@ -15,18 +15,13 @@ app:
     value: e5d820b8cc1cdf1704e1532
   image:
     tag: v0.6.2
-  ingress:
+  routing:
     hosts:
     - sample-spring.demo.nalbam.com
-    preview:
+    httpRoute:
       enabled: true
-      hosts:
-      - sample-spring-preview.demo.nalbam.com
-  istio:
-    gateway:
-      enabled: true
-    sidecar:
-      inject: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
   # serviceMonitor:
   #   enabled: true
   #   endpoints:

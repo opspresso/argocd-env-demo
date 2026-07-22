@@ -14,8 +14,8 @@ app:
     value: e9e29df80f2ab583d1372c27f4fbf950
   image:
     tag: v0.3.20
-  istio:
-    gateway:
+  routing:
+    httpRoute:
       enabled: true
-    sidecar:
-      inject: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
