@@ -24,7 +24,7 @@ app:
     link.argocd.argoproj.io/external-link: https://agent-studio.demo.opspresso.com
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::396608815058:role/irsa--eks-demo--agent-studio
+      eks.amazonaws.com/role-arn: arn:aws:iam::396608815058:role/irsa--eks-demo-b--agent-studio
   externalSecrets:
     data:
     - key: /k8s/common/agent-studio/better-auth-secret

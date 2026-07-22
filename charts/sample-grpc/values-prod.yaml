@@ -12,6 +12,8 @@ app:
   env:
   - name: ENV_HASH
     value: a120a6c32a9783f5d10d3611a244074b
+  - name: VERSION
+    value: v0.10.1
   image:
     tag: v0.10.1
   routing:

@@ -3,7 +3,7 @@ app:
 
   image:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
-    tag: v0.2.0
+    tag: latest
 
   resources:
     requests:

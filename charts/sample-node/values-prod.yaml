@@ -10,6 +10,8 @@ app:
   env:
   - name: ENV_HASH
     value: 2bb252b5b2ffc5888713c9296e3aa5ed
+  - name: VERSION
+    value: v0.12.9
   externalSecrets:
     data:
     - key: /k8s/common/slack-token
