@@ -10,9 +10,12 @@ app:
       LLM_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
       ALLOWED_EMAIL_DOMAINS: nalbam.com
-      SLACK_DEFAULT_PROJECT: sample-assistant
       SKILLS_REPO: opspresso/agent-skills
       SKILLS_REPO_BRANCH: main
+      # Set explicitly because terminationGracePeriodSeconds in values.yaml is
+      # sized to cover it. Changing one without the other either cuts runs short
+      # at shutdown or leaves pods draining longer than they ever need to.
+      MAX_RUN_DURATION_MS: '600000'
   routing:
     hosts:
     - agent-studio.demo.opspresso.com

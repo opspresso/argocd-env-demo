@@ -24,10 +24,6 @@ app:
       name: AES_ENCRYPTION_KEY
     - key: /k8s/common/agent-studio/a2a-api-key
       name: A2A_API_KEY
-    - key: /k8s/common/agent-studio/slack-bot-token
-      name: SLACK_BOT_TOKEN
-    - key: /k8s/common/agent-studio/slack-signing-secret
-      name: SLACK_SIGNING_SECRET
     - key: /k8s/common/agent-studio/github-token
       name: GITHUB_TOKEN
     enabled: true

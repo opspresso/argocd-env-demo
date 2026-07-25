@@ -17,6 +17,23 @@ app:
     name: http
     targetPort: 3000
 
+  # Draining a pod takes up to the grace period below, so replacing pods one at a
+  # time would stretch a rollout to that many multiples. Surging the whole new set
+  # at once keeps a rollout to roughly a single drain, at the cost of briefly
+  # running double the pods. maxUnavailable stays 0 — capacity never dips.
+  controller:
+    strategy:
+      rollingUpdate:
+        maxSurge: 100%
+        maxUnavailable: 0
+
+  # Both probes use /api/health, which reports only "this process is serving".
+  #
+  # /api/ready additionally checks the LLM provider, which makes it wrong for a
+  # readiness probe here: the provider is shared by every pod, so one provider
+  # blip would mark the entire fleet unready at once and take down the console
+  # along with it — even though the console, chats and dashboards do not need the
+  # provider. It stays available for manual and ALB-style checks.
   readinessProbe:
     failureThreshold: 3
     httpGet:
@@ -25,6 +42,9 @@ app:
     initialDelaySeconds: 5
     periodSeconds: 5
 
+  # Liveness must not fail while a long run is in flight; /api/health answers
+  # without touching DynamoDB or the LLM channel, so a slow provider can never
+  # restart a pod that is working.
   livenessProbe:
     failureThreshold: 3
     httpGet:
@@ -32,6 +52,70 @@ app:
       port: 3000
     initialDelaySeconds: 10
     periodSeconds: 10
+
+  # A run may hold its connection for MAX_RUN_DURATION_MS (600s), and Next.js
+  # drains in-flight requests and `after()` work before exiting. The grace period
+  # has to cover that, or every scale-down and rolling deploy cuts streams
+  # mid-answer and drops the Slack events being processed in the background.
+  #
+  # The countdown starts before preStop runs, so the budget is
+  # preStop (15s) + run (600s) + drain overhead — not the run alone. 660s matches
+  # RUN_LEASE_SECONDS in the app, which is derived the same way.
+  #
+  # The cost is deliberate: terminating one pod takes up to ~11 minutes. Lower
+  # this only together with MAX_RUN_DURATION_MS — the two are one decision.
+  terminationGracePeriodSeconds: 660
+
+  # SIGTERM makes Next.js stop accepting new connections immediately, while
+  # removing the pod from Service endpoints propagates asynchronously. Without
+  # this pause, requests routed during that window hit a closed listener and fail.
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 15"]
+
+  # Runs are I/O bound — a pod saturated with in-flight runs sits at near-zero
+  # CPU — so CPU utilization is not a usable scaling signal here. It would fail to
+  # scale up under real load and would scale down pods that are busy streaming.
+  # Scale on the in-flight run gauge the app exposes at /api/metrics instead.
+  #
+  # Requires prometheus-adapter to publish agent_studio_active_runs as a pods
+  # metric. Until it does, the HPA reports FailedGetPodsMetric and holds the
+  # replica count steady — it does not scale on anything else.
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+    metrics:
+      - type: Pods
+        pods:
+          metric:
+            name: agent_studio_active_runs
+          target:
+            type: AverageValue
+            averageValue: "8"
+    # Pods take minutes to terminate, so scaling down eagerly is expensive and
+    # hard to undo. Scale up promptly, shed slowly.
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 900
+        policies:
+          - type: Pods
+            value: 1
+            periodSeconds: 300
+
+  serviceMonitor:
+    enabled: true
+    endpoints:
+      - interval: 15s
+        path: /api/metrics
+        port: http
 
   routing:
     httpRoute:
@@ -42,6 +126,14 @@ app:
   serviceAccount:
     create: true
 
+  # Keeps replicas off a single node so one node's loss cannot take the service
+  # with it — and, with the long grace period, cannot stall every in-flight run.
+  podAntiAffinity:
+    topologyKey: kubernetes.io/hostname
+
+  # maxUnavailable, not minAvailable: minAvailable equal to minReplicas would
+  # leave no disruption budget at the floor and block node drains outright.
+  # One pod at a time holds at every fleet size.
   pdb:
     enabled: true
     maxUnavailable: 1
