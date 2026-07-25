@@ -28,3 +28,7 @@ app:
   serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::396608815058:role/irsa--{{cluster}}--agent-studio
+
+  serviceMonitor:
+    labels:
+      release: prometheus-{{cluster}}
