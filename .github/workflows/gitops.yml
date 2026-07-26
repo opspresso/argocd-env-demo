@@ -5,6 +5,12 @@ on:
     types:
       - gitops
 
+# Deploys serialize: every non-prod phase pushes to main, so overlapping runs
+# would race. Never cancel one - a cancelled deploy leaves a half-written chart.
+concurrency:
+  group: gitops
+  cancel-in-progress: false
+
 jobs:
   gitops:
     runs-on: ubuntu-latest
@@ -14,10 +20,22 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          # Persists as the credential for git push, so no token ends up in a
+          # remote URL. A PAT (not GITHUB_TOKEN) so the push triggers workflows.
+          token: ${{ secrets.GHP_TOKEN }}
+
+      - name: Setup Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies 📦
+        run: pip install -r requirements.txt
 
       - name: GitOps 🚚
         env:
           GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
+          GH_TOKEN: ${{ secrets.GHP_TOKEN }}
           TG_USERNAME: ${{ github.event.client_payload.username }}
           TG_PROJECT: ${{ github.event.client_payload.project }}
           TG_VERSION: ${{ github.event.client_payload.version }}
@@ -26,4 +44,4 @@ jobs:
           TG_PHASE: ${{ github.event.client_payload.phase }}
           TG_TYPE: ${{ github.event.client_payload.type }}
         run: |
-          bash ./gitops.sh action
+          bash ./gitops.sh

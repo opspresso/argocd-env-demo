@@ -2,6 +2,7 @@ cluster: eks-demo-a
 
 country: kr
 env: demo
+phase: alpha
 role: service
 
 aws_account_id: "396608815058"

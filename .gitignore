@@ -27,6 +27,11 @@ $RECYCLE.BIN/
 target/
 build/
 
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
 # Temp
 *.pid
 *.log

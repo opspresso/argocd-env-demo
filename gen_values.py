@@ -35,19 +35,22 @@ def gen_repos(args):
 def gen_values(t, reponame):
     for env_file in os.listdir("env"):
         if env_file.endswith(".yaml"):
-            # print("")
-
             env_path = "env/{}".format(env_file)
-            # print("# env ", env_path)
-
-            save_root = "charts/{}/demo".format(reponame)
-            save_path = "{}/values-{}".format(save_root, env_file)
 
             with open(env_path, "r") as vars:
                 v = yaml.safe_load(vars)
+
+                # The ApplicationSet reads "{{env}}/values-{{cluster}}.yaml",
+                # so the directory has to follow the env field.
+                if "env" not in v:
+                    raise KeyError("{} has no 'env' field".format(env_path))
+
                 d = t.render(v)
 
                 if d != None:
+                    save_root = "charts/{}/{}".format(reponame, v["env"])
+                    save_path = "{}/values-{}".format(save_root, env_file)
+
                     os.makedirs(save_root, exist_ok=True)
 
                     with open(save_path, "w") as file:

@@ -33,7 +33,7 @@ spec:
         helm:
           valueFiles:
             - values.yaml
-            - values-alpha.yaml
+            - "values-{{phase}}.yaml"
             - "{{env}}/values-{{cluster}}.yaml"
 
       syncPolicy:
