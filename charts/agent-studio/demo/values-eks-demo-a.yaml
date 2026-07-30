@@ -2,20 +2,21 @@ app:
   configmap:
     enabled: true
     data:
-      STAGE: 'prod'
-      AWS_REGION: ap-northeast-2
-      DYNAMODB_TABLE_NAME: agent-studio
-      BETTER_AUTH_URL: https://agent-studio.demo.opspresso.com
-      PUBLIC_BASE_URL: https://agent-studio.demo.opspresso.com
-      LLM_BASE_URL: https://api.openai.com/v1
-      LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
+      ADMIN_EMAILS: me@nalbam.com
       ALLOWED_EMAIL_DOMAINS: nalbam.com
-      SKILLS_REPO: opspresso/agent-skills
-      SKILLS_REPO_BRANCH: main
-      # Set explicitly because terminationGracePeriodSeconds in values.yaml is
-      # sized to cover it. Changing one without the other either cuts runs short
-      # at shutdown or leaves pods draining longer than they ever need to.
+      AWS_REGION: ap-northeast-2
+      BETTER_AUTH_URL: https://agent-studio.demo.opspresso.com
+      DYNAMODB_TABLE_NAME: agent-studio
+      LLM_BASE_URL: https://api.openai.com/v1
+      LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
+      LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
+      LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai
       MAX_RUN_DURATION_MS: '600000'
+      PUBLIC_BASE_URL: https://agent-studio.demo.opspresso.com
+      S3_BUCKET_NAME: agent-studio-static
+      SKILLS_REPO_BRANCH: main
+      SKILLS_REPO: opspresso/agent-skills
+      STAGE: 'prod'
   routing:
     hosts:
     - agent-studio.demo.opspresso.com
