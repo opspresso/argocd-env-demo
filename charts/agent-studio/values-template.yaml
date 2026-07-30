@@ -26,9 +26,6 @@ app:
     sidecar.istio.io/inject: "true"
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://agent-studio.{{hostname.public}}
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::396608815058:role/irsa--{{cluster}}--agent-studio
 
   serviceMonitor:
     labels:
