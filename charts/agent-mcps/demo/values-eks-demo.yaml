@@ -2,6 +2,10 @@ url-fetch:
   podLabels:
     sidecar.istio.io/inject: "true"
 
+memory:
+  podLabels:
+    sidecar.istio.io/inject: "true"
+
 grafana:
   podLabels:
     sidecar.istio.io/inject: "true"

@@ -126,3 +126,74 @@ grafana:
 
   serviceAccount:
     create: true
+
+memory:
+  enabled: true
+  fullnameOverride: mcp-memory
+
+  image:
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/mcp-memory
+
+  # No MCP_API_KEY, for the same reason url-fetch has none: nothing routes to
+  # this Service from outside. The server says which mode it is in on every
+  # start, so the day an ingress appears the open mode is in the logs.
+  #
+  # No AWS credentials either. The ServiceAccount below is bound to
+  # pod-role--mcp-memory by an EKS Pod Identity association, defined in
+  # terraform-env-demo/demo/6-role. Pod Identity needs no annotation on the
+  # ServiceAccount — unlike IRSA — so the only requirement here is that the
+  # account exists under exactly the name the association names.
+  configmap:
+    enabled: true
+    data:
+      AWS_REGION: ap-northeast-2
+      # S3 Vectors. The index's dimension, distance metric and non-filterable
+      # metadata keys are fixed at creation; see the repository's README before
+      # pointing this at a different one.
+      VECTOR_BUCKET: agent-studio-vector
+      VECTOR_INDEX: memories
+      # Ordinary S3: access counters and the recency index.
+      STATE_BUCKET: agent-studio-memory
+      # Bedrock needs no key — the pod role covers it — and runs in the same
+      # region as the vector bucket. EMBEDDING_DIM must equal the index's.
+      EMBEDDING_PROVIDER: bedrock
+      EMBEDDING_MODEL: amazon.titan-embed-text-v2:0
+      EMBEDDING_DIM: '1024'
+      # The relevance floor, and the one setting that belongs to the embedding
+      # model rather than to the server: calibrated against measured Titan
+      # similarities, where a correct answer scores 0.15-0.41 and an unrelated
+      # one under 0.05. Changing EMBEDDING_MODEL means recalibrating this.
+      RECALL_MIN_SIMILARITY: '0.1'
+
+  service:
+    name: http
+    targetPort: 3000
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 3
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+
+  # Required, and not just conventional: the Pod Identity association names this
+  # account, so the pod gets no AWS credentials at all without it.
+  serviceAccount:
+    create: true

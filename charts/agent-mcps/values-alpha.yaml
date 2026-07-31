@@ -1,13 +1,17 @@
 # Image tags, pinned by hand.
 #
 # agent-studio's equivalent file is generated — its release workflow sends a
-# repository_dispatch that gen_values.py turns into a bump. Neither MCP server
-# does that, so these move when someone edits them, which is also why they are
+# repository_dispatch that gen_values.py turns into a bump. No MCP server does
+# that, so these move when someone edits them, which is also why they are
 # pinned rather than :latest.
 
 url-fetch:
   image:
     tag: v1.1.2
+
+memory:
+  image:
+    tag: v0.1.0
 
 grafana:
   image:
