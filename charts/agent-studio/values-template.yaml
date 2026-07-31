@@ -12,6 +12,11 @@ app:
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai
       MAX_RUN_DURATION_MS: '600000'
+      # The MCP servers in the agent-mcps chart are cluster-internal, so their
+      # Service names resolve to ClusterIPs the SSRF guard blocks. Declaring the
+      # namespace suffix is what lets them be registered and called; the blocked
+      # ranges themselves are untouched. See docs/SECURITY.md in agent-studio.
+      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
       PUBLIC_BASE_URL: https://agent-studio.{{hostname.public}}
       S3_BUCKET_NAME: agent-studio-static
       SKILLS_REPO_BRANCH: main
