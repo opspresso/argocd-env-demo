@@ -9,6 +9,6 @@ aws_account_id: "396608815058"
 aws_region: ap-northeast-2
 
 hostname:
-  internal: in.demo.opspresso.com
+  internal: demo-in.opspresso.com
   public: demo.opspresso.com
   this: demo-b.opspresso.com
