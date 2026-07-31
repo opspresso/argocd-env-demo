@@ -67,11 +67,25 @@ grafana:
   # `--address 0.0.0.0:8000` is load-bearing. The default is localhost:8000,
   # which binds inside the pod's own namespace only — the Service would resolve,
   # connect, and hang forever on a listener no other pod can reach.
+  #
+  # `--allowed-hosts` is the other half of that change, and it is not optional.
+  # The server validates the Host header against loopback variants of --address
+  # by default (DNS-rebinding protection), so widening the bind address without
+  # widening this answers 403 to everything that is not localhost — including the
+  # kubelet probe, which is what put this in a restart loop the first time.
+  #
+  # Matching is exact, verified against the running image: an entry with the port
+  # and one without are different values, and `mcp-grafana.agent-mcps` does not
+  # match `mcp-grafana.agent-mcps.svc.cluster.local`. So every form a caller may
+  # use is listed. The pod IP cannot be — it changes every restart, which is why
+  # the probes below send a Host header instead.
   args:
     - "--transport"
     - "streamable-http"
     - "--address"
     - "0.0.0.0:8000"
+    - "--allowed-hosts"
+    - "mcp-grafana.agent-mcps.svc.cluster.local,mcp-grafana.agent-mcps.svc,mcp-grafana.agent-mcps,mcp-grafana,localhost:8000,localhost"
 
   service:
     name: http
@@ -85,10 +99,16 @@ grafana:
       cpu: 200m
       memory: 256Mi
 
+  # kubelet sends the pod IP as the Host header, which the allowlist above cannot
+  # contain because it changes on every restart. Naming one explicitly is what
+  # lets the check stay on for real traffic.
   readinessProbe:
     httpGet:
       path: /healthz
       port: 8000
+      httpHeaders:
+        - name: Host
+          value: localhost
     initialDelaySeconds: 3
     periodSeconds: 5
     failureThreshold: 3
@@ -97,6 +117,9 @@ grafana:
     httpGet:
       path: /healthz
       port: 8000
+      httpHeaders:
+        - name: Host
+          value: localhost
     initialDelaySeconds: 10
     periodSeconds: 10
     failureThreshold: 3
