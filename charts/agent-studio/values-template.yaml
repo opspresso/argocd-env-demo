@@ -2,6 +2,7 @@ app:
   configmap:
     enabled: true
     data:
+      STAGE: 'prod'
       ADMIN_EMAILS: me@nalbam.com
       ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
@@ -15,10 +16,9 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
       PUBLIC_BASE_URL: https://agent-studio.{{hostname.public}}
       S3_BUCKET_NAME: agent-studio-static
-      SKILLS_REPO_BRANCH: main
       SKILLS_REPO: opspresso/agent-skills
       SLACK_LOADING_INDICATOR: ':loading:'
-      STAGE: 'prod'
+      TOOLS_REPO: opspresso/agent-tools
   routing:
     hosts:
     - agent-studio.{{hostname.public}}
