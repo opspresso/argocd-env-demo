@@ -7,11 +7,11 @@
 
 url-fetch:
   image:
-    tag: v1.1.2
+    tag: v1.1.3
 
 memory:
   image:
-    tag: v0.1.0
+    tag: v0.2.0
 
 grafana:
   image:
