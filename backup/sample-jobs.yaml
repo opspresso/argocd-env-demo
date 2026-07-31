@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: sample-jobs
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/eks-demo.yaml"
+          # - path: "env/eks-demo-a.yaml"
+          # - path: "env/eks-demo-b.yaml"
+
+  template:
+    metadata:
+      name: "sample-jobs-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
+      labels:
+        app.kubernetes.io/instance: "apps-{{cluster}}"
+        opspresso.com/cluster: "{{cluster}}"
+        opspresso.com/group: "apps"
+    spec:
+      project: apps
+      destination:
+        name: "{{cluster}}"
+        namespace: sample
+      source:
+        repoURL: https://github.com/opspresso/argocd-env-demo
+        targetRevision: HEAD
+        path: charts/sample-jobs
+        helm:
+          valueFiles:
+            - values.yaml
+            - values-{{env}}.yaml
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
