@@ -1,13 +1,13 @@
 app:
   configmap:
     data:
-      VERSION: v0.21.0
+      VERSION: v0.21.1
     enabled: true
   env:
   - name: ENV_HASH
-    value: 21b357de529f9babf17f9b8623af7e24
+    value: fbd770b4c8fc653e3f6eb8091ef5acf1
   - name: VERSION
-    value: v0.21.0
+    value: v0.21.1
   externalSecrets:
     data:
     - key: /k8s/common/agent-studio/better-auth-secret
@@ -32,4 +32,4 @@ app:
       name: GITHUB_TOKEN
     enabled: true
   image:
-    tag: v0.21.0
+    tag: v0.21.1
