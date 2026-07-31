@@ -1,0 +1,15 @@
+url-fetch:
+  podLabels:
+    sidecar.istio.io/inject: "true"
+
+grafana:
+  podLabels:
+    sidecar.istio.io/inject: "true"
+
+  configmap:
+    enabled: true
+    data:
+      # In-cluster Grafana. This is mcp-grafana's own outbound call, so Agent
+      # Studio's SSRF guard has nothing to say about it — that guard only bounds
+      # what Agent Studio itself dials.
+      GRAFANA_URL: http://grafana.addon-grafana.svc.cluster.local
