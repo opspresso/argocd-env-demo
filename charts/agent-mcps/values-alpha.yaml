@@ -34,3 +34,7 @@ grafana:
         name: GRAFANA_USERNAME
       - key: /k8s/common/admin-password
         name: GRAFANA_PASSWORD
+
+kubernetes:
+  image:
+    tag: v0.0.66
