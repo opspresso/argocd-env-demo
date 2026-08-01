@@ -1,13 +1,8 @@
-# Image tag, bumped by the source repo's release workflow: a v* tag sends the
-# same gitops repository_dispatch agent-studio uses, and gitops.py writes the
-# version here. (That rewrite strips comments — this block lives until the
-# first dispatch lands.)
-
 app:
   env:
   - name: ENV_HASH
-    value: 200abbe06794336039f725daf47aa284
+    value: 94b624b22d00c8231c5c61de41b00a3b
   - name: VERSION
-    value: v1.1.3
+    value: v1.2.0
   image:
-    tag: v1.1.3
+    tag: v1.2.0
