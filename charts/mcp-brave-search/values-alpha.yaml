@@ -1,0 +1,24 @@
+# Image tag, pinned by hand.
+#
+# agent-studio's equivalent file is generated — its release workflow sends a
+# repository_dispatch that gen_values.py turns into a bump. No MCP server does
+# that, so this moves when someone edits it, which is also why it is pinned
+# rather than :latest.
+
+app:
+  image:
+    # Upstream tags carry a `v` prefix on Docker Hub (brave/brave-search-mcp-server).
+    tag: v2.1.0
+
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
+    data:
+      # The parameter must exist before first sync — External Secrets holds the
+      # Deployment's env until it resolves, so a missing parameter shows up as
+      # a pod that never schedules its secret, not as a clean error here.
+      - key: /k8s/common/mcp-brave-search/brave-api-key
+        name: BRAVE_API_KEY
