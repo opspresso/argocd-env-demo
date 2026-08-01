@@ -144,3 +144,53 @@ app:
     secretStoreRef:
       kind: ClusterSecretStore
       name: parameter-store
+
+# The schedule ticker (agent-studio docs/OPERATIONS.md#schedule-ticker).
+# Schedule triggers fire only when something POSTs /api/triggers/scan; this
+# CronJob is that something. It holds no state and no cron knowledge — which
+# occurrences are due and who wins each one is decided server-side with a
+# conditional write per occurrence, so a duplicate, concurrent or late tick
+# never double-fires. The token comes from the same external secret the app
+# reads (SCHEDULE_SCAN_TOKEN, /k8s/common/agent-studio/schedule-scan-token).
+scan:
+  fullnameOverride: agent-studio-scan
+
+  # Once a minute, matching the app's fixed 10-minute catch-up window: a few
+  # missed ticks lose nothing, and an outage longer than the window is bounded
+  # on purpose.
+  schedule: "* * * * *"
+
+  image:
+    repository: curlimages/curl
+    tag: "8.11.1"
+
+  # -f turns an app-side refusal (401/503) into a failed Job, which is what
+  # failedJobsHistoryLimit keeps visible.
+  command:
+    - /bin/sh
+    - -c
+    - >-
+      curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
+      http://agent-studio/api/triggers/scan
+  additionalSecret:
+    enabled: true
+    names:
+      - agent-studio-external
+
+  # A tick answers in seconds; one that outlives the next tick is stuck, and
+  # the claim makes an overlapping replacement safe anyway.
+  activeDeadlineSeconds: 55
+  concurrencyPolicy: Forbid
+  backoffLimit: 0
+  restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  ttlSecondsAfterFinished: 600
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 50m
+      memory: 32Mi

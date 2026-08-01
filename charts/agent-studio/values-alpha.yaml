@@ -30,6 +30,8 @@ app:
       name: A2A_API_KEY
     - key: /k8s/common/agent-studio/github-token
       name: GITHUB_TOKEN
+    - key: /k8s/common/agent-studio/schedule-scan-token
+      name: SCHEDULE_SCAN_TOKEN
     enabled: true
   image:
     tag: v0.24.0

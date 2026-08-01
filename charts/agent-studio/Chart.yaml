@@ -8,4 +8,10 @@ appVersion: v1.0.0
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: "v1.3.0"
+    version: "v1.4.0"
+  # The schedule ticker: a CronJob POSTing the app's scan endpoint once a
+  # minute. Aliased so its values sit under `scan:` beside `app:`.
+  - repository: https://opspresso.github.io/helm-charts
+    name: cronjob
+    version: "v1.1.0"
+    alias: scan
