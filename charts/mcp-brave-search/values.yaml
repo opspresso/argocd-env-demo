@@ -51,11 +51,11 @@ app:
 
   resources:
     requests:
-      cpu: 50m
-      memory: 64Mi
+      cpu: 100m
+      memory: 256Mi
     limits:
       cpu: 200m
-      memory: 256Mi
+      memory: 512Mi
 
   # /ping is upstream's health route and sits outside the /mcp DNS-rebinding
   # guard, so the kubelet needs none of mcp-grafana's Host-header tricks.
