@@ -1,0 +1,107 @@
+# Kubernetes MCP server Agent Studio calls.
+#
+# Cluster-internal by design: no `routing` block anywhere in this chart, so no
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
+# reaches it at mcp-kubernetes.agent-mcps.svc.cluster.local.
+#
+# Deliberately absent, and not an oversight: the HPA, PDB and long
+# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
+# runs holding in-flight SSE streams. A request here is one read-only API
+# query, so the chart defaults are right and a copied 660s grace period would
+# only make every rollout eleven minutes long.
+
+app:
+  fullnameOverride: mcp-kubernetes
+
+  image:
+    repository: quay.io/containers/kubernetes_mcp_server
+
+  # No auth, like every MCP server here: nothing routes to this Service from
+  # outside. What bounds this one is not the network but the two flags and the
+  # RBAC below — together they decide what a caller can learn about the cluster.
+  #
+  # `--read-only` drops every mutating tool before it is listed. `--toolsets
+  # core` drops the helm toolset, and that is a consequence of the RBAC choice
+  # rather than taste: helm stores releases in Secrets, which the rules below
+  # deliberately cannot read, so the helm tools would only ever answer 403.
+  args:
+    - "--port"
+    - "8080"
+    - "--read-only"
+    - "--toolsets"
+    - "core"
+
+  service:
+    name: http
+    targetPort: 8080
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+    initialDelaySeconds: 3
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+
+  serviceAccount:
+    create: true
+
+  # view-level read access with core `secrets` left out on purpose: an
+  # unauthenticated in-cluster service must not be a Secret reader every pod
+  # can reach. The named groups are the ones this cluster actually runs; a new
+  # API group is invisible to the server until it is added here.
+  rbac:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources:
+          - pods
+          - pods/log
+          - pods/status
+          - services
+          - endpoints
+          - namespaces
+          - nodes
+          - events
+          - configmaps
+          - persistentvolumeclaims
+          - persistentvolumes
+          - replicationcontrollers
+          - serviceaccounts
+          - resourcequotas
+          - limitranges
+        verbs: ["get", "list", "watch"]
+      - apiGroups:
+          - apps
+          - batch
+          - autoscaling
+          - policy
+          - networking.k8s.io
+          - storage.k8s.io
+          - rbac.authorization.k8s.io
+          - apiextensions.k8s.io
+          - metrics.k8s.io
+          - coordination.k8s.io
+          - discovery.k8s.io
+          - events.k8s.io
+          - gateway.networking.k8s.io
+          - argoproj.io
+          - external-secrets.io
+        resources: ["*"]
+        verbs: ["get", "list", "watch"]

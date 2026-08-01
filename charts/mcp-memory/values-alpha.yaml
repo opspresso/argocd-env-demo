@@ -1,0 +1,10 @@
+# Image tag, pinned by hand.
+#
+# agent-studio's equivalent file is generated — its release workflow sends a
+# repository_dispatch that gen_values.py turns into a bump. No MCP server does
+# that, so this moves when someone edits it, which is also why it is pinned
+# rather than :latest.
+
+app:
+  image:
+    tag: v0.2.0

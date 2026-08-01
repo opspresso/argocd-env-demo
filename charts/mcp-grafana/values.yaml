@@ -1,0 +1,92 @@
+# Grafana MCP server Agent Studio calls.
+#
+# Cluster-internal by design: no `routing` block anywhere in this chart, so no
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
+# reaches it at mcp-grafana.agent-mcps.svc.cluster.local.
+#
+# Deliberately absent, and not an oversight: the HPA, PDB and long
+# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
+# runs holding in-flight SSE streams. A request here is one Grafana query, so
+# the chart defaults are right and a copied 660s grace period would only make
+# every rollout eleven minutes long.
+
+app:
+  fullnameOverride: mcp-grafana
+
+  image:
+    repository: grafana/mcp-grafana
+
+  # `--address 0.0.0.0:8000` is load-bearing. The default is localhost:8000,
+  # which binds inside the pod's own namespace only — the Service would resolve,
+  # connect, and hang forever on a listener no other pod can reach.
+  #
+  # `--allowed-hosts` is the other half of that change, and it is not optional.
+  # The server validates the Host header against loopback variants of --address
+  # by default (DNS-rebinding protection), so widening the bind address without
+  # widening this answers 403 to everything that is not localhost — including the
+  # kubelet probe, which is what put this in a restart loop the first time.
+  #
+  # Matching is exact, verified against the running image: an entry with the port
+  # and one without are different values, and `mcp-grafana.agent-mcps` does not
+  # match `mcp-grafana.agent-mcps.svc.cluster.local`. So every form a caller may
+  # use is listed. The pod IP cannot be — it changes every restart, which is why
+  # the probes below send a Host header instead.
+  args:
+    - "--transport"
+    - "streamable-http"
+    - "--address"
+    - "0.0.0.0:8000"
+    - "--allowed-hosts"
+    - "mcp-grafana.agent-mcps.svc.cluster.local,mcp-grafana.agent-mcps.svc,mcp-grafana.agent-mcps,mcp-grafana,localhost:8000,localhost"
+
+  service:
+    name: http
+    targetPort: 8000
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+  # kubelet sends the pod IP as the Host header, which the allowlist above cannot
+  # contain because it changes on every restart. Naming one explicitly is what
+  # lets the check stay on for real traffic.
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: 8000
+      httpHeaders:
+        - name: Host
+          value: localhost
+    initialDelaySeconds: 3
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8000
+      httpHeaders:
+        - name: Host
+          value: localhost
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+
+  serviceAccount:
+    create: true
+
+  # The one stateful MCP server: streamable-http sessions live in the pod's
+  # memory (calls without a valid Mcp-Session-Id get "Invalid session ID"), so
+  # every request of a session must land on the pod that created it. With one
+  # replica this changes nothing; it exists so that raising replicas is a
+  # one-line change instead of a source of randomly broken runs.
+  destinationRule:
+    enabled: true
+    trafficPolicy:
+      loadBalancer:
+        consistentHash:
+          httpHeaderName: mcp-session-id

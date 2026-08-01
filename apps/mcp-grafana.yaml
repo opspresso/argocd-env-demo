@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: agent-mcps
+  name: mcp-grafana
 spec:
   generators:
     - git:
@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "agent-mcps-{{cluster}}"
+      name: "mcp-grafana-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
       labels:
@@ -27,7 +27,7 @@ spec:
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
-        path: charts/agent-mcps
+        path: charts/mcp-grafana
         helm:
           valueFiles:
             - values.yaml
