@@ -2,7 +2,7 @@ apiVersion: v2
 name: agent-mcps
 description: MCP servers Agent Studio calls — one Deployment each, cluster-internal
 type: application
-version: v1.0.0
+version: v1.3.0
 appVersion: v1.0.0
 
 # One aliased `app` per server, the shape sample-jobs uses for its cronjobs. The

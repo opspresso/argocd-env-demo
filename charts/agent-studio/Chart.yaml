@@ -3,7 +3,7 @@ name: agent-studio
 description: LLM platform for prompt, agent, and cost management
 type: application
 version: v1.3.0
-appVersion: v0.2.0
+appVersion: v1.0.0
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
