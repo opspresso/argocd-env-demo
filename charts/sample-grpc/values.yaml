@@ -21,6 +21,7 @@ app:
         - '-addr=:50051'
     initialDelaySeconds: 1
     periodSeconds: 3
+    timeoutSeconds: 3
 
   livenessProbe:
     failureThreshold: 3
@@ -30,6 +31,7 @@ app:
         - '-addr=:50051'
     initialDelaySeconds: 1
     periodSeconds: 3
+    timeoutSeconds: 3
 
   service:
     name: grpc
