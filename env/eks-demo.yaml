@@ -12,13 +12,3 @@ hostname:
   internal: demo-in.opspresso.com
   public: demo.opspresso.com
   this: demo-0.opspresso.com
-
-sample_node:
-  ingress:
-    enabled: true
-
-dumy:
-  name: tester
-  list:
-    - name: test1
-    - name: test2
