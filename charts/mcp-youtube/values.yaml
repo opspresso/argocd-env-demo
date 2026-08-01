@@ -1,0 +1,55 @@
+# YouTube transcript/metadata MCP server Agent Studio calls.
+#
+# Cluster-internal by design: no `routing` block anywhere in this chart, so no
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
+# reaches it at mcp-youtube.agent-mcps.svc.cluster.local.
+#
+# Deliberately absent, like its siblings: the HPA, PDB and long
+# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
+# runs holding in-flight SSE streams. A request here is one innertube call plus
+# one caption fetch, so the chart defaults are right.
+
+app:
+  fullnameOverride: mcp-youtube
+
+  image:
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/mcp-youtube
+
+  # No MCP_API_KEY. The server runs unauthenticated when the key is unset, which
+  # is the intended mode here: nothing routes to this Service from outside, so a
+  # shared secret every pod already reaches would add a thing to rotate without
+  # adding a thing it protects against. It says so in its own startup log.
+  # Setting a key here is what to do if this ever gains an ingress.
+
+  service:
+    name: http
+    targetPort: 3000
+
+  # A transcript is bounded at 90k characters by the server itself, so the
+  # working set per request is small; these are its siblings' numbers.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 3
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+
+  serviceAccount:
+    create: true
