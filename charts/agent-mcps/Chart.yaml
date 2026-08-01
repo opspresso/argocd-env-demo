@@ -14,14 +14,14 @@ dependencies:
     name: app
     alias: url-fetch
     condition: url-fetch.enabled
-    version: "v1.3.0"
+    version: "v1.4.0"
   - repository: https://opspresso.github.io/helm-charts
     name: app
     alias: grafana
     condition: grafana.enabled
-    version: "v1.3.0"
+    version: "v1.4.0"
   - repository: https://opspresso.github.io/helm-charts
     name: app
     alias: memory
     condition: memory.enabled
-    version: "v1.3.0"
+    version: "v1.4.0"

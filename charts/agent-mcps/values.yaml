@@ -127,6 +127,18 @@ grafana:
   serviceAccount:
     create: true
 
+  # The one stateful server here: streamable-http sessions live in the pod's
+  # memory (calls without a valid Mcp-Session-Id get "Invalid session ID"), so
+  # every request of a session must land on the pod that created it. With one
+  # replica this changes nothing; it exists so that raising replicas is a
+  # one-line change instead of a source of randomly broken runs.
+  destinationRule:
+    enabled: true
+    trafficPolicy:
+      loadBalancer:
+        consistentHash:
+          httpHeaderName: mcp-session-id
+
 memory:
   enabled: true
   fullnameOverride: mcp-memory
