@@ -19,6 +19,7 @@ app:
       SKILLS_REPO: opspresso/agent-skills
       SLACK_LOADING_INDICATOR: ':loading:'
       TOOLS_REPO: opspresso/agent-tools
+      TRUSTED_PROXY_CIDRS: 10.10.0.0/16
   routing:
     hosts:
     - agent-studio.demo.opspresso.com
