@@ -25,8 +25,12 @@ grafana:
       kind: ClusterSecretStore
       name: parameter-store
     data:
-      # A service account token, not GRAFANA_API_KEY — upstream deprecated the
-      # latter. Create the parameter before syncing, or the pod stays pending on
-      # a secret that never materialises.
-      - key: /k8s/common/agent-mcps/grafana-service-account-token
-        name: GRAFANA_SERVICE_ACCOUNT_TOKEN
+      # Basic auth with the same parameters that seed Grafana's own
+      # GF_SECURITY_ADMIN_* env, not a service account token. A token lives in
+      # Grafana's database and dies whenever the PVC is recreated with the
+      # cluster; the admin credential is re-seeded from these parameters on
+      # every fresh start, so both sides always agree.
+      - key: /k8s/common/admin-user
+        name: GRAFANA_USERNAME
+      - key: /k8s/common/admin-password
+        name: GRAFANA_PASSWORD
