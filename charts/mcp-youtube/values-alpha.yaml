@@ -1,8 +1,8 @@
 app:
   env:
   - name: ENV_HASH
-    value: 44601a51afa8d4d1d6c8b5f61c3f23f0
+    value: cf9e5496d3f28b08b2715c1d59adde86
   - name: VERSION
-    value: v0.1.1
+    value: v0.2.0
   image:
-    tag: v0.1.1
+    tag: v0.2.0
