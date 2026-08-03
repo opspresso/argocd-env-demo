@@ -27,9 +27,6 @@ jobs:
       - name: Install dependencies 📦
         run: pip install -r requirements.txt
 
-      - name: Install Helm 📝
-        uses: azure/setup-helm@v4
-
       - name: Build and Push 🚀
         run: |
           bash ./build.sh
