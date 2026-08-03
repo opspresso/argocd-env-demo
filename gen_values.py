@@ -21,13 +21,14 @@ def gen_repos(args):
     os.makedirs("build", exist_ok=True)
     os.makedirs("charts", exist_ok=True)
 
-    template_path = "charts/{}/values-template.yaml".format(args.reponame)
+    template_name = "values-template.yaml.j2"
+    template_path = "charts/{}/{}".format(args.reponame, template_name)
 
     if os.path.exists(template_path):
         print("# gen_values", template_path)
 
         e = Environment(loader=FileSystemLoader("charts/{}/".format(args.reponame)))
-        t = e.get_template("values-template.yaml")
+        t = e.get_template(template_name)
 
         gen_values(t, args.reponame)
 

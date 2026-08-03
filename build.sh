@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Renders charts/*/values-template.yaml against every env/*.yaml.
+# Renders charts/*/values-template.yaml.j2 against every env/*.yaml.
 
 set -euo pipefail
 

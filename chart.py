@@ -21,9 +21,10 @@ CHARTS_DIR = "charts"
 
 VALUES_RE = re.compile(r"^values-([a-z][a-z0-9-]*)\.yaml$")
 
-# values-template.yaml is the jinja2 source consumed by gen_values.py, not a
-# deployable phase. Without this exclusion it is dispatched like any other
-# phase - which is how charts/*/versions-template.json came to exist.
+# The jinja2 source is values-template.yaml.j2, which VALUES_RE no longer
+# matches. "template" stays reserved so a chart still carrying the old
+# values-template.yaml is not dispatched as a phase - which is how
+# charts/*/versions-template.json came to exist.
 RESERVED_PHASES = frozenset({"template"})
 
 ENV_HASH = "ENV_HASH"
