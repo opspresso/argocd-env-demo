@@ -17,17 +17,26 @@ app:
     repository: quay.io/containers/kubernetes_mcp_server
 
   # No auth, like every MCP server here: nothing routes to this Service from
-  # outside. What bounds this one is not the network but the two flags and the
-  # RBAC below — together they decide what a caller can learn about the cluster.
+  # outside. What bounds this one is not the network but the flag and the RBAC
+  # below — together they decide what a caller can do to the cluster.
   #
-  # `--read-only` drops every mutating tool before it is listed. `--toolsets
-  # core` drops the helm toolset, and that is a consequence of the RBAC choice
-  # rather than taste: helm stores releases in Secrets, which the rules below
-  # deliberately cannot read, so the helm tools would only ever answer 403.
+  # `--read-only` is gone, so the mutating tools are listed and a caller may
+  # create and update workloads. The whole boundary now sits in RBAC, which
+  # grants no `delete` and no `pods/exec`: `resources_delete`, `pods_delete`
+  # and `pods_exec` still list, and answer 403.
+  #
+  # `--disable-destructive` is deliberately not used in their place. It drops
+  # every tool marked destructive, and upstream marks `resources_create_or_update`
+  # among them — that would leave `pods_run` as the only write tool, which is
+  # not the split we want.
+  #
+  # `--toolsets core` drops the helm toolset, and that is a consequence of the
+  # RBAC choice rather than taste: helm stores releases in Secrets, which the
+  # rules below still deliberately cannot read, so the helm tools would only
+  # ever answer 403.
   args:
     - "--port"
     - "8080"
-    - "--read-only"
     - "--toolsets"
     - "core"
 
@@ -62,10 +71,27 @@ app:
   serviceAccount:
     create: true
 
-  # view-level read access with core `secrets` left out on purpose: an
-  # unauthenticated in-cluster service must not be a Secret reader every pod
+  # Reads are unchanged: view-level, with core `secrets` left out on purpose —
+  # an unauthenticated in-cluster service must not be a Secret reader every pod
   # can reach. The named groups are the ones this cluster actually runs; a new
   # API group is invisible to the server until it is added here.
+  #
+  # Writes are separate rules rather than extra verbs on the read rules, and
+  # that asymmetry is the point: everything readable here is not writable. Left
+  # out on purpose, each one an escalation path rather than a workload change:
+  #
+  #   rbac.authorization.k8s.io   a writer edits the rules that bound it
+  #   serviceaccounts, nodes      identity and scheduling substrate
+  #   apiextensions.k8s.io        CRDs are cluster-wide schema
+  #   storage.k8s.io              StorageClasses reach node-level volumes
+  #   external-secrets.io         an ExternalSecret pulls any parameter the
+  #                               ClusterSecretStore can read, which walks
+  #                               straight around the Secret exclusion above
+  #   argoproj.io                 an Application deploys with Argo CD's own
+  #                               privileges; mcp-argocd is the audited path
+  #
+  # No `delete` and no `pods/exec` anywhere below — with --read-only gone,
+  # nothing else stops those two.
   rbac:
     create: true
     rules:
@@ -105,3 +131,39 @@ app:
           - external-secrets.io
         resources: ["*"]
         verbs: ["get", "list", "watch"]
+
+      # Writes. `pods` is here because pods_run creates one; the `*/scale`
+      # subresources are here because resources_scale goes through them rather
+      # than through the parent object.
+      - apiGroups: [""]
+        resources:
+          - pods
+          - services
+          - configmaps
+          - persistentvolumeclaims
+        verbs: ["create", "update", "patch"]
+      - apiGroups: ["apps"]
+        resources:
+          - deployments
+          - deployments/scale
+          - statefulsets
+          - statefulsets/scale
+          - daemonsets
+          - replicasets
+          - replicasets/scale
+        verbs: ["create", "update", "patch"]
+      - apiGroups: ["batch"]
+        resources: ["jobs", "cronjobs"]
+        verbs: ["create", "update", "patch"]
+      - apiGroups: ["autoscaling"]
+        resources: ["horizontalpodautoscalers"]
+        verbs: ["create", "update", "patch"]
+      - apiGroups: ["policy"]
+        resources: ["poddisruptionbudgets"]
+        verbs: ["create", "update", "patch"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses", "networkpolicies"]
+        verbs: ["create", "update", "patch"]
+      - apiGroups: ["gateway.networking.k8s.io"]
+        resources: ["httproutes", "grpcroutes", "referencegrants"]
+        verbs: ["create", "update", "patch"]
