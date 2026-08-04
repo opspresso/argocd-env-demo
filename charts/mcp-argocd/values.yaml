@@ -1,0 +1,87 @@
+# Argo CD MCP server Agent Studio calls.
+#
+# Cluster-internal by design: no `routing` block anywhere in this chart, so no
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
+# reaches it at mcp-argocd.agent-mcps.svc.cluster.local.
+#
+# Deliberately absent, and not an oversight: the HPA, PDB and long
+# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
+# runs holding in-flight SSE streams. A request here is one Argo CD API call, so
+# the chart defaults are right and a copied 660s grace period would only make
+# every rollout eleven minutes long.
+
+app:
+  fullnameOverride: mcp-argocd
+
+  # quay.io, like mcp-kubernetes. Upstream publishes to quay.io and ghcr.io —
+  # the bare `argoprojlabs/mcp-for-argocd` in its README is the quay path, and
+  # there is no Docker Hub repository behind that name.
+  image:
+    repository: quay.io/argoprojlabs/mcp-for-argocd
+
+  # `command` is here and nowhere else in this repo's MCP charts, and it is
+  # load-bearing. The image declares no ENTRYPOINT — its whole command line is
+  # CMD (`node dist/index.js http`) — so `args` alone would replace that CMD and
+  # the kubelet would try to exec `http` as a binary. Naming the interpreter is
+  # what keeps `args` below a list of flags.
+  command:
+    - "node"
+    - "dist/index.js"
+
+  # `--stateless` is what lets this chart skip mcp-grafana's destinationRule.
+  # The default keeps streamable-http sessions in the pod's memory, pinning
+  # every request of a session to the pod that created it; stateless returns no
+  # Mcp-Session-Id at all, so any replica can answer any request and raising
+  # replicas is a non-event.
+  #
+  # `--port 3000` restates the command's own default. It is written out so the
+  # Service targetPort and the probes below have something to agree with — the
+  # port is a flag, not an env var, whatever upstream's `make run PORT=` implies.
+  #
+  # Nothing here corresponds to mcp-grafana's `--address`/`--allowed-hosts`: the
+  # server calls `app.listen(port)` with no host, which already binds every
+  # interface, and it does no Host-header validation at all.
+  args:
+    - "http"
+    - "--port"
+    - "3000"
+    - "--stateless"
+
+  service:
+    name: http
+    targetPort: 3000
+
+  # Node/express fronting one Argo CD API call at a time — its siblings'
+  # numbers, sized like mcp-brave-search rather than the Go servers.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+
+  # /healthz is registered before the MCP handler and takes no credential, so
+  # the kubelet needs neither the API token nor mcp-grafana's Host-header trick.
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: 3000
+    initialDelaySeconds: 3
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+
+  # No RBAC on this ServiceAccount, unlike mcp-kubernetes: this server never
+  # touches the Kubernetes API. It reaches the cluster only through Argo CD's
+  # HTTP API, so what it may do is the API token's Argo CD RBAC — declared in
+  # argocd-env-addons as `role:mcp`, not here.
+  serviceAccount:
+    create: true

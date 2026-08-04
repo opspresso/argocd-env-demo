@@ -1,0 +1,26 @@
+app:
+  podLabels:
+    sidecar.istio.io/inject: "true"
+
+  configmap:
+    enabled: true
+    data:
+      # In-cluster Argo CD. This is mcp-argocd's own outbound call, so Agent
+      # Studio's SSRF guard has nothing to say about it — that guard only bounds
+      # what Agent Studio itself dials.
+      #
+      # Plain HTTP, and deliberately: argocd-env-addons runs the server with
+      # `server.insecure: true` and terminates TLS at the gateway. Dialing
+      # https:// here would only fail a handshake the server does not offer,
+      # which is why no NODE_TLS_REJECT_UNAUTHORIZED=0 appears anywhere.
+      #
+      # The bare origin is right — the client appends /api/v1/... itself.
+      ARGOCD_BASE_URL: http://argocd-server.argocd.svc.cluster.local
+
+      # MCP_READ_ONLY is absent on purpose. Unset leaves the mutating tools
+      # (create/update/delete/sync_application, run_resource_action) listed;
+      # setting it to "true" drops them before they are ever listed.
+      #
+      # It is not the boundary, though — the token's Argo CD RBAC is. This flag
+      # only decides what the model is offered, so tightening `role:mcp` in
+      # argocd-env-addons is what actually stops a write.

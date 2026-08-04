@@ -1,0 +1,36 @@
+# Image tag, pinned by hand.
+#
+# agent-studio's equivalent file is generated — its release workflow sends a
+# repository_dispatch that gen_values.py turns into a bump. No MCP server does
+# that, so this moves when someone edits it, which is also why it is pinned
+# rather than :latest.
+
+app:
+  image:
+    # Upstream tags carry a `v` prefix on quay.io (argoprojlabs/mcp-for-argocd).
+    tag: v0.8.0
+
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
+    data:
+      # An Argo CD API token for the `mcp` local account. The account and its
+      # `role:mcp` grant are declared in argocd-env-addons' argo-cd chart; the
+      # token itself cannot be, because Argo CD signs it with server.secretkey.
+      # argocd-env-addons' install/token.sh mints it and pins it here, together
+      # with the matching entry in `accounts.mcp.tokens` — both survive a
+      # cluster rebuild, so this token does not change when Argo CD is
+      # reinstalled and there is no generate-token step to remember.
+      #
+      # The parameter must exist before first sync — External Secrets holds the
+      # Deployment's env until it resolves, so a missing parameter shows up as
+      # a pod that never schedules its secret, not as a clean error here.
+      #
+      # The server takes the token from ARGOCD_API_TOKEN only as the fallback
+      # for a request that carries no x-argocd-api-token header, which is every
+      # request Agent Studio sends: sync leaves MCP entry headers empty.
+      - key: /k8s/common/mcp-argocd/argocd-api-token
+        name: ARGOCD_API_TOKEN
