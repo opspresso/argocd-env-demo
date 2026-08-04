@@ -34,11 +34,20 @@ app:
   # RBAC choice rather than taste: helm stores releases in Secrets, which the
   # rules below still deliberately cannot read, so the helm tools would only
   # ever answer 403.
+  #
+  # `--stateless` is what lets this chart skip mcp-grafana's destinationRule.
+  # Without it the streamable-http session lives in this pod's memory and every
+  # request carrying an Mcp-Session-Id must come back to the pod that issued
+  # it — one replica hides that, a second one would break runs at random.
+  # Stateless asks for no session id at all, so raising replicas is a
+  # non-event. What it gives up is upstream's listChanged notifications, and
+  # nothing here uses them: the toolset is fixed by the flag above.
   args:
     - "--port"
     - "8080"
     - "--toolsets"
     - "core"
+    - "--stateless"
 
   service:
     name: http
