@@ -14,11 +14,10 @@ app:
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai
       MAX_RUN_DURATION_MS: '600000'
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
+      PLUGINS_REPO: opspresso/agent-plugins
       PUBLIC_BASE_URL: https://agent-studio.{{hostname.public}}
       S3_BUCKET_NAME: agent-studio-static
-      SKILLS_REPO: opspresso/agent-skills
       SLACK_LOADING_INDICATOR: ':loading:'
-      TOOLS_REPO: opspresso/agent-tools
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
   routing:
     hosts:
