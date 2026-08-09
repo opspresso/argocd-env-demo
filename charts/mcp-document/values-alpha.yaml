@@ -1,7 +1,7 @@
 app:
   env:
   - name: ENV_HASH
-    value: ''
+    value: 7df044b3b106dda820a175ef3c47804f
   - name: VERSION
     value: v0.1.0
   image:
