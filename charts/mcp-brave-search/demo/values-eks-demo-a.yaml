@@ -1,3 +1,32 @@
 app:
   podLabels:
     sidecar.istio.io/inject: "true"
+
+  # Configuration rides the ConfigMap, not `app.env`, and not args. Upstream
+  # reads a BRAVE_MCP_* env var for every CLI flag, so no args are needed —
+  # and `env` in values.yaml would be wiped by a deploy: gitops writes
+  # `app.env` (ENV_HASH/VERSION) into values-alpha.yaml, and Helm replaces
+  # lists wholesale instead of merging them.
+  #
+  # HOST 0.0.0.0 is load-bearing. The default is 127.0.0.1, which binds inside
+  # the pod's own namespace only — the Service would resolve, connect, and hang
+  # forever on a listener no other pod can reach.
+  #
+  # No BRAVE_MCP_ALLOWED_HOSTS, a deliberate contrast with mcp-grafana's
+  # --allowed-hosts list: this server disables Host-header validation when the
+  # list is unset (reverse-proxy compatibility), so nothing here answers 403 to
+  # the Service DNS names. DNS rebinding needs a browser on an attacker's page,
+  # and no browser routes to this ClusterIP.
+  #
+  # STATELESS=true is what lets this chart skip mcp-grafana's destinationRule:
+  # the default (false) keeps streamable-http sessions in pod memory, pinning
+  # every request of a session to the pod that created it. Stateless is the
+  # mode upstream built for exactly this kind of fronting (Bedrock AgentCore),
+  # and it makes raising replicas a non-event.
+  configmap:
+    enabled: true
+    data:
+      BRAVE_MCP_TRANSPORT: "http"
+      BRAVE_MCP_HOST: "0.0.0.0"
+      BRAVE_MCP_PORT: "8080"
+      BRAVE_MCP_STATELESS: "true"
