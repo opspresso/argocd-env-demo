@@ -15,12 +15,6 @@ app:
   image:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/mcp-youtube
 
-  # No MCP_API_KEY. The server runs unauthenticated when the key is unset, which
-  # is the intended mode here: nothing routes to this Service from outside, so a
-  # shared secret every pod already reaches would add a thing to rotate without
-  # adding a thing it protects against. It says so in its own startup log.
-  # Setting a key here is what to do if this ever gains an ingress.
-
   service:
     name: http
     targetPort: 3000

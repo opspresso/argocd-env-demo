@@ -16,24 +16,6 @@ app:
   image:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/mcp-document
 
-  # No MCP_API_KEY, for the same reason url-fetch has none: nothing routes to
-  # this Service from outside. The server says which mode it is in on every
-  # start, so the day an ingress appears the open mode is in the logs.
-  #
-  # No AWS credentials either. The ServiceAccount below is bound to
-  # pod-role--mcp-document by an EKS Pod Identity association, defined in
-  # terraform-env-demo/demo/8-role. Until that role is applied, read_document
-  # works and write_document fails with the S3 reason in the tool result.
-  configmap:
-    enabled: true
-    data:
-      AWS_REGION: ap-northeast-2
-      # Written documents land here under <prefix>/<tenant>/<ulid>/<name>, and
-      # the download links this server returns are presigned against the pod
-      # role — so the bucket stays private.
-      DOCUMENT_BUCKET: agent-studio-document
-      DOCUMENT_PREFIX: documents
-
   service:
     name: http
     targetPort: 3000
