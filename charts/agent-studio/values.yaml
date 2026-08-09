@@ -152,6 +152,11 @@ app:
 # conditional write per occurrence, so a duplicate, concurrent or late tick
 # never double-fires. The token comes from the same external secret the app
 # reads (SCHEDULE_SCAN_TOKEN, /k8s/common/agent-studio/schedule-scan-token).
+#
+# The same tick also nudges the plugins sync (/api/plugins/sync/scan): the
+# server compares the repo head against its last report and answers upToDate
+# without paying for a snapshot when nothing merged, so a merge to
+# agent-plugins lands within a minute at one GitHub read per quiet tick.
 scan:
   fullnameOverride: agent-studio-scan
 
@@ -171,7 +176,9 @@ scan:
     - -c
     - >-
       curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
-      http://agent-studio/api/triggers/scan
+      http://agent-studio/api/triggers/scan &&
+      curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
+      http://agent-studio/api/plugins/sync/scan
   additionalSecret:
     enabled: true
     names:
