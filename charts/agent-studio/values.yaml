@@ -221,7 +221,7 @@ scan:
 reindex:
   fullnameOverride: agent-studio-reindex
 
-  schedule: "17 * * * *"
+  schedule: "12 * * * *"
 
   image:
     repository: curlimages/curl
