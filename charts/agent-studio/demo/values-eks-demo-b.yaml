@@ -14,12 +14,22 @@ app:
       CATALOG_INDEX: capabilities
       VECTOR_BUCKET: agent-studio-vector
       DYNAMODB_TABLE_NAME: agent-studio
-      # Must stay identical to mcp-memory's: both embed into the same bucket,
-      # and vectors from two models are not comparable. Bedrock needs no key —
-      # pod-role--agent-studio carries bedrock:InvokeModel.
-      EMBEDDING_PROVIDER: bedrock
-      EMBEDDING_MODEL: amazon.titan-embed-text-v2:0
+      # Cohere rather than mcp-memory's Titan, and the reason is measured: a
+      # Korean query against an English description scores 0.39 here and 0.065
+      # on Titan, where unrelated pairs score 0.04 — so this registry is
+      # unreachable from a Korean request under Titan. The two indexes are
+      # separate, so they may differ; what must not differ is the model that
+      # wrote an index and the one that queries it. Reached through its
+      # inference profile: the bare model id refuses on-demand invocation.
+      # No key — pod-role--agent-studio carries bedrock:InvokeModel.
+      EMBEDDING_PROVIDER: cohere
+      EMBEDDING_MODEL: global.cohere.embed-v4:0
       EMBEDDING_DIM: '1024'
+      # Belongs to the embedding model, not to the search. Cohere scores
+      # everything higher than Titan — unrelated pairs land at 0.24 where Titan
+      # put them at 0.04 — so the floor is 0.25 rather than 0.15. Re-measure
+      # when EMBEDDING_MODEL changes.
+      CATALOG_MIN_SCORE: '0.25'
       LLM_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
