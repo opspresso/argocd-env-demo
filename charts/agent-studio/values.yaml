@@ -201,3 +201,58 @@ scan:
     limits:
       cpu: 50m
       memory: 32Mi
+
+# The capability reindex (agent-studio docs/OPERATIONS.md#catalog-reindex).
+# Rebuilds the global catalog — every skill, every MCP server and the tools it
+# offers, every external agent — so a newly registered entry becomes
+# discoverable without an admin doing anything.
+#
+# Hourly rather than per minute like the scan above, and the difference is the
+# whole reason it is a second CronJob: a schedule occurrence is time-bound and
+# a missed window loses it, while this rebuilds from the registries as they are
+# now. A skipped run only delays discovery of what changed since the last one,
+# and each run probes every registered MCP server — sixty times an hour would
+# buy nothing. Ticking twice is safe: keys are derived from the entry, so a
+# second pass writes the same records and computes the same leftovers.
+#
+# 503 means VECTOR_BUCKET is unset, which -f turns into a failed Job. That is
+# deliberate — a deployment carrying EMBEDDING_* but no bucket should be
+# visible rather than quietly doing nothing.
+reindex:
+  fullnameOverride: agent-studio-reindex
+
+  schedule: "17 * * * *"
+
+  image:
+    repository: curlimages/curl
+    tag: "8.11.1"
+
+  command:
+    - /bin/sh
+    - -c
+    - >-
+      curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
+      http://agent-studio/api/catalog/reindex
+
+  additionalSecret:
+    enabled: true
+    names:
+      - agent-studio-external
+
+  # Bounds the request, not the reindex: the tick hands the work off and returns
+  # in milliseconds, so the rebuild outlives this Job by design.
+  activeDeadlineSeconds: 60
+  concurrencyPolicy: Forbid
+  backoffLimit: 0
+  restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  ttlSecondsAfterFinished: 3600
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 50m
+      memory: 32Mi

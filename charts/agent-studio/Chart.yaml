@@ -15,3 +15,12 @@ dependencies:
     name: cronjob
     version: "v1.1.0"
     alias: scan
+  # The capability reindex, hourly. A second CronJob rather than another curl
+  # inside `scan`: that one ticks every minute because a schedule occurrence is
+  # time-bound and missing its window loses it, while a reindex rebuilds from
+  # the registries as they are now and has no window to miss. Per minute it
+  # would only probe every MCP server sixty times an hour for nothing.
+  - repository: https://opspresso.github.io/helm-charts
+    name: cronjob
+    version: "v1.1.0"
+    alias: reindex
