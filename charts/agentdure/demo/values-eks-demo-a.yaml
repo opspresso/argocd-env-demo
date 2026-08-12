@@ -6,8 +6,8 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://agentdure.com
-      PUBLIC_BASE_URL: https://agentdure.com
+      BETTER_AUTH_URL: https://agentdure.demo.opspresso.com
+      PUBLIC_BASE_URL: https://agentdure.demo.opspresso.com
       # Capability catalog. Same S3 Vectors bucket mcp-memory writes to, its own
       # index — an index fixes its dimension and metric at creation, so the two
       # cannot share one. Created out of band: nothing in terraform-env-demo
@@ -43,14 +43,14 @@ app:
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
   routing:
     hosts:
-    - agent-studio.demo.opspresso.com
+    - agentdure.demo.opspresso.com
     - agentdure.com
     httpRoute:
       enabled: true
   podLabels:
     sidecar.istio.io/inject: "true"
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://agentdure.com
+    link.argocd.argoproj.io/external-link: https://agentdure.demo.opspresso.com
 
   serviceMonitor:
     labels:
