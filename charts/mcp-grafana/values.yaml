@@ -1,11 +1,11 @@
-# Grafana MCP server Agent Studio calls.
+# Grafana MCP server AgentDure calls.
 #
 # Cluster-internal by design: no `routing` block anywhere in this chart, so no
-# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. AgentDure
 # reaches it at mcp-grafana.agent-mcps.svc.cluster.local.
 #
 # Deliberately absent, and not an oversight: the HPA, PDB and long
-# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
+# terminationGracePeriod that agentdure carries. Those exist for ten-minute
 # runs holding in-flight SSE streams. A request here is one Grafana query, so
 # the chart defaults are right and a copied 660s grace period would only make
 # every rollout eleven minutes long.

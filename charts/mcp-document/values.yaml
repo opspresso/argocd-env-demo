@@ -1,12 +1,12 @@
-# Document MCP server Agent Studio calls — reads PDF/DOCX/HWP/HWPX to text,
+# Document MCP server AgentDure calls — reads PDF/DOCX/HWP/HWPX to text,
 # writes Markdown out as DOCX/PDF/HWPX and returns a presigned download link.
 #
 # Cluster-internal by design: no `routing` block anywhere in this chart, so no
-# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. AgentDure
 # reaches it at mcp-document.agent-mcps.svc.cluster.local.
 #
 # Deliberately absent, and not an oversight: the HPA, PDB and long
-# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
+# terminationGracePeriod that agentdure carries. Those exist for ten-minute
 # runs holding in-flight SSE streams. A request here is one document read or
 # one render, so the chart defaults are right.
 

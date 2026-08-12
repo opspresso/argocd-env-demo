@@ -1,0 +1,37 @@
+app:
+  configmap:
+    data:
+      VERSION: v0.43.0
+    enabled: true
+  env:
+  - name: ENV_HASH
+    value: e987b4dcd3bdce53c2b6b5eef12f4d0a
+  - name: VERSION
+    value: v0.43.0
+  externalSecrets:
+    data:
+    - key: /k8s/common/agentdure/better-auth-secret
+      name: BETTER_AUTH_SECRET
+    - key: /k8s/common/agentdure/google-client-id
+      name: GOOGLE_CLIENT_ID
+    - key: /k8s/common/agentdure/google-client-secret
+      name: GOOGLE_CLIENT_SECRET
+    - key: /k8s/common/agentdure/llm-api-key
+      name: LLM_API_KEY
+    - key: /k8s/common/agentdure/llm-provider-openai-api-key
+      name: LLM_PROVIDER_OPENAI_API_KEY
+    - key: /k8s/common/agentdure/llm-provider-anthropic-api-key
+      name: LLM_PROVIDER_ANTHROPIC_API_KEY
+    - key: /k8s/common/agentdure/llm-provider-xai-api-key
+      name: LLM_PROVIDER_XAI_API_KEY
+    - key: /k8s/common/agentdure/aes-encryption-key
+      name: AES_ENCRYPTION_KEY
+    - key: /k8s/common/agentdure/a2a-api-key
+      name: A2A_API_KEY
+    - key: /k8s/common/agentdure/github-token
+      name: GITHUB_TOKEN
+    - key: /k8s/common/agentdure/schedule-scan-token
+      name: SCHEDULE_SCAN_TOKEN
+    enabled: true
+  image:
+    tag: v0.43.0
