@@ -44,7 +44,7 @@ app:
   routing:
     hosts:
     - agent-studio.demo.opspresso.com
-    - agentpresso.dev
+    - agentdure.com
     httpRoute:
       enabled: true
   podLabels:
