@@ -1,5 +1,5 @@
-# Document MCP server AgentDure calls — reads PDF/DOCX/HWP/HWPX to text,
-# writes Markdown out as DOCX/PDF/HWPX and returns a presigned download link.
+# Document MCP server AgentDure calls — reads DOCX/XLSX/PPTX/HWP/HWPX/ODF/RTF
+# to text, and writes Markdown out as DOCX/PDF/HWPX, returning the bytes.
 #
 # Cluster-internal by design: no `routing` block anywhere in this chart, so no
 # HTTPRoute is ever rendered and the only way in is the ClusterIP. AgentDure
@@ -29,8 +29,10 @@ app:
       memory: 512Mi
 
   # A document parse holds the whole file in memory, so the limit above is the
-  # real bound on a request — not the 20MB fetch cap, which is the input to it.
-  # PDF writing adds the two embedded Korean faces (~4MB) on top.
+  # real bound on a request — not the caller's ~11.5MB body cap, which is the
+  # input to it. PDF writing adds the two embedded Korean faces (~4MB) on top,
+  # and a rendered file rides back through the response, so a render peaks at
+  # roughly twice its own size.
 
   readinessProbe:
     httpGet:
@@ -48,7 +50,9 @@ app:
     periodSeconds: 10
     failureThreshold: 3
 
-  # Required, and not just conventional: the Pod Identity association names this
-  # account, so the pod gets no AWS credentials at all without it.
+  # Kept, though nothing is bound to it any more: since v0.2.0 the server makes
+  # no AWS call, so pod-role--mcp-document and its association can be retired in
+  # terraform-env-demo/demo/8-role. The account itself stays because the
+  # Deployment names one either way.
   serviceAccount:
     create: true
