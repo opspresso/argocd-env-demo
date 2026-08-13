@@ -24,6 +24,8 @@ app:
       name: LLM_PROVIDER_ANTHROPIC_API_KEY
     - key: /k8s/common/agentdure/llm-provider-xai-api-key
       name: LLM_PROVIDER_XAI_API_KEY
+    - key: /k8s/common/agentdure/llm-provider-openrouter-api-key
+      name: LLM_PROVIDER_OPENROUTER_API_KEY
     - key: /k8s/common/agentdure/aes-encryption-key
       name: AES_ENCRYPTION_KEY
     - key: /k8s/common/agentdure/a2a-api-key
