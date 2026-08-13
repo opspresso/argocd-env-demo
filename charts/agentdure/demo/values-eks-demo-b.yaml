@@ -32,6 +32,7 @@ app:
       # when EMBEDDING_MODEL changes.
       CATALOG_MIN_SCORE: '0.25'
       LLM_BASE_URL: https://api.openai.com/v1
+      UNKNOWN_MODEL_POLICY: allow
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai/v1
