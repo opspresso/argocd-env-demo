@@ -157,6 +157,50 @@ redis:
 
   architecture: standalone
 
+# The demo ticker. The index page's two buttons only move the counters while
+# someone is clicking them; this CronJob presses one of them every minute so the
+# numbers keep moving on their own.
+thumbs:
+  fullnameOverride: sample-node-thumbs
+
+  schedule: "* * * * *"
+
+  image:
+    repository: curlimages/curl
+    tag: "8.11.1"
+
+  # The same two calls public/counter.js makes on click: thumbs up is
+  # POST /counter/up (INCR), thumbs down is DELETE /counter/down (DECR). awk
+  # seeds from the clock, so each tick picks its side independently of the last.
+  #
+  # -f turns an app-side error — Redis unreachable answers 500 — into a failed
+  # Job, which is what failedJobsHistoryLimit keeps visible.
+  command:
+    - /bin/sh
+    - -c
+    - >-
+      if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
+      then curl -sf -X POST http://sample-node/counter/up;
+      else curl -sf -X DELETE http://sample-node/counter/down;
+      fi
+
+  # A tick answers in milliseconds; one that outlives the next tick is stuck.
+  activeDeadlineSeconds: 55
+  concurrencyPolicy: Forbid
+  backoffLimit: 0
+  restartPolicy: Never
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  ttlSecondsAfterFinished: 600
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 50m
+      memory: 32Mi
+
 raw:
   enabled: false
 
