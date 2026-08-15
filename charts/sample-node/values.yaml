@@ -183,7 +183,7 @@ thumbs:
     - >-
       if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
       then curl -s -o /dev/null -X POST http://sample-node/counter/up;
-      else curl -s -o /dev/null -X DELETE http://sample-node/counter/down;
+      else curl -s -o /dev/null -X POST http://sample-node/counter/down;
       fi; exit 0
 
   # A tick answers in milliseconds; one that outlives the next tick is stuck.
