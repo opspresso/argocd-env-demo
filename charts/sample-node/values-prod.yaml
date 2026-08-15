@@ -1,17 +1,17 @@
 app:
   autoscaling:
     enabled: true
-    maxReplicas: 24
+    maxReplicas: 12
     minReplicas: 2
   configmap:
     data:
-      VERSION: v0.12.9
+      VERSION: v0.15.3
     enabled: true
   env:
   - name: ENV_HASH
-    value: 2bb252b5b2ffc5888713c9296e3aa5ed
+    value: c29df298a9e7a2f6d55f8b4c110538bd
   - name: VERSION
-    value: v0.12.9
+    value: v0.15.3
   externalSecrets:
     data:
     - key: /k8s/common/slack-token
@@ -20,4 +20,4 @@ app:
       name: REDIS_PASS
     enabled: true
   image:
-    tag: v0.12.9
+    tag: v0.15.3
