@@ -173,16 +173,18 @@ thumbs:
   # POST /counter/up (INCR), thumbs down is DELETE /counter/down (DECR). awk
   # seeds from the clock, so each tick picks its side independently of the last.
   #
-  # -f turns an app-side error — Redis unreachable answers 500 — into a failed
-  # Job, which is what failedJobsHistoryLimit keeps visible.
+  # No -f and exit 0 whatever happens: the tick only has to place the call. How
+  # the app answers is the app's health to report — its probes and alerts
+  # already do — and /counter needs Redis, so an unreachable Redis would
+  # otherwise file a broken Job every single minute while saying nothing new.
   command:
     - /bin/sh
     - -c
     - >-
       if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
-      then curl -sf -X POST http://sample-node/counter/up;
-      else curl -sf -X DELETE http://sample-node/counter/down;
-      fi
+      then curl -s -o /dev/null -X POST http://sample-node/counter/up;
+      else curl -s -o /dev/null -X DELETE http://sample-node/counter/down;
+      fi; exit 0
 
   # A tick answers in milliseconds; one that outlives the next tick is stuck.
   activeDeadlineSeconds: 55
