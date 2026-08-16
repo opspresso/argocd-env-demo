@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: mcp-cloudwatch
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/eks-demo.yaml"
+
+  template:
+    metadata:
+      name: "mcp-cloudwatch-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
+      labels:
+        app.kubernetes.io/instance: "apps-{{cluster}}"
+        opspresso.com/cluster: "{{cluster}}"
+        opspresso.com/group: "apps"
+    spec:
+      project: apps
+      destination:
+        name: "{{cluster}}"
+        namespace: agent-mcps
+      source:
+        repoURL: https://github.com/opspresso/argocd-env-demo
+        targetRevision: HEAD
+        path: charts/mcp-cloudwatch
+        helm:
+          valueFiles:
+            - values.yaml
+            - "values-{{phase}}.yaml"
+            - "{{env}}/values-{{cluster}}.yaml"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

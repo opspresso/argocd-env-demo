@@ -1,0 +1,7 @@
+# Image tag, pinned by hand. AWS Labs publishes this package without a `v`
+# prefix; do not use `latest`, because the HTTP launcher depends on its FastMCP
+# construction remaining compatible.
+
+app:
+  image:
+    tag: "0.1.8"

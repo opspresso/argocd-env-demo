@@ -1,0 +1,83 @@
+# AWS Labs CloudWatch MCP server AgentDure calls.
+#
+# Cluster-internal by design: no `routing` block exists, so no HTTPRoute is
+# rendered and the only way in is the ClusterIP. AgentDure reaches it at
+# mcp-cloudwatch.agent-mcps.svc.cluster.local.
+
+app:
+  fullnameOverride: mcp-cloudwatch
+
+  image:
+    repository: public.ecr.aws/awslabs-mcp/awslabs/cloudwatch-mcp-server
+
+  # Upstream starts the same FastMCP object with stdio and exposes no transport
+  # flag. Importing that object and selecting streamable-http keeps the upstream
+  # tools unchanged while making it reachable through the in-cluster Service.
+  #
+  # The settings are assigned after import because upstream constructs the
+  # object with localhost defaults before this launcher runs. Replacing the
+  # transport security allowlist is therefore as important as changing host:
+  # without it the SDK rejects the Service's Host header.
+  command:
+    - python
+    - -c
+  args:
+    - |
+      from awslabs.cloudwatch_mcp_server.server import mcp
+      from mcp.server.transport_security import TransportSecuritySettings
+
+      mcp.settings.host = "0.0.0.0"
+      mcp.settings.port = 8000
+      mcp.settings.stateless_http = True
+      mcp.settings.json_response = True
+      mcp.settings.transport_security = TransportSecuritySettings(
+          enable_dns_rebinding_protection=True,
+          allowed_hosts=[
+              "mcp-cloudwatch.agent-mcps.svc.cluster.local",
+              "mcp-cloudwatch.agent-mcps.svc.cluster.local:*",
+              "mcp-cloudwatch.agent-mcps.svc",
+              "mcp-cloudwatch.agent-mcps.svc:*",
+              "mcp-cloudwatch.agent-mcps",
+              "mcp-cloudwatch.agent-mcps:*",
+              "mcp-cloudwatch",
+              "mcp-cloudwatch:*",
+              "localhost",
+              "localhost:*",
+              "127.0.0.1",
+              "127.0.0.1:*",
+          ],
+      )
+      mcp.run(transport="streamable-http")
+
+  service:
+    name: http
+    targetPort: 8000
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+  # Upstream only exposes the MCP route. A TCP probe checks that the HTTP
+  # listener is accepting connections without opening a long-lived MCP stream.
+  readinessProbe:
+    tcpSocket:
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    tcpSocket:
+      port: 8000
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    failureThreshold: 3
+
+  # AWS credentials come from the EKS Pod Identity association for
+  # agent-mcps/mcp-cloudwatch. No profile or static credential is mounted.
+  serviceAccount:
+    create: true
