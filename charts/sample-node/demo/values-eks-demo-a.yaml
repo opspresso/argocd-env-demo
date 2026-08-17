@@ -31,6 +31,9 @@ redis:
     sidecar:
       inject: true
 
+# https rather than http: the ALB in front of the gateway answers http with a 301
+# to https, and this curl has no -L, so every tick stopped at the redirect. The
+# app never saw the POST and neither did the mesh metrics.
 thumbs:
   command:
     - /bin/sh
@@ -40,5 +43,5 @@ thumbs:
       then SIDE=up; else SIDE=down; fi;
       curl -s -o /dev/null
       -w "thumbs $SIDE %{http_code} %{time_total}s %{errormsg}\n"
-      -X POST http://sample-node.demo.opspresso.com/counter/$SIDE;
+      -X POST https://sample-node.demo.opspresso.com/counter/$SIDE;
       exit 0
