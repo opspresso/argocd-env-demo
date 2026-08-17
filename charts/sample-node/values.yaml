@@ -78,10 +78,19 @@ app:
           type: Percent
           value: 25
         stabilizationWindowSeconds: 600
+    # The pod runs an injected istio-proxy beside the app, and a type: Resource
+    # target sums both containers' CPU and divides by both their requests — the
+    # sidecar's idle usage drags the ratio down and hides load on the app.
+    # ContainerResource scopes the signal to the app container alone; `app` is
+    # the container name the upstream chart's deployment uses.
+    #
+    # The target stays at 50, but it now means 50m of the app's own 100m request
+    # rather than 50% of the pod's combined request, so it scales out earlier.
     metrics:
-    - type: Resource
-      resource:
+    - type: ContainerResource
+      containerResource:
         name: cpu
+        container: app
         target:
           type: Utilization
           averageUtilization: 50
