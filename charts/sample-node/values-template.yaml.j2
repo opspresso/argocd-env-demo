@@ -39,9 +39,8 @@ thumbs:
     - /bin/sh
     - -c
     - >-
-      if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
-      then SIDE=up; else SIDE=down; fi;
-      curl -s -o /dev/null
-      -w "thumbs $SIDE %{http_code} %{time_total}s %{errormsg}\n"
-      -X POST https://sample-node.{{hostname.public}}/counter/$SIDE;
+      seq 150 | awk 'BEGIN{srand()}{print "-o"; print "/dev/null";
+      print "https://sample-node.{{hostname.public}}/counter/" (rand() < 0.5 ? "up" : "down")}'
+      | xargs curl -s --rate 3/s -X POST -w "%{http_code}\n"
+      | awk '{c[$0]++} END{line="thumbs"; for (k in c) line=line " " k "x" c[k]; print line}';
       exit 0

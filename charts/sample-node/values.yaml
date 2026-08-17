@@ -167,8 +167,10 @@ redis:
   architecture: standalone
 
 # The demo ticker. The index page's two buttons only move the counters while
-# someone is clicking them; this CronJob presses one of them every minute so the
-# numbers keep moving on their own.
+# someone is clicking them; this CronJob presses them on its own so the numbers
+# keep moving. At three presses a second it doubles as the traffic the
+# dashboards graph — nothing else calls this cluster between demos, and one
+# call a minute sat too close to zero on a rate graph to read.
 thumbs:
   fullnameOverride: sample-node-thumbs
 
@@ -178,30 +180,35 @@ thumbs:
     repository: curlimages/curl
     tag: "8.11.1"
 
-  # The same two calls public/counter.js makes on click: thumbs up is
-  # POST /counter/up (INCR), thumbs down is DELETE /counter/down (DECR). awk
-  # seeds from the clock, so each tick picks its side independently of the last.
+  # The call public/counter.js makes on click, POST /counter/<side>, 150 times
+  # at three a second — fifty seconds of the minute — with awk picking a side
+  # per press the way a visitor would.
   #
-  # No -f and exit 0 whatever happens: the tick only has to place the call. How
+  # One curl rather than a loop of them: a process and a TLS handshake per
+  # request would cost more CPU than this job is allowed, while a single
+  # connection carries all 150 on keep-alive. --rate is what paces them; curl
+  # given a list of URLs otherwise sends them as fast as it can.
+  #
+  # No -f and exit 0 whatever happens: the tick only has to place the calls. How
   # the app answers is the app's health to report — its probes and alerts
   # already do — and /counter needs Redis, so an unreachable Redis would
   # otherwise file a broken Job every single minute while saying nothing new.
   #
-  # Since the Job always succeeds, the tick's outcome lives only in its log:
-  # one line per run with the side pressed, the status code (000 when curl
-  # never got an answer), how long it took, and curl's own error if any.
+  # Since the Job always succeeds, the tick's outcome lives only in its log, and
+  # 150 lines a minute would bury it. The codes are tallied into one line per
+  # tick instead — `thumbs 200x150`, with 000 for calls that got no answer.
   command:
     - /bin/sh
     - -c
     - >-
-      if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
-      then SIDE=up; else SIDE=down; fi;
-      curl -s -o /dev/null
-      -w "thumbs $SIDE %{http_code} %{time_total}s %{errormsg}\n"
-      -X POST http://sample-node/counter/$SIDE;
+      seq 150 | awk 'BEGIN{srand()}{print "-o"; print "/dev/null";
+      print "http://sample-node/counter/" (rand() < 0.5 ? "up" : "down")}'
+      | xargs curl -s --rate 3/s -X POST -w "%{http_code}\n"
+      | awk '{c[$0]++} END{line="thumbs"; for (k in c) line=line " " k "x" c[k]; print line}';
       exit 0
 
-  # A tick answers in milliseconds; one that outlives the next tick is stuck.
+  # The tick now runs most of the minute by design, so the deadline is only here
+  # to stop one that has stalled from overlapping the next.
   activeDeadlineSeconds: 55
   concurrencyPolicy: Forbid
   backoffLimit: 0
