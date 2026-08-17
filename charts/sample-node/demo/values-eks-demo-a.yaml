@@ -25,7 +25,18 @@ app:
     data:
     - key: /k8s/common/sample-node/redis-password
       name: REDIS_PASS
+
 redis:
   istio:
     sidecar:
       inject: true
+
+thumbs:
+  command:
+    - /bin/sh
+    - -c
+    - >-
+      if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
+      then curl -s -o /dev/null -X POST http://sample-node.demo.opspresso.com/counter/up;
+      else curl -s -o /dev/null -X POST http://sample-node.demo.opspresso.com/counter/down;
+      fi; exit 0
