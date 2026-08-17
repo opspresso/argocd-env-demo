@@ -1,7 +1,7 @@
 app:
   autoscaling:
     enabled: true
-    maxReplicas: 12
+    maxReplicas: 6
     minReplicas: 2
   configmap:
     data:

@@ -22,7 +22,7 @@ app:
     enabled: true
 
     minReplicas: 1
-    maxReplicas: 5
+    maxReplicas: 6
 
     behavior:
       scaleDown:
