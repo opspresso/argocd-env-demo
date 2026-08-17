@@ -37,6 +37,8 @@ thumbs:
     - -c
     - >-
       if [ "$(awk 'BEGIN{srand();print int(rand()*2)}')" = 0 ];
-      then curl -s -o /dev/null -X POST http://sample-node.demo.opspresso.com/counter/up;
-      else curl -s -o /dev/null -X POST http://sample-node.demo.opspresso.com/counter/down;
-      fi; exit 0
+      then SIDE=up; else SIDE=down; fi;
+      curl -s -o /dev/null
+      -w "thumbs $SIDE %{http_code} %{time_total}s %{errormsg}\n"
+      -X POST http://sample-node.demo.opspresso.com/counter/$SIDE;
+      exit 0
