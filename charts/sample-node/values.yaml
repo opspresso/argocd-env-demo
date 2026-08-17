@@ -168,9 +168,9 @@ redis:
 
 # The demo ticker. The index page's two buttons only move the counters while
 # someone is clicking them; this CronJob presses them on its own so the numbers
-# keep moving. At three presses a second it doubles as the traffic the
-# dashboards graph — nothing else calls this cluster between demos, and one
-# call a minute sat too close to zero on a rate graph to read.
+# keep moving. At a press a second it doubles as the traffic the dashboards
+# graph — nothing else calls this cluster between demos, and one call a minute
+# sat too close to zero on a rate graph to read.
 thumbs:
   fullnameOverride: sample-node-thumbs
 
@@ -180,14 +180,20 @@ thumbs:
     repository: curlimages/curl
     tag: "8.11.1"
 
-  # The call public/counter.js makes on click, POST /counter/<side>, 150 times
-  # at three a second — fifty seconds of the minute — with awk picking a side
-  # per press the way a visitor would.
+  # The call public/counter.js makes on click, POST /counter/<side>, 45 times at
+  # one a second — three quarters of the minute — with awk picking a side per
+  # press the way a visitor would.
   #
   # One curl rather than a loop of them: a process and a TLS handshake per
-  # request would cost more CPU than this job is allowed, while a single
-  # connection carries all 150 on keep-alive. --rate is what paces them; curl
-  # given a list of URLs otherwise sends them as fast as it can.
+  # request would eat most of the CPU this job is allowed, and being throttled
+  # it would place fewer calls than asked while saying so nowhere. A single
+  # connection carries all 45 on keep-alive instead. --rate is what paces them;
+  # curl given a list of URLs otherwise sends them as fast as it can.
+  #
+  # timeout, not the Job deadline, is what bounds a tick that drags: it leaves
+  # the exit code to `exit 0` below, where the deadline would file a failed Job.
+  # It sits above the 45s the calls take, so it only fires when something is
+  # actually stuck.
   #
   # No -f and exit 0 whatever happens: the tick only has to place the calls. How
   # the app answers is the app's health to report — its probes and alerts
@@ -195,21 +201,24 @@ thumbs:
   # otherwise file a broken Job every single minute while saying nothing new.
   #
   # Since the Job always succeeds, the tick's outcome lives only in its log, and
-  # 150 lines a minute would bury it. The codes are tallied into one line per
-  # tick instead — `thumbs 200x150`, with 000 for calls that got no answer.
+  # 45 lines a minute would bury it. The codes are tallied into one line per
+  # tick instead — `thumbs 200x45`, with 000 for calls that got no answer.
   command:
     - /bin/sh
     - -c
     - >-
-      seq 150 | awk 'BEGIN{srand()}{print "-o"; print "/dev/null";
+      seq 45 | awk 'BEGIN{srand()}{print "-o"; print "/dev/null";
       print "http://sample-node/counter/" (rand() < 0.5 ? "up" : "down")}'
-      | xargs curl -s --rate 3/s -X POST -w "%{http_code}\n"
+      | xargs timeout 50 curl -s --rate 1/s -X POST -w "%{http_code}\n"
       | awk '{c[$0]++} END{line="thumbs"; for (k in c) line=line " " k "x" c[k]; print line}';
       exit 0
 
-  # The tick now runs most of the minute by design, so the deadline is only here
-  # to stop one that has stalled from overlapping the next.
-  activeDeadlineSeconds: 55
+  # This counts from the Job starting, not from curl starting, and the pod needs
+  # the better part of ten seconds to schedule and pull before it runs anything:
+  # a tick whose calls fit the minute can still trip a deadline set at the
+  # minute. Sized above that startup plus the timeout above, so only a tick that
+  # is genuinely stuck reaches it, and Forbid then skips the one after.
+  activeDeadlineSeconds: 70
   concurrencyPolicy: Forbid
   backoffLimit: 0
   restartPolicy: Never

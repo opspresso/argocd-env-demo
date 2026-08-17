@@ -39,8 +39,8 @@ thumbs:
     - /bin/sh
     - -c
     - >-
-      seq 150 | awk 'BEGIN{srand()}{print "-o"; print "/dev/null";
+      seq 45 | awk 'BEGIN{srand()}{print "-o"; print "/dev/null";
       print "https://sample-node.demo.opspresso.com/counter/" (rand() < 0.5 ? "up" : "down")}'
-      | xargs curl -s --rate 3/s -X POST -w "%{http_code}\n"
+      | xargs timeout 50 curl -s --rate 1/s -X POST -w "%{http_code}\n"
       | awk '{c[$0]++} END{line="thumbs"; for (k in c) line=line " " k "x" c[k]; print line}';
       exit 0
