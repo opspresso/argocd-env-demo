@@ -8,7 +8,7 @@ app:
   #
   # No AWS credentials either. The ServiceAccount below is bound to
   # pod-role--mcp-memory by an EKS Pod Identity association, defined in
-  # terraform-env-demo/demo/6-role. Pod Identity needs no annotation on the
+  # terraform-env-demo/demo/8-role. Pod Identity needs no annotation on the
   # ServiceAccount — unlike IRSA — so the only requirement here is that the
   # account exists under exactly the name the association names.
   configmap:
@@ -18,10 +18,15 @@ app:
       # S3 Vectors. The index's dimension, distance metric and non-filterable
       # metadata keys are fixed at creation; see the repository's README before
       # pointing this at a different one.
-      VECTOR_BUCKET: agent-studio-vector
+      #
+      # The `agentdure-*` set is prod's. The IDC host is alpha and keeps writing
+      # to `agent-studio-*`, which is where everything remembered before this
+      # split stayed — the cluster's memory starts empty here. Both sets are
+      # managed by terraform-env-demo/demo/9-agentdure.
+      VECTOR_BUCKET: agentdure-vector
       VECTOR_INDEX: memories
       # Ordinary S3: access counters and the recency index.
-      STATE_BUCKET: agent-studio-memory
+      STATE_BUCKET: agentdure-memory
       # Bedrock needs no key — the pod role covers it — and runs in the same
       # region as the vector bucket. EMBEDDING_DIM must equal the index's.
       EMBEDDING_PROVIDER: bedrock

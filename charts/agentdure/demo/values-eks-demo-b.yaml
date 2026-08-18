@@ -8,12 +8,16 @@ app:
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://agentdure.com
       PUBLIC_BASE_URL: https://agentdure.com
-      # Capability catalog. Same S3 Vectors bucket mcp-memory writes to, its own
-      # index — an index fixes its dimension and metric at creation, so the two
-      # cannot share one. Created out of band: nothing in terraform-env-demo
-      # manages s3vectors resources.
+      # Capability catalog. This is the prod environment, so every name here is
+      # the `agentdure-*` set; the IDC host is alpha and reads the
+      # `agent-studio-*` one. The two share no storage — a project made on one
+      # is invisible on the other (agentdure repo docs/OPERATIONS.md).
+      #
+      # The bucket holds mcp-memory's index too, but a separate one: an index
+      # fixes its dimension and metric at creation, so the two cannot share one.
+      # Both are managed by terraform-env-demo/demo/9-agentdure.
       CATALOG_INDEX: capabilities
-      VECTOR_BUCKET: agent-studio-vector
+      VECTOR_BUCKET: agentdure-vector
       DYNAMODB_TABLE_NAME: agentdure
       # Cohere rather than mcp-memory's Titan, and the reason is measured: a
       # Korean query against an English description scores 0.39 here and 0.065
