@@ -4,7 +4,7 @@ app:
     data:
       STAGE: 'prod'
       ADMIN_EMAILS: me@nalbam.com
-      ALLOWED_EMAIL_DOMAINS: nalbam.com
+      # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://agentdure.com
       PUBLIC_BASE_URL: https://agentdure.com
