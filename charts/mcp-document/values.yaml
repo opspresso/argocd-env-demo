@@ -52,7 +52,7 @@ app:
 
   # Kept, though nothing is bound to it any more: since v0.2.0 the server makes
   # no AWS call, so pod-role--mcp-document and its association can be retired in
-  # terraform-env-demo/demo/8-role. The account itself stays because the
+  # terraform-env-demo/demo/4-role. The account itself stays because the
   # Deployment names one either way.
   serviceAccount:
     create: true
