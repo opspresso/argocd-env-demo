@@ -10,5 +10,5 @@ app:
   # the region and the download TTL left when the renderer stopped storing what
   # it produced — it returns the bytes over MCP now and AgentDure keeps them as
   # an artifact. The pod needs no AWS credentials, so the Pod Identity
-  # association and pod-role--mcp-document (terraform-env-demo/demo/8-role) can
+  # association and pod-role--mcp-document (terraform-env-demo/demo/4-role) can
   # be retired.
