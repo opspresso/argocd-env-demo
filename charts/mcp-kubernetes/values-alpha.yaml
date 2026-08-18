@@ -6,10 +6,5 @@
 # rather than :latest.
 
 app:
-  env:
-  - name: ENV_HASH
-    value: 200abbe06794336039f725daf47aa284
-  - name: VERSION
-    value: v0.0.66
   image:
     tag: v0.0.66
