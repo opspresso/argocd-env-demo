@@ -1,13 +1,13 @@
 app:
   configmap:
     data:
-      VERSION: v0.72.1
+      VERSION: v0.73.0
     enabled: true
   env:
   - name: ENV_HASH
-    value: efb578a16aaf5d83d674a9d8e5464bbe
+    value: 54fe56193ff8fdc4d7c33ec9b374e633
   - name: VERSION
-    value: v0.72.1
+    value: v0.73.0
   externalSecrets:
     data:
     - key: /k8s/common/agentdure/better-auth-secret
@@ -36,4 +36,4 @@ app:
       name: SCHEDULE_SCAN_TOKEN
     enabled: true
   image:
-    tag: v0.72.1
+    tag: v0.73.0
