@@ -1,11 +1,11 @@
-# YouTube transcript/metadata MCP server AgentDure calls.
+# YouTube transcript/metadata MCP server Agent Studio calls.
 #
 # Cluster-internal by design: no `routing` block anywhere in this chart, so no
-# HTTPRoute is ever rendered and the only way in is the ClusterIP. AgentDure
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
 # reaches it at mcp-youtube.agent-mcps.svc.cluster.local.
 #
 # Deliberately absent, like its siblings: the HPA, PDB and long
-# terminationGracePeriod that agentdure carries. Those exist for ten-minute
+# terminationGracePeriod that agent-studio carries. Those exist for ten-minute
 # runs holding in-flight SSE streams. A request here is one innertube call plus
 # one caption fetch, so the chart defaults are right.
 

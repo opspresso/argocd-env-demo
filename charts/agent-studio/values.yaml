@@ -1,8 +1,8 @@
 app:
-  fullnameOverride: agentdure
+  fullnameOverride: agent-studio
 
   image:
-    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agentdure
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
     tag: latest
 
   resources:
@@ -79,7 +79,7 @@ app:
   # scale up under real load and would scale down pods that are busy streaming.
   # Scale on the in-flight run gauge the app exposes at /api/metrics instead.
   #
-  # Requires prometheus-adapter to publish agentdure_active_runs as a pods
+  # Requires prometheus-adapter to publish agent_studio_active_runs as a pods
   # metric. Until it does, the HPA reports FailedGetPodsMetric and holds the
   # replica count steady — it does not scale on anything else.
   autoscaling:
@@ -90,7 +90,7 @@ app:
       - type: Pods
         pods:
           metric:
-            name: agentdure_active_runs
+            name: agent_studio_active_runs
           target:
             type: AverageValue
             averageValue: "8"
@@ -145,20 +145,20 @@ app:
       kind: ClusterSecretStore
       name: parameter-store
 
-# The schedule ticker (agentdure docs/OPERATIONS.md#schedule-ticker).
+# The schedule ticker (agent-studio docs/OPERATIONS.md#schedule-ticker).
 # Schedule triggers fire only when something POSTs /api/triggers/scan; this
 # CronJob is that something. It holds no state and no cron knowledge — which
 # occurrences are due and who wins each one is decided server-side with a
 # conditional write per occurrence, so a duplicate, concurrent or late tick
 # never double-fires. The token comes from the same external secret the app
-# reads (SCHEDULE_SCAN_TOKEN, /k8s/common/agentdure/schedule-scan-token).
+# reads (SCHEDULE_SCAN_TOKEN, /k8s/common/agent-studio/schedule-scan-token).
 #
 # The same tick also nudges the plugins sync (/api/plugins/sync/scan): the
 # server compares the repo head against its last report and answers upToDate
 # without paying for a snapshot when nothing merged, so a merge to
 # agent-plugins lands within a minute at one GitHub read per quiet tick.
 scan:
-  fullnameOverride: agentdure-scan
+  fullnameOverride: agent-studio-scan
 
   # Once a minute, matching the app's fixed 10-minute catch-up window: a few
   # missed ticks lose nothing, and an outage longer than the window is bounded
@@ -176,13 +176,13 @@ scan:
     - -c
     - >-
       curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
-      http://agentdure/api/triggers/scan &&
+      http://agent-studio/api/triggers/scan &&
       curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
-      http://agentdure/api/plugins/sync/scan
+      http://agent-studio/api/plugins/sync/scan
   additionalSecret:
     enabled: true
     names:
-      - agentdure-external
+      - agent-studio-external
 
   # A tick answers in seconds; one that outlives the next tick is stuck, and
   # the claim makes an overlapping replacement safe anyway.
@@ -202,7 +202,7 @@ scan:
       cpu: 50m
       memory: 32Mi
 
-# The capability reindex (agentdure docs/OPERATIONS.md#catalog-reindex).
+# The capability reindex (agent-studio docs/OPERATIONS.md#catalog-reindex).
 # Rebuilds the global catalog — every skill, every MCP server and the tools it
 # offers, every external agent — so a newly registered entry becomes
 # discoverable without an admin doing anything.
@@ -219,7 +219,7 @@ scan:
 # deliberate — a deployment carrying EMBEDDING_* but no bucket should be
 # visible rather than quietly doing nothing.
 reindex:
-  fullnameOverride: agentdure-reindex
+  fullnameOverride: agent-studio-reindex
 
   schedule: "12 * * * *"
 
@@ -232,12 +232,12 @@ reindex:
     - -c
     - >-
       curl -sf -X POST -H "x-scan-token: ${SCHEDULE_SCAN_TOKEN}"
-      http://agentdure/api/catalog/reindex
+      http://agent-studio/api/catalog/reindex
 
   additionalSecret:
     enabled: true
     names:
-      - agentdure-external
+      - agent-studio-external
 
   # Bounds the request, not the reindex: the tick hands the work off and returns
   # in milliseconds, so the rebuild outlives this Job by design.

@@ -1,6 +1,6 @@
 # Image tag, pinned by hand.
 #
-# agentdure's equivalent file is generated — its release workflow sends a
+# agent-studio's equivalent file is generated — its release workflow sends a
 # repository_dispatch that gen_values.py turns into a bump. No MCP server does
 # that, so this moves when someone edits it, which is also why it is pinned
 # rather than :latest.
@@ -31,6 +31,6 @@ app:
       #
       # The server takes the token from ARGOCD_API_TOKEN only as the fallback
       # for a request that carries no x-argocd-api-token header, which is every
-      # request AgentDure sends: sync leaves MCP entry headers empty.
+      # request Agent Studio sends: sync leaves MCP entry headers empty.
       - key: /k8s/common/mcp-argocd/argocd-api-token
         name: ARGOCD_API_TOKEN

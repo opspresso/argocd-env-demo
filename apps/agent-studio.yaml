@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: agentdure
+  name: agent-studio
 spec:
   generators:
     - git:
@@ -12,7 +12,7 @@ spec:
 
   template:
     metadata:
-      name: "agentdure-{{cluster}}"
+      name: "agent-studio-{{cluster}}"
       annotations:
         notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
       labels:
@@ -23,11 +23,11 @@ spec:
       project: apps
       destination:
         name: "{{cluster}}"
-        namespace: agentdure
+        namespace: agent-studio
       source:
         repoURL: https://github.com/opspresso/argocd-env-demo
         targetRevision: HEAD
-        path: charts/agentdure
+        path: charts/agent-studio
         helm:
           valueFiles:
             - values.yaml

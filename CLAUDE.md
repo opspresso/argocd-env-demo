@@ -89,7 +89,7 @@ charts/<project>/
 - 애플리케이션 chart 는 `opspresso/helm-charts` 의 `app` chart 를 dependency 로 쓴다.
   `app` chart 버전을 올릴 때 wrapper `version` 도 함께 올린다.
 - 한 chart 를 두 번 쓰거나 이름을 바꿔 붙일 때는 `alias` 로 values 키를 정한다
-  (예: agentdure 의 `cronjob` → `scan`).
+  (예: agent-studio 의 `cronjob` → `scan`).
 
 ### values 병합 순서
 

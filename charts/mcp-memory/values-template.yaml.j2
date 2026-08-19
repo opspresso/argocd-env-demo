@@ -19,14 +19,16 @@ app:
       # metadata keys are fixed at creation; see the repository's README before
       # pointing this at a different one.
       #
-      # The `agentdure-*` set is prod's. The IDC host is alpha and keeps writing
-      # to `agent-studio-*`, which is where everything remembered before this
-      # split stayed — the cluster's memory starts empty here. Both sets are
-      # managed by terraform-env-demo/demo/9-agentdure.
-      VECTOR_BUCKET: agentdure-vector
+      # The `agent-studio-prod-*` set is prod's. The IDC host is alpha and keeps
+      # writing to `agent-studio-*`, which is where everything remembered before
+      # this split stayed — the cluster's memory starts empty here. Both sets
+      # are named by terraform-env-demo/demo/9-agent-studio; the prod set is not
+      # created yet (a commented env there), so this has no bucket to reach
+      # until it is.
+      VECTOR_BUCKET: agent-studio-prod-vector
       VECTOR_INDEX: memories
       # Ordinary S3: access counters and the recency index.
-      STATE_BUCKET: agentdure-memory
+      STATE_BUCKET: agent-studio-prod-memory
       # Bedrock needs no key — the pod role covers it — and runs in the same
       # region as the vector bucket. EMBEDDING_DIM must equal the index's.
       EMBEDDING_PROVIDER: bedrock

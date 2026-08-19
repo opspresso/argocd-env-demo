@@ -1,6 +1,6 @@
 apiVersion: v2
-name: agentdure
-description: Build AI agents that work together.
+name: agent-studio
+description: Build and operate production AI agents.
 type: application
 version: v1.3.0
 appVersion: v1.0.0

@@ -6,19 +6,21 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://agentdure.com
-      PUBLIC_BASE_URL: https://agentdure.com
+      BETTER_AUTH_URL: https://studio.opspresso.com
+      PUBLIC_BASE_URL: https://studio.opspresso.com
       # Capability catalog. This is the prod environment, so every name here is
-      # the `agentdure-*` set; the IDC host is alpha and reads the
+      # the `agent-studio-prod-*` set; the IDC host is alpha and reads the
       # `agent-studio-*` one. The two share no storage — a project made on one
-      # is invisible on the other (agentdure repo docs/OPERATIONS.md).
+      # is invisible on the other (agent-studio repo docs/OPERATIONS.md).
+      # The prod set is named but not created yet: terraform-env-demo's
+      # demo/9-agent-studio carries it as a commented env, so until that is
+      # applied this deployment has no table to reach.
       #
       # The bucket holds mcp-memory's index too, but a separate one: an index
       # fixes its dimension and metric at creation, so the two cannot share one.
-      # Both are managed by terraform-env-demo/demo/9-agentdure.
       CATALOG_INDEX: capabilities
-      VECTOR_BUCKET: agentdure-vector
-      DYNAMODB_TABLE_NAME: agentdure
+      VECTOR_BUCKET: agent-studio-prod-vector
+      DYNAMODB_TABLE_NAME: agent-studio-prod
       # Cohere rather than mcp-memory's Titan, and the reason is measured: a
       # Korean query against an English description scores 0.39 here and 0.065
       # on Titan, where unrelated pairs score 0.04 — so this registry is
@@ -26,7 +28,7 @@ app:
       # separate, so they may differ; what must not differ is the model that
       # wrote an index and the one that queries it. Reached through its
       # inference profile: the bare model id refuses on-demand invocation.
-      # No key — pod-role--agentdure carries bedrock:InvokeModel.
+      # No key — pod-role--agent-studio carries bedrock:InvokeModel.
       EMBEDDING_PROVIDER: cohere
       EMBEDDING_MODEL: global.cohere.embed-v4:0
       EMBEDDING_DIM: '1024'
@@ -47,20 +49,20 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
-      S3_BUCKET_NAME: agentdure-static
+      S3_BUCKET_NAME: agent-studio-prod-static
       SLACK_LOADING_INDICATOR: ':loading:'
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
   routing:
     hosts:
-    - agentdure.demo.opspresso.com
-    - agentdure.com
+    - agent-studio.demo.opspresso.com
+    - studio.opspresso.com
     httpRoute:
       enabled: true
   podLabels:
     sidecar.istio.io/inject: "true"
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://agentdure.com
+    link.argocd.argoproj.io/external-link: https://studio.opspresso.com
 
   serviceMonitor:
     labels:
-      release: prometheus-eks-demo-b
+      release: prometheus-eks-demo-a

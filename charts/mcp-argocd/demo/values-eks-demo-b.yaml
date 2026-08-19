@@ -7,7 +7,7 @@ app:
     data:
       # In-cluster Argo CD. This is mcp-argocd's own outbound call, so Agent
       # Studio's SSRF guard has nothing to say about it — that guard only bounds
-      # what AgentDure itself dials.
+      # what Agent Studio itself dials.
       #
       # Plain HTTP, and deliberately: argocd-env-addons runs the server with
       # `server.insecure: true` and terminates TLS at the gateway. Dialing

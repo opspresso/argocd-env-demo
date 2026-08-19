@@ -1,7 +1,7 @@
-# AWS Labs CloudWatch MCP server AgentDure calls.
+# AWS Labs CloudWatch MCP server Agent Studio calls.
 #
 # Cluster-internal by design: no `routing` block exists, so no HTTPRoute is
-# rendered and the only way in is the ClusterIP. AgentDure reaches it at
+# rendered and the only way in is the ClusterIP. Agent Studio reaches it at
 # mcp-cloudwatch.agent-mcps.svc.cluster.local.
 
 app:

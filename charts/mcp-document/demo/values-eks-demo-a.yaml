@@ -8,7 +8,7 @@ app:
   #
   # No configuration at all beyond that, since v0.2.0. The bucket, its prefix,
   # the region and the download TTL left when the renderer stopped storing what
-  # it produced — it returns the bytes over MCP now and AgentDure keeps them as
+  # it produced — it returns the bytes over MCP now and Agent Studio keeps them as
   # an artifact. The pod needs no AWS credentials, so the Pod Identity
   # association and pod-role--mcp-document (terraform-env-demo/demo/4-role) can
   # be retired.
