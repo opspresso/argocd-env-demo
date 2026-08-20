@@ -41,6 +41,7 @@ app:
       UNKNOWN_MODEL_POLICY: allow
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
+      LLM_PROVIDER_GOOGLE_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai/v1
       LLM_PROVIDER_BEDROCK_BASE_URL: https://bedrock-mantle.us-east-1.api.aws/v1
       LLM_PROVIDER_BEDROCK_AUTH: sigv4
