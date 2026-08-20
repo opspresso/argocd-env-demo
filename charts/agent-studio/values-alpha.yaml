@@ -22,6 +22,8 @@ app:
       name: LLM_PROVIDER_OPENAI_API_KEY
     - key: /k8s/common/agent-studio/llm-provider-anthropic-api-key
       name: LLM_PROVIDER_ANTHROPIC_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-google-api-key
+      name: LLM_PROVIDER_GOOGLE_API_KEY
     - key: /k8s/common/agent-studio/llm-provider-xai-api-key
       name: LLM_PROVIDER_XAI_API_KEY
     - key: /k8s/common/agent-studio/llm-provider-openrouter-api-key
