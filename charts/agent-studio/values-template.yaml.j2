@@ -8,6 +8,10 @@ app:
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://studio.opspresso.com
       PUBLIC_BASE_URL: https://studio.opspresso.com
+      DYNAMODB_TABLE_NAME: agent-studio-prod
+      S3_BUCKET_NAME: agent-studio-prod-static
+      SLACK_LOADING_INDICATOR: ':loading:'
+      TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       # Capability catalog. This is the prod environment, so every name here is
       # the `agent-studio-prod-*` set; the IDC host is alpha and reads the
       # `agent-studio-*` one. The two share no storage — a project made on one
@@ -20,7 +24,6 @@ app:
       # fixes its dimension and metric at creation, so the two cannot share one.
       CATALOG_INDEX: capabilities
       VECTOR_BUCKET: agent-studio-prod-vector
-      DYNAMODB_TABLE_NAME: agent-studio-prod
       # Cohere rather than mcp-memory's Titan, and the reason is measured: a
       # Korean query against an English description scores 0.39 here and 0.065
       # on Titan, where unrelated pairs score 0.04 — so this registry is
@@ -50,9 +53,6 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
-      S3_BUCKET_NAME: agent-studio-prod-static
-      SLACK_LOADING_INDICATOR: ':loading:'
-      TRUSTED_PROXY_CIDRS: 10.10.0.0/16
   routing:
     hosts:
     - agent-studio.{{hostname.public}}
