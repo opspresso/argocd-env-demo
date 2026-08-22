@@ -8,7 +8,7 @@
 app:
   image:
     # Upstream tags carry a `v` prefix on Docker Hub (brave/brave-search-mcp-server).
-    tag: v2.1.0
+    tag: v2.1.3
 
   externalSecrets:
     enabled: true

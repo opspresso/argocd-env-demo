@@ -1,8 +1,9 @@
 # Argo CD MCP server Agent Studio calls.
 #
 # Cluster-internal by design: no `routing` block anywhere in this chart, so no
-# HTTPRoute is ever rendered and the only way in is the ClusterIP. Agent Studio
-# reaches it at mcp-argocd.agent-mcps.svc.cluster.local.
+# HTTPRoute is ever rendered and the only way in is the ClusterIP. The parent
+# chart's NetworkPolicy further admits only Agent Studio and this chart's test
+# pod. Agent Studio reaches it at mcp-argocd.agent-mcps.svc.cluster.local.
 #
 # Deliberately absent, and not an oversight: the HPA, PDB and long
 # terminationGracePeriod that agent-studio carries. Those exist for ten-minute
@@ -19,33 +20,33 @@ app:
   image:
     repository: quay.io/argoprojlabs/mcp-for-argocd
 
-  # `command` is here and nowhere else in this repo's MCP charts, and it is
-  # load-bearing. The image declares no ENTRYPOINT — its whole command line is
-  # CMD (`node dist/index.js http`) — so `args` alone would replace that CMD and
-  # the kubelet would try to exec `http` as a binary. Naming the interpreter is
-  # what keeps `args` below a list of flags.
-  command:
-    - "node"
-    - "dist/index.js"
-
   # `--stateless` is what lets this chart skip mcp-grafana's destinationRule.
   # The default keeps streamable-http sessions in the pod's memory, pinning
   # every request of a session to the pod that created it; stateless returns no
   # Mcp-Session-Id at all, so any replica can answer any request and raising
   # replicas is a non-event.
   #
-  # `--port 3000` restates the command's own default. It is written out so the
-  # Service targetPort and the probes below have something to agree with — the
-  # port is a flag, not an env var, whatever upstream's `make run PORT=` implies.
+  # The image declares `node dist/index.js` as its ENTRYPOINT, so the args begin
+  # with the transport. `--port 3000` restates the command's default so the
+  # Service targetPort and probes below have something to agree with. The port
+  # is a flag, not an env var, whatever upstream's `make run PORT=` implies.
   #
-  # Nothing here corresponds to mcp-grafana's `--address`/`--allowed-hosts`: the
-  # server calls `app.listen(port)` with no host, which already binds every
-  # interface, and it does no Host-header validation at all.
+  # The server binds loopback by default and refuses a wider bind until its
+  # security mode is explicit. This chart has no route or ingress and
+  # exposes only a ClusterIP, so unauthenticated access remains inside the
+  # cluster boundary; ARGOCD_API_TOKEN below still authenticates outbound calls.
   args:
     - "http"
     - "--port"
     - "3000"
     - "--stateless"
+    - "--bind-address"
+    - "0.0.0.0"
+    - "--allow-unauthenticated"
+    - "--allowed-host-header"
+    - "mcp-argocd.agent-mcps.svc.cluster.local"
+    - "--allowed-host-header"
+    - "mcp-argocd"
 
   service:
     name: http

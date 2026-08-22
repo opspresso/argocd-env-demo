@@ -8,7 +8,7 @@
 app:
   image:
     # Upstream tags carry a `v` prefix on quay.io (argoprojlabs/mcp-for-argocd).
-    tag: v0.8.0
+    tag: v0.9.0
 
   externalSecrets:
     enabled: true
