@@ -215,8 +215,8 @@ scan:
 # buy nothing. Ticking twice is safe: keys are derived from the entry, so a
 # second pass writes the same records and computes the same leftovers.
 #
-# 503 means VECTOR_BUCKET is unset, which -f turns into a failed Job. That is
-# deliberate — a deployment carrying EMBEDDING_* but no bucket should be
+# 503 means CATALOG_ENABLED is off, which -f turns into a failed Job. That is
+# deliberate — a deployment carrying EMBEDDING_* but no catalog should be
 # visible rather than quietly doing nothing.
 reindex:
   fullnameOverride: agent-studio-reindex
