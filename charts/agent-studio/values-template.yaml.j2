@@ -8,22 +8,20 @@ app:
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://studio.opspresso.com
       PUBLIC_BASE_URL: https://studio.opspresso.com
-      DYNAMODB_TABLE_NAME: agent-studio-prod
+      # Storage since agent-studio v0.87: one PostgreSQL (DATABASE_URL, from
+      # the external secret /k8s/common/agent-studio/database-url — an RDS or
+      # an in-cluster Postgres with pgvector; neither exists for prod yet) and
+      # an S3-compatible bucket for artifacts, served through the app
+      # (ARTIFACT_ACCESS_MODE=proxied) so the bucket needs no public policy.
+      # The capability catalog lives in the database; CATALOG_ENABLED turns it
+      # on. This is the prod environment; the IDC host is alpha and the two
+      # share no storage — a project made on one is invisible on the other
+      # (agent-studio repo docs/OPERATIONS.md).
       S3_BUCKET_NAME: agent-studio-prod-static
+      ARTIFACT_ACCESS_MODE: proxied
+      CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
-      # Capability catalog. This is the prod environment, so every name here is
-      # the `agent-studio-prod-*` set; the IDC host is alpha and reads the
-      # `agent-studio-*` one. The two share no storage — a project made on one
-      # is invisible on the other (agent-studio repo docs/OPERATIONS.md).
-      # The prod set is named but not created yet: terraform-env-demo's
-      # demo/9-agent-studio carries it as a commented env, so until that is
-      # applied this deployment has no table to reach.
-      #
-      # The bucket holds mcp-memory's index too, but a separate one: an index
-      # fixes its dimension and metric at creation, so the two cannot share one.
-      CATALOG_INDEX: capabilities
-      VECTOR_BUCKET: agent-studio-prod-vector
       # Cohere rather than mcp-memory's Titan, and the reason is measured: a
       # Korean query against an English description scores 0.39 here and 0.065
       # on Titan, where unrelated pairs score 0.04 — so this registry is

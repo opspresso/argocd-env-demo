@@ -36,6 +36,8 @@ app:
       name: GITHUB_TOKEN
     - key: /k8s/common/agent-studio/schedule-scan-token
       name: SCHEDULE_SCAN_TOKEN
+    - key: /k8s/common/agent-studio/database-url
+      name: DATABASE_URL
     enabled: true
   image:
     tag: v0.86.0
