@@ -1,0 +1,25 @@
+app:
+  configmap:
+    data:
+      VERSION: v0.1.2
+    enabled: true
+  env:
+  - name: ENV_HASH
+    value: 8a5f55xb6989060d471c13dd0059426c
+  - name: VERSION
+    value: v0.1.2
+  externalSecrets:
+    data:
+    - key: /k8s/common/agent-memory/better-auth-secret
+      name: BETTER_AUTH_SECRET
+    - key: /k8s/common/agent-memory/google-client-id
+      name: GOOGLE_CLIENT_ID
+    - key: /k8s/common/agent-memory/google-client-secret
+      name: GOOGLE_CLIENT_SECRET
+    - key: /k8s/common/agent-memory/llm-provider-xai-api-key
+      name: LLM_PROVIDER_XAI_API_KEY
+    - key: /k8s/common/agent-memory/llm-provider-openrouter-api-key
+      name: LLM_PROVIDER_OPENROUTER_API_KEY
+    enabled: true
+  image:
+    tag: v0.1.2

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: agent-memory
+description: Build and operate production AI agents.
+type: application
+version: v1.3.0
+appVersion: v1.0.0
+
+dependencies:
+  - repository: https://opspresso.github.io/helm-charts
+    name: app
+    version: "v1.4.0"
