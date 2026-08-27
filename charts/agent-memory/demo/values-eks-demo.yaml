@@ -1,0 +1,23 @@
+app:
+  configmap:
+    enabled: true
+    data:
+      STAGE: 'prod'
+      ADMIN_EMAILS: me@nalbam.com
+      # ALLOWED_EMAIL_DOMAINS: nalbam.com
+      AWS_REGION: ap-northeast-2
+      BETTER_AUTH_URL: https://memory.opspresso.com
+  routing:
+    hosts:
+    - agent-memory.demo.opspresso.com
+    - memory.opspresso.com
+    httpRoute:
+      enabled: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://memory.opspresso.com
+
+  serviceMonitor:
+    labels:
+      release: prometheus-eks-demo
