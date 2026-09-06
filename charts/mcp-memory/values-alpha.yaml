@@ -4,5 +4,9 @@ app:
     value: b95a367ab0e859d828ff2a888de8cca1
   - name: VERSION
     value: v0.9.0
+  externalSecrets:
+    data:
+    - key: /k8s/common/mcp-memory/database-url
+      name: DATABASE_URL
   image:
     tag: v0.9.0

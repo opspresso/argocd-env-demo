@@ -48,3 +48,10 @@ app:
   # account, so the pod gets no AWS credentials at all without it.
   serviceAccount:
     create: true
+
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
