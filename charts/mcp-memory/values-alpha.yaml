@@ -1,12 +1,12 @@
 app:
   env:
   - name: ENV_HASH
-    value: b95a367ab0e859d828ff2a888de8cca1
+    value: 4f90fca8b8673e0b7a50a28f58e891b1
   - name: VERSION
-    value: v0.9.0
+    value: v0.10.0
   externalSecrets:
     data:
     - key: /k8s/common/mcp-memory/database-url
       name: DATABASE_URL
   image:
-    tag: v0.9.0
+    tag: v0.10.0
