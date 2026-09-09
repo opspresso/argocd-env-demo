@@ -1,13 +1,13 @@
 app:
   configmap:
     data:
-      VERSION: v0.18.0
+      VERSION: v0.19.0
     enabled: true
   env:
   - name: ENV_HASH
-    value: 446f34d2e0bb84a7ae61555394676b1a
+    value: 34718af3e645e7c2513cc6d775623069
   - name: VERSION
-    value: v0.18.0
+    value: v0.19.0
   externalSecrets:
     data:
     - key: /k8s/common/agent-memory/better-auth-secret
@@ -22,4 +22,4 @@ app:
       name: LLM_PROVIDER_OPENROUTER_API_KEY
     enabled: true
   image:
-    tag: v0.18.0
+    tag: v0.19.0
