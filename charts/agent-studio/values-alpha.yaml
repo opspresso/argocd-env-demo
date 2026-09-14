@@ -1,13 +1,13 @@
 app:
   configmap:
     data:
-      VERSION: v0.111.3
+      VERSION: v0.111.4
     enabled: true
   env:
   - name: ENV_HASH
-    value: abc0df44a5efea8dd481f81976ce1c62
+    value: e4e43337da55568e5519f2f767692e9a
   - name: VERSION
-    value: v0.111.3
+    value: v0.111.4
   externalSecrets:
     data:
     - key: /k8s/common/agent-studio/better-auth-secret
@@ -40,4 +40,4 @@ app:
       name: DATABASE_URL
     enabled: true
   image:
-    tag: v0.111.3
+    tag: v0.111.4
