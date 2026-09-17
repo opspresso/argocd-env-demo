@@ -6,17 +6,16 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://memory.opspresso.com
+      BETTER_AUTH_URL: https://memory.{{hostname.public}}
   routing:
     hosts:
-    - agent-memory.{{hostname.public}}
-    - memory.opspresso.com
+    - memory.{{hostname.public}}
     httpRoute:
       enabled: true
   podLabels:
     sidecar.istio.io/inject: "true"
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://memory.opspresso.com
+    link.argocd.argoproj.io/external-link: https://memory.{{hostname.public}}
 
   serviceMonitor:
     labels:
