@@ -2,6 +2,7 @@ app:
   replicaCount: 1
   autoscaling:
     enabled: True
+
   configmap:
     data:
       CLUSTER_NAME: 'eks-demo-b'
@@ -34,10 +35,12 @@ redis:
     sidecar:
       inject: true
 
+
 # https rather than http: the ALB in front of the gateway answers http with a 301
 # to https, and this curl has no -L, so every tick stopped at the redirect. The
 # app never saw the POST and neither did the mesh metrics.
 thumbs:
+
   command:
     - /bin/sh
     - -c

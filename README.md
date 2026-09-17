@@ -13,7 +13,7 @@ ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리�
 클러스터만 읽는다.
 
 replica 수와 autoscaling 여부는 `env/<cluster>.yaml`이 원천이다. k3s 환경은
-`replicas: 1`, `autoscaling: false`로 렌더한다.
+`replicas: 1`, `autoscaling: false`, `resources: false`로 렌더한다.
 
 ## charts
 

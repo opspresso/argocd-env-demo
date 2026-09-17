@@ -1,4 +1,7 @@
 app:
   replicaCount: {{replicas}}
+{% if not resources %}
+  resources: null
+{% endif %}
   podLabels:
     sidecar.istio.io/inject: "true"

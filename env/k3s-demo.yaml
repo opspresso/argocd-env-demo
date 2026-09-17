@@ -7,6 +7,7 @@ role: k3s
 
 replicas: 1
 autoscaling: false
+resources: false
 
 hostname:
   internal: demo-in.opsp.dev

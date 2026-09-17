@@ -2,6 +2,9 @@ app:
   replicaCount: {{replicas}}
   autoscaling:
     enabled: {{autoscaling}}
+{% if not resources %}
+  resources: null
+{% endif %}
   configmap:
     data:
       CLUSTER_NAME: '{{cluster}}'
@@ -33,11 +36,17 @@ redis:
   istio:
     sidecar:
       inject: true
+{% if not resources %}
+  resources: null
+{% endif %}
 
 # https rather than http: the ALB in front of the gateway answers http with a 301
 # to https, and this curl has no -L, so every tick stopped at the redirect. The
 # app never saw the POST and neither did the mesh metrics.
 thumbs:
+{% if not resources %}
+  resources: null
+{% endif %}
   command:
     - /bin/sh
     - -c

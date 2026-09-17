@@ -2,6 +2,7 @@ app:
   replicaCount: 1
   autoscaling:
     enabled: True
+
   configmap:
     enabled: true
     data:

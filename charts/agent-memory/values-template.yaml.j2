@@ -2,6 +2,9 @@ app:
   replicaCount: {{replicas}}
   autoscaling:
     enabled: {{autoscaling}}
+{% if not resources %}
+  resources: null
+{% endif %}
   configmap:
     enabled: true
     data:

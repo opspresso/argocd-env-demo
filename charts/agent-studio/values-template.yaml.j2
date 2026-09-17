@@ -2,6 +2,9 @@ app:
   replicaCount: {{replicas}}
   autoscaling:
     enabled: {{autoscaling}}
+{% if not resources %}
+  resources: null
+{% endif %}
   configmap:
     enabled: true
     data:
@@ -67,3 +70,11 @@ app:
   serviceMonitor:
     labels:
       release: prometheus-{{cluster}}
+{% if not resources %}
+
+scan:
+  resources: null
+
+reindex:
+  resources: null
+{% endif %}

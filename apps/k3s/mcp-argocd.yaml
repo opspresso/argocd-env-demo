@@ -1,42 +1,30 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
-  name: mcp-argocd
+  name: mcp-argocd-k3s
+  namespace: argocd
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-k3s
+  labels:
+    app.kubernetes.io/instance: apps-k3s-demo
+    opspresso.com/cluster: k3s-demo
+    opspresso.com/group: apps
 spec:
-  generators:
-    - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
-        revision: HEAD
-        files:
-          - path: "env/k3s-demo.yaml"
-
-  template:
-    metadata:
-      name: "mcp-argocd-{{cluster}}"
-      annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
-      labels:
-        app.kubernetes.io/instance: "apps-{{cluster}}"
-        opspresso.com/cluster: "{{cluster}}"
-        opspresso.com/group: "apps"
-    spec:
-      project: apps
-      destination:
-        name: "{{cluster}}"
-        namespace: agent-mcps
-      source:
-        repoURL: https://github.com/opspresso/argocd-env-demo
-        targetRevision: HEAD
-        path: charts/mcp-argocd
-        helm:
-          valueFiles:
-            - values.yaml
-            - "values-{{phase}}.yaml"
-            - "{{env}}/values-{{cluster}}.yaml"
-
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
+  project: apps
+  destination:
+    name: in-cluster
+    namespace: agent-mcps
+  source:
+    repoURL: https://github.com/opspresso/argocd-env-demo
+    targetRevision: HEAD
+    path: charts/mcp-argocd
+    helm:
+      valueFiles:
+      - values.yaml
+      - k3s/values-k3s-demo.yaml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

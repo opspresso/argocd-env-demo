@@ -109,6 +109,8 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `gen_values.py` 는 `env` 가 없으면 실패한다.
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
   `app.autoscaling.enabled`의 원천이다. k3s는 각각 `1`, `false`를 사용한다.
+- `resources` 는 workload의 requests/limits 사용 여부를 제어한다. k3s는 `false`로
+  설정해 app과 부가 workload의 resources를 제거한다.
 - `phase` 는 그 클러스터가 읽을 `values-<phase>.yaml` 을 정한다.
 - env 파일을 추가하면 `build.sh` 가 모든 chart 에 대해 렌더 결과를 새로 만든다.
 

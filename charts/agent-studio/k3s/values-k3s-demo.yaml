@@ -2,6 +2,9 @@ app:
   replicaCount: 1
   autoscaling:
     enabled: False
+
+  resources: null
+
   configmap:
     enabled: true
     data:
@@ -67,3 +70,10 @@ app:
   serviceMonitor:
     labels:
       release: prometheus-k3s-demo
+
+
+scan:
+  resources: null
+
+reindex:
+  resources: null
