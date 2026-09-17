@@ -9,6 +9,9 @@ replicas: 1
 autoscaling: false
 resources: false
 
+aws_account_id: "396608815058"
+aws_region: ap-northeast-2
+
 hostname:
   internal: demo-in.opsp.dev
   public: demo.opsp.dev
