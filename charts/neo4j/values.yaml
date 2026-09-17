@@ -1,4 +1,4 @@
-neo4j:
+neo4jdb:
   fullnameOverride: memory-neo4j
   disableLookups: true
 
@@ -12,6 +12,6 @@ neo4j:
       mode: defaultStorageClass
       defaultStorageClass:
         accessModes:
-          - ReadWriteOnce
+        - ReadWriteOnce
         requests:
-          storage: 20Gi
+          storage: 10Gi

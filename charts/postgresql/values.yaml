@@ -13,6 +13,7 @@ postgresql:
       userPasswordKey: password
 
   primary:
+    resourcesPreset: none
     initdb:
       scripts:
         00-agent-memory.sql: |
@@ -21,10 +22,5 @@ postgresql:
 
     persistence:
       enabled: true
-      size: 20Gi
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        memory: 1Gi
+      size: 10Gi
+    resources: null

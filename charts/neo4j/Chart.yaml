@@ -7,5 +7,6 @@ appVersion: 2026.08.1
 
 dependencies:
   - name: neo4j
+    alias: neo4jdb
     repository: https://helm.neo4j.com/neo4j
     version: 2026.8.1

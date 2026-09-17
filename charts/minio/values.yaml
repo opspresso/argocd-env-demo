@@ -12,11 +12,17 @@ minio:
 
   persistence:
     enabled: true
-    size: 50Gi
+    size: 10Gi
 
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      memory: 1Gi
+  resourcesPreset: none
+  resources: null
+  console:
+    resourcesPreset: none
+    resources: null
+  defaultInitContainers:
+    volumePermissions:
+      resourcesPreset: none
+      resources: null
+  provisioning:
+    resourcesPreset: none
+    resources: null
