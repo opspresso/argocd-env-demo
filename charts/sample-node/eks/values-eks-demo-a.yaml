@@ -17,8 +17,11 @@ app:
     - sample-node.demo.opspresso.com
     httpRoute:
       enabled: true
+
+
   podLabels:
     sidecar.istio.io/inject: "true"
+
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-node.demo.opspresso.com
   serviceMonitor:

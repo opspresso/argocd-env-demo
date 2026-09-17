@@ -3,8 +3,7 @@ app:
 
   resources: null
 
-  podLabels:
-    sidecar.istio.io/inject: "true"
+
 
   # Configuration rides the ConfigMap, not `app.env`, and not args. Upstream
   # reads a BRAVE_MCP_* env var for every CLI flag, so no args are needed —

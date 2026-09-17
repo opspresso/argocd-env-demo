@@ -19,8 +19,15 @@ app:
     - sample-node.{{hostname.public}}
     httpRoute:
       enabled: true
+{% if env == 'k3s' %}
+      parentRefs:
+        - name: traefik-gateway
+          namespace: traefik-gateway
+{% endif %}
+{% if env != 'k3s' %}
   podLabels:
     sidecar.istio.io/inject: "true"
+{% endif %}
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-node.{{hostname.public}}
   serviceMonitor:

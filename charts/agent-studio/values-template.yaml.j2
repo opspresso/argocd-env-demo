@@ -2,6 +2,8 @@ app:
   replicaCount: {{replicas}}
   autoscaling:
     enabled: {{autoscaling}}
+  image:
+    repository: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-studio
 {% if not resources %}
   resources: null
 {% endif %}
@@ -11,7 +13,7 @@ app:
       STAGE: 'prod'
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
-      AWS_REGION: ap-northeast-2
+      AWS_REGION: {{aws_region}}
       BETTER_AUTH_URL: https://studio.{{hostname.public}}
       PUBLIC_BASE_URL: https://studio.{{hostname.public}}
       # Storage since agent-studio v0.87: one PostgreSQL (DATABASE_URL, from
@@ -66,8 +68,15 @@ app:
     - studio.{{hostname.public}}
     httpRoute:
       enabled: true
+{% if env == 'k3s' %}
+      parentRefs:
+        - name: traefik-gateway
+          namespace: traefik-gateway
+{% endif %}
+{% if env != 'k3s' %}
   podLabels:
     sidecar.istio.io/inject: "true"
+{% endif %}
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://studio.{{hostname.public}}
 

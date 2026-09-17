@@ -22,6 +22,7 @@ app:
       # share no storage — a project made on one is invisible on the other
       # (agent-studio repo docs/OPERATIONS.md).
       S3_BUCKET_NAME: agent-studio-static
+
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
@@ -60,8 +61,11 @@ app:
     - studio.demo.opspresso.com
     httpRoute:
       enabled: true
+
+
   podLabels:
     sidecar.istio.io/inject: "true"
+
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://studio.demo.opspresso.com
 

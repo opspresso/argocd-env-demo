@@ -19,8 +19,12 @@ app:
     - sample-node.demo.opsp.dev
     httpRoute:
       enabled: true
-  podLabels:
-    sidecar.istio.io/inject: "true"
+
+      parentRefs:
+        - name: traefik-gateway
+          namespace: traefik-gateway
+
+
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-node.demo.opsp.dev
   serviceMonitor:

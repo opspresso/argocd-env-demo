@@ -2,6 +2,3 @@ app:
   replicaCount: 1
 
   resources: null
-
-  podLabels:
-    sidecar.istio.io/inject: "true"

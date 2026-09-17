@@ -1,8 +1,10 @@
 app:
   replicaCount: 1
 
+
   podLabels:
     sidecar.istio.io/inject: "true"
+
 
   configmap:
     enabled: true

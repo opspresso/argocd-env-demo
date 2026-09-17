@@ -16,8 +16,11 @@ app:
     - memory.demo.opspresso.com
     httpRoute:
       enabled: true
+
+
   podLabels:
     sidecar.istio.io/inject: "true"
+
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://memory.demo.opspresso.com
 

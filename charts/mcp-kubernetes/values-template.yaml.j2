@@ -3,5 +3,7 @@ app:
 {% if not resources %}
   resources: null
 {% endif %}
+{% if env != 'k3s' %}
   podLabels:
     sidecar.istio.io/inject: "true"
+{% endif %}

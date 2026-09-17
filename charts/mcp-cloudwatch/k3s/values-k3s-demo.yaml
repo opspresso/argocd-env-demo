@@ -3,10 +3,9 @@ app:
 
   resources: null
 
-  podLabels:
-    sidecar.istio.io/inject: "true"
+
 
   configmap:
     enabled: true
     data:
-      AWS_REGION: 
+      AWS_REGION: ap-northeast-2

@@ -3,8 +3,7 @@ app:
 
   resources: null
 
-  podLabels:
-    sidecar.istio.io/inject: "true"
+
 
   configmap:
     enabled: true
