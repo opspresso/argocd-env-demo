@@ -1,0 +1,11 @@
+apiVersion: v2
+name: neo4j
+description: Neo4j for Agent Memory on k3s
+type: application
+version: v1.0.0
+appVersion: 2026.08.1
+
+dependencies:
+  - name: neo4j
+    repository: https://helm.neo4j.com/neo4j
+    version: 2026.8.1

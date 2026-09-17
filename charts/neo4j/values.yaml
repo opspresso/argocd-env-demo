@@ -1,0 +1,17 @@
+neo4j:
+  fullnameOverride: memory-neo4j
+  disableLookups: true
+
+  neo4j:
+    name: memory-neo4j
+    edition: community
+    passwordFromSecret: memory-neo4j-auth
+
+  volumes:
+    data:
+      mode: defaultStorageClass
+      defaultStorageClass:
+        accessModes:
+          - ReadWriteOnce
+        requests:
+          storage: 20Gi

@@ -1,0 +1,30 @@
+postgresql:
+  fullnameOverride: postgres
+
+  architecture: standalone
+
+  auth:
+    enablePostgresUser: true
+    username: agent_studio
+    database: agent_studio
+    existingSecret: postgresql-credentials
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
+
+  primary:
+    initdb:
+      scripts:
+        00-agent-memory.sql: |
+          SELECT 'CREATE DATABASE agent_memory OWNER agent_studio'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'agent_memory')\gexec
+
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 1Gi

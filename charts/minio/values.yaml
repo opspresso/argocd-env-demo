@@ -1,0 +1,22 @@
+minio:
+  fullnameOverride: minio
+
+  mode: standalone
+  defaultBuckets: agent-studio-static,agent-memory
+
+  auth:
+    rootUser: agent-studio
+    existingSecret: minio-credentials
+    rootUserSecretKey: root-user
+    rootPasswordSecretKey: root-password
+
+  persistence:
+    enabled: true
+    size: 50Gi
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
