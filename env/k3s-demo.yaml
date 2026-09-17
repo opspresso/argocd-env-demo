@@ -5,6 +5,9 @@ env: k3s
 group: k3s-demo
 role: k3s
 
+replicas: 1
+autoscaling: false
+
 hostname:
   internal: demo-in.opsp.dev
   public: demo.opsp.dev

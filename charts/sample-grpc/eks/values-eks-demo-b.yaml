@@ -1,21 +1,21 @@
 app:
   replicaCount: 1
   autoscaling:
-    enabled: False
+    enabled: True
   configmap:
     data:
-      CLUSTER_NAME: 'k3s-demo'
+      CLUSTER_NAME: 'eks-demo-b'
       MESSAGE: hello world
-      PROFILE: 'k3s'
+      PROFILE: 'eks'
   routing:
     hosts:
-    - sample-grpc.demo.opsp.dev
+    - sample-grpc.demo.opspresso.com
     httpRoute:
       enabled: true
   podLabels:
     sidecar.istio.io/inject: "true"
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://sample-grpc.demo.opsp.dev
+    link.argocd.argoproj.io/external-link: https://sample-grpc.demo.opspresso.com
   serviceMonitor:
     enabled: true
     labels:

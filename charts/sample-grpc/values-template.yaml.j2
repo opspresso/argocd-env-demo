@@ -1,4 +1,7 @@
 app:
+  replicaCount: {{replicas}}
+  autoscaling:
+    enabled: {{autoscaling}}
   configmap:
     data:
       CLUSTER_NAME: '{{cluster}}'

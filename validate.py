@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """Render every ApplicationSet the way Argo CD would, and fail on any error.
 
-Reads apps/*.yaml, expands the git files generator against the env files it
+Reads apps/**/*.yaml, expands the git files generator against the env files it
 names, and runs `helm template` with the exact valueFiles Argo CD passes -
 including values-<phase>.yaml, whose phase comes from the env file. A broken
 template or a missing values file then fails CI instead of surfacing as a
 failed sync on the cluster.
 
-Also enforces that every <env>/values-<cluster>.yaml has a values-template.yaml.j2
+Also enforces that every <platform>/values-<cluster>.yaml has a values-template.yaml.j2
 to come from - a hand-written one is indistinguishable from a render and drifts
 without anyone noticing.
 
@@ -62,38 +62,39 @@ def load_targets(dirs):
     targets = []
 
     for directory in dirs:
-        for name in sorted(os.listdir(directory)):
-            if not name.endswith(".yaml"):
-                continue
+        for current, _, names in os.walk(directory):
+            for name in sorted(names):
+                if not name.endswith(".yaml"):
+                    continue
 
-            path = os.path.join(directory, name)
-            with open(path, "r") as file:
-                doc = yaml.safe_load(file)
+                path = os.path.join(current, name)
+                with open(path, "r") as file:
+                    doc = yaml.safe_load(file)
 
-            if not doc or doc.get("kind") != "ApplicationSet":
-                continue
+                if not doc or doc.get("kind") != "ApplicationSet":
+                    continue
 
-            template = doc["spec"]["template"]
-            source = template["spec"]["source"]
+                template = doc["spec"]["template"]
+                source = template["spec"]["source"]
 
-            targets.append({
-                "appset": path,
-                "chart": source["path"],
-                "value_files": source.get("helm", {}).get("valueFiles", []),
-                "env_files": [
-                    entry["path"]
-                    for generator in doc["spec"]["generators"]
-                    for entry in generator["git"]["files"]
-                ],
-                "name": template["metadata"]["name"],
-                "namespace": template["spec"]["destination"]["namespace"],
-            })
+                targets.append({
+                    "appset": path,
+                    "chart": source["path"],
+                    "value_files": source.get("helm", {}).get("valueFiles", []),
+                    "env_files": [
+                        entry["path"]
+                        for generator in doc["spec"]["generators"]
+                        for entry in generator["git"]["files"]
+                    ],
+                    "name": template["metadata"]["name"],
+                    "namespace": template["spec"]["destination"]["namespace"],
+                })
 
     return targets
 
 
 def check_templates(only=None):
-    """Every <env>/values-<cluster>.yaml has to be a render, never hand-written.
+    """Every <platform>/values-<cluster>.yaml has to be a render, never hand-written.
 
     A hand-maintained one looks exactly like a generated one, so it survives
     every build while quietly drifting from the template beside it.

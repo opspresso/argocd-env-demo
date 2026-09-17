@@ -1,9 +1,9 @@
 app:
-  replicaCount: {{replicas}}
+  replicaCount: 1
   podLabels:
     sidecar.istio.io/inject: "true"
 
   configmap:
     enabled: true
     data:
-      AWS_REGION: {{ aws_region }}
+      AWS_REGION: ap-northeast-2

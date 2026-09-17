@@ -1,9 +1,12 @@
 cluster: eks-demo-b
 
 country: kr
-env: demo
+env: eks
 phase: alpha
 role: service
+
+replicas: 1
+autoscaling: true
 
 aws_account_id: "396608815058"
 aws_region: ap-northeast-2

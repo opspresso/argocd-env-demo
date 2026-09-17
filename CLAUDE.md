@@ -8,11 +8,12 @@
 ## 저장소 구조
 
 ```
-apps.yaml              # App of Apps. Application `apps-demo` 가 apps/ 를 sync
-apps/<project>.yaml    # application 별 ApplicationSet (배포 대상)
+apps-eks.yaml          # EKS용 App of Apps
+apps-k3s.yaml          # k3s용 App of Apps
+apps/{eks,k3s}/        # 플랫폼별 ApplicationSet
 charts/<project>/      # wrapper Helm chart
 env/<cluster>.yaml     # 클러스터별 변수. git files generator 입력이자 Jinja2 렌더 입력
-gen_values.py          # values-template.yaml.j2 × env/*.yaml → charts/<project>/<env>/values-<cluster>.yaml
+gen_values.py          # values-template.yaml.j2 × 플랫폼별 env/*.yaml → charts/<project>/<platform>/values-<cluster>.yaml
 build.sh               # 모든 chart 에 gen_values.py 실행. CI 에서 결과를 자동 커밋
 gitops.py              # repository_dispatch 로 들어온 버전을 values-<phase>.yaml 에 기록
 gitops.sh              # gitops.py 래퍼 (workflow 호출 규약 유지용)
@@ -30,7 +31,7 @@ charts/<project>/
   values-<phase>.yaml           # phase 별 값. 배포 시 gitops 가 버전을 갱신
   versions-<phase>.json         # phase 별 배포 이력
   values-template.yaml.j2       # Jinja2 템플릿 (렌더 소스, phase 아님)
-  <env>/values-<cluster>.yaml   # build.sh 가 env/*.yaml 로 렌더한 결과
+  <platform>/values-<cluster>.yaml # build.sh 가 플랫폼별 env/*.yaml 로 렌더한 결과
 ```
 
 ### 파일별 편집 규칙
@@ -42,9 +43,9 @@ charts/<project>/
 | `values-<phase>.yaml` | O — 단, 버전 관련 키는 gitops 소유(아래) |
 | `versions-<phase>.json` | **X** — gitops 산출물 |
 | `values-template.yaml.j2` | O |
-| `<env>/values-<cluster>.yaml` | **X** — 언제나 생성물 |
+| `<platform>/values-<cluster>.yaml` | **X** — 언제나 생성물 |
 
-**`<env>/values-<cluster>.yaml` 은 예외 없이 `values-template.yaml.j2` 의 렌더 결과다.**
+**`<platform>/values-<cluster>.yaml` 은 예외 없이 `values-template.yaml.j2` 의 렌더 결과다.**
 클러스터별 값을 바꾸려면 템플릿을 고치고 `./build.sh` 를 돌린다. 렌더 결과를 직접 고치면
 다음 build 에서 덮어써진다. `validate.py` 가 이 규칙을 검사하므로, 템플릿 없이 env 디렉토리만
 있는 chart 는 CI 에서 실패한다.
@@ -61,7 +62,7 @@ charts/<project>/
 `env[]` 의 `VERSION`·`ENV_HASH`.
 
 `ENV_HASH` 는 **`values-<phase>.yaml` 만** 해시한 값이다 (`chart.py:157`). `values.yaml` 이나
-`<env>/values-<cluster>.yaml` 이 바뀌어도 움직이지 않는다. 다만 pod 재시작은 이것에 의존하지
+`<platform>/values-<cluster>.yaml` 이 바뀌어도 움직이지 않는다. 다만 pod 재시작은 이것에 의존하지
 않는다 — upstream `app` chart 가 `checksum/config`·`checksum/secret` 을 병합된 값 전체에서
 계산해 deployment 에 달아준다. `ENV_HASH` 는 앱이 자기 버전을 env 로 읽기 위한 값에 가깝다.
 
@@ -97,21 +98,23 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 
 1. `values.yaml`
 2. `values-<phase>.yaml`
-3. `<env>/values-<cluster>.yaml`
+3. `<platform>/values-<cluster>.yaml`
 
 `phase` 는 `env/<cluster>.yaml` 의 `phase` 필드에서 온다. 즉 **클러스터가 phase 를 고른다.**
 
 ## env/<cluster>.yaml
 
 - 파일 이름이 클러스터 이름이고, 안의 `cluster` 필드와 일치해야 한다 (`{{cluster}}` 로 치환됨).
-- `env` 는 렌더 출력 디렉토리이자 valueFiles 경로가 된다 (`{{env}}/values-{{cluster}}.yaml`).
+- `env` 는 플랫폼(`eks` 또는 `k3s`)이며 렌더 출력 디렉터리이자 valueFiles 경로가 된다 (`{{env}}/values-{{cluster}}.yaml`).
   `gen_values.py` 는 `env` 가 없으면 실패한다.
+- `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
+  `app.autoscaling.enabled`의 원천이다. k3s는 각각 `1`, `false`를 사용한다.
 - `phase` 는 그 클러스터가 읽을 `values-<phase>.yaml` 을 정한다.
 - env 파일을 추가하면 `build.sh` 가 모든 chart 에 대해 렌더 결과를 새로 만든다.
 
-## apps/<project>.yaml
+## apps/{eks,k3s}/<project>.yaml
 
-- `kind: ApplicationSet` + git files generator 로 `env/*.yaml` 을 읽어 클러스터별로 fan-out 한다.
+- `kind: ApplicationSet` + git files generator 로 플랫폼별 `env/*.yaml` 을 읽어 클러스터별로 fan-out 한다.
 - 배포할 클러스터는 `generators.git.files` 의 주석을 풀어 고른다.
 - Application 이름은 `<project>-{{cluster}}`.
 - label `opspresso.com/group: apps`, `opspresso.com/cluster: {{cluster}}` 를 유지한다.
@@ -163,8 +166,8 @@ pytest                           # chart.py / gitops.py 테스트
 | 템플릿 파일 | `values-template.yaml.j2` | 같음 |
 | phase | `values-<phase>.yaml`, `versions-<phase>.json` | 없음 |
 | `env/*.yaml` | `phase` 필드 있음 | `phase` 필드 없음 |
-| valueFiles | `values.yaml` → `values-<phase>.yaml` → `<env>/values-<cluster>.yaml` | `values-<phase>.yaml` 단계가 없음 |
-| 렌더 출력 경로 | `charts/<project>/<env>/` | 같음 |
+| valueFiles | `values.yaml` → `values-<phase>.yaml` → `<platform>/values-<cluster>.yaml` | `values-<phase>.yaml` 단계가 없음 |
+| 렌더 출력 경로 | `charts/<project>/<platform>/` | 같음 |
 | chart 버전 | 자체 SemVer | upstream chart 버전을 그대로 |
 | 버전 배포 | `repository_dispatch` → `gitops.py` | 없음 (수동 chart 버전 변경) |
 

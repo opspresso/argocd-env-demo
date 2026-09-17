@@ -1,4 +1,7 @@
 app:
+  replicaCount: 1
+  autoscaling:
+    enabled: False
   configmap:
     data:
       CLUSTER_NAME: 'k3s-demo'

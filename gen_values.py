@@ -9,11 +9,13 @@ from jinja2 import Environment, FileSystemLoader
 
 
 REPONAME = "sample-app"
+PLATFORM = "eks"
 
 
 def parse_args():
     p = argparse.ArgumentParser(description="Helm chart gen")
     p.add_argument("-r", "--reponame", default=REPONAME, help="reponame")
+    p.add_argument("-p", "--platform", choices=["eks", "k3s"], default=PLATFORM)
     return p.parse_args()
 
 
@@ -30,10 +32,10 @@ def gen_repos(args):
         e = Environment(loader=FileSystemLoader("charts/{}/".format(args.reponame)))
         t = e.get_template(template_name)
 
-        gen_values(t, args.reponame)
+        gen_values(t, args.reponame, args.platform)
 
 
-def gen_values(t, reponame):
+def gen_values(t, reponame, platform=PLATFORM):
     for env_file in os.listdir("env"):
         if env_file.endswith(".yaml"):
             env_path = "env/{}".format(env_file)
@@ -46,10 +48,13 @@ def gen_values(t, reponame):
                 if "env" not in v:
                     raise KeyError("{} has no 'env' field".format(env_path))
 
+                if v.get("env") != platform:
+                    continue
+
                 d = t.render(v)
 
                 if d != None:
-                    save_root = "charts/{}/{}".format(reponame, v["env"])
+                    save_root = "charts/{}/{}".format(reponame, platform)
                     save_path = "{}/values-{}".format(save_root, env_file)
 
                     os.makedirs(save_root, exist_ok=True)

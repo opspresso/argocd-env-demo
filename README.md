@@ -5,8 +5,15 @@
 > apps 를 등록 합니다.
 
 ```bash
-kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps-eks.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps-k3s.yaml
 ```
+
+ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리는 해당 플랫폼의
+클러스터만 읽는다.
+
+replica 수와 autoscaling 여부는 `env/<cluster>.yaml`이 원천이다. k3s 환경은
+`replicas: 1`, `autoscaling: false`로 렌더한다.
 
 ## charts
 
@@ -17,13 +24,13 @@ charts/<project>/
   values-<phase>.yaml          # phase 별 값. 배포시 gitops 가 갱신
   versions-<phase>.json        # phase 별 배포 이력
   values-template.yaml.j2      # jinja2 템플릿 (phase 아님)
-  <env>/values-<cluster>.yaml  # build.sh 가 env/*.yaml 로 렌더한 결과
+  <platform>/values-<cluster>.yaml # build.sh 가 해당 플랫폼 env로 렌더한 결과
 ```
 
 `phase` 는 `values-<phase>.yaml` 파일에서 찾는다. `values-template.yaml.j2` 는 렌더 소스이므로
 phase 로 취급하지 않는다.
 
-`<env>/values-<cluster>.yaml` 은 **언제나** `values-template.yaml.j2` 의 렌더 결과다.
+`<platform>/values-<cluster>.yaml` 은 **언제나** `values-template.yaml.j2` 의 렌더 결과다.
 직접 고치지 말고 템플릿을 고친 뒤 `./build.sh` 를 돌린다.
 덮어쓸 값이 없는 chart 도 템플릿을 둔다 — ApplicationSet 의 `valueFiles` 에 적힌 파일이 없으면
 sync 에 실패하기 때문이다.
@@ -87,7 +94,8 @@ TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" python3 gitops.py dispatch --dry-ru
 
 ## build
 
-`values-template.yaml.j2` 를 `env/*.yaml` 마다 렌더해 `charts/<project>/<env>/` 에 저장한다.
+`values-template.yaml.j2` 를 플랫폼에 맞는 `env/*.yaml` 마다 렌더해
+`charts/<project>/<platform>/` 에 저장한다.
 
 ```bash
 ./build.sh

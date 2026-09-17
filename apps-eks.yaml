@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apps-eks
+  namespace: argocd
+  labels:
+    opspresso.com/group: apps
+spec:
+  project: apps
+  source:
+    repoURL: https://github.com/opspresso/argocd-env-demo
+    targetRevision: HEAD
+    path: apps/eks
+    directory:
+      recurse: true
+  destination:
+    name: in-cluster
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

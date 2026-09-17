@@ -1,4 +1,7 @@
 app:
+  replicaCount: {{replicas}}
+  autoscaling:
+    enabled: {{autoscaling}}
   configmap:
     enabled: true
     data:
