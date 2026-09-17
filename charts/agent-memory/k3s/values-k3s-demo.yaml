@@ -13,7 +13,6 @@ app:
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://memory.demo.opsp.dev
-
       NEO4J_URI: bolt://memory-neo4j.agent-memory.svc.cluster.local:7687
       NEO4J_USERNAME: neo4j
       NEO4J_DATABASE: neo4j

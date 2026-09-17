@@ -22,6 +22,7 @@ app:
       # share no storage — a project made on one is invisible on the other
       # (agent-studio repo docs/OPERATIONS.md).
       S3_BUCKET_NAME: agent-studio-static
+
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
@@ -68,3 +69,4 @@ app:
   serviceMonitor:
     labels:
       release: prometheus-eks-demo-b
+
