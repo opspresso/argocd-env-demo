@@ -9,6 +9,7 @@ spec:
         revision: HEAD
         files:
           - path: "env/eks-demo.yaml"
+          - path: "env/k3s-demo.yaml"
 
   template:
     metadata:

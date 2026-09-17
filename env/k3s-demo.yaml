@@ -1,0 +1,10 @@
+cluster: k3s-demo
+
+country: kr
+env: k3s
+group: k3s-demo
+role: k3s
+
+hostname:
+  internal: demo-in.opsp.dev
+  public: demo.opsp.dev
