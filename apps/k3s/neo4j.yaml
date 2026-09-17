@@ -11,6 +11,12 @@ metadata:
     opspresso.com/group: apps
 spec:
   project: apps
+  ignoreDifferences:
+  - group: apps
+    kind: StatefulSet
+    name: memory-neo4j
+    jsonPointers:
+    - /spec/volumeClaimTemplates
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD
@@ -26,4 +32,5 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
+    - RespectIgnoreDifferences=true
