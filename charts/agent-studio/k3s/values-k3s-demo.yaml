@@ -24,8 +24,6 @@ app:
       # share no storage — a project made on one is invisible on the other
       # (agent-studio repo docs/OPERATIONS.md).
       S3_BUCKET_NAME: agent-studio-static
-      S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
-      S3_ACCESS_KEY_ID: agent-studio
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
@@ -72,40 +70,6 @@ app:
   serviceMonitor:
     labels:
       release: prometheus-k3s-demo
-
-  externalSecrets:
-    enabled: true
-    data:
-    - key: /k8s/common/agent-studio/better-auth-secret
-      name: BETTER_AUTH_SECRET
-    - key: /k8s/common/agent-studio/google-client-id
-      name: GOOGLE_CLIENT_ID
-    - key: /k8s/common/agent-studio/google-client-secret
-      name: GOOGLE_CLIENT_SECRET
-    - key: /k8s/common/agent-studio/llm-api-key
-      name: LLM_API_KEY
-    - key: /k8s/common/agent-studio/llm-provider-openai-api-key
-      name: LLM_PROVIDER_OPENAI_API_KEY
-    - key: /k8s/common/agent-studio/llm-provider-anthropic-api-key
-      name: LLM_PROVIDER_ANTHROPIC_API_KEY
-    - key: /k8s/common/agent-studio/llm-provider-google-api-key
-      name: LLM_PROVIDER_GOOGLE_API_KEY
-    - key: /k8s/common/agent-studio/llm-provider-xai-api-key
-      name: LLM_PROVIDER_XAI_API_KEY
-    - key: /k8s/common/agent-studio/llm-provider-openrouter-api-key
-      name: LLM_PROVIDER_OPENROUTER_API_KEY
-    - key: /k8s/common/agent-studio/aes-encryption-key
-      name: AES_ENCRYPTION_KEY
-    - key: /k8s/common/agent-studio/a2a-api-key
-      name: A2A_API_KEY
-    - key: /k8s/common/agent-studio/github-token
-      name: GITHUB_TOKEN
-    - key: /k8s/common/agent-studio/schedule-scan-token
-      name: SCHEDULE_SCAN_TOKEN
-    - key: /k8s/k3s-demo/agent-studio/database-url
-      name: DATABASE_URL
-    - key: /k8s/k3s-demo/agent-studio/minio-root-password
-      name: S3_SECRET_ACCESS_KEY
 
 
 scan:
