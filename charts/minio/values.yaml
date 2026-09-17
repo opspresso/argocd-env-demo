@@ -1,6 +1,15 @@
 minio:
   fullnameOverride: minio
 
+  global:
+    security:
+      allowInsecureImages: true
+
+  image:
+    repository: bitnamilegacy/minio
+  clientImage:
+    repository: bitnamilegacy/minio-client
+
   mode: standalone
   defaultBuckets: agent-studio-static,agent-memory
 
@@ -17,6 +26,8 @@ minio:
   resourcesPreset: none
   resources: null
   console:
+    image:
+      repository: bitnamilegacy/minio-object-browser
     resourcesPreset: none
     resources: null
   defaultInitContainers:
