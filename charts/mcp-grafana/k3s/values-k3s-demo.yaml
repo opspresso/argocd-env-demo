@@ -12,3 +12,6 @@ app:
       # Studio's SSRF guard has nothing to say about it — that guard only bounds
       # what Agent Studio itself dials.
       GRAFANA_URL: http://grafana.addon-grafana.svc.cluster.local
+
+  destinationRule:
+    enabled: false

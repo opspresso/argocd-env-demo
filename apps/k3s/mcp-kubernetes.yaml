@@ -21,6 +21,7 @@ spec:
     helm:
       valueFiles:
       - values.yaml
+      - values-alpha.yaml
       - k3s/values-k3s-demo.yaml
   syncPolicy:
     automated:

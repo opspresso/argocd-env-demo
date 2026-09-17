@@ -2,6 +2,8 @@ app:
   replicaCount: 1
   autoscaling:
     enabled: False
+  image:
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-memory
 
   resources: null
 
