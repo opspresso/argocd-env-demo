@@ -1,0 +1,19 @@
+app:
+  configmap:
+    data:
+      CLUSTER_NAME: 'k3s-demo'
+      MESSAGE: hello world
+      PROFILE: 'k3s'
+  routing:
+    hosts:
+    - sample-grpc.demo.opsp.dev
+    httpRoute:
+      enabled: true
+  podLabels:
+    sidecar.istio.io/inject: "true"
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://sample-grpc.demo.opsp.dev
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus-eks-demo
