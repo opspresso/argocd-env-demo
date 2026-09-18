@@ -9,14 +9,6 @@ app:
     - name: ecr-registry
 
 
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
-
   configmap:
     enabled: true
     data:

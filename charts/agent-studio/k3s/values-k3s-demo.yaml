@@ -20,14 +20,6 @@ app:
       readOnly: true
 
 
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 768Mi
-
   configmap:
     enabled: true
     data:
@@ -144,13 +136,6 @@ app:
     - key: /k8s/k3s-demo/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 
-
-
-scan:
-  resources: null
-
-reindex:
-  resources: null
 
 
 
