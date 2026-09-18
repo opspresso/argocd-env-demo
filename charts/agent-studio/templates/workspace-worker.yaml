@@ -110,6 +110,7 @@ spec:
             - name: ecr-config
               mountPath: /home/app/.docker
               readOnly: true
+{{- if .Values.app.resources }}
           resources:
             requests:
               cpu: 100m
@@ -117,6 +118,7 @@ spec:
             limits:
               cpu: 500m
               memory: 768Mi
+{{- end }}
           readinessProbe:
             exec:
               command: ["/bin/sh", "-ec", "docker info >/dev/null && test -s /tmp/workspace-worker.heartbeat"]
@@ -141,6 +143,7 @@ spec:
           volumeMounts:
             - name: docker-data
               mountPath: /var/lib/docker
+{{- if .Values.app.resources }}
           resources:
             requests:
               cpu: 100m
@@ -148,6 +151,7 @@ spec:
             limits:
               cpu: 1000m
               memory: 1536Mi
+{{- end }}
           readinessProbe:
             exec:
               command: ["/bin/sh", "-ec", "docker info >/dev/null 2>&1"]

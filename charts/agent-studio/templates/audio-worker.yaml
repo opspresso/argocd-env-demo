@@ -32,8 +32,10 @@ spec:
                 name: agent-studio
             - secretRef:
                 name: agent-studio-external
+{{- if .Values.app.resources }}
 {{- with .Values.audioWorker.resources }}
           resources:
 {{ toYaml . | nindent 12 }}
+{{- end }}
 {{- end }}
 {{- end }}
