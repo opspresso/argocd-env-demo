@@ -7,8 +7,27 @@ app:
 {% if env == 'k3s' %}
   imagePullSecrets:
     - name: ecr-registry
+  extraVolumes:
+    - name: ecr-config
+      secret:
+        secretName: ecr-registry
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+  extraVolumeMounts:
+    - name: ecr-config
+      mountPath: /home/app/.docker
+      readOnly: true
 {% endif %}
-{% if not resources %}
+{% if env == 'k3s' %}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+{% elif not resources %}
   resources: null
 {% endif %}
   configmap:
@@ -67,6 +86,15 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
+{%- if env == 'k3s' %}
+      WORKSPACE_IMAGE: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-studio:workspace-v0.113.5
+      DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
+      WORKSPACE_NETWORK: none
+      WORKSPACE_MEMORY_MB: '1024'
+      WORKSPACE_DISK_MB: '2048'
+      WORKSPACE_CPUS: '1'
+      WORKSPACE_WORKER_CONCURRENCY: '1'
+{%- endif %}
   routing:
     hosts:
     - studio.{{hostname.public}}
@@ -135,4 +163,16 @@ reindex:
 {% if env == 'k3s' %}
 audioWorker:
   enabled: true
+
+workspaceWorker:
+  enabled: true
+  sandboxImage: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-studio:workspace-v0.113.5
+  dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
+  workerConcurrency: 1
+  memoryMb: 1024
+  diskMb: 2048
+  cpus: 1
+  persistence:
+    size: 10Gi
+    storageClass: local-path
 {% endif %}

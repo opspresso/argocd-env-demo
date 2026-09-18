@@ -1,5 +1,3 @@
 app:
   replicaCount: 1
 
-  resources: null
-

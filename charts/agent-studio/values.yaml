@@ -259,3 +259,16 @@ reindex:
 
 audioWorker:
   enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+workspaceWorker:
+  enabled: false
+  persistence:
+    size: 10Gi
+    storageClass: local-path

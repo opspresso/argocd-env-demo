@@ -1,0 +1,163 @@
+{{- if .Values.workspaceWorker.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: agent-studio-workspace-docker
+  labels:
+    app.kubernetes.io/name: agent-studio-workspace-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: {{ .Values.workspaceWorker.persistence.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.workspaceWorker.persistence.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-studio-workspace-docker
+  labels:
+    app.kubernetes.io/name: agent-studio-workspace-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: agent-studio-workspace-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: docker
+      port: 2375
+      targetPort: 2375
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-studio-workspace-docker
+  labels:
+    app.kubernetes.io/name: agent-studio-workspace-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: agent-studio-workspace-worker
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values: [agent-studio, agent-studio-workspace-worker]
+      ports:
+        - protocol: TCP
+          port: 2375
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-studio-workspace-worker
+  labels:
+    app.kubernetes.io/name: agent-studio-workspace-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agent-studio-workspace-worker
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agent-studio-workspace-worker
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      imagePullSecrets:
+        - name: ecr-registry
+      volumes:
+        - name: docker-data
+          persistentVolumeClaim:
+            claimName: agent-studio-workspace-docker
+        - name: ecr-config
+          secret:
+            secretName: ecr-registry
+            items:
+              - key: .dockerconfigjson
+                path: config.json
+      containers:
+        - name: workspace-worker
+          image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              until docker info >/dev/null 2>&1; do sleep 2; done
+              docker image inspect "$WORKSPACE_IMAGE" >/dev/null 2>&1 || docker pull "$WORKSPACE_IMAGE"
+              exec node build/workspace-worker.cjs
+          env:
+            - name: DOCKER_HOST
+              value: tcp://127.0.0.1:2375
+          envFrom:
+            - configMapRef:
+                name: agent-studio
+            - secretRef:
+                name: agent-studio-external
+          volumeMounts:
+            - name: ecr-config
+              mountPath: /home/app/.docker
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-ec", "docker info >/dev/null && test -s /tmp/workspace-worker.heartbeat"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-ec", "docker info >/dev/null && test -s /tmp/workspace-worker.heartbeat"]
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+        - name: docker
+          image: {{ .Values.workspaceWorker.dockerImage }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
+          args: ["--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: docker-data
+              mountPath: /var/lib/docker
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1536Mi
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-ec", "docker info >/dev/null 2>&1"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-ec", "docker info >/dev/null 2>&1"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+{{- end }}

@@ -24,4 +24,10 @@ postgresql:
     persistence:
       enabled: true
       size: 5Gi
-    resources: null
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi

@@ -8,7 +8,15 @@ app:
   imagePullSecrets:
     - name: ecr-registry
 {% endif %}
-{% if not resources %}
+{% if env == 'k3s' %}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+{% elif not resources %}
   resources: null
 {% endif %}
   configmap:

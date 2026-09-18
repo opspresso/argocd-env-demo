@@ -13,7 +13,9 @@ ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리�
 클러스터만 읽는다.
 
 replica 수와 autoscaling 여부는 `env/<cluster>.yaml`이 원천이다. k3s 환경은
-`replicas: 1`, `autoscaling: false`, `resources: false`로 렌더한다.
+`replicas: 1`, `autoscaling: false`로 렌더한다. 일반 chart는 `resources: false`를
+사용하지만 Agent Studio/Memory와 PostgreSQL/MinIO 등 핵심 workload는 k3s values에서
+운영용 requests/limits를 명시한다.
 
 ## charts
 
@@ -111,6 +113,18 @@ values 파일 누락이나 chart 오류를 Argo CD sync 가 아니라 CI 에서 
 
 ./validate.py -r sample-node
 ```
+
+## k3s workers
+
+k3s의 `agent-studio`는 `audio-worker`를 별도 Deployment로 실행한다. Workspace 기능은
+`workspace-worker`와 Docker-in-Docker sidecar를 사용하며, sandbox Docker daemon은
+`agent-studio-workspace-docker` ClusterIP로 앱과 worker만 접근한다. Docker state는
+`agent-studio-workspace-docker` PVC에 보존하고, sandbox image는 private ECR의
+`agent-studio:workspace-<version>` tag를 사용한다.
+
+Workspace worker Pod는 DinD 때문에 privileged 권한이 필요하다. `ecr-registry` Secret은
+kubelet image pull뿐 아니라 worker와 앱의 Docker client config에도 mount해야 하며,
+Agent Studio image와 matching Workspace image를 함께 release해야 한다.
 
 ## test
 
