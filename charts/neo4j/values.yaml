@@ -14,4 +14,4 @@ neo4jdb:
         accessModes:
         - ReadWriteOnce
         requests:
-          storage: 10Gi
+          storage: 5Gi
