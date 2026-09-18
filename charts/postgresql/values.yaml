@@ -1,10 +1,12 @@
 postgresql:
   fullnameOverride: postgres
 
-  architecture: standalone
+  image:
+    repository: pgvector/pgvector
+    tag: 0.8.6-pg18-trixie
+    pullPolicy: IfNotPresent
 
   auth:
-    enablePostgresUser: true
     username: agent_studio
     database: agent_studio
     existingSecret: postgresql-credentials
@@ -13,7 +15,6 @@ postgresql:
       userPasswordKey: password
 
   primary:
-    resourcesPreset: none
     initdb:
       scripts:
         00-agent-memory.sql: |

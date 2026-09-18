@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-scripts
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+data:
+{{- toYaml .Values.postgresql.primary.initdb.scripts | nindent 2 }}

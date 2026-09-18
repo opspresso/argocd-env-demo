@@ -15,3 +15,10 @@ neo4jdb:
         - ReadWriteOnce
         requests:
           storage: 5Gi
+
+  # Agent Memory connects through the in-cluster Service. The upstream chart
+  # enables a LoadBalancer for Neo4j Browser/Bolt by default, which would
+  # expose the database on a k3s node even though IDC keeps both ports private.
+  services:
+    neo4j:
+      enabled: false

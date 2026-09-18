@@ -127,3 +127,8 @@ scan:
 
 reindex:
   resources: null
+
+
+
+audioWorker:
+  enabled: true

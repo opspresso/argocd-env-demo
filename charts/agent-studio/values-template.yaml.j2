@@ -131,3 +131,8 @@ scan:
 reindex:
   resources: null
 {% endif %}
+
+{% if env == 'k3s' %}
+audioWorker:
+  enabled: true
+{% endif %}

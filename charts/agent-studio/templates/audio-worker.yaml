@@ -1,0 +1,39 @@
+{{- if .Values.audioWorker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-studio-audio-worker
+  labels:
+    app.kubernetes.io/name: agent-studio-audio-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agent-studio-audio-worker
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agent-studio-audio-worker
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: agent-studio
+      terminationGracePeriodSeconds: 60
+      imagePullSecrets:
+        - name: ecr-registry
+      containers:
+        - name: audio-worker
+          image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}
+          imagePullPolicy: IfNotPresent
+          command: ["node", "build/audio-worker.cjs"]
+          envFrom:
+            - configMapRef:
+                name: agent-studio
+            - secretRef:
+                name: agent-studio-external
+{{- with .Values.audioWorker.resources }}
+          resources:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- end }}
