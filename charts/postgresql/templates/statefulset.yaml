@@ -24,31 +24,23 @@ spec:
       initContainers:
         - name: data-permissions
           image: busybox:1.36
-          command: ["sh", "-ec", "chown -R 999:999 /var/lib/postgresql"]
+          command:
+            - sh
+            - -ec
+            - |
+              chown -R 999:999 /var/lib/postgresql
+              if [ ! -f /var/lib/postgresql/data/postgresql.conf ]; then
+                printf "%s\\n" "listen_addresses = '*'" > /var/lib/postgresql/data/postgresql.conf
+                printf "%s\\n" "local all all trust" > /var/lib/postgresql/data/pg_hba.conf
+                printf "%s\\n" "host all all 127.0.0.1/32 scram-sha-256" >> /var/lib/postgresql/data/pg_hba.conf
+                printf "%s\\n" "host all all 0.0.0.0/0 scram-sha-256" >> /var/lib/postgresql/data/pg_hba.conf
+                chown 999:999 /var/lib/postgresql/data/postgresql.conf /var/lib/postgresql/data/pg_hba.conf
+              fi
           securityContext:
             runAsUser: 0
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql
-        - name: data-config
-          image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
-          command:
-            - sh
-            - -ec
-            - |
-              if [ ! -f /var/lib/postgresql/data/postgresql.conf ]; then
-                initdb -D /tmp/initdb --auth=trust >/dev/null
-                cp /tmp/initdb/postgresql.conf /var/lib/postgresql/data/postgresql.conf
-                cp /tmp/initdb/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf
-                printf "listen_addresses = '*'\n" >> /var/lib/postgresql/data/postgresql.conf
-                printf "host all all 0.0.0.0/0 scram-sha-256\n" >> /var/lib/postgresql/data/pg_hba.conf
-                chown 999:999 /var/lib/postgresql/data/postgresql.conf /var/lib/postgresql/data/pg_hba.conf
-              fi
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/postgresql
-            - name: initdb
-              mountPath: /tmp/initdb
       containers:
         - name: postgresql
           image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
@@ -101,8 +93,6 @@ spec:
         - name: init-scripts
           configMap:
             name: postgres-init-scripts
-        - name: initdb
-          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
