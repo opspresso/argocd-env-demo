@@ -9,7 +9,3 @@ app:
     enabled: true
     data:
       AWS_REGION: ap-northeast-2
-      # K3s has no EKS Pod Identity. The node instance role is exposed to this
-      # pod through IMDS; keep the provider enabled and scope the EC2 role to
-      # the CloudWatch actions this MCP server needs.
-      AWS_EC2_METADATA_DISABLED: "false"
