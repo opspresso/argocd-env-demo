@@ -109,6 +109,8 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `gen_values.py` 는 `env` 가 없으면 실패한다.
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
   `app.autoscaling.enabled`의 원천이다. k3s는 각각 `1`, `false`를 사용한다.
+- `metrics.backend` 는 ServiceMonitor 라벨의 원천이다. k3s는 `victoria-metrics`, EKS는
+  `prometheus`를 사용한다.
 - `resources` 는 workload의 requests/limits 사용 여부를 제어하는 env 원천값이다.
   `true`면 chart 기본 requests/limits를 유지하고, `false`면 템플릿이 resource block을
   제거한다. k3s-demo는 `resources: true`로 선언해 핵심 workload가 BestEffort가 되지 않게 한다.

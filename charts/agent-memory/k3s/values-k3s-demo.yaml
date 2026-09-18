@@ -51,7 +51,8 @@ app:
 
   serviceMonitor:
     labels:
-      release: prometheus-k3s-demo
+release: victoria-metrics-k3s-demo
+
 
 
   externalSecrets:

@@ -28,7 +28,8 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-      release: prometheus-eks-demo
+release: victoria-metrics-k3s-demo
+
   externalSecrets:
     data:
     - key: /k8s/common/sample-node/redis-password

@@ -24,4 +24,4 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-      release: prometheus-eks-demo
+release: victoria-metrics-k3s-demo

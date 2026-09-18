@@ -14,6 +14,8 @@ ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리�
 
 replica 수, autoscaling 여부와 resource 사용 여부는 `env/<cluster>.yaml`이 원천이다.
 k3s 환경은 `replicas: 1`, `autoscaling: false`, `resources: true`로 선언한다.
+metrics backend는 `metrics.backend`로 선택하며, k3s는 `victoria-metrics`, EKS는
+`prometheus`를 사용한다.
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
 환경에서는 템플릿이 해당 resource block을 제거한다.
 

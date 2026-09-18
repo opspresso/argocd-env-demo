@@ -2,6 +2,8 @@ cluster: eks-demo
 
 country: kr
 env: eks
+metrics:
+  backend: prometheus
 phase: alpha
 role: mgmt
 

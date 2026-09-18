@@ -2,6 +2,8 @@ cluster: k3s-demo
 
 country: kr
 env: k3s
+metrics:
+  backend: victoria-metrics
 group: k3s-demo
 role: k3s
 

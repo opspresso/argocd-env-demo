@@ -29,4 +29,8 @@ app:
   serviceMonitor:
     enabled: true
     labels:
+{% if metrics.backend == 'victoria-metrics' -%}
+      release: victoria-metrics-{{cluster}}
+{% else -%}
       release: prometheus-eks-demo
+{%- endif %}

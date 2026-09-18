@@ -27,7 +27,7 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-      release: prometheus-eks-demo
+release: prometheus-eks-demo
   externalSecrets:
     data:
     - key: /k8s/common/sample-node/redis-password
