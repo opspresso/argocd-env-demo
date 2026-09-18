@@ -27,8 +27,8 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://studio.demo.opsp.dev
-      PUBLIC_BASE_URL: https://studio.demo.opsp.dev
+      BETTER_AUTH_URL: https://studio.opspresso.com
+      PUBLIC_BASE_URL: https://studio.opspresso.com
       # Storage since agent-studio v0.87: one PostgreSQL (DATABASE_URL, from
       # the external secret /k8s/common/agent-studio/database-url — an RDS or
       # an in-cluster Postgres with pgvector; neither exists for prod yet) and
@@ -85,7 +85,7 @@ app:
       WORKSPACE_WORKER_CONCURRENCY: '1'
   routing:
     hosts:
-    - studio.demo.opsp.dev
+    - studio.opspresso.com
     httpRoute:
       enabled: true
 
@@ -95,7 +95,7 @@ app:
 
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://studio.demo.opsp.dev
+    link.argocd.argoproj.io/external-link: https://studio.opspresso.com
 
   serviceMonitor:
     labels:

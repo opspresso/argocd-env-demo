@@ -29,8 +29,8 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: {{aws_region}}
-      BETTER_AUTH_URL: https://studio.{{hostname.public}}
-      PUBLIC_BASE_URL: https://studio.{{hostname.public}}
+      BETTER_AUTH_URL: https://{{agent_studio.hostname}}
+      PUBLIC_BASE_URL: https://{{agent_studio.hostname}}
       # Storage since agent-studio v0.87: one PostgreSQL (DATABASE_URL, from
       # the external secret /k8s/common/agent-studio/database-url — an RDS or
       # an in-cluster Postgres with pgvector; neither exists for prod yet) and
@@ -89,7 +89,7 @@ app:
 {%- endif %}
   routing:
     hosts:
-    - studio.{{hostname.public}}
+    - {{agent_studio.hostname}}
     httpRoute:
       enabled: true
 {% if env == 'k3s' %}
@@ -102,7 +102,7 @@ app:
     sidecar.istio.io/inject: "true"
 {% endif %}
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://studio.{{hostname.public}}
+    link.argocd.argoproj.io/external-link: https://{{agent_studio.hostname}}
 
   serviceMonitor:
     labels:

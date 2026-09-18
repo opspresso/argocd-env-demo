@@ -18,7 +18,7 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: {{aws_region}}
-      BETTER_AUTH_URL: https://memory.{{hostname.public}}
+      BETTER_AUTH_URL: https://{{agent_memory.hostname}}
 {%- if env == 'k3s' %}
       NEO4J_URI: bolt://memory-neo4j.agent-memory.svc.cluster.local:7687
       NEO4J_USERNAME: neo4j
@@ -40,7 +40,7 @@ app:
 {% endif %}
   routing:
     hosts:
-    - memory.{{hostname.public}}
+    - {{agent_memory.hostname}}
     httpRoute:
       enabled: true
 {% if env == 'k3s' %}
@@ -53,7 +53,7 @@ app:
     sidecar.istio.io/inject: "true"
 {% endif %}
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://memory.{{hostname.public}}
+    link.argocd.argoproj.io/external-link: https://{{agent_memory.hostname}}
 
   serviceMonitor:
     labels:

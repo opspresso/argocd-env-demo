@@ -18,3 +18,9 @@ hostname:
   internal: demo-in.opspresso.com
   public: demo.opspresso.com
   this: demo-0.opspresso.com
+
+agent_studio:
+  hostname: studio.opspresso.com
+
+agent_memory:
+  hostname: memory.opspresso.com

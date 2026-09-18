@@ -27,3 +27,9 @@ aws_region: ap-northeast-2
 hostname:
   internal: demo-in.opsp.dev
   public: demo.opsp.dev
+
+agent_studio:
+  hostname: studio.opspresso.com
+
+agent_memory:
+  hostname: memory.opspresso.com
