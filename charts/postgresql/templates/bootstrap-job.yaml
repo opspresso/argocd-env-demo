@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-bootstrap
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  backoffLimit: 12
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: bootstrap
+          image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.auth.existingSecret }}
+                  key: {{ .Values.postgresql.auth.secretKeys.adminPasswordKey }}
+          command:
+            - sh
+            - -ec
+            - |
+              until pg_isready -h postgres -U postgres -d postgres; do sleep 2; done
+              psql -h postgres -U postgres -d postgres -v ON_ERROR_STOP=1 \
+                -c "ALTER ROLE {{ .Values.postgresql.auth.username }} WITH SUPERUSER;"
+              for database in agent_studio agent_memory; do
+                psql -h postgres -U postgres -d "${database}" -v ON_ERROR_STOP=1 \
+                  -c "CREATE EXTENSION IF NOT EXISTS vector;"
+              done
