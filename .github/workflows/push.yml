@@ -33,3 +33,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PUSH: "true"
+
+      - name: Validate 🧪
+        run: python3 ./validate.py
