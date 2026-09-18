@@ -109,9 +109,9 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `gen_values.py` 는 `env` 가 없으면 실패한다.
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
   `app.autoscaling.enabled`의 원천이다. k3s는 각각 `1`, `false`를 사용한다.
-- `resources` 는 workload의 requests/limits 사용 여부를 제어한다. k3s는 일반 chart에서
-  `false`를 사용하지만, Agent Studio/Memory와 PostgreSQL/MinIO 등 핵심 workload는
-  k3s values가 운영용 requests/limits를 명시해 BestEffort 실행을 피한다.
+- `resources` 는 workload의 requests/limits 사용 여부를 제어하는 env 원천값이다.
+  `true`면 chart 기본 requests/limits를 유지하고, `false`면 템플릿이 resource block을
+  제거한다. k3s-demo는 `resources: true`로 선언해 핵심 workload가 BestEffort가 되지 않게 한다.
 - `phase` 는 그 클러스터가 읽을 `values-<phase>.yaml` 을 정한다.
 - env 파일을 추가하면 `build.sh` 가 모든 chart 에 대해 렌더 결과를 새로 만든다.
 

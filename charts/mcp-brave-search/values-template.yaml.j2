@@ -1,6 +1,6 @@
 app:
   replicaCount: {{replicas}}
-{% if env != 'k3s' and not resources %}
+{% if not resources %}
   resources: null
 {% endif %}
 {% if env != 'k3s' %}

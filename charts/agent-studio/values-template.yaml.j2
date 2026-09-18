@@ -19,15 +19,7 @@ app:
       mountPath: /home/app/.docker
       readOnly: true
 {% endif %}
-{% if env == 'k3s' %}
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 768Mi
-{% elif not resources %}
+{% if not resources %}
   resources: null
 {% endif %}
   configmap:

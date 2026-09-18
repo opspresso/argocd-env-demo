@@ -12,10 +12,10 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-en
 ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리는 해당 플랫폼의
 클러스터만 읽는다.
 
-replica 수와 autoscaling 여부는 `env/<cluster>.yaml`이 원천이다. k3s 환경은
-`replicas: 1`, `autoscaling: false`로 렌더한다. 일반 chart는 `resources: false`를
-사용하지만 Agent Studio/Memory와 PostgreSQL/MinIO 등 핵심 workload는 k3s values에서
-운영용 requests/limits를 명시한다.
+replica 수, autoscaling 여부와 resource 사용 여부는 `env/<cluster>.yaml`이 원천이다.
+k3s 환경은 `replicas: 1`, `autoscaling: false`, `resources: true`로 선언한다.
+각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
+환경에서는 템플릿이 해당 resource block을 제거한다.
 
 ## charts
 

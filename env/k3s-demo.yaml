@@ -7,7 +7,7 @@ role: k3s
 
 replicas: 1
 autoscaling: false
-resources: false
+resources: true
 
 aws_account_id: "396608815058"
 aws_region: ap-northeast-2
