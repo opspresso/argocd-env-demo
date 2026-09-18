@@ -78,14 +78,14 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
-{%- if env == 'k3s' %}
-      WORKSPACE_IMAGE: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-studio:workspace-v0.113.5
+{%- if workspace_worker %}
+      WORKSPACE_IMAGE: {{workspace_image}}
       DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
-      WORKSPACE_NETWORK: none
-      WORKSPACE_MEMORY_MB: '1024'
-      WORKSPACE_DISK_MB: '2048'
-      WORKSPACE_CPUS: '1'
-      WORKSPACE_WORKER_CONCURRENCY: '1'
+      WORKSPACE_NETWORK: {{workspace_network}}
+      WORKSPACE_MEMORY_MB: '{{workspace_memory_mb}}'
+      WORKSPACE_DISK_MB: '{{workspace_disk_mb}}'
+      WORKSPACE_CPUS: '{{workspace_cpus}}'
+      WORKSPACE_WORKER_CONCURRENCY: '{{workspace_worker_concurrency}}'
 {%- endif %}
   routing:
     hosts:
@@ -152,19 +152,22 @@ reindex:
   resources: null
 {% endif %}
 
-{% if env == 'k3s' %}
+{% if audio_worker or workspace_worker %}
+{% if audio_worker %}
 audioWorker:
   enabled: true
-
+{% endif %}
+{% if workspace_worker %}
 workspaceWorker:
   enabled: true
-  sandboxImage: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-studio:workspace-v0.113.5
-  dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
-  workerConcurrency: 1
-  memoryMb: 1024
-  diskMb: 2048
-  cpus: 1
+  sandboxImage: {{workspace_image}}
+  dockerImage: {{workspace_docker_image}}
+  workerConcurrency: {{workspace_worker_concurrency}}
+  memoryMb: {{workspace_memory_mb}}
+  diskMb: {{workspace_disk_mb}}
+  cpus: {{workspace_cpus}}
   persistence:
     size: 10Gi
     storageClass: local-path
 {% endif %}
+{%- endif %}

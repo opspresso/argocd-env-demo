@@ -139,8 +139,10 @@ app:
 
 
 
+
 audioWorker:
   enabled: true
+
 
 workspaceWorker:
   enabled: true
