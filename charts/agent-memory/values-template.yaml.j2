@@ -57,11 +57,7 @@ app:
 
   serviceMonitor:
     labels:
-{% if metrics.backend == 'victoria-metrics' -%}
-      release: victoria-metrics-{{cluster}}
-{% else -%}
-      release: prometheus-{{cluster}}
-{%- endif %}
+      release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
 {% if env == 'k3s' %}
 
   externalSecrets:

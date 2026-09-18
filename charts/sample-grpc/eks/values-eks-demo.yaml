@@ -23,4 +23,4 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-release: prometheus-eks-demo
+      release: prometheus-eks-demo

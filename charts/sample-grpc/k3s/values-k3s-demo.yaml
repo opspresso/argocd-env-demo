@@ -24,4 +24,4 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-release: victoria-metrics-k3s-demo
+      release: victoria-metrics-k3s-demo

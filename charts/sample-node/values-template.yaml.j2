@@ -33,11 +33,7 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-{% if metrics.backend == 'victoria-metrics' -%}
-      release: victoria-metrics-{{cluster}}
-{% else -%}
-      release: prometheus-eks-demo
-{%- endif %}
+      release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
   externalSecrets:
     data:
     - key: /k8s/common/sample-node/redis-password

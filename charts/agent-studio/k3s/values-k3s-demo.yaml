@@ -99,8 +99,7 @@ app:
 
   serviceMonitor:
     labels:
-release: victoria-metrics-k3s-demo
-
+      release: victoria-metrics-k3s-demo
 
 
   externalSecrets:

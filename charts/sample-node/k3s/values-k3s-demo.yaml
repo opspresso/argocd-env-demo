@@ -28,8 +28,7 @@ app:
   serviceMonitor:
     enabled: true
     labels:
-release: victoria-metrics-k3s-demo
-
+      release: victoria-metrics-k3s-demo
   externalSecrets:
     data:
     - key: /k8s/common/sample-node/redis-password

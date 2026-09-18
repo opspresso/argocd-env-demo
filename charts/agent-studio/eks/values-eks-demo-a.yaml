@@ -74,7 +74,7 @@ app:
 
   serviceMonitor:
     labels:
-release: prometheus-eks-demo-a
+      release: prometheus-eks-demo-a
 
 
 
