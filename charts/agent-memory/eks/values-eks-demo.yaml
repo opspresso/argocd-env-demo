@@ -1,4 +1,6 @@
 app:
+  fullnameOverride: agent-memory
+
   replicaCount: 1
   autoscaling:
     enabled: True
@@ -13,10 +15,10 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://memory.demo.opspresso.com
+      BETTER_AUTH_URL: https://memory.opspresso.com
   routing:
     hosts:
-    - memory.demo.opspresso.com
+    - memory.opspresso.com
     httpRoute:
       enabled: true
 
@@ -25,8 +27,9 @@ app:
     sidecar.istio.io/inject: "true"
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://memory.demo.opspresso.com
+    link.argocd.argoproj.io/external-link: https://memory.opspresso.com
 
   serviceMonitor:
     labels:
       release: prometheus-eks-demo
+
