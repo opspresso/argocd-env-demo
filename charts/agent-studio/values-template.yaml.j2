@@ -1,4 +1,6 @@
 app:
+  fullnameOverride: agent-studio
+{% if agent_studio is defined %}
   replicaCount: {{replicas}}
   autoscaling:
     enabled: {{autoscaling}}
@@ -31,7 +33,6 @@ app:
       AWS_REGION: {{aws_region}}
       BETTER_AUTH_URL: https://{{agent_studio.hostname}}
       PUBLIC_BASE_URL: https://{{agent_studio.hostname}}
-
       S3_BUCKET_NAME: agent-studio-static
 {% if env == 'k3s' %}
       S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
@@ -152,4 +153,5 @@ workspaceWorker:
     size: 10Gi
     storageClass: local-path
 {% endif %}
-{%- endif %}
+{% endif %}
+{% endif %}

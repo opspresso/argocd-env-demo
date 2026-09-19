@@ -1,4 +1,6 @@
 app:
+  fullnameOverride: agent-memory
+{% if agent_memory is defined %}
   replicaCount: {{replicas}}
   autoscaling:
     enabled: {{autoscaling}}
@@ -85,4 +87,5 @@ app:
       name: S3_ACCESS_KEY_ID
     - key: /k8s/k3s-demo/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
+{% endif %}
 {% endif %}
