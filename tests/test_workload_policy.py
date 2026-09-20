@@ -16,13 +16,13 @@ class WorkloadPolicyTests(unittest.TestCase):
         self.assertEqual(policy_errors(manifest("Pod", {"containers": [{"resources": {"requests": {"cpu": "100m"}}}]}), "eks"), [])
 
     def test_both_low_reservation_platforms_are_detected(self):
-        for platform in ("k3s", "orb"):
+        for platform in ("k3s", "local"):
             with self.subTest(platform=platform):
                 self.assertEqual(target_platform({"appset": f"apps/{platform}/example.yaml"}, {}), platform)
                 self.assertEqual(target_platform({"appset": "apps/example.yaml"}, {"env": platform}), platform)
 
     def test_main_init_and_sidecar_container_resources_are_rejected(self):
-        for platform in ("k3s", "orb"):
+        for platform in ("k3s", "local"):
             for container_key in ("containers", "initContainers", "ephemeralContainers"):
                 for field in ("requests", "limits"):
                     with self.subTest(platform=platform, containers=container_key, field=field):
@@ -34,19 +34,19 @@ class WorkloadPolicyTests(unittest.TestCase):
     def test_pvc_storage_and_empty_compute_settings_are_allowed(self):
         pvc = manifest("PersistentVolumeClaim", {"resources": {"requests": {"storage": "5Gi"}}})
         pod = manifest("Pod", {"containers": [{"resources": None}, {"resources": {}}, {}], "initContainers": None})
-        for platform in ("k3s", "orb"):
+        for platform in ("k3s", "local"):
             self.assertEqual(policy_errors(pvc + "\n---\n" + pod, platform), [])
 
     def test_all_autoscaler_kinds_are_rejected(self):
         for kind in ("HorizontalPodAutoscaler", "VerticalPodAutoscaler", "ScaledObject", "ScaledJob"):
-            for platform in ("k3s", "orb"):
+            for platform in ("k3s", "local"):
                 with self.subTest(kind=kind, platform=platform):
                     self.assertEqual(len(policy_errors(manifest(kind, {}), platform)), 1)
 
     def test_helmchartconfig_cannot_reenable_traefik_defaults(self):
         valid = manifest("HelmChartConfig", {"valuesContent": "resources:\n  requests: null\n  limits: null\nautoscaling:\n  enabled: false\n"}, "traefik")
         missing = manifest("HelmChartConfig", {"valuesContent": "providers: {}"}, "traefik")
-        for platform in ("k3s", "orb"):
+        for platform in ("k3s", "local"):
             self.assertEqual(policy_errors(valid, platform), [])
             self.assertEqual(len(policy_errors(missing, platform)), 2)
 

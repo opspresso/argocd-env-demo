@@ -14,7 +14,7 @@ app:
     enabled: true
     data:
       AWS_REGION: {{ aws_region }}
-{%- if env == 'orb' %}
+{%- if env == 'local' %}
       AWS_PROFILE: "{{aws_local.profile}}"
       AWS_CONFIG_FILE: /aws/config
       AWS_SHARED_CREDENTIALS_FILE: /aws/credentials

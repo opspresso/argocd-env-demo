@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mcp-kubernetes-orb
+  name: mcp-grafana-local
   namespace: argocd
   labels:
-    app.kubernetes.io/instance: apps-orb-demo
-    opspresso.com/cluster: orb-demo
+    app.kubernetes.io/instance: apps-local-demo
+    opspresso.com/cluster: local-demo
     opspresso.com/group: apps
 spec:
   project: apps
@@ -15,12 +15,12 @@ spec:
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD
-    path: charts/mcp-kubernetes
+    path: charts/mcp-grafana
     helm:
       valueFiles:
       - values.yaml
       - values-alpha.yaml
-      - orb/values-orb-demo.yaml
+      - local/values-local-demo.yaml
   syncPolicy:
     automated:
       prune: true

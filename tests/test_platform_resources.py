@@ -21,7 +21,7 @@ def render(chart, value_files, extra_args=()):
     definition = yaml.safe_load((chart_path / "Chart.yaml").read_text())
     if definition.get("dependencies") and not list((chart_path / "charts").glob("*.tgz")):
         pytest.skip(f"Run helm dependency update {chart} before this render check")
-    command = ["helm", "template", "orb-test", str(chart_path)]
+    command = ["helm", "template", "local-test", str(chart_path)]
     for value_file in value_files:
         command += ["-f", str(chart_path / value_file)]
     return subprocess.run(command + list(extra_args), capture_output=True, text=True)
@@ -39,7 +39,7 @@ def containers(value):
             yield from containers(child)
 
 
-@pytest.mark.parametrize("application", sorted(path for platform in ("k3s", "orb") for path in (ROOT / "apps" / platform).glob("*.yaml")), ids=lambda path: f"{path.parent.name}-{path.stem}")
+@pytest.mark.parametrize("application", sorted(path for platform in ("k3s", "local") for path in (ROOT / "apps" / platform).glob("*.yaml")), ids=lambda path: f"{path.parent.name}-{path.stem}")
 def test_local_platforms_have_no_resources_or_autoscaling(application):
     source = yaml.safe_load(application.read_text())["spec"]["source"]
     result = render(source["path"], source["helm"]["valueFiles"])

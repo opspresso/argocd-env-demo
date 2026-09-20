@@ -10,7 +10,7 @@ app:
     sidecar.istio.io/inject: "true"
 {% endif %}
 
-{% if env != 'orb' %}  configmap:
+{% if env != 'local' %}  configmap:
     enabled: true
     data:
       # In-cluster Grafana. This is mcp-grafana's own outbound call, so Agent
@@ -18,12 +18,10 @@ app:
       # what Agent Studio itself dials.
       GRAFANA_URL: http://grafana.addon-grafana.svc.cluster.local
 {% else %}
-  externalSecrets:
+  configmap:
+    enabled: true
     data:
-      - key: /k8s/{{cluster}}/mcp-grafana/url
-        name: GRAFANA_URL
-      - key: /k8s/{{cluster}}/mcp-grafana/service-account-token
-        name: GRAFANA_SERVICE_ACCOUNT_TOKEN
+      GRAFANA_URL: {{grafana_url}}
 {% endif %}{% if env != 'eks' %}
   destinationRule:
     enabled: false

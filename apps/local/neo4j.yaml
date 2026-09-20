@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: neo4j-orb
+  name: neo4j-local
   namespace: argocd
   labels:
-    app.kubernetes.io/instance: apps-orb-demo
-    opspresso.com/cluster: orb-demo
+    app.kubernetes.io/instance: apps-local-demo
+    opspresso.com/cluster: local-demo
     opspresso.com/group: apps
 spec:
   project: apps
@@ -22,7 +22,7 @@ spec:
     helm:
       valueFiles:
       - values.yaml
-      - orb/values-orb-demo.yaml
+      - local/values-local-demo.yaml
   destination:
     name: in-cluster
     namespace: agent-memory

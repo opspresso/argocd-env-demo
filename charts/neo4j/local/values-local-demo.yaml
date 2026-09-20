@@ -1,4 +1,4 @@
-ssmPrefix: /k8s/orb-demo
+ssmPrefix: /k8s/local-demo
 
 neo4jdb:
 

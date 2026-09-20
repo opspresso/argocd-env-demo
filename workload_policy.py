@@ -1,12 +1,12 @@
-"""EKS keeps chart defaults; k3s/orb must not reserve compute or autoscale."""
+"""EKS keeps chart defaults; k3s/local must not reserve compute or autoscale."""
 
 from pathlib import Path
 
 import yaml
 
 
-PLATFORMS = {"eks", "k3s", "orb"}
-UNRESERVED_PLATFORMS = {"k3s", "orb"}
+PLATFORMS = {"eks", "k3s", "local"}
+UNRESERVED_PLATFORMS = {"k3s", "local"}
 AUTOSCALERS = {"HorizontalPodAutoscaler", "VerticalPodAutoscaler", "ScaledObject", "ScaledJob"}
 VM_WORKLOADS = {"VMAgent", "VMAlert", "VMAlertmanager", "VMAuth", "VMCluster", "VMSingle"}
 

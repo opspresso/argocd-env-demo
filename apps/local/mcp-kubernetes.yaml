@@ -1,35 +1,29 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio-orb
+  name: mcp-kubernetes-local
   namespace: argocd
   labels:
-    app.kubernetes.io/instance: apps-orb-demo
-    opspresso.com/cluster: orb-demo
+    app.kubernetes.io/instance: apps-local-demo
+    opspresso.com/cluster: local-demo
     opspresso.com/group: apps
 spec:
   project: apps
-  ignoreDifferences:
-  - group: ""
-    kind: PersistentVolumeClaim
-    name: minio
-    jsonPointers:
-    - /spec/resources/requests/storage
+  destination:
+    name: in-cluster
+    namespace: agent-mcps
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD
-    path: charts/minio
+    path: charts/mcp-kubernetes
     helm:
       valueFiles:
       - values.yaml
-      - orb/values-orb-demo.yaml
-  destination:
-    name: in-cluster
-    namespace: agent-studio
+      - values-alpha.yaml
+      - local/values-local-demo.yaml
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    - RespectIgnoreDifferences=true

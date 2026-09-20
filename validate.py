@@ -191,7 +191,7 @@ def render(target, env_file):
         if "ssmPrefix" in values:
             prefix_present = True
             prefix = values["ssmPrefix"]
-        if resolved.parent.name in {"eks", "k3s", "orb"} and resolved.stem.startswith("values-"):
+        if resolved.parent.name in {"eks", "k3s", "local"} and resolved.stem.startswith("values-"):
             value_clusters.add(resolved.stem.removeprefix("values-"))
         args += ["-f", path]
 

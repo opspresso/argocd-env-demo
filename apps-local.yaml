@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: apps-orb
+  name: apps-local
   namespace: argocd
   labels:
     opspresso.com/group: apps
@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/opspresso/argocd-env-demo
     targetRevision: HEAD
-    path: apps/orb
+    path: apps/local
     directory:
       recurse: true
   destination:

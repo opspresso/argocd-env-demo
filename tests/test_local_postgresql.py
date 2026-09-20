@@ -1,4 +1,4 @@
-"""Fresh-volume PostgreSQL contracts shared by k3s and OrbStack."""
+"""Fresh-volume PostgreSQL contracts shared by k3s and local Kubernetes."""
 
 from pathlib import Path
 import shutil
@@ -11,7 +11,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.fixture(params=["k3s/values-k3s-demo.yaml", "orb/values-orb-demo.yaml"])
+@pytest.fixture(params=["k3s/values-k3s-demo.yaml", "local/values-local-demo.yaml"])
 def manifests(request):
     if not shutil.which("helm"):
         pytest.skip("Helm is required to validate deployment manifests")

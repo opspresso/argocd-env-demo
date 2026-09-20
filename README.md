@@ -14,26 +14,30 @@ ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리�
 
 replica 수, autoscaling 여부와 resource 사용 여부는 `env/<cluster>.yaml`이 원천이다.
 공통 `values.yaml`은 EKS를 기본으로 하며 EKS는 기존 env 설정을 적용한다.
-k3s·orb 환경은 `replicas: 1`, `autoscaling: false`, `resources: false`로 선언한다.
+k3s·local 환경은 `replicas: 1`, `autoscaling: false`, `resources: false`로 선언한다.
 metrics backend는 `metrics.backend`로 선택하며, k3s는 `victoria-metrics`, EKS는
 `prometheus`를 사용한다.
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
 환경에서는 템플릿이 해당 resource block을 제거한다. 컨테이너·초기화 컨테이너·worker·CronJob에도 같은 규칙을 적용한다.
 HPA·VPA·KEDA autoscaler를 생성하지 않으며 PVC storage 요청은 유지한다.
-`validate.py`는 k3s·orb 렌더 결과에 compute requests/limits나 autoscaler가 남으면 실패한다.
+`validate.py`는 k3s·local 렌더 결과에 compute requests/limits나 autoscaler가 남으면 실패한다.
 
-## OrbStack 개발 환경
+## 로컬 Kubernetes 개발 환경
 
-`apps-orb.yaml`은 `apps/orb/`를 동기화한다. `env/orb-demo.yaml`과 기존 chart의
-`values-template.yaml.j2`에서 `orb/values-orb-demo.yaml`을 생성한다. PostgreSQL·MinIO·
+실행 제품은 OrbStack 또는 Docker Desktop이며 배포 환경 이름은 `local`로 통일한다.
+`argocd` namespace와 Helm release를 사용하고, Mac 연결은 addons의
+`install/local/connect.py`로 localhost 포워딩을 유지한다.
+
+`apps-local.yaml`은 `apps/local/`를 동기화한다. `env/local-demo.yaml`과 기존 chart의
+`values-template.yaml.j2`에서 `local/values-local-demo.yaml`을 생성한다. PostgreSQL·MinIO·
 Neo4j·MCP 5종을 배포하며, Studio·Memory는 Mac에서 `pnpm`으로 실행한다.
 namespace·서비스 주소·SSM·External Secrets는 기존 k3s 규칙을 따른다.
-orb는 `resources: false`로 모든 컨테이너의 CPU·메모리 requests/limits를 선언하지 않는다.
-Argo CD bootstrap은 형제 `argocd-env-addons/install/orb/`를 사용한다.
+local은 `resources: false`로 모든 컨테이너의 CPU·메모리 requests/limits를 선언하지 않는다.
+Argo CD bootstrap은 형제 `argocd-env-addons/install/local/`를 사용한다.
 
 ```bash
 GITHUB_PUSH=false bash build.sh
-python3 validate.py -d apps/orb
+python3 validate.py -d apps/local
 ```
 
 ## charts

@@ -12,11 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_cloudwatch_uses_runtime_credentials_without_a_secret(env_file):
     context = yaml.safe_load(env_file.read_text())
     template = Environment(loader=FileSystemLoader(ROOT / "charts/mcp-cloudwatch")).get_template("values-template.yaml.j2")
-    if context["env"] != "orb":
+    if context["env"] != "local":
         context["aws_local"] = {"profile": "unused", "config_file": "/unused/config", "credentials_file": "/unused/credentials"}
     app = yaml.safe_load(template.render(context))["app"]
     assert "additionalSecret" not in app
-    if context["env"] != "orb":
+    if context["env"] != "local":
         assert "extraVolumes" not in app
         assert "AWS_PROFILE" not in app["configmap"]["data"]
         return

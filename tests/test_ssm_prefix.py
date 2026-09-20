@@ -88,7 +88,7 @@ def test_application_secrets_follow_a_new_cluster_name(chart):
     assert f"/k8s/k3s-other/{chart}/database-url" in generated
 
 
-@pytest.mark.parametrize("cluster", ["eks-demo", "k3s-demo", "orb-demo"])
+@pytest.mark.parametrize("cluster", ["eks-demo", "k3s-demo", "local-demo"])
 def test_validator_rejects_wrong_prefix_before_helm(cluster, tmp_path):
     chart = tmp_path / "chart"
     chart.mkdir()

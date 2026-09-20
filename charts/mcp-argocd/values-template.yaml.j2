@@ -33,8 +33,12 @@ app:
       # only decides what the model is offered, so tightening `role:mcp` in
       # argocd-env-addons is what actually stops a write.
 
-{%- if env == 'orb' %}
+{%- if env == 'local' %}
+  externalSecrets:
+    data:
+      - key: /k8s/{{cluster}}/mcp-argocd/argocd-api-token
+        name: ARGOCD_API_TOKEN
 networkPolicy:
-  # Mac clients reach the ClusterIP through OrbStack rather than an in-cluster Studio Pod.
+  # Mac clients use local port forwards or direct Service connectivity.
   enabled: false
 {% endif %}

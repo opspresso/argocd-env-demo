@@ -14,7 +14,7 @@ GIT_USEREMAIL="bot@nalbam.com"
 cd "${SHELL_DIR}"
 
 # find charts
-for PLATFORM in eks k3s orb; do
+for PLATFORM in eks k3s local; do
   for CHART in charts/*/; do
     if [ -f "${CHART}/values-template.yaml.j2" ] && [ -d "${CHART}/${PLATFORM}" ]; then
       echo
