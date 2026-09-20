@@ -24,8 +24,8 @@ spec:
       - values-alpha.yaml
       - k3s/values-k3s-demo.yaml
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+    # automated:
+    #   prune: true
+    #   selfHeal: true
     syncOptions:
     - CreateNamespace=true
