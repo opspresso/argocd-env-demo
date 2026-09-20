@@ -11,6 +11,8 @@ app:
     - name: ecr-registry
 
 
+  resources: null
+
   configmap:
     enabled: true
     data:

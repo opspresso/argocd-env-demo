@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mcp-kubernetes-orb
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: apps-orb-demo
+    opspresso.com/cluster: orb-demo
+    opspresso.com/group: apps
+spec:
+  project: apps
+  destination:
+    name: in-cluster
+    namespace: agent-mcps
+  source:
+    repoURL: https://github.com/opspresso/argocd-env-demo
+    targetRevision: HEAD
+    path: charts/mcp-kubernetes
+    helm:
+      valueFiles:
+      - values.yaml
+      - values-alpha.yaml
+      - orb/values-orb-demo.yaml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

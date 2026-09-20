@@ -13,11 +13,28 @@ ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리�
 클러스터만 읽는다.
 
 replica 수, autoscaling 여부와 resource 사용 여부는 `env/<cluster>.yaml`이 원천이다.
-k3s 환경은 `replicas: 1`, `autoscaling: false`, `resources: true`로 선언한다.
+공통 `values.yaml`은 EKS를 기본으로 하며 EKS는 기존 env 설정을 적용한다.
+k3s·orb 환경은 `replicas: 1`, `autoscaling: false`, `resources: false`로 선언한다.
 metrics backend는 `metrics.backend`로 선택하며, k3s는 `victoria-metrics`, EKS는
 `prometheus`를 사용한다.
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
-환경에서는 템플릿이 해당 resource block을 제거한다.
+환경에서는 템플릿이 해당 resource block을 제거한다. 컨테이너·초기화 컨테이너·worker·CronJob에도 같은 규칙을 적용한다.
+HPA·VPA·KEDA autoscaler를 생성하지 않으며 PVC storage 요청은 유지한다.
+`validate.py`는 k3s·orb 렌더 결과에 compute requests/limits나 autoscaler가 남으면 실패한다.
+
+## OrbStack 개발 환경
+
+`apps-orb.yaml`은 `apps/orb/`를 동기화한다. `env/orb-demo.yaml`과 기존 chart의
+`values-template.yaml.j2`에서 `orb/values-orb-demo.yaml`을 생성한다. PostgreSQL·MinIO·
+Neo4j·MCP 5종을 배포하며, Studio·Memory는 Mac에서 `pnpm`으로 실행한다.
+namespace·서비스 주소·SSM·External Secrets는 기존 k3s 규칙을 따른다.
+orb는 `resources: false`로 모든 컨테이너의 CPU·메모리 requests/limits를 선언하지 않는다.
+Argo CD bootstrap은 형제 `argocd-env-addons/install/orb/`를 사용한다.
+
+```bash
+GITHUB_PUSH=false bash build.sh
+python3 validate.py -d apps/orb
+```
 
 ## charts
 
@@ -41,6 +58,12 @@ sync 에 실패하기 때문이다.
 
 ApplicationSet 은 `env/*.yaml` 의 `phase` 필드로 어떤 `values-<phase>.yaml` 을 읽을지 정한다.
 현재 env 파일은 모두 `phase: alpha` 라 `values-prod.yaml` 을 읽는 클러스터는 없다.
+
+클러스터별 SSM 경로는 `values-template.yaml.j2`가 `env/<cluster>.yaml`의 `cluster`에서
+생성한다. 공통 `values.yaml`에는 특정 클러스터의 `ssmPrefix`를 두지 않는다.
+PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패하며, `validate.py`는
+최종 `ssmPrefix`가 대상 클러스터와 다르면 실패한다. EKS 공통 기본값과 클러스터의
+자격 증명 경로는 별개다.
 
 ## gitops
 

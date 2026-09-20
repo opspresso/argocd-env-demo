@@ -1,0 +1,34 @@
+ssmPrefix: /k8s/orb-demo
+
+minio:
+
+  defaultBuckets: agent-studio,agent-memory
+
+
+  persistence:
+    size: 5Gi
+
+
+  resources: null
+  resourcesPreset: none
+
+
+  autoscaling:
+    vpa:
+      enabled: false
+
+
+  console:
+
+    enabled: False
+
+
+    resources: null
+    resourcesPreset: none
+
+
+    autoscaling:
+      vpa:
+        enabled: false
+      hpa:
+        enabled: false

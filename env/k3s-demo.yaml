@@ -9,7 +9,7 @@ role: k3s
 
 replicas: 1
 autoscaling: false
-resources: true
+resources: false
 
 audio_worker: true
 workspace_worker: true
@@ -33,3 +33,10 @@ agent_studio:
 
 agent_memory:
   hostname: memory.opspresso.com
+
+postgresql:
+  storage: 5Gi
+minio:
+  storage: 10Gi
+neo4j:
+  storage: 5Gi

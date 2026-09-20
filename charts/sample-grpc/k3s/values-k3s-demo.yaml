@@ -3,6 +3,8 @@ app:
   autoscaling:
     enabled: False
 
+  resources: null
+
   configmap:
     data:
       CLUSTER_NAME: 'k3s-demo'

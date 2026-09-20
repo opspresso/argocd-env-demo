@@ -21,11 +21,14 @@ not checked.
 
 import argparse
 import os
+from pathlib import Path
 import re
 import subprocess
 import sys
 
 import yaml
+
+from workload_policy import policy_errors, target_platform
 
 
 APPSET_DIR = "apps"
@@ -84,11 +87,13 @@ def load_targets(dirs):
                         for entry in generator["git"]["files"]
                     ]
                     name = template["metadata"]["name"]
+                    cluster = (template["metadata"].get("labels") or {}).get("opspresso.com/cluster")
                     namespace = template["spec"]["destination"]["namespace"]
                 else:
                     source = doc["spec"]["source"]
                     env_files = [None]
                     name = doc["metadata"]["name"]
+                    cluster = (doc["metadata"].get("labels") or {}).get("opspresso.com/cluster")
                     namespace = doc["spec"]["destination"]["namespace"]
 
                 targets.append({
@@ -98,6 +103,7 @@ def load_targets(dirs):
                     "env_files": env_files,
                     "name": name,
                     "namespace": namespace,
+                    "cluster": cluster,
                 })
 
     return targets
@@ -163,22 +169,50 @@ def render(target, env_file):
     args = ["helm", "template", expand(target["name"], env), target["chart"]]
     args += ["--namespace", expand(target["namespace"], env)]
 
+    prefix_present = False
+    prefix = None
+    value_clusters = set()
     for value_file in target["value_files"]:
-        path = os.path.join(target["chart"], expand(value_file, env))
+        resolved = Path(expand(value_file, env))
+        path = os.path.join(target["chart"], resolved)
 
         # Argo CD fails the sync when a listed valueFile is missing, so a
         # chart that was never rendered has to fail here too.
         if not os.path.exists(path):
             return "missing values file: {}".format(path)
 
+        try:
+            with open(path) as file:
+                values = yaml.safe_load(file) or {}
+        except yaml.YAMLError:
+            return f"invalid YAML values file: {path}"
+        if not isinstance(values, dict):
+            return f"values file must contain a mapping: {path}"
+        if "ssmPrefix" in values:
+            prefix_present = True
+            prefix = values["ssmPrefix"]
+        if resolved.parent.name in {"eks", "k3s", "orb"} and resolved.stem.startswith("values-"):
+            value_clusters.add(resolved.stem.removeprefix("values-"))
         args += ["-f", path]
+
+    if prefix_present:
+        cluster = env.get("cluster") or expand(target.get("cluster") or "", env)
+        if not cluster and len(value_clusters) == 1:
+            cluster = next(iter(value_clusters))
+        if not cluster or len(value_clusters) > 1:
+            return "ssmPrefix requires exactly one cluster context"
+        if value_clusters and cluster not in value_clusters:
+            return f"cluster values must match the target cluster: {cluster}"
+        if prefix != f"/k8s/{cluster}":
+            return f"ssmPrefix must match the target cluster: /k8s/{cluster}"
 
     result = subprocess.run(args, capture_output=True, text=True)
 
     if result.returncode != 0:
         return result.stderr.strip() or result.stdout.strip()
 
-    return None
+    errors = policy_errors(result.stdout, target_platform(target, env))
+    return "\n".join(errors) if errors else None
 
 
 def main():

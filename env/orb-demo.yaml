@@ -1,0 +1,32 @@
+cluster: orb-demo
+
+country: kr
+env: orb
+group: orb-demo
+role: orb
+phase: alpha
+
+replicas: 1
+autoscaling: false
+resources: false
+
+aws_region: ap-northeast-2
+aws_local:
+  profile: default
+  config_file: /Users/nalbam/.aws/config
+  credentials_file: /Users/nalbam/.aws/credentials
+
+postgresql:
+  storage: 5Gi
+
+minio:
+  storage: 5Gi
+  buckets: agent-studio,agent-memory
+  console: false
+
+neo4j:
+  storage: 5Gi
+  config:
+    server.memory.heap.initial_size: "256m"
+    server.memory.heap.max_size: "512m"
+    server.memory.pagecache.size: "128m"

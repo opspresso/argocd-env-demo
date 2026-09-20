@@ -1,0 +1,16 @@
+ssmPrefix: /k8s/k3s-demo
+
+neo4jdb:
+
+  neo4j:
+    resources: null
+    operations:
+      resources: null
+
+
+
+  volumes:
+    data:
+      defaultStorageClass:
+        requests:
+          storage: 5Gi

@@ -1,9 +1,11 @@
 app:
-  replicaCount: {{replicas}}
+  replicaCount: {{replicas}}{% if not autoscaling %}
+  autoscaling:
+    enabled: false{% endif %}
 {% if not resources %}
   resources: null
 {% endif %}
-{% if env != 'k3s' %}
+{% if env == 'eks' %}
   podLabels:
     sidecar.istio.io/inject: "true"
 {% endif %}
@@ -12,3 +14,24 @@ app:
     enabled: true
     data:
       AWS_REGION: {{ aws_region }}
+{%- if env == 'orb' %}
+      AWS_PROFILE: "{{aws_local.profile}}"
+      AWS_CONFIG_FILE: /aws/config
+      AWS_SHARED_CREDENTIALS_FILE: /aws/credentials
+  extraVolumes:
+    - name: local-aws-config
+      hostPath:
+        path: "{{aws_local.config_file}}"
+        type: File
+    - name: local-aws-credentials
+      hostPath:
+        path: "{{aws_local.credentials_file}}"
+        type: File
+  extraVolumeMounts:
+    - name: local-aws-config
+      mountPath: /aws/config
+      readOnly: true
+    - name: local-aws-credentials
+      mountPath: /aws/credentials
+      readOnly: true
+{% endif %}

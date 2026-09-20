@@ -24,6 +24,7 @@ spec:
     helm:
       valueFiles:
       - values.yaml
+      - k3s/values-k3s-demo.yaml
   destination:
     name: in-cluster
     namespace: agent-memory

@@ -3,7 +3,10 @@ app:
 {% if not resources %}
   resources: null
 {% endif %}
-{% if env != 'k3s' %}
+{% if env == 'eks' %}
   podLabels:
     sidecar.istio.io/inject: "true"
+{% endif %}{% if not autoscaling %}
+  autoscaling:
+    enabled: {{autoscaling | lower}}
 {% endif %}

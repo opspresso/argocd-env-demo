@@ -1,0 +1,23 @@
+ssmPrefix: /k8s/{{cluster}}
+{% if (neo4j is defined and (neo4j.storage is defined or (neo4j.config is defined and neo4j.config))) or not resources %}
+neo4jdb:
+{% if not resources %}
+  neo4j:
+    resources: null
+    operations:
+      resources: null
+{% endif %}
+{% if neo4j is defined and neo4j.config is defined and neo4j.config %}
+  config:
+{% for key, value in neo4j.config.items() %}
+    {{key}}: {{value | tojson}}
+{% endfor %}
+{% endif %}
+{% if neo4j is defined and neo4j.storage is defined %}
+  volumes:
+    data:
+      defaultStorageClass:
+        requests:
+          storage: {{neo4j.storage}}
+{%- endif %}
+{%- endif %}

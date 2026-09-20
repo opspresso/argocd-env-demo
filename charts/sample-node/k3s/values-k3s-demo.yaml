@@ -3,6 +3,8 @@ app:
   autoscaling:
     enabled: False
 
+  resources: null
+
   configmap:
     data:
       CLUSTER_NAME: 'k3s-demo'
@@ -39,11 +41,15 @@ redis:
     sidecar:
       inject: true
 
+  resources: null
+
 
 # https rather than http: the ALB in front of the gateway answers http with a 301
 # to https, and this curl has no -L, so every tick stopped at the redirect. The
 # app never saw the POST and neither did the mesh metrics.
 thumbs:
+
+  resources: null
 
   command:
     - /bin/sh

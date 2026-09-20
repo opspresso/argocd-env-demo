@@ -121,9 +121,9 @@ app:
       name: GITHUB_TOKEN
     - key: /k8s/common/agent-studio/schedule-scan-token
       name: SCHEDULE_SCAN_TOKEN
-    - key: /k8s/k3s-demo/agent-studio/database-url
+    - key: /k8s/{{cluster}}/agent-studio/database-url
       name: DATABASE_URL
-    - key: /k8s/k3s-demo/agent-studio/minio-root-password
+    - key: /k8s/{{cluster}}/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 {% endif %}
 {% if not resources %}

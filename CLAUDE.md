@@ -10,7 +10,8 @@
 ```
 apps-eks.yaml          # EKS용 App of Apps
 apps-k3s.yaml          # k3s용 App of Apps
-apps/{eks,k3s}/        # 플랫폼별 ApplicationSet
+apps-orb.yaml          # OrbStack용 App of Apps
+apps/{eks,k3s,orb}/        # 플랫폼별 ApplicationSet
 charts/<project>/      # wrapper Helm chart
 env/<cluster>.yaml     # 클러스터별 변수. git files generator 입력이자 Jinja2 렌더 입력
 gen_values.py          # values-template.yaml.j2 × 플랫폼별 env/*.yaml → charts/<project>/<platform>/values-<cluster>.yaml
@@ -105,19 +106,22 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 ## env/<cluster>.yaml
 
 - 파일 이름이 클러스터 이름이고, 안의 `cluster` 필드와 일치해야 한다 (`{{cluster}}` 로 치환됨).
-- `env` 는 플랫폼(`eks` 또는 `k3s`)이며 렌더 출력 디렉터리이자 valueFiles 경로가 된다 (`{{env}}/values-{{cluster}}.yaml`).
+- 클러스터별 SSM 경로는 템플릿의 `{{cluster}}`에서 만든다. 공통 `values.yaml`에 특정 클러스터의 경로를 기본값으로 두지 않는다.
+- `env` 는 플랫폼(`eks`, `k3s`, `orb`)이며 렌더 출력 디렉터리이자 valueFiles 경로가 된다 (`{{env}}/values-{{cluster}}.yaml`).
   `gen_values.py` 는 `env` 가 없으면 실패한다.
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
-  `app.autoscaling.enabled`의 원천이다. k3s는 각각 `1`, `false`를 사용한다.
+  `app.autoscaling.enabled`의 원천이다. k3s·orb는 각각 `1`, `false`를 사용한다.
 - `metrics.backend` 는 ServiceMonitor 라벨의 원천이다. k3s는 `victoria-metrics`, EKS는
   `prometheus`를 사용한다.
 - `resources` 는 workload의 requests/limits 사용 여부를 제어하는 env 원천값이다.
   `true`면 chart 기본 requests/limits를 유지하고, `false`면 템플릿이 resource block을
-  제거한다. k3s-demo는 `resources: true`로 선언해 핵심 workload가 BestEffort가 되지 않게 한다.
+  제거한다. 공통 chart는 EKS 기본값이며 k3s·orb는 반드시 `resources: false`를 사용한다.
+  worker·초기화 컨테이너·CronJob에도 requests/limits를 두지 않고 HPA·VPA·KEDA를 생성하지 않는다.
+  PVC의 storage 요청은 유지하고 `validate.py`의 렌더 결과 검사로 이 규칙을 검증한다.
 - `phase` 는 그 클러스터가 읽을 `values-<phase>.yaml` 을 정한다.
 - env 파일을 추가하면 `build.sh` 가 모든 chart 에 대해 렌더 결과를 새로 만든다.
 
-## apps/{eks,k3s}/<project>.yaml
+## apps/{eks,k3s,orb}/<project>.yaml
 
 - `kind: ApplicationSet` + git files generator 로 플랫폼별 `env/*.yaml` 을 읽어 클러스터별로 fan-out 한다.
 - 배포할 클러스터는 `generators.git.files` 의 주석을 풀어 고른다.

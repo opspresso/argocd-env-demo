@@ -1,0 +1,25 @@
+ssmPrefix: /k8s/orb-demo
+
+neo4jdb:
+
+  neo4j:
+    resources: null
+    operations:
+      resources: null
+
+
+  config:
+
+    server.memory.heap.initial_size: "256m"
+
+    server.memory.heap.max_size: "512m"
+
+    server.memory.pagecache.size: "128m"
+
+
+
+  volumes:
+    data:
+      defaultStorageClass:
+        requests:
+          storage: 5Gi

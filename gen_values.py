@@ -15,7 +15,7 @@ PLATFORM = "eks"
 def parse_args():
     p = argparse.ArgumentParser(description="Helm chart gen")
     p.add_argument("-r", "--reponame", default=REPONAME, help="reponame")
-    p.add_argument("-p", "--platform", choices=["eks", "k3s"], default=PLATFORM)
+    p.add_argument("-p", "--platform", choices=["eks", "k3s", "orb"], default=PLATFORM)
     return p.parse_args()
 
 

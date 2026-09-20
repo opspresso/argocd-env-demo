@@ -1,0 +1,10 @@
+ssmPrefix: /k8s/orb-demo
+
+postgresql:
+  primary:
+
+    persistence:
+      size: 5Gi
+
+
+    resources: null

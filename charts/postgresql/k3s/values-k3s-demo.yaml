@@ -1,0 +1,10 @@
+ssmPrefix: /k8s/k3s-demo
+
+postgresql:
+  primary:
+
+    persistence:
+      size: 5Gi
+
+
+    resources: null

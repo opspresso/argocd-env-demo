@@ -1,9 +1,11 @@
 app:
-  replicaCount: {{replicas}}
+  replicaCount: {{replicas}}{% if not autoscaling %}
+  autoscaling:
+    enabled: false{% endif %}
 {% if not resources %}
   resources: null
 {% endif %}
-{% if env != 'k3s' %}
+{% if env == 'eks' %}
   podLabels:
     sidecar.istio.io/inject: "true"
 {% endif %}
@@ -30,3 +32,9 @@ app:
       # It is not the boundary, though — the token's Argo CD RBAC is. This flag
       # only decides what the model is offered, so tightening `role:mcp` in
       # argocd-env-addons is what actually stops a write.
+
+{%- if env == 'orb' %}
+networkPolicy:
+  # Mac clients reach the ClusterIP through OrbStack rather than an in-cluster Studio Pod.
+  enabled: false
+{% endif %}

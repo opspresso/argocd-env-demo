@@ -22,6 +22,8 @@ app:
       readOnly: true
 
 
+  resources: null
+
   configmap:
     enabled: true
     data:
@@ -119,6 +121,13 @@ app:
     - key: /k8s/k3s-demo/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 
+
+
+scan:
+  resources: null
+
+reindex:
+  resources: null
 
 
 

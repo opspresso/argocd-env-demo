@@ -86,3 +86,6 @@ app:
   # argocd-env-addons as `role:mcp`, not here.
   serviceAccount:
     create: true
+
+networkPolicy:
+  enabled: true

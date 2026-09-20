@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio-orb
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: apps-orb-demo
+    opspresso.com/cluster: orb-demo
+    opspresso.com/group: apps
+spec:
+  project: apps
+  ignoreDifferences:
+  - group: ""
+    kind: PersistentVolumeClaim
+    name: minio
+    jsonPointers:
+    - /spec/resources/requests/storage
+  source:
+    repoURL: https://github.com/opspresso/argocd-env-demo
+    targetRevision: HEAD
+    path: charts/minio
+    helm:
+      valueFiles:
+      - values.yaml
+      - orb/values-orb-demo.yaml
+  destination:
+    name: in-cluster
+    namespace: agent-studio
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - RespectIgnoreDifferences=true

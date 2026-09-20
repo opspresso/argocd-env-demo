@@ -1,0 +1,12 @@
+ssmPrefix: /k8s/{{cluster}}
+{% if (postgresql is defined and postgresql.storage is defined) or not resources %}
+postgresql:
+  primary:
+{% if postgresql is defined and postgresql.storage is defined %}
+    persistence:
+      size: {{postgresql.storage}}
+{% endif %}
+{% if not resources %}
+    resources: null
+{%- endif %}
+{%- endif %}

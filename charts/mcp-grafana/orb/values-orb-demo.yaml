@@ -1,0 +1,19 @@
+app:
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+
+  resources: null
+
+
+
+
+  externalSecrets:
+    data:
+      - key: /k8s/orb-demo/mcp-grafana/url
+        name: GRAFANA_URL
+      - key: /k8s/orb-demo/mcp-grafana/service-account-token
+        name: GRAFANA_SERVICE_ACCOUNT_TOKEN
+
+  destinationRule:
+    enabled: false

@@ -1,21 +1,30 @@
 app:
-  replicaCount: {{replicas}}
+  replicaCount: {{replicas}}{% if not autoscaling %}
+  autoscaling:
+    enabled: false{% endif %}
 {% if not resources %}
   resources: null
 {% endif %}
-{% if env != 'k3s' %}
+{% if env == 'eks' %}
   podLabels:
     sidecar.istio.io/inject: "true"
 {% endif %}
 
-  configmap:
+{% if env != 'orb' %}  configmap:
     enabled: true
     data:
       # In-cluster Grafana. This is mcp-grafana's own outbound call, so Agent
       # Studio's SSRF guard has nothing to say about it — that guard only bounds
       # what Agent Studio itself dials.
       GRAFANA_URL: http://grafana.addon-grafana.svc.cluster.local
-{% if env == 'k3s' %}
+{% else %}
+  externalSecrets:
+    data:
+      - key: /k8s/{{cluster}}/mcp-grafana/url
+        name: GRAFANA_URL
+      - key: /k8s/{{cluster}}/mcp-grafana/service-account-token
+        name: GRAFANA_SERVICE_ACCOUNT_TOKEN
+{% endif %}{% if env != 'eks' %}
   destinationRule:
     enabled: false
 {% endif %}
