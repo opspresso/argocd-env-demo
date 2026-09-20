@@ -44,11 +44,18 @@ class WorkloadPolicyTests(unittest.TestCase):
                     self.assertEqual(len(policy_errors(manifest(kind, {}), platform)), 1)
 
     def test_helmchartconfig_cannot_reenable_traefik_defaults(self):
-        valid = manifest("HelmChartConfig", {"valuesContent": "resources: null\nautoscaling:\n  enabled: false\n"}, "traefik")
+        valid = manifest("HelmChartConfig", {"valuesContent": "resources:\n  requests: null\n  limits: null\nautoscaling:\n  enabled: false\n"}, "traefik")
         missing = manifest("HelmChartConfig", {"valuesContent": "providers: {}"}, "traefik")
         for platform in ("k3s", "orb"):
             self.assertEqual(policy_errors(valid, platform), [])
             self.assertEqual(len(policy_errors(missing, platform)), 2)
+
+    def test_traefik_resources_preserve_mapping_and_remove_nested_defaults(self):
+        for resources in (None, {}, {"requests": {}, "limits": {}}, {"requests": None}, {"limits": None}):
+            values = json.dumps({"resources": resources, "autoscaling": {"enabled": False}})
+            config = manifest("HelmChartConfig", {"valuesContent": values}, "traefik")
+            with self.subTest(resources=resources):
+                self.assertTrue(policy_errors(config, "k3s"))
 
     def test_operator_defaults_and_reloader_resources_are_checked(self):
         for kind in ("VMAgent", "VMAlert", "VMAlertmanager", "VMSingle"):
@@ -57,6 +64,15 @@ class WorkloadPolicyTests(unittest.TestCase):
                 self.assertEqual(policy_errors(manifest(kind, {"useDefaultResources": False}), "k3s"), [])
         reloader = {"useDefaultResources": False, "configReloaderResources": {"limits": {"cpu": "100m"}}}
         self.assertIn("configReloaderResources", policy_errors(manifest("VMAgent", reloader), "k3s")[0])
+
+    def test_vm_resources_must_be_objects_when_present(self):
+        for kind in ("VMAgent", "VMAlert", "VMAlertmanager", "VMSingle"):
+            for field in ("resources", "configReloaderResources"):
+                with self.subTest(kind=kind, field=field):
+                    spec = {"useDefaultResources": False, field: None}
+                    self.assertTrue(policy_errors(manifest(kind, spec), "k3s"))
+                    spec[field] = {}
+                    self.assertEqual(policy_errors(manifest(kind, spec), "k3s"), [])
 
     def test_vmcluster_policy_is_checked_per_component(self):
         valid = {name: {"useDefaultResources": False} for name in ("vminsert", "vmselect", "vmstorage")}

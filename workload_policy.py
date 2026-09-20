@@ -22,13 +22,15 @@ def policy_errors(manifests, platform):
         return []
     errors = []
 
-    def inspect(value, owner, path=""):
+    def inspect(value, owner, path="", vm_workload=False):
         if isinstance(value, list):
             for index, child in enumerate(value):
-                inspect(child, owner, f"{path}[{index}]")
+                inspect(child, owner, f"{path}[{index}]", vm_workload)
         elif isinstance(value, dict):
             for key, child in value.items():
                 location = f"{path}.{key}" if path else key
+                if vm_workload and key in {"resources", "configReloaderResources"} and not isinstance(child, dict):
+                    errors.append(f"{owner} {location} must be an object when present")
                 if (key == "resources" or key.endswith("Resources")) and isinstance(child, dict):
                     for field in ("requests", "limits"):
                         quantities = child.get(field) or {}
@@ -38,7 +40,7 @@ def policy_errors(manifests, platform):
                     errors.append(f"{owner} {location}.enabled must be false")
                 if key == "autoscaleEnabled" and child is True:
                     errors.append(f"{owner} {location} must be false")
-                inspect(child, owner, location)
+                inspect(child, owner, location, vm_workload)
 
     for document in yaml.safe_load_all(manifests):
         if not document or document.get("kind") == "CustomResourceDefinition":
@@ -54,15 +56,21 @@ def policy_errors(manifests, platform):
                     errors.append(f"{owner} spec.{component}.useDefaultResources must be false")
         elif kind in VM_WORKLOADS and document.get("spec", {}).get("useDefaultResources") is not False:
             errors.append(f"{owner} spec.useDefaultResources must be false")
-        inspect(document, owner)
+        inspect(document, owner, vm_workload=kind in VM_WORKLOADS)
         if kind == "HelmChartConfig":
             # k3s deploys its bundled Traefik chart from this embedded values document.
             values = yaml.safe_load(document.get("spec", {}).get("valuesContent", ""))
             inspect(values, owner, "spec.valuesContent")
             if document.get("metadata", {}).get("name") == "traefik":
                 values = values or {}
-                if "resources" not in values or values["resources"] is not None:
-                    errors.append(f"{owner} valuesContent.resources must explicitly be null")
+                # Traefik dereferences resources.limits; removing the parent map breaks rendering.
+                # Null children remove Helm defaults, while empty maps merge those defaults back in.
+                resources = values.get("resources")
+                if not isinstance(resources, dict) or any(
+                    field not in resources or resources[field] is not None
+                    for field in ("requests", "limits")
+                ):
+                    errors.append(f"{owner} valuesContent.resources must keep a map with requests/limits explicitly null")
                 if values.get("autoscaling", {}).get("enabled") is not False:
                     errors.append(f"{owner} valuesContent.autoscaling.enabled must be false")
     return errors
