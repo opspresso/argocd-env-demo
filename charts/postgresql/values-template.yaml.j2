@@ -1,5 +1,7 @@
-ssmPrefix: /k8s/{{cluster}}
-{% if (postgresql is defined and postgresql.storage is defined) or not resources %}
+{% if env == 'local' %}externalSecrets:
+  enabled: false
+{% else %}ssmPrefix: /k8s/{{cluster}}
+{% endif %}{% if (postgresql is defined and postgresql.storage is defined) or not resources %}
 postgresql:
   primary:
 {% if postgresql is defined and postgresql.storage is defined %}

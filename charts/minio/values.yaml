@@ -1,3 +1,6 @@
+externalSecrets:
+  enabled: true
+
 minio:
   fullnameOverride: minio
 

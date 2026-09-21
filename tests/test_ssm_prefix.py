@@ -63,7 +63,11 @@ def test_data_charts_render_only_the_selected_clusters_secrets(chart, env_file, 
     generated = template.render(context)
     prefix = f"/k8s/{context['cluster']}"
     overrides = yaml.safe_load(generated)
-    assert overrides["ssmPrefix"] == prefix
+    if context["env"] == "local":
+        assert overrides["externalSecrets"]["enabled"] is False
+        assert "ssmPrefix" not in overrides
+    else:
+        assert overrides["ssmPrefix"] == prefix
     if chart not in context and context["resources"] and context["autoscaling"]:
         assert overrides == {"ssmPrefix": prefix}
     values_file = tmp_path / "cluster.yaml"
@@ -73,8 +77,11 @@ def test_data_charts_render_only_the_selected_clusters_secrets(chart, env_file, 
     refs = [entry["remoteRef"]["key"]
             for doc in yaml.safe_load_all(result.stdout) if doc and doc["kind"] == "ExternalSecret"
             for entry in doc["spec"].get("data", [])]
-    assert refs
-    assert all(key.startswith(prefix + "/") for key in refs)
+    if context["env"] == "local":
+        assert not refs
+    else:
+        assert refs
+        assert all(key.startswith(prefix + "/") for key in refs)
     assert policy_errors(result.stdout, context["env"]) == []
 
 

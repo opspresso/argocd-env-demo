@@ -30,9 +30,12 @@ app:
       # only decides what the model is offered, so tightening `role:mcp` in
       # argocd-env-addons is what actually stops a write.
   externalSecrets:
-    data:
-      - key: /k8s/local-demo/mcp-argocd/argocd-api-token
-        name: ARGOCD_API_TOKEN
+    enabled: false
+    data: []
+  additionalSecret:
+    enabled: true
+    names:
+      - mcp-argocd-external
 networkPolicy:
   # Mac clients use local port forwards or direct Service connectivity.
   enabled: false

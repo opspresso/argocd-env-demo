@@ -24,7 +24,8 @@ def test_argocd_mcp_uses_local_server_and_local_token_only_on_orb():
         app = yaml.safe_load(template.render(context))["app"]
         if platform == "local":
             assert app["configmap"]["data"]["ARGOCD_BASE_URL"] == "http://argocd-server.argocd.svc.cluster.local"
-            assert app["externalSecrets"]["data"] == [{"key": "/k8s/local-demo/mcp-argocd/argocd-api-token", "name": "ARGOCD_API_TOKEN"}]
+            assert app["externalSecrets"]["enabled"] is False
+            assert app["additionalSecret"]["names"] == ["mcp-argocd-external"]
         else:
             assert app["configmap"]["data"]["ARGOCD_BASE_URL"] == "http://argocd-server.argocd.svc.cluster.local"
             assert "externalSecrets" not in app

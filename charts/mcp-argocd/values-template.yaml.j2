@@ -35,9 +35,12 @@ app:
 
 {%- if env == 'local' %}
   externalSecrets:
-    data:
-      - key: /k8s/{{cluster}}/mcp-argocd/argocd-api-token
-        name: ARGOCD_API_TOKEN
+    enabled: false
+    data: []
+  additionalSecret:
+    enabled: true
+    names:
+      - mcp-argocd-external
 networkPolicy:
   # Mac clients use local port forwards or direct Service connectivity.
   enabled: false

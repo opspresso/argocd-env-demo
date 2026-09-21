@@ -1,5 +1,7 @@
-ssmPrefix: /k8s/{{cluster}}
-{% if (neo4j is defined and (neo4j.storage is defined or (neo4j.config is defined and neo4j.config))) or not resources %}
+{% if env == 'local' %}externalSecrets:
+  enabled: false
+{% else %}ssmPrefix: /k8s/{{cluster}}
+{% endif %}{% if (neo4j is defined and (neo4j.storage is defined or (neo4j.config is defined and neo4j.config))) or not resources %}
 neo4jdb:
 {% if not resources %}
   neo4j:

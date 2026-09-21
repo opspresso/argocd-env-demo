@@ -1,5 +1,7 @@
-ssmPrefix: /k8s/{{cluster}}
-{% if (minio is defined and (minio.buckets is defined or minio.storage is defined or minio.console is defined)) or not resources or not autoscaling %}
+{% if env == 'local' %}externalSecrets:
+  enabled: false
+{% else %}ssmPrefix: /k8s/{{cluster}}
+{% endif %}{% if (minio is defined and (minio.buckets is defined or minio.storage is defined or minio.console is defined)) or not resources or not autoscaling %}
 minio:
 {% if minio is defined and minio.buckets is defined %}
   defaultBuckets: {{minio.buckets}}

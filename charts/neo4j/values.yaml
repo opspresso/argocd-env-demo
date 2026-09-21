@@ -1,3 +1,6 @@
+externalSecrets:
+  enabled: true
+
 neo4jdb:
   fullnameOverride: memory-neo4j
   disableLookups: true

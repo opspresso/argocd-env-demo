@@ -1,4 +1,5 @@
-ssmPrefix: /k8s/local-demo
+externalSecrets:
+  enabled: false
 
 minio:
 

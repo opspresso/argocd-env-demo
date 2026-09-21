@@ -1,3 +1,6 @@
+externalSecrets:
+  enabled: true
+
 postgresql:
   fullnameOverride: postgres
 
