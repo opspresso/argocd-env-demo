@@ -7,5 +7,5 @@ appVersion: 2025.7.23
 
 dependencies:
   - name: minio
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 17.0.21
