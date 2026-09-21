@@ -52,8 +52,6 @@ app:
     name: http
     targetPort: 3000
 
-  # Node/express fronting one Argo CD API call at a time — its siblings'
-  # numbers, sized like mcp-brave-search rather than the Go servers.
   resources:
     requests:
       cpu: 100m
@@ -62,8 +60,6 @@ app:
       cpu: 200m
       memory: 512Mi
 
-  # /healthz is registered before the MCP handler and takes no credential, so
-  # the kubelet needs neither the API token nor mcp-grafana's Host-header trick.
   readinessProbe:
     httpGet:
       path: /healthz
@@ -80,10 +76,6 @@ app:
     periodSeconds: 10
     failureThreshold: 3
 
-  # No RBAC on this ServiceAccount, unlike mcp-kubernetes: this server never
-  # touches the Kubernetes API. It reaches the cluster only through Argo CD's
-  # HTTP API, so what it may do is the API token's Argo CD RBAC — declared in
-  # argocd-env-addons as `role:mcp`, not here.
   serviceAccount:
     create: true
 

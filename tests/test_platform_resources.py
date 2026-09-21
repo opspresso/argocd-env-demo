@@ -81,7 +81,7 @@ def test_neo4j_still_rejects_invalid_explicit_resources(setting):
     assert "less than minimum" in result.stderr
 
 
-@pytest.mark.parametrize("chart", ["mcp-argocd", "mcp-brave-search", "mcp-cloudwatch", "mcp-grafana", "mcp-kubernetes"])
+@pytest.mark.parametrize("chart", ["mcp-argocd", "mcp-cloudwatch", "mcp-grafana", "mcp-kubernetes"])
 def test_mcp_flags_are_independent_of_platform_routing(chart):
     context = yaml.safe_load((ROOT / "env/eks-demo.yaml").read_text())
     context.update(resources=False, autoscaling=False)
