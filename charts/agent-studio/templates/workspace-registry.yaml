@@ -1,0 +1,32 @@
+{{- if and .Values.workspaceWorker.enabled .Values.workspaceWorker.registry.enabled }}
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: ECRAuthorizationToken
+metadata:
+  name: agent-studio-workspace-ecr
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  region: {{ .Values.workspaceWorker.registry.region }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ecr-registry
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  refreshInterval: 1h
+  target:
+    name: ecr-registry
+    template:
+      type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: |
+          {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: ECRAuthorizationToken
+          name: agent-studio-workspace-ecr
+{{- end }}

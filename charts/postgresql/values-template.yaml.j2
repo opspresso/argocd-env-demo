@@ -7,6 +7,9 @@ postgresql:
 {% if postgresql is defined and postgresql.storage is defined %}
     persistence:
       size: {{postgresql.storage}}
+{% if postgresql.storageClass is defined %}
+      storageClass: {{postgresql.storageClass}}
+{% endif %}
 {% endif %}
 {% if not resources %}
     resources: null

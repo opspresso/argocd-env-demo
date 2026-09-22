@@ -9,6 +9,8 @@ app:
 {% if env == 'k3s' %}
   imagePullSecrets:
     - name: ecr-registry
+{% endif %}
+{% if workspace_worker %}
   extraVolumes:
     - name: ecr-config
       secret:
@@ -36,17 +38,22 @@ app:
       S3_BUCKET_NAME: agent-studio-static
 {% if env == 'k3s' %}
       S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
-      S3_ACCESS_KEY_ID: agent-studio
 {% endif %}
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       EMBEDDING_PROVIDER: openai
+{% if env == 'k3s' %}
       EMBEDDING_BASE_URL: http://100.66.249.76:8001/v1
       EMBEDDING_DIM: native
       RERANKER_BASE_URL: http://100.66.249.76:8002/v1
       RERANKER_MODEL: selfhosted/Qwen/Qwen3-Reranker-0.6B
+{% else %}
+      EMBEDDING_BASE_URL: https://api.openai.com/v1
+      EMBEDDING_MODEL: text-embedding-3-small
+      EMBEDDING_DIM: native
+{% endif %}
       CATALOG_MIN_SCORE: '0.25'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
@@ -54,11 +61,9 @@ app:
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_GOOGLE_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai/v1
-      LLM_PROVIDER_BEDROCK_BASE_URL: https://bedrock-mantle.us-east-1.api.aws/v1
-      LLM_PROVIDER_BEDROCK_AUTH: sigv4
       LLM_PROVIDER_OPENROUTER_BASE_URL: https://openrouter.ai/api/v1
       MAX_RUN_DURATION_MS: '600000'
-      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
+      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
 {%- if workspace_worker %}
@@ -90,7 +95,6 @@ app:
   serviceMonitor:
     labels:
       release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
-{% if env == 'k3s' %}
 
   externalSecrets:
     enabled: true
@@ -123,8 +127,14 @@ app:
       name: SCHEDULE_SCAN_TOKEN
     - key: /k8s/{{cluster}}/agent-studio/database-url
       name: DATABASE_URL
+{% if env == 'k3s' %}
+    - key: /k8s/{{cluster}}/agent-studio/minio-root-user
+      name: S3_ACCESS_KEY_ID
     - key: /k8s/{{cluster}}/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
+{% else %}
+    - key: /k8s/common/agent-studio/llm-provider-openai-api-key
+      name: EMBEDDING_API_KEY
 {% endif %}
 {% if not resources %}
 
@@ -150,8 +160,13 @@ workspaceWorker:
   diskMb: {{workspace_disk_mb}}
   cpus: {{workspace_cpus}}
   persistence:
-    size: 10Gi
-    storageClass: local-path
-{% endif %}
-{% endif %}
-{% endif %}
+    size: {{workspace_storage | default('10Gi')}}
+    storageClass: {{workspace_storage_class | default('local-path')}}
+{% if env == 'eks' %}
+  registry:
+    enabled: true
+    region: {{aws_region}}
+{%- endif %}
+{%- endif %}
+{%- endif %}
+{%- endif %}

@@ -80,10 +80,9 @@ charts/<project>/
 - 새 phase 를 추가하려면 `values-<phase>.yaml` 을 만들면 된다. `versions-<phase>.json` 은
   첫 배포 때 자동 생성된다.
 - `prod` 만 특별하다 — 브랜치를 만들어 PR 을 올린다. 나머지는 `main` 에 바로 push.
-- **`prod` 는 아직 소비처가 없다.** `env/*.yaml` 세 개가 모두 `phase: alpha` 라
-  `values-prod.yaml` 을 읽는 클러스터가 없다. `TG_PHASE` 없이 dispatch 하면 prod 도 fan-out 되어
-  PR 이 만들어지고 mergify 가 머지하지만, 그 값은 어느 클러스터에도 반영되지 않는다.
-  prod 클러스터를 붙일 때 `env/<cluster>.yaml` 에 `phase: prod` 를 넣으면 그때부터 연결된다.
+- `eks-demo`는 `phase: prod`, `k3s-demo`는 `phase: alpha`를 사용한다.
+  EKS ApplicationSet이 읽는 앱과 MCP chart는 `values-prod.yaml`을 제공해야 한다.
+  추가 EKS env의 phase는 각 `env/<cluster>.yaml`에서 선택한다.
 
 ### Chart.yaml
 

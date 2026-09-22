@@ -72,10 +72,13 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ toYaml .Values.app.configmap | sha256sum }}
       labels:
         app.kubernetes.io/name: agent-studio-workspace-worker
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      serviceAccountName: agent-studio
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 60
       imagePullSecrets:

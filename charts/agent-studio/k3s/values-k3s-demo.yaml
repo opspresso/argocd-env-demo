@@ -9,6 +9,8 @@ app:
 
   imagePullSecrets:
     - name: ecr-registry
+
+
   extraVolumes:
     - name: ecr-config
       secret:
@@ -31,22 +33,23 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://studio.opspresso.com
-      PUBLIC_BASE_URL: https://studio.opspresso.com
+      BETTER_AUTH_URL: https://studio.opsp.dev
+      PUBLIC_BASE_URL: https://studio.opsp.dev
       S3_BUCKET_NAME: agent-studio-static
 
       S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
-      S3_ACCESS_KEY_ID: agent-studio
 
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       EMBEDDING_PROVIDER: openai
+
       EMBEDDING_BASE_URL: http://100.66.249.76:8001/v1
       EMBEDDING_DIM: native
       RERANKER_BASE_URL: http://100.66.249.76:8002/v1
       RERANKER_MODEL: selfhosted/Qwen/Qwen3-Reranker-0.6B
+
       CATALOG_MIN_SCORE: '0.25'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
@@ -54,14 +57,12 @@ app:
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_GOOGLE_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai/v1
-      LLM_PROVIDER_BEDROCK_BASE_URL: https://bedrock-mantle.us-east-1.api.aws/v1
-      LLM_PROVIDER_BEDROCK_AUTH: sigv4
       LLM_PROVIDER_OPENROUTER_BASE_URL: https://openrouter.ai/api/v1
       MAX_RUN_DURATION_MS: '600000'
-      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
+      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
-      WORKSPACE_IMAGE: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.113.5
+      WORKSPACE_IMAGE: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
       DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
       WORKSPACE_NETWORK: none
       WORKSPACE_MEMORY_MB: '1024'
@@ -70,7 +71,7 @@ app:
       WORKSPACE_WORKER_CONCURRENCY: '1'
   routing:
     hosts:
-    - studio.opspresso.com
+    - studio.opsp.dev
     httpRoute:
       enabled: true
 
@@ -80,12 +81,11 @@ app:
 
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://studio.opspresso.com
+    link.argocd.argoproj.io/external-link: https://studio.opsp.dev
 
   serviceMonitor:
     labels:
       release: victoria-metrics-k3s-demo
-
 
   externalSecrets:
     enabled: true
@@ -118,6 +118,9 @@ app:
       name: SCHEDULE_SCAN_TOKEN
     - key: /k8s/k3s-demo/agent-studio/database-url
       name: DATABASE_URL
+
+    - key: /k8s/k3s-demo/agent-studio/minio-root-user
+      name: S3_ACCESS_KEY_ID
     - key: /k8s/k3s-demo/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 
@@ -138,7 +141,7 @@ audioWorker:
 
 workspaceWorker:
   enabled: true
-  sandboxImage: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.113.5
+  sandboxImage: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
   memoryMb: 1024
@@ -147,5 +150,3 @@ workspaceWorker:
   persistence:
     size: 10Gi
     storageClass: local-path
-
-

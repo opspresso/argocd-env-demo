@@ -4,6 +4,7 @@ country: kr
 env: k3s
 metrics:
   backend: victoria-metrics
+phase: alpha
 group: k3s-demo
 role: k3s
 
@@ -13,7 +14,7 @@ resources: false
 
 audio_worker: true
 workspace_worker: true
-workspace_image: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.113.5
+workspace_image: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
 workspace_docker_image: public.ecr.aws/docker/library/docker:27.5.1-dind
 workspace_network: none
 workspace_memory_mb: 1024
@@ -29,10 +30,10 @@ hostname:
   public: demo.opsp.dev
 
 agent_studio:
-  hostname: studio.opspresso.com
+  hostname: studio.opsp.dev
 
 agent_memory:
-  hostname: memory.opspresso.com
+  hostname: memory.opsp.dev
 
 postgresql:
   storage: 5Gi

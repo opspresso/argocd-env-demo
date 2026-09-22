@@ -5,7 +5,7 @@ app:
     enabled: true
   env:
   - name: ENV_HASH
-    value: 0991063cbe0657bd4bc3551810d5c062
+    value: 78f4b6e0a93383ef452202d693209aba
   - name: VERSION
     value: v0.28.14
   image:

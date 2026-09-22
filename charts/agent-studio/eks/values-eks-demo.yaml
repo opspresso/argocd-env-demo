@@ -8,6 +8,19 @@ app:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
 
 
+  extraVolumes:
+    - name: ecr-config
+      secret:
+        secretName: ecr-registry
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+  extraVolumeMounts:
+    - name: ecr-config
+      mountPath: /home/app/.docker
+      readOnly: true
+
+
   configmap:
     enabled: true
     data:
@@ -24,10 +37,11 @@ app:
       SLACK_LOADING_INDICATOR: ':loading:'
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       EMBEDDING_PROVIDER: openai
-      EMBEDDING_BASE_URL: http://100.66.249.76:8001/v1
+
+      EMBEDDING_BASE_URL: https://api.openai.com/v1
+      EMBEDDING_MODEL: text-embedding-3-small
       EMBEDDING_DIM: native
-      RERANKER_BASE_URL: http://100.66.249.76:8002/v1
-      RERANKER_MODEL: selfhosted/Qwen/Qwen3-Reranker-0.6B
+
       CATALOG_MIN_SCORE: '0.25'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
@@ -35,13 +49,18 @@ app:
       LLM_PROVIDER_OPENAI_BASE_URL: https://api.openai.com/v1
       LLM_PROVIDER_GOOGLE_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai/v1
-      LLM_PROVIDER_BEDROCK_BASE_URL: https://bedrock-mantle.us-east-1.api.aws/v1
-      LLM_PROVIDER_BEDROCK_AUTH: sigv4
       LLM_PROVIDER_OPENROUTER_BASE_URL: https://openrouter.ai/api/v1
       MAX_RUN_DURATION_MS: '600000'
-      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local
+      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
+      WORKSPACE_IMAGE: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
+      DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
+      WORKSPACE_NETWORK: none
+      WORKSPACE_MEMORY_MB: '1024'
+      WORKSPACE_DISK_MB: '2048'
+      WORKSPACE_CPUS: '1'
+      WORKSPACE_WORKER_CONCURRENCY: '1'
   routing:
     hosts:
     - studio.opspresso.com
@@ -59,6 +78,61 @@ app:
     labels:
       release: prometheus-eks-demo
 
+  externalSecrets:
+    enabled: true
+    data:
+    - key: /k8s/common/agent-studio/better-auth-secret
+      name: BETTER_AUTH_SECRET
+    - key: /k8s/common/agent-studio/google-client-id
+      name: GOOGLE_CLIENT_ID
+    - key: /k8s/common/agent-studio/google-client-secret
+      name: GOOGLE_CLIENT_SECRET
+    - key: /k8s/common/agent-studio/llm-api-key
+      name: LLM_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-openai-api-key
+      name: LLM_PROVIDER_OPENAI_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-anthropic-api-key
+      name: LLM_PROVIDER_ANTHROPIC_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-google-api-key
+      name: LLM_PROVIDER_GOOGLE_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-xai-api-key
+      name: LLM_PROVIDER_XAI_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-openrouter-api-key
+      name: LLM_PROVIDER_OPENROUTER_API_KEY
+    - key: /k8s/common/agent-studio/aes-encryption-key
+      name: AES_ENCRYPTION_KEY
+    - key: /k8s/common/agent-studio/a2a-api-key
+      name: A2A_API_KEY
+    - key: /k8s/common/agent-studio/github-token
+      name: GITHUB_TOKEN
+    - key: /k8s/common/agent-studio/schedule-scan-token
+      name: SCHEDULE_SCAN_TOKEN
+    - key: /k8s/eks-demo/agent-studio/database-url
+      name: DATABASE_URL
+
+    - key: /k8s/common/agent-studio/llm-provider-openai-api-key
+      name: EMBEDDING_API_KEY
 
 
 
+
+
+audioWorker:
+  enabled: true
+
+
+workspaceWorker:
+  enabled: true
+  sandboxImage: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
+  dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
+  workerConcurrency: 1
+  memoryMb: 1024
+  diskMb: 2048
+  cpus: 1
+  persistence:
+    size: 20Gi
+    storageClass: gp3
+
+  registry:
+    enabled: true
+    region: ap-northeast-2

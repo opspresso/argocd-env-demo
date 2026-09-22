@@ -43,7 +43,7 @@ app:
     periodSeconds: 5
 
   # Liveness must not fail while a long run is in flight; /api/health answers
-  # without touching DynamoDB or the LLM channel, so a slow provider can never
+  # without touching PostgreSQL or the LLM channel, so a slow provider can never
   # restart a pod that is working.
   livenessProbe:
     failureThreshold: 3
@@ -269,6 +269,8 @@ audioWorker:
 
 workspaceWorker:
   enabled: false
+  registry:
+    enabled: false
   persistence:
     size: 10Gi
     storageClass: local-path

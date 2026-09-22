@@ -14,6 +14,10 @@ spec:
       containers:
         - name: bootstrap
           image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+{{- with .Values.postgresql.primary.resources }}
+          resources:
+{{ toYaml . | nindent 12 }}
+{{- end }}
           env:
             - name: PGPASSWORD
               valueFrom:

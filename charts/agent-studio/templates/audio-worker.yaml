@@ -14,14 +14,18 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ toYaml .Values.app.configmap | sha256sum }}
       labels:
         app.kubernetes.io/name: agent-studio-audio-worker
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       serviceAccountName: agent-studio
       terminationGracePeriodSeconds: 60
+{{- with .Values.app.imagePullSecrets }}
       imagePullSecrets:
-        - name: ecr-registry
+{{ toYaml . | nindent 8 }}
+{{- end }}
       containers:
         - name: audio-worker
           image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}

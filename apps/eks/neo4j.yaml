@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: neo4j
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        revision: HEAD
+        files:
+          - path: "env/eks-demo.yaml"
+
+  template:
+    metadata:
+      name: "neo4j-{{cluster}}"
+      annotations:
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
+      labels:
+        app.kubernetes.io/instance: "apps-{{cluster}}"
+        opspresso.com/cluster: "{{cluster}}"
+        opspresso.com/group: "apps"
+    spec:
+      project: apps
+      destination:
+        name: "{{cluster}}"
+        namespace: agent-memory
+      source:
+        repoURL: https://github.com/opspresso/argocd-env-demo
+        targetRevision: HEAD
+        path: charts/neo4j
+        helm:
+          valueFiles:
+            - values.yaml
+            - "{{env}}/values-{{cluster}}.yaml"
+
+      syncPolicy:
+        # automated:
+        #   prune: true
+        #   selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

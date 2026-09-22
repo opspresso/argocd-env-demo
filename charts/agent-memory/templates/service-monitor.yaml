@@ -1,0 +1,26 @@
+{{- if and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: agent-memory
+  labels:
+    app.kubernetes.io/name: agent-memory
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- with .Values.serviceMonitor.labels }}
+{{ toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  endpoints:
+    - interval: 15s
+      path: /api/metrics
+      port: http
+      authorization:
+        type: Bearer
+        credentials:
+          name: agent-memory-external
+          key: METRICS_BEARER_TOKEN
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agent-memory
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

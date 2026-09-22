@@ -1,0 +1,12 @@
+app:
+  externalSecrets:
+    data:
+    - key: /k8s/common/mcp-argocd/argocd-api-token
+      name: ARGOCD_API_TOKEN
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
+  image:
+    tag: v0.9.0

@@ -1,0 +1,14 @@
+app:
+  externalSecrets:
+    data:
+    - key: /k8s/common/admin-user
+      name: GRAFANA_USERNAME
+    - key: /k8s/common/admin-password
+      name: GRAFANA_PASSWORD
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
+  image:
+    tag: 1.1.0

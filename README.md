@@ -1,5 +1,8 @@
 # argocd-env-demo
 
+Agent Studio·Memory의 k3s/EKS 구성, 저장소별 책임, Secret 준비와 배포 순서는
+[Agent Platform 배포](docs/agent-platform.md)를 따른다.
+
 ## apps
 
 > apps 를 등록 합니다.
@@ -61,7 +64,8 @@ phase 로 취급하지 않는다.
 sync 에 실패하기 때문이다.
 
 ApplicationSet 은 `env/*.yaml` 의 `phase` 필드로 어떤 `values-<phase>.yaml` 을 읽을지 정한다.
-현재 env 파일은 모두 `phase: alpha` 라 `values-prod.yaml` 을 읽는 클러스터는 없다.
+`k3s-demo`는 `phase: alpha`, `eks-demo`는 `phase: prod`를 사용한다.
+앱과 MCP의 두 phase values를 별도로 관리한다.
 
 클러스터별 SSM 경로는 `values-template.yaml.j2`가 `env/<cluster>.yaml`의 `cluster`에서
 생성한다. 공통 `values.yaml`에는 특정 클러스터의 `ssmPrefix`를 두지 않는다.

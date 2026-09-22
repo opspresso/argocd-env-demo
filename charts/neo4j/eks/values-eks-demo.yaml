@@ -1,0 +1,20 @@
+ssmPrefix: /k8s/eks-demo
+
+neo4jdb:
+
+
+  config:
+
+    server.memory.heap.initial_size: "512m"
+
+    server.memory.heap.max_size: "512m"
+
+    server.memory.pagecache.size: "512m"
+
+
+
+  volumes:
+    data:
+      defaultStorageClass:
+        requests:
+          storage: 20Gi

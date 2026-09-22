@@ -1,6 +1,6 @@
 apiVersion: v2
 name: postgresql
-description: PostgreSQL for the k3s Agent Platform
+description: PostgreSQL for the Agent Platform
 type: application
 version: v1.1.1
 appVersion: 18.6.0-pgvector
