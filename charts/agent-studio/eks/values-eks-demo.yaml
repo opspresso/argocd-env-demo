@@ -8,6 +8,10 @@ app:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
 
 
+  additionalConfigmap:
+    enabled: true
+    names:
+      - agent-studio-workspace
   extraVolumes:
     - name: ecr-config
       secret:
@@ -54,9 +58,11 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
-      WORKSPACE_IMAGE: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
       DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
-      WORKSPACE_NETWORK: none
+      WORKSPACE_NETWORK: agent-studio-public
+      WORKSPACE_GITHUB_AUTH: token
+      GITHUB_API_URL: https://api.github.com
+      GITHUB_WEB_URL: https://github.com
       WORKSPACE_MEMORY_MB: '1024'
       WORKSPACE_DISK_MB: '2048'
       WORKSPACE_CPUS: '1'
@@ -123,7 +129,6 @@ audioWorker:
 
 workspaceWorker:
   enabled: true
-  sandboxImage: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio:workspace-v0.115.1
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
   memoryMb: 1024

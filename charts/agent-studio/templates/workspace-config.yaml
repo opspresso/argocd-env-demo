@@ -1,0 +1,10 @@
+{{- if .Values.workspaceWorker.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-studio-workspace
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+data:
+  WORKSPACE_IMAGE: {{ printf "%s:workspace-%s" .Values.app.image.repository .Values.app.image.tag | quote }}
+{{- end }}

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @lru_cache
-def manifests(chart, platform):
+def manifests(chart, platform, image_tag=None):
     path = ROOT / "charts" / chart
     definition = yaml.safe_load((path / "Chart.yaml").read_text())
     if definition.get("dependencies") and not list((path / "charts").glob("*.tgz")):
@@ -25,6 +25,8 @@ def manifests(chart, platform):
     if (path / "values-alpha.yaml").exists():
         args += ["-f", str(path / f"values-{phase}.yaml")]
     args += ["-f", str(path / platform / f"values-{platform}-demo.yaml")]
+    if image_tag:
+        args += ["--set-string", f"app.image.tag={image_tag}"]
     result = subprocess.run(args, capture_output=True, text=True, check=True)
     assert not policy_errors(result.stdout, platform)
     return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
@@ -89,6 +91,41 @@ def test_eks_workers_have_resources_identity_and_registry_refresh():
     assert registry["dataFrom"][0]["sourceRef"]["generatorRef"]["kind"] == "ECRAuthorizationToken"
     pvc = resource("agent-studio", "eks", "PersistentVolumeClaim", "agent-studio-workspace-docker")
     assert pvc["spec"]["storageClassName"] == "gp3"
+
+
+@pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
+def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage):
+    config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
+    assert config["STAGE"] == stage
+    assert config["WORKSPACE_GITHUB_AUTH"] == "token"
+    assert config["GITHUB_WEB_URL"] == "https://github.com"
+    assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
+    pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker")["spec"]["template"]["spec"]
+    worker, docker = pod["containers"]
+    assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
+    assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
+    script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]
+    assert script == (ROOT / "charts/agent-studio/files/workspace-network.sh").read_text()
+    assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-health.cjs", "--heartbeat-only"]
+    for cron in ["agent-studio-scan", "agent-studio-reindex"]:
+        assert resource("agent-studio", platform, "CronJob", cron)["spec"]["suspend"] is False
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+@pytest.mark.parametrize("tag", ["v0.115.1", "v0.115.2"])
+def test_application_and_workspace_use_the_same_release(platform, tag):
+    documents = manifests("agent-studio", platform, tag)
+    configs = {doc["metadata"]["name"]: doc["data"] for doc in documents if doc["kind"] == "ConfigMap"}
+    deployments = {doc["metadata"]["name"]: doc for doc in documents if doc["kind"] == "Deployment"}
+    for name in ["agent-studio", "agent-studio-workspace-worker"]:
+        container = deployments[name]["spec"]["template"]["spec"]["containers"][0]
+        repository, image_tag = container["image"].rsplit(":", 1)
+        assert image_tag == tag
+        images = [configs[entry["configMapRef"]["name"]]["WORKSPACE_IMAGE"]
+                  for entry in container["envFrom"] if "configMapRef" in entry
+                  and "WORKSPACE_IMAGE" in configs.get(entry["configMapRef"]["name"], {})]
+        assert images == [f"{repository}:workspace-{tag}"]
+        assert not any(entry["name"] == "WORKSPACE_IMAGE" for entry in container.get("env", []))
 
 
 @pytest.mark.parametrize("chart,name", [("postgresql", "postgres"), ("neo4j", "memory-neo4j")])

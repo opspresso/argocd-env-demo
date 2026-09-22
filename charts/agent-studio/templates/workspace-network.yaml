@@ -1,0 +1,9 @@
+{{- if .Values.workspaceWorker.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-studio-workspace-network
+data:
+  workspace-network.sh: |
+{{ .Files.Get "files/workspace-network.sh" | indent 4 }}
+{{- end }}

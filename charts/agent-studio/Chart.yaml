@@ -13,7 +13,7 @@ dependencies:
   # minute. Aliased so its values sit under `scan:` beside `app:`.
   - repository: https://opspresso.github.io/helm-charts
     name: cronjob
-    version: "v1.1.0"
+    version: "v1.1.1"
     alias: scan
   # The capability reindex, hourly. A second CronJob rather than another curl
   # inside `scan`: that one ticks every minute because a schedule occurrence is
@@ -22,5 +22,5 @@ dependencies:
   # would only probe every MCP server sixty times an hour for nothing.
   - repository: https://opspresso.github.io/helm-charts
     name: cronjob
-    version: "v1.1.0"
+    version: "v1.1.1"
     alias: reindex

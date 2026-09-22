@@ -159,6 +159,7 @@ app:
 # agent-plugins lands within a minute at one GitHub read per quiet tick.
 scan:
   fullnameOverride: agent-studio-scan
+  suspend: false
 
   # Once a minute, matching the app's fixed 10-minute catch-up window: a few
   # missed ticks lose nothing, and an outage longer than the window is bounded
@@ -220,6 +221,7 @@ scan:
 # visible rather than quietly doing nothing.
 reindex:
   fullnameOverride: agent-studio-reindex
+  suspend: false
 
   schedule: "12 * * * *"
 

@@ -74,6 +74,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ toYaml .Values.app.configmap | sha256sum }}
+        checksum/network: {{ .Files.Get "files/workspace-network.sh" | sha256sum }}
       labels:
         app.kubernetes.io/name: agent-studio-workspace-worker
         app.kubernetes.io/instance: {{ .Release.Name }}
@@ -84,6 +85,11 @@ spec:
       imagePullSecrets:
         - name: ecr-registry
       volumes:
+        - name: network-script
+          configMap:
+            name: agent-studio-workspace-network
+        - name: network-ready
+          emptyDir: {}
         - name: docker-data
           persistentVolumeClaim:
             claimName: agent-studio-workspace-docker
@@ -101,7 +107,7 @@ spec:
             - /bin/sh
             - -ec
             - |
-              until docker info >/dev/null 2>&1; do sleep 2; done
+              until test -f /workspace-network/ready && docker info >/dev/null 2>&1; do sleep 2; done
               docker image inspect "$WORKSPACE_IMAGE" >/dev/null 2>&1 || docker pull "$WORKSPACE_IMAGE"
               exec node build/workspace-worker.cjs
           env:
@@ -112,7 +118,12 @@ spec:
                 name: agent-studio
             - secretRef:
                 name: agent-studio-external
+            - configMapRef:
+                name: agent-studio-workspace
           volumeMounts:
+            - name: network-ready
+              mountPath: /workspace-network
+              readOnly: true
             - name: ecr-config
               mountPath: /home/app/.docker
               readOnly: true
@@ -127,26 +138,34 @@ spec:
 {{- end }}
           readinessProbe:
             exec:
-              command: ["/bin/sh", "-ec", "docker info >/dev/null && test -s /tmp/workspace-worker.heartbeat"]
+              command: ["node", "build/workspace-health.cjs", "--worker"]
             initialDelaySeconds: 20
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 15
           livenessProbe:
             exec:
-              command: ["/bin/sh", "-ec", "docker info >/dev/null && test -s /tmp/workspace-worker.heartbeat"]
+              command: ["node", "build/workspace-health.cjs", "--heartbeat-only"]
             initialDelaySeconds: 60
             periodSeconds: 20
-            timeoutSeconds: 5
+            timeoutSeconds: 15
         - name: docker
           image: {{ .Values.workspaceWorker.dockerImage }}
           imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
           env:
             - name: DOCKER_TLS_CERTDIR
               value: ""
+            - name: WORKSPACE_NETWORK
+              value: {{ .Values.app.configmap.data.WORKSPACE_NETWORK | quote }}
           args: ["--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
           securityContext:
             privileged: true
           volumeMounts:
+            - name: network-script
+              mountPath: /opt/workspace-network
+              readOnly: true
+            - name: network-ready
+              mountPath: /workspace-network
             - name: docker-data
               mountPath: /var/lib/docker
 {{- if .Values.app.resources }}
@@ -160,13 +179,13 @@ spec:
 {{- end }}
           readinessProbe:
             exec:
-              command: ["/bin/sh", "-ec", "docker info >/dev/null 2>&1"]
+              command: ["/bin/sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null 2>&1"]
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
             exec:
-              command: ["/bin/sh", "-ec", "docker info >/dev/null 2>&1"]
+              command: ["/bin/sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null 2>&1"]
             initialDelaySeconds: 30
             periodSeconds: 20
             timeoutSeconds: 5
