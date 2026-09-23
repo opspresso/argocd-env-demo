@@ -75,7 +75,7 @@ def update_versions(root, project, phase, version, action="", now=None):
     else:
         docs = {"version": "", "items": []}
 
-    if action == "approved":
+    if action == "approved" and (docs.get("version") != version or not docs.get("approved")):
         docs["version"] = version
         docs["approved"] = timestamp
 

@@ -7,6 +7,7 @@ arrives as TG_* environment variables.
 
 With TG_PHASE set the run deploys that single phase. Without it the run fans
 out, dispatching one event per phase found in the chart.
+Prod opens a pull request unless TG_AUTO_MERGE=true or --auto-merge is set.
 """
 
 import argparse
@@ -28,7 +29,7 @@ MAIN_BRANCH = os.environ.get("MAIN_BRANCH", "main")
 GIT_USERNAME = "nalbam-bot"
 GIT_USEREMAIL = "bot@nalbam.com"
 
-# prod lands on a pull request; every other phase pushes straight to main.
+# prod defaults to a pull request; auto_merge opts into a direct main push.
 PROD_PHASE = "prod"
 
 PUSH_RETRIES = 3
@@ -95,6 +96,10 @@ class Config(object):
                 raise ConfigError("TG_PHASE is reserved: '{}'".format(self.phase))
 
         self.github_token = env.get("GITHUB_TOKEN", "").strip()
+        auto_merge = env.get("TG_AUTO_MERGE", "").strip().lower()
+        if auto_merge not in {"", "true", "false"}:
+            raise ConfigError("TG_AUTO_MERGE must be true or false")
+        self.auto_merge = auto_merge == "true"
 
     @property
     def image(self):
@@ -129,6 +134,7 @@ def build_payload(cfg, phase):
             "action": cfg.action,
             "phase": phase,
             "type": cfg.type,
+            "auto_merge": cfg.auto_merge,
         },
     }
 
@@ -196,11 +202,12 @@ def cmd_deploy(cfg, dry_run=False):
     if not os.path.exists(values):
         raise ConfigError("values file not found: {}".format(values))
 
-    log("{} {}".format(cfg.image, cfg.phase))
-
     branch = "{}-{}-{}".format(cfg.project, cfg.phase, cfg.version)
     message = "Deploy {} {} {}".format(cfg.project, cfg.phase, cfg.version)
-    is_prod = cfg.phase == PROD_PHASE
+    needs_pr = cfg.phase == PROD_PHASE and not cfg.auto_merge
+    log("{} {} ({})".format(
+        cfg.image, cfg.phase, "pull request" if needs_pr else "direct push"
+    ))
 
     if dry_run:
         _write_version(cfg)
@@ -208,43 +215,61 @@ def cmd_deploy(cfg, dry_run=False):
         return 0
 
     cfg.require_token()
+    _prepare_main()
     _git_config()
-    _git_pull()
 
-    # A re-dispatch of a version already on a release branch must not open a
-    # second pull request.
-    if is_prod and _remote_branch_exists(branch):
-        log("{} already exists, nothing to do".format(branch))
-        return 0
-
-    if is_prod:
-        run(["git", "checkout", "-b", branch])
+    if needs_pr:
+        run(["git", "check-ref-format", "--branch", branch])
+        # A push can succeed while PR creation fails. Resume that last step,
+        # while leaving existing (including closed) PRs alone.
+        if _remote_branch_exists(branch):
+            _ensure_pull_request(cfg, branch, message)
+            return 0
 
     _write_version(cfg)
 
-    run(["git", "add", "--all"])
+    run([
+        "git", "add", "--", values,
+        chart.versions_path(cfg.root, cfg.project, cfg.phase),
+    ])
 
     if _nothing_staged():
         log("{} is already at {}, nothing to commit".format(values, cfg.version))
         return 0
 
+    if needs_pr:
+        run(["git", "checkout", "-b", branch])
+
     run(["git", "commit", "-m", message])
 
-    if is_prod:
+    if needs_pr:
         run(["git", "push", "origin", branch])
-        run(
-            [
-                "gh", "pr", "create",
-                "--base", MAIN_BRANCH,
-                "--head", branch,
-                "--title", message,
-                "--body", "Deploy `{}` to `{}`.".format(cfg.image, cfg.phase),
-            ]
-        )
+        _ensure_pull_request(cfg, branch, message)
     else:
         _push_with_retry()
 
     return 0
+
+
+def _ensure_pull_request(cfg, branch, message):
+    completed = run(
+        [
+            "gh", "pr", "list", "--base", MAIN_BRANCH, "--head", branch,
+            "--state", "all", "--limit", "1", "--json", "state,url",
+        ],
+        capture_output=True, text=True,
+    )
+    prs = json.loads(completed.stdout)
+    if prs:
+        log("{} PR already exists: {}".format(prs[0]["state"], prs[0]["url"]))
+        return
+    run([
+        "gh", "pr", "create",
+        "--base", MAIN_BRANCH,
+        "--head", branch,
+        "--title", message,
+        "--body", "Deploy `{}` to `{}`.".format(cfg.image, cfg.phase),
+    ])
 
 
 def _write_version(cfg):
@@ -265,6 +290,25 @@ def _git_config():
     run(["git", "config", "pull.rebase", "true"])
 
 
+def _prepare_main():
+    """Only deploy from a clean main checkout without unpublished commits."""
+    status = run(["git", "status", "--porcelain"], capture_output=True, text=True)
+    if status.stdout.strip():
+        raise ConfigError("deploy requires a clean working tree and index")
+    current = run(["git", "branch", "--show-current"], capture_output=True, text=True)
+    if current.stdout.strip() != MAIN_BRANCH:
+        raise ConfigError("deploy requires the {} branch".format(MAIN_BRANCH))
+
+    run(["git", "fetch", "origin", MAIN_BRANCH])
+    ahead = run(
+        ["git", "rev-list", "--count", "FETCH_HEAD..HEAD"],
+        capture_output=True, text=True,
+    )
+    if int(ahead.stdout.strip()):
+        raise ConfigError("deploy requires no unpublished commits on {}".format(MAIN_BRANCH))
+    run(["git", "merge", "--ff-only", "FETCH_HEAD"])
+
+
 def _git_pull():
     run(["git", "pull", "--rebase", "origin", MAIN_BRANCH])
 
@@ -275,7 +319,11 @@ def _nothing_staged():
     Staged rather than working-tree state, so a brand new versions-<phase>.json
     counts instead of being missed as untracked.
     """
-    return subprocess.run(["git", "diff", "--cached", "--quiet"]).returncode == 0
+    cmd = ["git", "diff", "--cached", "--quiet"]
+    completed = subprocess.run(cmd)
+    if completed.returncode not in {0, 1}:
+        raise subprocess.CalledProcessError(completed.returncode, cmd)
+    return completed.returncode == 0
 
 
 def _remote_branch_exists(branch):
@@ -313,6 +361,11 @@ def parse_args(argv):
         help="'auto' (default) deploys when TG_PHASE is set, else dispatches",
     )
     parser.add_argument(
+        "--auto-merge",
+        action="store_true",
+        help="push directly to main, including prod (also TG_AUTO_MERGE=true)",
+    )
+    parser.add_argument(
         "-n", "--dry-run",
         action="store_true",
         help="update files but do not call GitHub or touch git",
@@ -335,6 +388,8 @@ def main(argv=None):
 
     try:
         cfg = Config(os.environ, root)
+        if args.auto_merge:
+            cfg.auto_merge = True
 
         if command == "auto":
             command = "deploy" if cfg.phase else "dispatch"

@@ -221,6 +221,35 @@ class TestUpdateVersions:
         assert docs["version"] == "v1.2.3"
         assert docs["approved"] == "2026-01-02T03:04:05"
 
+    def test_repeated_approval_preserves_the_timestamp(self, root):
+        filepath = chart.update_versions(
+            root, "demo-app", "prod", "v1.2.3", action="approved", now=self.now()
+        )
+        with open(filepath, "rb") as file:
+            before = file.read()
+
+        chart.update_versions(
+            root, "demo-app", "prod", "v1.2.3", action="approved",
+            now=self.now() + datetime.timedelta(days=1),
+        )
+
+        with open(filepath, "rb") as file:
+            assert file.read() == before
+
+    def test_approving_another_version_updates_the_timestamp(self, root):
+        chart.update_versions(
+            root, "demo-app", "prod", "v1.2.3", action="approved", now=self.now()
+        )
+        later = self.now() + datetime.timedelta(days=1)
+
+        chart.update_versions(
+            root, "demo-app", "prod", "v1.2.4", action="approved", now=later
+        )
+
+        docs = self.read(root, "prod")
+        assert docs["version"] == "v1.2.4"
+        assert docs["approved"] == later.isoformat()
+
     def test_keeps_only_the_most_recent_entries(self, root):
         for i in range(chart.MAX_VERSIONS + 5):
             chart.update_versions(

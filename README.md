@@ -86,11 +86,29 @@ PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패
 | `project` | 차트 이름 (`charts/<project>`) |
 | `version` | 배포할 버전 |
 | `container` | 갱신할 values 최상위 키. 기본 `app` |
-| `action` | 비움 또는 `approved` |
+| `action` | 비움 또는 `approved`. 승인 이력 기록용이며 머지 방식과는 독립적 |
 | `phase` | 대상 phase. **비우면 차트의 모든 phase 로 fan-out** |
 | `type` | `helm` |
+| `auto_merge` | JSON boolean. 기본 `false`; `true`면 prod도 `main`에 즉시 반영 |
 
-`prod` 는 브랜치를 만들어 PR 을 올리고, 나머지 phase 는 `main` 에 바로 푸시한다.
+`alpha` 등 prod 이외의 phase는 `main`에 바로 푸시한다. `prod`는 기본적으로
+브랜치를 만들어 PR을 올리며, `auto_merge: true`를 지정하면 PR 생성 없이
+`main`에 바로 푸시한다. GitHub의 브랜치 보호 규칙은 그대로 적용된다.
+`phase`를 비워 fan-out 할 때도 `auto_merge`가 각 이벤트에 전달되므로 prod에 적용된다.
+
+예를 들어 prod를 즉시 반영하는 payload는 다음과 같다.
+
+```json
+{
+  "event_type": "gitops",
+  "client_payload": {
+    "project": "sample-node",
+    "version": "v1.2.3",
+    "phase": "prod",
+    "auto_merge": true
+  }
+}
+```
 
 ```bash
 PAYLOAD="{\"event_type\":\"gitops\","
@@ -99,6 +117,7 @@ PAYLOAD="${PAYLOAD}\"username\":\"${TG_USERNAME}\","
 PAYLOAD="${PAYLOAD}\"project\":\"${TG_PROJECT}\","
 PAYLOAD="${PAYLOAD}\"version\":\"${TG_VERSION}\","
 PAYLOAD="${PAYLOAD}\"phase\":\"${TG_PHASE}\","
+PAYLOAD="${PAYLOAD}\"auto_merge\":${TG_AUTO_MERGE:-false},"
 PAYLOAD="${PAYLOAD}\"type\":\"helm\""
 PAYLOAD="${PAYLOAD}}}"
 
@@ -112,6 +131,8 @@ curl -sL -X POST \
 ### 로컬 실행
 
 `--dry-run` 은 파일만 갱신하고 git·GitHub 은 건드리지 않는다.
+실제 배포는 미커밋 변경·미추적 파일·미푸시 커밋이 없는 `main` checkout에서 실행한다.
+배포 커밋에는 대상 `values-<phase>.yaml`과 `versions-<phase>.json`만 포함한다.
 
 ```bash
 export TG_PROJECT="sample-grpc"
@@ -120,6 +141,20 @@ export TG_PHASE="alpha"
 
 python3 gitops.py deploy --dry-run
 ```
+
+prod 즉시 반영은 `TG_AUTO_MERGE=true` 또는 `--auto-merge`로 선택한다.
+환경변수는 `true`·`false`만 허용하며(대소문자 무관), 비우면 `false`다.
+`--auto-merge`는 환경변수의 `false`보다 우선한다.
+
+```bash
+TG_PROJECT="sample-node" TG_VERSION="v1.2.3" TG_PHASE="prod" \
+  python3 gitops.py deploy --auto-merge --dry-run
+```
+
+실제로 반영하려면 `--dry-run`을 제외한다. 같은 버전의 prod 브랜치가 이미 있으면
+기존 PR은 중복 생성하거나 다시 열지 않고, 브랜치만 있고 PR 생성이 실패했던 경우는
+PR 생성을 재개한다. `auto_merge`는 기존 PR 유무와 관계없이 `main`을 갱신하며,
+기존 PR을 닫거나 머지하지는 않는다.
 
 `TG_PHASE` 를 비우면 phase 목록을 찾아 fan-out 한다.
 

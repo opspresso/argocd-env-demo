@@ -79,7 +79,8 @@ charts/<project>/
   phase 로 잡히지 않는다. 이 예외가 없던 시절 `versions-template.json` 이 생겼던 적이 있다.
 - 새 phase 를 추가하려면 `values-<phase>.yaml` 을 만들면 된다. `versions-<phase>.json` 은
   첫 배포 때 자동 생성된다.
-- `prod` 만 특별하다 — 브랜치를 만들어 PR 을 올린다. 나머지는 `main` 에 바로 push.
+- `prod`는 기본적으로 브랜치를 만들어 PR을 올린다. `auto_merge: true` (`TG_AUTO_MERGE=true`
+  또는 `--auto-merge`)면 prod도 `main`에 바로 push한다. 나머지 phase는 항상 직접 push한다.
 - `eks-demo`는 `phase: prod`, `k3s-demo`는 `phase: alpha`를 사용한다.
   EKS ApplicationSet이 읽는 앱과 MCP chart는 `values-prod.yaml`을 제공해야 한다.
   추가 EKS env의 phase는 각 `env/<cluster>.yaml`에서 선택한다.
@@ -135,8 +136,12 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 payload 필드와 curl 예시는 [README](README.md#gitops) 참고.
 
 - `TG_PHASE` 가 있으면 그 phase 를 배포(`deploy`), 없으면 chart 의 모든 phase 로 fan-out(`dispatch`).
+- `TG_AUTO_MERGE`는 비움·`false`가 기본, `true`면 prod도 직접 push한다. fan-out에서도 전달된다.
 - 배포는 `values-<phase>.yaml` + `versions-<phase>.json` 을 갱신하고 `nalbam-bot` 으로 커밋한다.
+- 실제 배포는 깨끗한 `main` checkout과 미푸시 커밋이 없는 상태를 요구한다.
 - 같은 버전을 다시 배포하면 파일이 바뀌지 않아 커밋 없이 끝난다 (idempotent).
+  같은 버전의 `approved` 재전송도 기존 승인 시각을 유지한다.
+- prod 브랜치만 있고 PR이 없으면 PR 생성을 재개한다. 기존 PR은 중복 생성하거나 다시 열지 않는다.
 - 워크플로는 `concurrency: gitops` 로 직렬화된다. 취소하면 chart 가 절반만 쓰인 채 남는다.
 - 로컬 확인은 `--dry-run` 으로 한다. 파일만 갱신하고 git·GitHub 은 건드리지 않는다.
 

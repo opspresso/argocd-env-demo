@@ -5,7 +5,7 @@ on:
     types:
       - gitops
 
-# Deploys serialize: every non-prod phase pushes to main, so overlapping runs
+# Deploys serialize: direct deployments push to main, so overlapping runs
 # would race. Never cancel one - a cancelled deploy leaves a half-written chart.
 concurrency:
   group: gitops
@@ -43,5 +43,6 @@ jobs:
           TG_ACTION: ${{ github.event.client_payload.action }}
           TG_PHASE: ${{ github.event.client_payload.phase }}
           TG_TYPE: ${{ github.event.client_payload.type }}
+          TG_AUTO_MERGE: ${{ github.event.client_payload.auto_merge }}
         run: |
           bash ./gitops.sh
