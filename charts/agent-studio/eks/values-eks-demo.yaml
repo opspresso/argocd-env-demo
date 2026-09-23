@@ -137,7 +137,7 @@ workspaceWorker:
   diskMb: 2048
   cpus: 1
   persistence:
-    size: 20Gi
+    size: 40Gi
     storageClass: gp3
 
   registry:
