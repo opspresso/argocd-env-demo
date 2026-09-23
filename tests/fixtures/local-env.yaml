@@ -1,0 +1,13 @@
+cluster: local-test
+env: local
+phase: alpha
+replicas: 1
+autoscaling: false
+resources: false
+aws_region: ap-northeast-2
+aws_local:
+  profile: test
+  config_file: /fixtures/aws/config
+  credentials_file: /fixtures/aws/credentials
+postgresql:
+  storage: 5Gi

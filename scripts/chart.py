@@ -102,24 +102,35 @@ def update_values(root, project, phase, version, container=""):
     with open(filepath, "r") as file:
         docs = yaml.safe_load(file)
 
-    if not docs:
-        return filepath
+    if not isinstance(docs, dict) or not docs:
+        raise ValueError("values must contain a non-empty mapping")
 
     sections = _sections(docs, container)
+    if not sections:
+        raise ValueError("container '{}' is missing or is not a mapping".format(container))
+    if not any(set(section) & {"image", "configmap", "secret", "env"} for section in sections):
+        raise ValueError("container '{}' has no version fields".format(container))
 
     for section in sections:
         if "image" in section:
+            if not isinstance(section["image"], dict):
+                raise ValueError("container image must be a mapping")
             section["image"]["tag"] = version
 
         if "configmap" in section:
-            section["configmap"]["data"][VERSION] = version
+            _data(section, "configmap")[VERSION] = version
 
         if "secret" in section:
-            section["secret"]["data"][SECRET_VERSION] = base64.b64encode(
+            _data(section, "secret")[SECRET_VERSION] = base64.b64encode(
                 version.encode("utf-8")
             ).decode("ascii")
 
         if "env" in section:
+            if not isinstance(section["env"], list) or any(
+                not isinstance(entry, dict) or not isinstance(entry.get("name"), str)
+                for entry in section["env"]
+            ):
+                raise ValueError("container env must be a list of named mappings")
             # Placeholder first so a freshly seeded env list keeps ENV_HASH
             # ahead of VERSION, matching the existing charts.
             _upsert_env(section["env"], ENV_HASH, "")
@@ -146,10 +157,21 @@ def _sections(docs, container):
     ]
 
 
+def _data(section, key):
+    if not isinstance(section[key], dict):
+        raise ValueError("container {} must be a mapping".format(key))
+    data = section[key].setdefault("data", {})
+    if not isinstance(data, dict):
+        raise ValueError("container {}.data must be a mapping".format(key))
+    return data
+
+
 def _upsert_env(env, name, value):
-    for entry in env:
+    for index, entry in enumerate(env):
         if entry.get("name") == name:
+            entry.pop("valueFrom", None)
             entry["value"] = value
+            env[index + 1:] = [item for item in env[index + 1:] if item.get("name") != name]
             return
     env.append({"name": name, "value": value})
 

@@ -66,6 +66,8 @@ def load_targets(dirs):
     targets = []
 
     for directory in dirs:
+        if not os.path.isdir(directory):
+            raise ValueError("no application directory: {}".format(directory))
         for current, _, names in os.walk(directory):
             for name in sorted(names):
                 if not name.endswith(".yaml"):
@@ -86,6 +88,8 @@ def load_targets(dirs):
                         for generator in doc["spec"]["generators"]
                         for entry in generator["git"]["files"]
                     ]
+                    if not env_files:
+                        raise ValueError("no environment files in {}".format(path))
                     name = template["metadata"]["name"]
                     cluster = (template["metadata"].get("labels") or {}).get("opspresso.com/cluster")
                     namespace = template["spec"]["destination"]["namespace"]
@@ -165,6 +169,8 @@ def render(target, env_file):
     if env_file:
         with open(env_file, "r") as file:
             env = yaml.safe_load(file)
+        if not isinstance(env, dict):
+            return "environment file must contain a mapping: {}".format(env_file)
 
     args = ["helm", "template", expand(target["name"], env), target["chart"]]
     args += ["--namespace", expand(target["namespace"], env)]
@@ -221,7 +227,14 @@ def main():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(root)
 
-    targets = load_targets(args.dirs or [APPSET_DIR])
+    try:
+        targets = load_targets(args.dirs or [APPSET_DIR])
+    except (ValueError, KeyError, OSError, yaml.YAMLError) as error:
+        print("FAIL {}".format(error))
+        return 1
+    if not targets:
+        print("no Application or ApplicationSet targets found")
+        return 1
 
     if args.reponame:
         wanted = "charts/{}".format(args.reponame)
@@ -233,23 +246,23 @@ def main():
 
     failures = check_templates(args.reponame)
     rendered = 0
-    prepared = set()
+    prepared = {}
 
     for target in targets:
         if target["chart"] not in prepared:
-            error = update_dependencies(target["chart"])
-            prepared.add(target["chart"])
+            prepared[target["chart"]] = update_dependencies(target["chart"])
 
-            if error:
-                failures.append((target["chart"], error))
-                continue
+            if prepared[target["chart"]]:
+                failures.append((target["chart"], prepared[target["chart"]]))
+        if prepared[target["chart"]]:
+            continue
 
         for env_file in target["env_files"]:
             print("# render {} {}".format(target["appset"], env_file or "direct"), flush=True)
 
             try:
                 error = render(target, env_file)
-            except (KeyError, IOError) as exception:
+            except (ValueError, KeyError, IOError, yaml.YAMLError) as exception:
                 error = str(exception)
 
             rendered += 1

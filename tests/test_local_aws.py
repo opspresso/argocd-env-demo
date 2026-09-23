@@ -11,6 +11,14 @@ ROOT = Path(__file__).resolve().parents[1]
 @pytest.mark.parametrize("env_file", sorted((ROOT / "env").glob("*.yaml")), ids=lambda path: path.stem)
 def test_cloudwatch_uses_runtime_credentials_without_a_secret(env_file):
     context = yaml.safe_load(env_file.read_text())
+    _check_credentials(context)
+
+
+def test_local_cloudwatch_uses_read_only_credential_files(local_env):
+    _check_credentials(local_env)
+
+
+def _check_credentials(context):
     template = Environment(loader=FileSystemLoader(ROOT / "charts/mcp-cloudwatch")).get_template("values-template.yaml.j2")
     if context["env"] != "local":
         context["aws_local"] = {"profile": "unused", "config_file": "/unused/config", "credentials_file": "/unused/credentials"}

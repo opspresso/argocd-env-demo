@@ -112,7 +112,8 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 - 파일 이름이 클러스터 이름이고, 안의 `cluster` 필드와 일치해야 한다 (`{{cluster}}` 로 치환됨).
 - 클러스터별 SSM 경로는 템플릿의 `{{cluster}}`에서 만든다. 공통 `values.yaml`에 특정 클러스터의 경로를 기본값으로 두지 않는다.
 - `env` 는 플랫폼(`eks`, `k3s`, `local`)이며 렌더 출력 디렉터리이자 valueFiles 경로가 된다 (`{{env}}/values-{{cluster}}.yaml`).
-  `scripts/gen_values.py` 는 `env` 가 없으면 실패한다.
+  `scripts/gen_values.py`는 필수 템플릿 변수 누락, 지원하지 않는 env, cluster와 파일명 불일치를 거부한다.
+  `resources`·`autoscaling`은 YAML boolean이어야 한다.
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
   `app.autoscaling.enabled`의 원천이다. k3s·local은 각각 `1`, `false`를 사용한다.
 - `metrics.backend` 는 ServiceMonitor 라벨의 원천이다. k3s는 `victoria-metrics`, EKS는
@@ -142,11 +143,13 @@ payload 필드와 curl 예시는 [README](README.md#gitops) 참고.
 - `TG_PHASE` 가 있으면 그 phase 를 배포(`deploy`), 없으면 chart 의 모든 phase 로 fan-out(`dispatch`).
 - `TG_AUTO_MERGE`는 비움·`false`가 기본, `true`면 prod도 직접 push한다. fan-out에서도 전달된다.
 - 배포는 `values-<phase>.yaml` + `versions-<phase>.json` 을 갱신하고 `nalbam-bot` 으로 커밋한다.
+- 대상 container가 없거나 버전 필드가 없으면 이력을 쓰기 전에 실패한다.
 - 실제 배포는 깨끗한 `main` checkout과 미푸시 커밋이 없는 상태를 요구한다.
 - 같은 버전을 다시 배포하면 파일이 바뀌지 않아 커밋 없이 끝난다 (idempotent).
   같은 버전의 `approved` 재전송도 기존 승인 시각을 유지한다.
 - prod 브랜치만 있고 PR이 없으면 PR 생성을 재개한다. 기존 PR은 중복 생성하거나 다시 열지 않는다.
-- 워크플로는 `concurrency: gitops` 로 직렬화된다. 취소하면 chart 가 절반만 쓰인 채 남는다.
+- GitOps와 빌드 게시 workflow는 `gitops` concurrency 그룹으로 직렬화된다.
+  `queue: max`로 대기 중인 fan-out 이벤트도 최대 100개까지 보존한다.
 - 로컬 확인은 `--dry-run` 으로 한다. 파일만 갱신하고 git·GitHub 은 건드리지 않는다.
 
 ```bash
@@ -163,15 +166,20 @@ TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" TG_PHASE="alpha" python3 scripts/gi
 pytest                                  # scripts/와 배포 구성 테스트
 ```
 
-`.github/workflows/push.yml`이 main push에서 `scripts/build.sh` → `scripts/validate.py`를 돌린다.
-렌더한 뒤 검증하므로 최신 템플릿 변경분이 검사된다.
+`.github/workflows/validate.yml`은 PR에서 렌더 → Helm 검증 → pytest를 실행한다.
+`.github/workflows/push.yml`도 main에서 같은 검사를 수행한 뒤 생성 파일을 게시한다.
 `apps/` 에 ApplicationSet 이 없는 chart(`sample-spring`)는 배포되지 않으므로 검증 대상도 아니다.
 
 `scripts/validate.py` 는 `helm dependency update` 로 upstream chart 를 내려받는다.
 결과물(`charts/*/charts/`, `charts/*/Chart.lock`)은 `.gitignore` 처리되어 있다.
 
-`main` 에 push 하면 `.github/workflows/push.yml` 이 `scripts/build.sh` 를 돌려 렌더 결과를
-`nalbam-bot` 이름으로 자동 커밋한다. `scripts/gitops.py` / `scripts/chart.py` 를 고치면 `tests/` 도 함께 본다.
+`scripts/build.sh`는 기본적으로 파일만 렌더한다. `GITHUB_PUSH=true`는 깨끗한 main에서
+원격 변경을 먼저 반영하고, Helm 검증과 pytest 통과 후 플랫폼별 생성 values만 커밋한다.
+`requirements/runtime.txt`와 `requirements/dev.txt`가 모두 필요하다.
+`scripts/gitops.py` / `scripts/chart.py`를 고치면 `tests/`도 함께 본다.
+
+local 배포 manifest와 env는 제공하지 않는다. 남아 있는 local 템플릿 분기는
+`tests/fixtures/local-env.yaml`로 검증하며 fixture를 실제 배포 env로 취급하지 않는다.
 
 ## argocd-env-addons 와 다른 점
 

@@ -1,0 +1,42 @@
+name: validate
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install -r requirements/runtime.txt -r requirements/dev.txt
+
+      - name: Build values
+        run: bash scripts/build.sh
+        env:
+          GITHUB_PUSH: "false"
+
+      - name: Validate charts
+        run: python3 scripts/validate.py
+
+      - name: Test
+        run: python3 -m pytest

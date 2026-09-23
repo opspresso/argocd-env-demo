@@ -13,6 +13,25 @@ GIT_USEREMAIL="bot@nalbam.com"
 
 cd "${SHELL_DIR}/.."
 
+if [ "${GITHUB_PUSH}" == "true" ]; then
+  if [ -n "$(git status --porcelain)" ]; then
+    echo "Publishing requires a clean working tree and index." >&2
+    exit 1
+  fi
+  if [ "$(git branch --show-current)" != "${MAIN_BRANCH:-main}" ]; then
+    echo "Publishing requires the ${MAIN_BRANCH:-main} branch." >&2
+    exit 1
+  fi
+  git fetch origin "${MAIN_BRANCH:-main}"
+  if [ "$(git rev-list --count FETCH_HEAD..HEAD)" != 0 ]; then
+    echo "Publishing requires no unpublished commits." >&2
+    exit 1
+  fi
+  git merge --ff-only FETCH_HEAD
+fi
+
+GENERATED_VALUES=()
+shopt -s nullglob
 # find charts
 for PLATFORM in eks k3s local; do
   for CHART in charts/*/; do
@@ -20,15 +39,24 @@ for PLATFORM in eks k3s local; do
       echo
       echo "Processing.. ${PLATFORM}/$(basename "${CHART}")"
       python3 "${SHELL_DIR}/gen_values.py" -p "${PLATFORM}" -r "$(basename "${CHART}")"
+      GENERATED_VALUES+=("${CHART}/${PLATFORM}"/values-*.yaml)
     fi
   done
 done
 
 if [ "${GITHUB_PUSH}" == "true" ]; then
+  # Nothing is published until both the rendered charts and Python contracts pass.
+  python3 "${SHELL_DIR}/validate.py"
+  python3 -m pytest
+
+  if [ "${#GENERATED_VALUES[@]}" -eq 0 ]; then
+    echo "No generated values to publish."
+    exit 0
+  fi
   git config user.name "${GIT_USERNAME}"
   git config user.email "${GIT_USEREMAIL}"
 
-  git add --all
+  git add -- "${GENERATED_VALUES[@]}"
 
   if git diff --cached --quiet; then
     echo

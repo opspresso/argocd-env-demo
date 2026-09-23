@@ -19,6 +19,8 @@ import sys
 import urllib.error
 import urllib.request
 
+import yaml
+
 import chart
 
 
@@ -273,15 +275,20 @@ def _ensure_pull_request(cfg, branch, message):
 
 
 def _write_version(cfg):
+    try:
+        values = chart.update_values(
+            cfg.root, cfg.project, cfg.phase, cfg.version, cfg.container
+        )
+    except yaml.YAMLError as error:
+        raise ConfigError("deployment values contain invalid YAML") from error
+    except ValueError as error:
+        raise ConfigError("invalid deployment values: {}".format(error)) from error
+    log("updated {}".format(values))
+
     versions = chart.update_versions(
         cfg.root, cfg.project, cfg.phase, cfg.version, cfg.action
     )
     log("updated {}".format(versions))
-
-    values = chart.update_values(
-        cfg.root, cfg.project, cfg.phase, cfg.version, cfg.container
-    )
-    log("updated {}".format(values))
 
 
 def _git_config():

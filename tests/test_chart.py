@@ -79,6 +79,36 @@ class TestDiscoverPhases:
 
 
 class TestUpdateValues:
+    @pytest.mark.parametrize("body,container", [
+        (VALUES, "missing"), ("{}\n", "app"), ("app: false\n", "app"),
+        ("app: {}\n", "app"), ("[]\n", "app"),
+        ("app:\n  image: invalid\n", "app"),
+        ("app:\n  env: invalid\n", "app"),
+    ])
+    def test_invalid_target_leaves_values_unchanged(self, root, body, container):
+        path = write_values(root, "alpha", body)
+        with pytest.raises(ValueError):
+            chart.update_values(root, "demo-app", "alpha", "v1.2.3", container)
+        with open(path) as file:
+            assert file.read() == body
+
+    def test_managed_env_replaces_value_from_and_duplicates(self, root):
+        write_values(root, "alpha", """app:
+  env:
+    - name: VERSION
+      valueFrom:
+        configMapKeyRef:
+          name: old
+          key: VERSION
+    - name: VERSION
+      value: old
+""")
+        chart.update_values(root, "demo-app", "alpha", "v1.2.3", "app")
+        entries = read_values(root, "alpha")["app"]["env"]
+        assert [entry for entry in entries if entry["name"] == "VERSION"] == [
+            {"name": "VERSION", "value": "v1.2.3"}
+        ]
+
     def test_replaces_version_everywhere(self, root):
         write_values(root, "alpha")
 

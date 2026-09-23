@@ -172,6 +172,17 @@ def deployment_repo(tmp_path, monkeypatch):
 
 
 class TestDeploy:
+    def test_invalid_container_does_not_record_a_deployment(self, deployment_repo):
+        root, git, github = deployment_repo
+        cfg = gitops.Config(env(TG_CONTAINER="missing"), str(root))
+        before = git("rev-parse", "HEAD")
+        with pytest.raises(gitops.ConfigError, match="container"):
+            gitops.cmd_deploy(cfg, dry_run=True)
+        assert not (root / "charts/demo-app/versions-alpha.json").exists()
+        assert git("status", "--porcelain") == ""
+        assert git("rev-parse", "HEAD") == before
+        assert github["calls"] == []
+
     @pytest.mark.parametrize("phase,auto_merge", [
         ("alpha", ""), ("alpha", "false"), ("alpha", "true"), ("prod", "true"),
     ])

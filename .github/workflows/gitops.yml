@@ -5,11 +5,15 @@ on:
     types:
       - gitops
 
-# Deploys serialize: direct deployments push to main, so overlapping runs
-# would race. Never cancel one - a cancelled deploy leaves a half-written chart.
+# Share the write lock with generated values publishing. Preserve pending fan-out
+# events as well as the running deployment.
 concurrency:
   group: gitops
   cancel-in-progress: false
+  queue: max
+
+permissions:
+  contents: read
 
 jobs:
   gitops:

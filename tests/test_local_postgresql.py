@@ -6,19 +6,25 @@ import subprocess
 
 import pytest
 import yaml
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.fixture(params=["k3s/values-k3s-demo.yaml", "local/values-local-demo.yaml"])
-def manifests(request):
+@pytest.fixture(params=["eks", "k3s", "local"])
+def manifests(request, local_env, tmp_path):
     if not shutil.which("helm"):
         pytest.skip("Helm is required to validate deployment manifests")
     chart = ROOT / "charts/postgresql"
     command = ["helm", "template", "postgresql-test", str(chart), "-f", str(chart / "values.yaml")]
-    if request.param:
-        command += ["-f", str(chart / request.param)]
+    if request.param == "local":
+        template = Environment(loader=FileSystemLoader(chart), undefined=StrictUndefined).get_template("values-template.yaml.j2")
+        values = tmp_path / "values-local-test.yaml"
+        values.write_text(template.render(local_env))
+    else:
+        values = chart / request.param / f"values-{request.param}-demo.yaml"
+    command += ["-f", str(values)]
     rendered = subprocess.run(command, check=True, text=True, capture_output=True).stdout
     return {doc["kind"]: doc for doc in yaml.safe_load_all(rendered) if doc}
 

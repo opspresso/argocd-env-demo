@@ -42,21 +42,9 @@ HPA·VPA·KEDA autoscaler를 생성하지 않으며 PVC storage 요청은 유지
 
 ## 로컬 Kubernetes 개발 환경
 
-실행 제품은 OrbStack 또는 Docker Desktop이며 배포 환경 이름은 `local`로 통일한다.
-`argocd` namespace와 Helm release를 사용하고, Mac 연결은 addons의
-`install/local/connect.py`로 localhost 포워딩을 유지한다.
-
-`apps-local.yaml`은 `apps/local/`를 동기화한다. `env/local-demo.yaml`과 기존 chart의
-`values-template.yaml.j2`에서 `local/values-local-demo.yaml`을 생성한다. PostgreSQL·MinIO·
-Neo4j·MCP 5종을 배포하며, Studio·Memory는 Mac에서 `pnpm`으로 실행한다.
-namespace·서비스 주소·SSM·External Secrets는 기존 k3s 규칙을 따른다.
-local은 `resources: false`로 모든 컨테이너의 CPU·메모리 requests/limits를 선언하지 않는다.
-Argo CD bootstrap은 형제 `argocd-env-addons/install/local/`를 사용한다.
-
-```bash
-GITHUB_PUSH=false bash scripts/build.sh
-python3 scripts/validate.py -d apps/local
-```
+현재 배포 구성은 EKS와 k3s다. `apps-local.yaml`, `apps/local/`, `env/local-demo.yaml`은
+제공하지 않는다. 템플릿의 `local` 분기는 `tests/fixtures/local-env.yaml`을 사용해
+MCP 인증 설정과 PostgreSQL 초기화 동작을 검증한다. 이 fixture는 배포 대상이 아니다.
 
 ## charts
 
@@ -100,7 +88,7 @@ PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패
 | `username` | 이미지 owner |
 | `project` | 차트 이름 (`charts/<project>`) |
 | `version` | 배포할 버전 |
-| `container` | 갱신할 values 최상위 키. 기본 `app` |
+| `container` | 갱신할 values 최상위 mapping. 기본 `app`; 없거나 버전 필드가 없으면 실패 |
 | `action` | 비움 또는 `approved`. 승인 이력 기록용이며 머지 방식과는 독립적 |
 | `phase` | 대상 phase. **비우면 차트의 모든 phase 로 fan-out** |
 | `type` | `helm` |
@@ -110,6 +98,8 @@ PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패
 브랜치를 만들어 PR을 올리며, `auto_merge: true`를 지정하면 PR 생성 없이
 `main`에 바로 푸시한다. GitHub의 브랜치 보호 규칙은 그대로 적용된다.
 `phase`를 비워 fan-out 할 때도 `auto_merge`가 각 이벤트에 전달되므로 prod에 적용된다.
+GitOps와 생성 파일 게시 workflow는 `gitops` concurrency 그룹을 공유한다.
+`queue: max`로 최대 100개의 대기 실행을 보존한다.
 
 예를 들어 prod를 즉시 반영하는 payload는 다음과 같다.
 
@@ -181,15 +171,23 @@ TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" python3 scripts/gitops.py dispatch 
 
 `values-template.yaml.j2` 를 플랫폼에 맞는 `env/*.yaml` 마다 렌더해
 `charts/<project>/<platform>/` 에 저장한다.
+템플릿 변수 누락, 지원하지 않는 `env`, 파일명과 다른 `cluster`, 잘못된 boolean은 실패한다.
+차트별로 모든 대상 환경을 렌더·검사한 후 파일을 쓴다.
 
 ```bash
 ./scripts/build.sh
 ```
 
+기본은 파일 생성만 수행한다. CI의 `GITHUB_PUSH=true` 모드는 깨끗한 `main`에서
+원격 변경을 먼저 반영하고, 렌더 → Helm 검증 → pytest가 모두 성공한 뒤
+생성된 플랫폼별 values만 커밋·push한다. 실행·테스트 의존성 모두 필요하다.
+
 ## validate
 
 ApplicationSet 이 지정한 것과 같은 valueFiles 조합으로 `helm template` 을 돌린다.
 values 파일 누락이나 chart 오류를 Argo CD sync 가 아니라 CI 에서 잡기 위한 것이다.
+대상 디렉터리나 Application이 없으면 실패하며, 의존성 다운로드 실패 후 남아 있는
+기존 차트로 검증을 계속하지 않는다.
 
 ```bash
 ./scripts/validate.py
@@ -210,6 +208,9 @@ kubelet image pull뿐 아니라 worker와 앱의 Docker client config에도 moun
 Agent Studio image와 matching Workspace image를 함께 release해야 한다.
 
 ## test
+
+PR에서는 `.github/workflows/validate.yml`이 렌더·Helm 검증·pytest를 실행한다.
+main push에서도 같은 검사를 수행하며, 검사 실패 시 생성 파일을 게시하지 않는다.
 
 ```bash
 pip install -r requirements/runtime.txt -r requirements/dev.txt
