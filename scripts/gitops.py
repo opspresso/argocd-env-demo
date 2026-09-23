@@ -378,7 +378,7 @@ def main(argv=None):
 
     # Chart paths and git both resolve against the repository root, whatever
     # directory the caller happened to be in.
-    root = os.path.dirname(os.path.abspath(__file__))
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(root)
 
     command = args.command

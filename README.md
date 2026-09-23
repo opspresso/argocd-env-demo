@@ -3,6 +3,21 @@
 Agent Studio·Memory의 k3s/EKS 구성, 저장소별 책임, Secret 준비와 배포 순서는
 [Agent Platform 배포](docs/agent-platform.md)를 따른다.
 
+## 저장소 구조
+
+```text
+apps-*.yaml       # App of Apps 설치 진입점
+apps/             # 플랫폼별 Argo CD Application/ApplicationSet
+charts/           # Helm chart와 배포 버전
+env/              # 클러스터별 설정
+scripts/          # 빌드·GitOps·검증·운영 스크립트
+requirements/     # Python 실행(runtime.txt)·테스트(dev.txt) 의존성
+tests/            # 자동화 테스트
+docs/             # 운영 문서
+```
+
+아래 명령은 저장소 루트 기준이다. 스크립트는 다른 디렉터리에서도 경로를 지정해 실행할 수 있다.
+
 ## apps
 
 > apps 를 등록 합니다.
@@ -23,7 +38,7 @@ metrics backend는 `metrics.backend`로 선택하며, k3s는 `victoria-metrics`,
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
 환경에서는 템플릿이 해당 resource block을 제거한다. 컨테이너·초기화 컨테이너·worker·CronJob에도 같은 규칙을 적용한다.
 HPA·VPA·KEDA autoscaler를 생성하지 않으며 PVC storage 요청은 유지한다.
-`validate.py`는 k3s·local 렌더 결과에 compute requests/limits나 autoscaler가 남으면 실패한다.
+`scripts/validate.py`는 k3s·local 렌더 결과에 compute requests/limits나 autoscaler가 남으면 실패한다.
 
 ## 로컬 Kubernetes 개발 환경
 
@@ -39,8 +54,8 @@ local은 `resources: false`로 모든 컨테이너의 CPU·메모리 requests/li
 Argo CD bootstrap은 형제 `argocd-env-addons/install/local/`를 사용한다.
 
 ```bash
-GITHUB_PUSH=false bash build.sh
-python3 validate.py -d apps/local
+GITHUB_PUSH=false bash scripts/build.sh
+python3 scripts/validate.py -d apps/local
 ```
 
 ## charts
@@ -52,14 +67,14 @@ charts/<project>/
   values-<phase>.yaml          # phase 별 값. 배포시 gitops 가 갱신
   versions-<phase>.json        # phase 별 배포 이력
   values-template.yaml.j2      # jinja2 템플릿 (phase 아님)
-  <platform>/values-<cluster>.yaml # build.sh 가 해당 플랫폼 env로 렌더한 결과
+  <platform>/values-<cluster>.yaml # scripts/build.sh 가 해당 플랫폼 env로 렌더한 결과
 ```
 
 `phase` 는 `values-<phase>.yaml` 파일에서 찾는다. `values-template.yaml.j2` 는 렌더 소스이므로
 phase 로 취급하지 않는다.
 
 `<platform>/values-<cluster>.yaml` 은 **언제나** `values-template.yaml.j2` 의 렌더 결과다.
-직접 고치지 말고 템플릿을 고친 뒤 `./build.sh` 를 돌린다.
+직접 고치지 말고 템플릿을 고친 뒤 `./scripts/build.sh` 를 돌린다.
 덮어쓸 값이 없는 chart 도 템플릿을 둔다 — ApplicationSet 의 `valueFiles` 에 적힌 파일이 없으면
 sync 에 실패하기 때문이다.
 
@@ -69,7 +84,7 @@ ApplicationSet 은 `env/*.yaml` 의 `phase` 필드로 어떤 `values-<phase>.yam
 
 클러스터별 SSM 경로는 `values-template.yaml.j2`가 `env/<cluster>.yaml`의 `cluster`에서
 생성한다. 공통 `values.yaml`에는 특정 클러스터의 `ssmPrefix`를 두지 않는다.
-PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패하며, `validate.py`는
+PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패하며, `scripts/validate.py`는
 최종 `ssmPrefix`가 대상 클러스터와 다르면 실패한다. EKS 공통 기본값과 클러스터의
 자격 증명 경로는 별개다.
 
@@ -78,7 +93,7 @@ PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패
 * <https://github.com/argoproj/argo-cd>
 
 `repository_dispatch` → [`.github/workflows/gitops.yml`](.github/workflows/gitops.yml) →
-`gitops.sh` → `gitops.py`
+`scripts/gitops.sh` → `scripts/gitops.py`
 
 | client_payload | 설명 |
 |---|---|
@@ -139,7 +154,7 @@ export TG_PROJECT="sample-grpc"
 export TG_VERSION="v0.0.0"
 export TG_PHASE="alpha"
 
-python3 gitops.py deploy --dry-run
+python3 scripts/gitops.py deploy --dry-run
 ```
 
 prod 즉시 반영은 `TG_AUTO_MERGE=true` 또는 `--auto-merge`로 선택한다.
@@ -148,7 +163,7 @@ prod 즉시 반영은 `TG_AUTO_MERGE=true` 또는 `--auto-merge`로 선택한다
 
 ```bash
 TG_PROJECT="sample-node" TG_VERSION="v1.2.3" TG_PHASE="prod" \
-  python3 gitops.py deploy --auto-merge --dry-run
+  python3 scripts/gitops.py deploy --auto-merge --dry-run
 ```
 
 실제로 반영하려면 `--dry-run`을 제외한다. 같은 버전의 prod 브랜치가 이미 있으면
@@ -159,7 +174,7 @@ PR 생성을 재개한다. `auto_merge`는 기존 PR 유무와 관계없이 `mai
 `TG_PHASE` 를 비우면 phase 목록을 찾아 fan-out 한다.
 
 ```bash
-TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" python3 gitops.py dispatch --dry-run
+TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" python3 scripts/gitops.py dispatch --dry-run
 ```
 
 ## build
@@ -168,7 +183,7 @@ TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" python3 gitops.py dispatch --dry-ru
 `charts/<project>/<platform>/` 에 저장한다.
 
 ```bash
-./build.sh
+./scripts/build.sh
 ```
 
 ## validate
@@ -177,9 +192,9 @@ ApplicationSet 이 지정한 것과 같은 valueFiles 조합으로 `helm templat
 values 파일 누락이나 chart 오류를 Argo CD sync 가 아니라 CI 에서 잡기 위한 것이다.
 
 ```bash
-./validate.py
+./scripts/validate.py
 
-./validate.py -r sample-node
+./scripts/validate.py -r sample-node
 ```
 
 ## k3s workers
@@ -197,6 +212,6 @@ Agent Studio image와 matching Workspace image를 함께 release해야 한다.
 ## test
 
 ```bash
-pip install -r requirements.txt -r requirements-dev.txt
+pip install -r requirements/runtime.txt -r requirements/dev.txt
 pytest
 ```

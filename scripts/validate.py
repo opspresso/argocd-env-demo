@@ -12,8 +12,8 @@ Also enforces that every <platform>/values-<cluster>.yaml has a values-template.
 to come from - a hand-written one is indistinguishable from a render and drifts
 without anyone noticing.
 
-    ./validate.py                 # every Application or ApplicationSet in apps/
-    ./validate.py -r sample-node  # one chart
+    ./scripts/validate.py                 # every Application or ApplicationSet in apps/
+    ./scripts/validate.py -r sample-node  # one chart
 
 A chart with no Application or ApplicationSet in apps/ is not deployed and is
 not checked.
@@ -218,7 +218,7 @@ def render(target, env_file):
 def main():
     args = parse_args()
 
-    root = os.path.dirname(os.path.abspath(__file__))
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(root)
 
     targets = load_targets(args.dirs or [APPSET_DIR])

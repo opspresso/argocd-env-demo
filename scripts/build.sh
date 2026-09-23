@@ -6,12 +6,12 @@ set -euo pipefail
 
 GITHUB_PUSH=${GITHUB_PUSH:-false}
 
-SHELL_DIR=$(dirname "$0")
+SHELL_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 GIT_USERNAME="nalbam-bot"
 GIT_USEREMAIL="bot@nalbam.com"
 
-cd "${SHELL_DIR}"
+cd "${SHELL_DIR}/.."
 
 # find charts
 for PLATFORM in eks k3s local; do
@@ -19,7 +19,7 @@ for PLATFORM in eks k3s local; do
     if [ -f "${CHART}/values-template.yaml.j2" ] && [ -d "${CHART}/${PLATFORM}" ]; then
       echo
       echo "Processing.. ${PLATFORM}/$(basename "${CHART}")"
-      python3 gen_values.py -p "${PLATFORM}" -r "$(basename "${CHART}")"
+      python3 "${SHELL_DIR}/gen_values.py" -p "${PLATFORM}" -r "$(basename "${CHART}")"
     fi
   done
 done

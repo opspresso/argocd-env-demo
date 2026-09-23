@@ -73,7 +73,7 @@ controller에 의존한다. NetworkPolicy 리소스가 존재하거나 Argo CD�
 차단을 실제 요청으로 확인한 뒤 Workspace 외부 통신을 활성화한다.
 
 ```bash
-python3 check_agent_network.py --context eks-demo
+python3 scripts/check_agent_network.py --context eks-demo
 ```
 
 이 검사는 기존 Ready Pod에서 DNS와 Docker `/_ping`만 조회한다. Studio의 정상 접근을 전후로
@@ -100,7 +100,7 @@ audio-worker가 모두 필요하다. 테스트·운영의 설정과 연결은 �
 내부 HTTP fixture를 사용하며, 자신의 컨테이너·볼륨만 정리한다.
 
 ```bash
-python3 check_workspace_network.py
+python3 scripts/check_workspace_network.py
 ```
 
 ## 최초 배포 순서
@@ -116,8 +116,8 @@ python3 check_workspace_network.py
 3. 이 저장소에서 EKS 연결 Secret을 확인하고, 없을 때만 생성한다.
 
    ```bash
-   python3 bootstrap_agent_platform.py --cluster eks-demo
-   python3 bootstrap_agent_platform.py --cluster eks-demo --apply
+   python3 scripts/bootstrap_agent_platform.py --cluster eks-demo
+   python3 scripts/bootstrap_agent_platform.py --cluster eks-demo --apply
    ```
 
    생성 대상은 `agent-studio/postgres-password`, `agent-studio/database-url`,
@@ -138,8 +138,8 @@ python3 check_workspace_network.py
 ## 검증
 
 ```bash
-GITHUB_PUSH=false bash build.sh
-python3 validate.py
+GITHUB_PUSH=false bash scripts/build.sh
+python3 scripts/validate.py
 pytest
 ```
 

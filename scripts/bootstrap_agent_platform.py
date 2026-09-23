@@ -71,7 +71,7 @@ def main():
     parser.add_argument("--cluster", default="eks-demo")
     parser.add_argument("--apply", action="store_true", help="Create missing SecureStrings; never overwrite")
     args = parser.parse_args()
-    env_path = Path(__file__).resolve().parent / "env" / f"{args.cluster}.yaml"
+    env_path = Path(__file__).resolve().parents[1] / "env" / f"{args.cluster}.yaml"
     env = yaml.safe_load(env_path.read_text())
     if env.get("env") != "eks" or env.get("cluster") != args.cluster:
         parser.error("Select an EKS cluster declared in env/<cluster>.yaml")

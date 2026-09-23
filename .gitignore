@@ -27,7 +27,7 @@ $RECYCLE.BIN/
 target/
 build/
 
-# Helm dependencies fetched by validate.py
+# Helm dependencies fetched by scripts/validate.py
 charts/*/charts/
 charts/*/Chart.lock
 

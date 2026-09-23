@@ -2,14 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import json
-import os
 import subprocess
-import sys
 
 import pytest
 import yaml
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import gitops
 
@@ -314,7 +310,7 @@ class TestDeploy:
         root, git, github = deployment_repo
         for key, value in env(TG_PHASE="prod", TG_AUTO_MERGE="false").items():
             monkeypatch.setenv(key, value)
-        monkeypatch.setattr(gitops, "__file__", str(root / "gitops.py"))
+        monkeypatch.setattr(gitops, "__file__", str(root / "scripts" / "gitops.py"))
 
         assert gitops.main(["deploy", "--auto-merge"]) == 0
 

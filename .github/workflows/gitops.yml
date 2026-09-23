@@ -30,7 +30,7 @@ jobs:
           python-version: "3.x"
 
       - name: Install dependencies 📦
-        run: pip install -r requirements.txt
+        run: pip install -r requirements/runtime.txt
 
       - name: GitOps 🚚
         env:
@@ -45,4 +45,4 @@ jobs:
           TG_TYPE: ${{ github.event.client_payload.type }}
           TG_AUTO_MERGE: ${{ github.event.client_payload.auto_merge }}
         run: |
-          bash ./gitops.sh
+          bash ./scripts/gitops.sh

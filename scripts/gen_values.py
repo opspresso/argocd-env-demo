@@ -67,6 +67,7 @@ def gen_values(t, reponame, platform=PLATFORM):
 def main():
     args = parse_args()
 
+    os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     gen_repos(args)
 
 

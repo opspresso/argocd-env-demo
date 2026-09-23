@@ -10,7 +10,7 @@ import subprocess
 import time
 import uuid
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 IMAGE = "docker:27.5.1-dind"
 FIXTURE = "alpine:3.21"
 SERVER = "python:3.14-alpine"
