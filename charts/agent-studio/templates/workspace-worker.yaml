@@ -26,7 +26,8 @@ spec:
     app.kubernetes.io/name: agent-studio-workspace-worker
     app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
-    - name: docker
+    # Docker exec hijacks HTTP with Upgrade: tcp; HTTP sniffing proxies reject it.
+    - name: tcp-docker
       port: 2375
       targetPort: 2375
 ---

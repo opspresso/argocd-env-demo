@@ -93,6 +93,18 @@ def test_eks_workers_have_resources_identity_and_registry_refresh():
     assert pvc["spec"]["storageClassName"] == "gp3"
 
 
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_docker_service_preserves_exec_upgrade_streams(platform):
+    service = resource("agent-studio", platform, "Service", "agent-studio-workspace-docker")
+    assert service["spec"]["type"] == "ClusterIP"
+    assert service["spec"]["ports"] == [{"name": "tcp-docker", "port": 2375, "targetPort": 2375}]
+    policy = resource("agent-studio", platform, "NetworkPolicy", "agent-studio-workspace-docker")["spec"]
+    assert policy["policyTypes"] == ["Ingress"]
+    assert policy["ingress"][0]["ports"] == [{"protocol": "TCP", "port": 2375}]
+    assert policy["ingress"][0]["from"][0]["podSelector"]["matchExpressions"][0]["values"] == [
+        "agent-studio", "agent-studio-workspace-worker"]
+
+
 @pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
 def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage):
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]

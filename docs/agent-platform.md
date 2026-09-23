@@ -67,6 +67,11 @@ link-local·메타데이터·다른 Sandbox·Pod 내부 Docker API 접근은 차
 비활성화한다. 이는 Docker의 [DOCKER-USER 방화벽 계약](https://docs.docker.com/engine/network/firewall-iptables/)을 따른다.
 내부 모델 endpoint를 사용할 설치는 해당 네트워크 정책을 별도로 설계해야 한다.
 
+Studio가 사용하는 Docker ClusterIP Service의 포트 이름은 `tcp-docker`다. Docker exec의
+`Upgrade: tcp` 스트림을 HTTP로 자동 감지하면 서비스 메시가 403으로 거절할 수 있으므로
+명시적인 TCP 전달을 사용한다. 네트워크 격리와 허용 Pod selector는 그대로 적용한다.
+`/_ping` 성공만으로 exec 경로를 검증하지 말고 테스트 Workspace에서 부작용 없는 명령도 확인한다.
+
 EKS의 Pod 간 NetworkPolicy는 addons의 `eks-network-policy-eks-demo`가 활성화한 관리형
 controller에 의존한다. NetworkPolicy 리소스가 존재하거나 Argo CD가 Healthy라는 사실만으로
 격리가 적용됐다고 판단하지 않는다. Studio → Docker API 허용과 다른 namespace → Docker API
