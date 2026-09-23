@@ -33,7 +33,7 @@ workspace_memory_mb: 1024
 workspace_disk_mb: 2048
 workspace_cpus: 1
 workspace_worker_concurrency: 1
-workspace_storage: 20Gi
+workspace_storage: 40Gi
 workspace_storage_class: gp3
 
 postgresql:
