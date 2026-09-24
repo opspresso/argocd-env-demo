@@ -59,13 +59,13 @@ app:
       RERANKER_MODEL: selfhosted/Qwen3-Reranker-0.6B
       RERANKER_MIN_SCORE: '0.01'
       LLM_PROVIDER_SELFHOSTED_BASE_URL: http://100.66.249.76:8000/v1
-      LLM_PROVIDER_SELFHOSTED_API_KEY: dummy-selfhosted-api-key
 {% else %}
       EMBEDDING_MODEL: openrouter/text-embedding-3-small
       EMBEDDING_DIM: native
       CATALOG_MIN_SCORE: '0.24'
       RERANKER_MODEL: openrouter/rerank-v3.5
       RERANKER_MIN_SCORE: '0.05'
+      LLM_PROVIDER_SELFHOSTED_BASE_URL: https://spark-0702.nyala-blenny.ts.net:8443/v1
 {% endif %}
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
@@ -131,6 +131,8 @@ app:
       name: LLM_PROVIDER_XAI_API_KEY
     - key: /k8s/common/agent-studio/llm-provider-openrouter-api-key
       name: LLM_PROVIDER_OPENROUTER_API_KEY
+    - key: /k8s/common/agent-studio/llm-provider-selfhosted-api-key
+      name: LLM_PROVIDER_SELFHOSTED_API_KEY
     - key: /k8s/common/agent-studio/aes-encryption-key
       name: AES_ENCRYPTION_KEY
     - key: /k8s/common/agent-studio/a2a-api-key
