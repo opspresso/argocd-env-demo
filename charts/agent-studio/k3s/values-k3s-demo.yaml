@@ -60,7 +60,7 @@ app:
       LLM_PROVIDER_SELFHOSTED_API_KEY: dummy-selfhosted-api-key
 
       CATALOG_MIN_SCORE: '0.25'
-      RERANKER_MIN_SCORE: '0.25'
+      RERANKER_MIN_SCORE: '0.01'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1

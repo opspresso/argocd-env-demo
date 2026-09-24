@@ -49,7 +49,7 @@ app:
       RERANKER_MODEL: openrouter/rerank-v3.5
 
       CATALOG_MIN_SCORE: '0.25'
-      RERANKER_MIN_SCORE: '0.25'
+      RERANKER_MIN_SCORE: '0.01'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
