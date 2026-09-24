@@ -44,9 +44,9 @@ app:
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       EMBEDDING_PROVIDER: openai
 
-      EMBEDDING_MODEL: openrouter/openai/text-embedding-3-small
+      EMBEDDING_MODEL: openrouter/text-embedding-3-small
       EMBEDDING_DIM: native
-      RERANKER_MODEL: openrouter/cohere/rerank-v3.5
+      RERANKER_MODEL: openrouter/rerank-v3.5
 
       CATALOG_MIN_SCORE: '0.25'
       RERANKER_MIN_SCORE: '0.25'

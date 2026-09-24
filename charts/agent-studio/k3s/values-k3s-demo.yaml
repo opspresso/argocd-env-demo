@@ -52,10 +52,10 @@ app:
       EMBEDDING_PROVIDER: openai
 
       EMBEDDING_BASE_URL: http://100.66.249.76:8001/v1
-      EMBEDDING_MODEL: selfhosted/Qwen/Qwen3-Embedding-4B
+      EMBEDDING_MODEL: selfhosted/Qwen3-Embedding-4B
       EMBEDDING_DIM: native
       RERANKER_BASE_URL: http://100.66.249.76:8002/v1
-      RERANKER_MODEL: selfhosted/Qwen/Qwen3-Reranker-0.6B
+      RERANKER_MODEL: selfhosted/Qwen3-Reranker-0.6B
       LLM_PROVIDER_SELFHOSTED_BASE_URL: http://100.66.249.76:8000/v1
       LLM_PROVIDER_SELFHOSTED_API_KEY: dummy-selfhosted-api-key
 
