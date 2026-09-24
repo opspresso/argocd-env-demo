@@ -44,11 +44,12 @@ app:
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       EMBEDDING_PROVIDER: openai
 
-      EMBEDDING_BASE_URL: https://api.openai.com/v1
-      EMBEDDING_MODEL: text-embedding-3-small
+      EMBEDDING_MODEL: openrouter/openai/text-embedding-3-small
       EMBEDDING_DIM: native
+      RERANKER_MODEL: openrouter/cohere/rerank-v3.5
 
-      CATALOG_MIN_SCORE: '0.25'
+      CATALOG_MIN_SCORE: '0.1'
+      RERANKER_MIN_SCORE: '0.1'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
