@@ -78,7 +78,7 @@ app:
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
-{%- if workspace_worker %}
+{% if workspace_worker %}
       DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
       WORKSPACE_NETWORK: {{workspace_network}}
       WORKSPACE_GITHUB_AUTH: token
@@ -88,7 +88,7 @@ app:
       WORKSPACE_DISK_MB: '{{workspace_disk_mb}}'
       WORKSPACE_CPUS: '{{workspace_cpus}}'
       WORKSPACE_WORKER_CONCURRENCY: '{{workspace_worker_concurrency}}'
-{%- endif %}
+{% endif %}
   routing:
     hosts:
     - {{agent_studio.hostname}}
