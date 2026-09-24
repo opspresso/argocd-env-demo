@@ -54,17 +54,19 @@ app:
       EMBEDDING_BASE_URL: http://100.66.249.76:8001/v1
       EMBEDDING_MODEL: selfhosted/Qwen3-Embedding-4B
       EMBEDDING_DIM: native
+      CATALOG_MIN_SCORE: '0.24'
       RERANKER_BASE_URL: http://100.66.249.76:8002/v1
       RERANKER_MODEL: selfhosted/Qwen3-Reranker-0.6B
+      RERANKER_MIN_SCORE: '0.01'
       LLM_PROVIDER_SELFHOSTED_BASE_URL: http://100.66.249.76:8000/v1
       LLM_PROVIDER_SELFHOSTED_API_KEY: dummy-selfhosted-api-key
 {% else %}
       EMBEDDING_MODEL: openrouter/text-embedding-3-small
       EMBEDDING_DIM: native
+      CATALOG_MIN_SCORE: '0.24'
       RERANKER_MODEL: openrouter/rerank-v3.5
+      RERANKER_MIN_SCORE: '0.05'
 {% endif %}
-      CATALOG_MIN_SCORE: '0.25'
-      RERANKER_MIN_SCORE: '0.01'
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
       LLM_PROVIDER_ANTHROPIC_BASE_URL: https://api.anthropic.com/v1
