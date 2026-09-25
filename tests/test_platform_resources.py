@@ -70,7 +70,8 @@ def test_workspace_docker_volume_has_only_one_owner_during_rollout():
     mount = next(mount for mount in docker["volumeMounts"] if mount["mountPath"] == "/var/lib/docker")
     volume = next(volume for volume in spec["template"]["spec"]["volumes"] if volume["name"] == mount["name"])
     assert volume["persistentVolumeClaim"]["claimName"] == "agent-studio-workspace-docker"
-    assert spec["replicas"] == 1
+    maintenance = yaml.safe_load((ROOT / "env/k3s-demo.yaml").read_text())["agent_studio_maintenance"]
+    assert spec["replicas"] == (0 if maintenance else 1)
     assert spec.get("strategy", {}).get("type") == "Recreate"
 
 

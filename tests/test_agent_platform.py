@@ -107,6 +107,7 @@ def test_docker_service_preserves_exec_upgrade_streams(platform):
 
 @pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
 def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage):
+    maintenance = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())["agent_studio_maintenance"]
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
     assert config["STAGE"] == stage
     assert config["WORKSPACE_GITHUB_AUTH"] == "token"
@@ -120,7 +121,7 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     assert script == (ROOT / "charts/agent-studio/files/workspace-network.sh").read_text()
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-health.cjs", "--heartbeat-only"]
     for cron in ["agent-studio-scan", "agent-studio-reindex"]:
-        assert resource("agent-studio", platform, "CronJob", cron)["spec"]["suspend"] is False
+        assert resource("agent-studio", platform, "CronJob", cron)["spec"]["suspend"] is maintenance
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])

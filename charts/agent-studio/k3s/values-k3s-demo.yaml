@@ -1,7 +1,7 @@
 app:
   fullnameOverride: agent-studio
 
-  replicaCount: 1
+  replicaCount: 0
   autoscaling:
     enabled: False
   image:
@@ -140,13 +140,13 @@ app:
       name: S3_SECRET_ACCESS_KEY
 
 scan:
-  suspend: False
+  suspend: True
 
   resources: null
 
 
 reindex:
-  suspend: False
+  suspend: True
 
   resources: null
 
@@ -155,12 +155,12 @@ reindex:
 
 audioWorker:
   enabled: true
-  replicas: 1
+  replicas: 0
 
 
 workspaceWorker:
   enabled: true
-  replicas: 1
+  replicas: 0
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
   memoryMb: 1024
