@@ -63,7 +63,7 @@ metadata:
     app.kubernetes.io/name: agent-studio-workspace-worker
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ if hasKey .Values.workspaceWorker "replicas" }}{{ .Values.workspaceWorker.replicas }}{{ else }}1{{ end }}
   # Only one Docker daemon may open the persistent data directory at a time.
   strategy:
     type: Recreate

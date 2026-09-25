@@ -10,6 +10,7 @@ role: k3s
 
 replicas: 1
 autoscaling: false
+agent_studio_maintenance: false
 resources: false
 
 audio_worker: true
