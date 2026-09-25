@@ -27,8 +27,9 @@ PostgreSQL은 pgvector가 포함된 이미지로 `agent_studio`와 `agent_memory
 초기화한다. 두 앱은 기존 배포 계약에 따라 `agent_studio` 사용자를 공유한다.
 Agent Studio의 DB 전환 중에는 대상 `env/<cluster>.yaml`의 `agent_studio_maintenance: true`를
 GitOps에 반영한다. 이 설정은 Studio 앱·오디오/Workspace worker를 0개로 내리고 두 CronJob을
-중지하지만 PostgreSQL·Agent Memory는 유지한다. 모든 Pod와 실행 중인 Job이 끝난 것을
-확인한 뒤 백업·복원을 진행한다. 새 DB와 이미지 검증 뒤 `false`로 되돌려 기동한다.
+중지하지만 PostgreSQL·Agent Memory는 유지한다. Studio 앱·오디오/Workspace worker Pod가
+모두 종료되고 이미 시작된 scan/reindex Job이 끝난 것을 확인한 뒤 백업·복원을 진행한다.
+새 DB와 이미지 검증 뒤 `false`로 되돌려 기동한다.
 `postgres-bootstrap` Sync hook은 두 database에 vector extension을 활성화한다.
 Studio와 Memory는 자기 이미지가 제공하는 시작 절차로 빈 DB를 초기화한다.
 Memory의 기존 schema fingerprint가 다르면 시작을 거부하며 자동으로 데이터를 초기화하지 않는다.
