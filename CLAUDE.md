@@ -116,6 +116,9 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `resources`·`autoscaling`은 YAML boolean이어야 한다.
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
   `app.autoscaling.enabled`의 원천이다. k3s·local은 각각 `1`, `false`를 사용한다.
+- `agent_studio_maintenance`는 Agent Studio만 위한 boolean이다. `true`이면 해당 클러스터의
+  앱·오디오/Workspace worker를 0개로 내리고 HPA를 끄며 scan/reindex CronJob을 중지한다.
+  PostgreSQL과 Agent Memory는 건드리지 않는다. 기본값은 `false`다.
 - `metrics.backend` 는 ServiceMonitor 라벨의 원천이다. k3s는 `victoria-metrics`, EKS는
   `prometheus`를 사용한다.
 - `resources` 는 workload의 requests/limits 사용 여부를 제어하는 env 원천값이다.

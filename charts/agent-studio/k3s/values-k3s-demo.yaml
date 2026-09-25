@@ -139,12 +139,15 @@ app:
     - key: /k8s/k3s-demo/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 
-
-
 scan:
+  suspend: False
+
   resources: null
 
+
 reindex:
+  suspend: False
+
   resources: null
 
 
@@ -152,10 +155,12 @@ reindex:
 
 audioWorker:
   enabled: true
+  replicas: 1
 
 
 workspaceWorker:
   enabled: true
+  replicas: 1
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
   memoryMb: 1024

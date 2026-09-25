@@ -127,16 +127,24 @@ app:
     - key: /k8s/common/agent-studio/llm-provider-openai-api-key
       name: EMBEDDING_API_KEY
 
+scan:
+  suspend: False
+
+
+reindex:
+  suspend: False
 
 
 
 
 audioWorker:
   enabled: true
+  replicas: 1
 
 
 workspaceWorker:
   enabled: true
+  replicas: 1
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
   memoryMb: 1024

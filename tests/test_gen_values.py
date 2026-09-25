@@ -49,6 +49,7 @@ def test_missing_template_fails(project):
     "env: eks\nreplicas: 2\n",
     "env: typo\ncluster: eks-demo\nreplicas: 2\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nresources: 'false'\n",
+    "env: eks\ncluster: eks-demo\nreplicas: 2\nagent_studio_maintenance: 'false'\n",
     "[]\n",
 ])
 def test_rejects_invalid_cluster_identity(project, body):
