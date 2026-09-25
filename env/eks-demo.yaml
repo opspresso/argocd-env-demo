@@ -9,7 +9,7 @@ role: mgmt
 
 replicas: 1
 autoscaling: true
-agent_studio_maintenance: false
+agent_studio_maintenance: true
 resources: true
 
 aws_account_id: "396608815058"

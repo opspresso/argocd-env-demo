@@ -1,9 +1,9 @@
 app:
   fullnameOverride: agent-studio
 
-  replicaCount: 1
+  replicaCount: 0
   autoscaling:
-    enabled: True
+    enabled: False
   image:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
 
@@ -128,23 +128,23 @@ app:
       name: EMBEDDING_API_KEY
 
 scan:
-  suspend: False
+  suspend: True
 
 
 reindex:
-  suspend: False
+  suspend: True
 
 
 
 
 audioWorker:
   enabled: true
-  replicas: 1
+  replicas: 0
 
 
 workspaceWorker:
   enabled: true
-  replicas: 1
+  replicas: 0
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
   memoryMb: 1024
