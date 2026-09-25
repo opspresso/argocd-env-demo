@@ -160,6 +160,9 @@ app:
 scan:
   fullnameOverride: agent-studio-scan
   suspend: false
+  # On maintenance resume, run at most the most recent missed minute. The
+  # server's 10-minute schedule catch-up window is evaluated by that one tick.
+  startingDeadlineSeconds: 60
 
   # Once a minute, matching the app's fixed 10-minute catch-up window: a few
   # missed ticks lose nothing, and an outage longer than the window is bounded
@@ -222,6 +225,8 @@ scan:
 reindex:
   fullnameOverride: agent-studio-reindex
   suspend: false
+  # An hourly rebuild needs at most one late start after maintenance.
+  startingDeadlineSeconds: 3600
 
   schedule: "12 * * * *"
 

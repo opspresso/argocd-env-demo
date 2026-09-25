@@ -44,3 +44,5 @@ def test_maintenance_stops_studio_writers_without_removing_dependencies(platform
     cronjobs = {doc["metadata"]["name"]: doc for doc in docs if doc["kind"] == "CronJob"}
     for name in ["agent-studio-scan", "agent-studio-reindex"]:
         assert cronjobs[name]["spec"]["suspend"] is True
+    assert cronjobs["agent-studio-scan"]["spec"]["startingDeadlineSeconds"] == 60
+    assert cronjobs["agent-studio-reindex"]["spec"]["startingDeadlineSeconds"] == 3600
