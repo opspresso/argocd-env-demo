@@ -35,7 +35,7 @@ app:
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://studio.opspresso.com
-      PUBLIC_BASE_URL: https://studio.opspresso.com
+      # PUBLIC_BASE_URL: https://studio.opspresso.com
       S3_BUCKET_NAME: agent-studio-static
 
       ARTIFACT_ACCESS_MODE: proxied

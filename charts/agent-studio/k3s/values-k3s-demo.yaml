@@ -40,7 +40,7 @@ app:
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://studio.opsp.dev
-      PUBLIC_BASE_URL: https://studio.opsp.dev
+      # PUBLIC_BASE_URL: https://studio.opsp.dev
       S3_BUCKET_NAME: agent-studio-static
 
       S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
