@@ -41,7 +41,7 @@ app:
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: {{aws_region}}
       BETTER_AUTH_URL: https://{{agent_studio.hostname}}
-      PUBLIC_BASE_URL: https://{{agent_studio.hostname}}
+      # PUBLIC_BASE_URL: https://{{agent_studio.hostname}}
       S3_BUCKET_NAME: agent-studio-static
 {% if env == 'k3s' %}
       S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
