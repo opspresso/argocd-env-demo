@@ -31,6 +31,9 @@ hostname:
 
 agent_studio:
   hostname: studio.opsp.dev
+  allowed_hosts:
+    - studio.opsp.dev
+    - studio.agrt.dev
 
 agent_memory:
   hostname: memory.opsp.dev
