@@ -34,9 +34,9 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://studio.opspresso.com
+      BETTER_AUTH_URL: https://agentops.demo.clush.net
       BETTER_AUTH_ALLOWED_HOSTS: 'studio.opspresso.com,agentops.demo.clush.net'
-      # PUBLIC_BASE_URL: https://studio.opspresso.com
+      # PUBLIC_BASE_URL: https://agentops.demo.clush.net
       S3_BUCKET_NAME: agent-studio-static
 
       ARTIFACT_ACCESS_MODE: proxied
@@ -86,7 +86,7 @@ app:
     sidecar.istio.io/inject: "true"
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://studio.opspresso.com
+    link.argocd.argoproj.io/external-link: https://agentops.demo.clush.net
 
   serviceMonitor:
     labels:
