@@ -29,7 +29,7 @@ app:
     enabled: true
     data:
       STAGE: 'prod'
-      SERVICE_NAME: 'AgentOps'
+      SERVICE_NAME: 'Axleon AgentOps'
       SERVICE_LOGO: 'agentops'
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
@@ -95,11 +95,11 @@ app:
   externalSecrets:
     enabled: true
     data:
-    - key: /k8s/common/agent-studio/better-auth-secret
+    - key: /k8s/common/agentops/better-auth-secret
       name: BETTER_AUTH_SECRET
-    - key: /k8s/common/agent-studio/google-client-id
+    - key: /k8s/common/agentops/google-client-id
       name: GOOGLE_CLIENT_ID
-    - key: /k8s/common/agent-studio/google-client-secret
+    - key: /k8s/common/agentops/google-client-secret
       name: GOOGLE_CLIENT_SECRET
     - key: /k8s/common/agent-studio/llm-api-key
       name: LLM_API_KEY
