@@ -22,6 +22,9 @@ hostname:
 
 agent_studio:
   hostname: studio.opspresso.com
+  allowed_hosts:
+    - studio.opspresso.com
+    - agentops.demo.clush.net
 
 agent_memory:
   hostname: memory.opspresso.com

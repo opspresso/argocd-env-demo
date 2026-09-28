@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 용도 | c6i.xlarge 단일 노드 테스트 | requests/limits·HPA·PDB를 적용하는 환경 |
 | Phase | `alpha` | `prod` |
-| Studio | `studio.opsp.dev` | `studio.opspresso.com` |
+| Studio | `studio.opsp.dev` | `studio.opspresso.com`, `agentops.demo.clush.net` |
 | Memory | `memory.opsp.dev` | `memory.opspresso.com` |
 | PostgreSQL | `agent-studio/postgres`, 5Gi | 같은 서비스, 20Gi gp3 |
 | Neo4j | `agent-memory/memory-neo4j`, 5Gi | 같은 서비스, 20Gi 기본 StorageClass(gp3) |
@@ -20,6 +20,11 @@
 k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
 `*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
 `https://<hostname>/api/auth/callback/google` redirect URI를 등록해야 한다.
+
+Studio의 `agent_studio.allowed_hosts`는 정확한 호스트 목록이며, 생략하면 `agent_studio.hostname`만 사용한다.
+이 목록으로 `BETTER_AUTH_ALLOWED_HOSTS`와 HTTPRoute의 호스트를 함께 생성한다.
+`BETTER_AUTH_URL`은 기본 도메인의 HTTPS origin을 유지하고, 프록시는 원래 `Host`를 전달해야 한다.
+추가 도메인의 DNS·TLS 인증서·Gateway 연결은 인프라 저장소에서 구성한다.
 
 ## 연결과 권한
 
