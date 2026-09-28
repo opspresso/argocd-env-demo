@@ -21,7 +21,7 @@ hostname:
   this: demo-0.opspresso.com
 
 agent_studio:
-  hostname: studio.opspresso.com
+  hostname: agentops.demo.clush.net
   allowed_hosts:
     - studio.opspresso.com
     - agentops.demo.clush.net
