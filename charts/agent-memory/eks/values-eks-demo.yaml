@@ -25,15 +25,16 @@ app:
       S3_FORCE_PATH_STYLE: 'false'
 
       EMBEDDING_BASE_URL: https://openrouter.ai/api/v1
-      EMBEDDING_MODEL: openai/text-embedding-3-small
+      EMBEDDING_MODEL: openrouter/text-embedding-3-small
+      EMBEDDING_MIN_SCORE: '0.24'
       RERANKER_BASE_URL: https://openrouter.ai/api/v1
-      RERANKER_MODEL: voyageai/rerank-2.5-lite
+      RERANKER_MODEL: openrouter/rerank-v3.5
       RERANKER_TIMEOUT_MS: '5000'
-      RERANKER_MIN_SCORE: '0.35'
+      RERANKER_MIN_SCORE: '0.05'
       DOCUMENT_WORKER_ENABLED: 'true'
-
       KNOWLEDGE_EXTRACTION_BASE_URL: https://openrouter.ai/api/v1
-      KNOWLEDGE_EXTRACTION_MODEL: openai/gpt-4.1-mini
+      KNOWLEDGE_EXTRACTION_MODEL: openrouter/gpt-6-luna
+
       KNOWLEDGE_ENRICHMENT_CONCURRENCY: '4'
 
   routing:
