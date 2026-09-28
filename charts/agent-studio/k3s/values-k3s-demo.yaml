@@ -40,7 +40,7 @@ app:
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
       BETTER_AUTH_URL: https://studio.opsp.dev
-      BETTER_AUTH_ALLOWED_HOSTS: 'studio.opsp.dev'
+      BETTER_AUTH_ALLOWED_HOSTS: 'studio.opsp.dev,studio.agrt.dev'
       # PUBLIC_BASE_URL: https://studio.opsp.dev
       S3_BUCKET_NAME: agent-studio-static
 
@@ -86,6 +86,7 @@ app:
   routing:
     hosts:
     - studio.opsp.dev
+    - studio.agrt.dev
     httpRoute:
       enabled: true
 
