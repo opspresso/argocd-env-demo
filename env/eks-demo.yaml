@@ -21,6 +21,10 @@ hostname:
   this: demo-0.opspresso.com
 
 agent_studio:
+  service:
+    key: agentops
+    name: 'Axleon AgentOps'
+    logo: agentops
   hostname: agentops.demo.clush.net
   allowed_hosts:
     - studio.opspresso.com

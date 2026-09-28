@@ -30,6 +30,10 @@ hostname:
   public: demo.opsp.dev
 
 agent_studio:
+  service:
+    key: agentops
+    name: 'Axleon AgentOps'
+    logo: agentops
   hostname: studio.opsp.dev
   allowed_hosts:
     - studio.opsp.dev

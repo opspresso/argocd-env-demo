@@ -38,8 +38,8 @@ app:
     enabled: true
     data:
       STAGE: '{{phase}}'
-      SERVICE_NAME: 'AgentOps'
-      SERVICE_LOGO: 'agentops'
+      SERVICE_NAME: '{{agent_studio.service.name}}'
+      SERVICE_LOGO: '{{agent_studio.service.logo}}'
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: {{aws_region}}
@@ -120,11 +120,11 @@ app:
   externalSecrets:
     enabled: true
     data:
-    - key: /k8s/common/agent-studio/better-auth-secret
+    - key: /k8s/common/{{agent_studio.service.key}}/better-auth-secret
       name: BETTER_AUTH_SECRET
-    - key: /k8s/common/agent-studio/google-client-id
+    - key: /k8s/common/{{agent_studio.service.key}}/google-client-id
       name: GOOGLE_CLIENT_ID
-    - key: /k8s/common/agent-studio/google-client-secret
+    - key: /k8s/common/{{agent_studio.service.key}}/google-client-secret
       name: GOOGLE_CLIENT_SECRET
     - key: /k8s/common/agent-studio/llm-api-key
       name: LLM_API_KEY
