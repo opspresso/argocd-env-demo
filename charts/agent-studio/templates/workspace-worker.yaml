@@ -65,6 +65,7 @@ metadata:
 spec:
   replicas: {{ if hasKey .Values.workspaceWorker "replicas" }}{{ .Values.workspaceWorker.replicas }}{{ else }}1{{ end }}
   # Only one Docker daemon may open the persistent data directory at a time.
+  revisionHistoryLimit: 3
   strategy:
     type: Recreate
   selector:

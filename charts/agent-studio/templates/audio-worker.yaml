@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ if hasKey .Values.audioWorker "replicas" }}{{ .Values.audioWorker.replicas }}{{ else }}1{{ end }}
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app.kubernetes.io/name: agent-studio-audio-worker
