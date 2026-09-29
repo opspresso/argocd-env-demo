@@ -81,6 +81,7 @@ app:
       LLM_PROVIDER_SELFHOSTED_BASE_URL: https://spark-0702.nyala-blenny.ts.net:8443/v1
 {% endif %}
       MAX_RUN_DURATION_MS: '600000'
+      MAX_CONCURRENT_RUNS_PER_ACTOR: '60'
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
