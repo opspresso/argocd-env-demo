@@ -58,13 +58,13 @@ app:
 {% if env == 'k3s' %}
       EMBEDDING_MODEL: selfhosted/Qwen3-Embedding-4B
       EMBEDDING_DIM: native
-      CATALOG_MIN_SCORE: '0.24'
+      CATALOG_MIN_SCORE: '0.2'
       RERANKER_MODEL: selfhosted/Qwen3-Reranker-0.6B
       RERANKER_MIN_SCORE: '0.01'
 {% else %}
       EMBEDDING_MODEL: openrouter/text-embedding-3-small
       EMBEDDING_DIM: native
-      CATALOG_MIN_SCORE: '0.24'
+      CATALOG_MIN_SCORE: '0.2'
       RERANKER_MODEL: openrouter/rerank-v3.5
       RERANKER_MIN_SCORE: '0.05'
 {% endif %}
