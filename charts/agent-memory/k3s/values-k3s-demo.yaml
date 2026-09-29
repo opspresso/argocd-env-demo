@@ -32,7 +32,7 @@ app:
 
       EMBEDDING_BASE_URL: https://openrouter.ai/api/v1
       EMBEDDING_MODEL: openai/text-embedding-3-small
-      EMBEDDING_MIN_SCORE: '0.24'
+      EMBEDDING_MIN_SCORE: '0.2'
       RERANKER_BASE_URL: https://openrouter.ai/api/v1
       RERANKER_MODEL: cohere/rerank-v3.5
       RERANKER_TIMEOUT_MS: '5000'
