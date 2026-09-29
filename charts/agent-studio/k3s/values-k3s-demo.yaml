@@ -52,14 +52,11 @@ app:
       TRUSTED_PROXY_CIDRS: 10.10.0.0/16
       EMBEDDING_PROVIDER: openai
 
-      EMBEDDING_BASE_URL: http://100.66.249.76:8001/v1
       EMBEDDING_MODEL: selfhosted/Qwen3-Embedding-4B
       EMBEDDING_DIM: native
       CATALOG_MIN_SCORE: '0.24'
-      RERANKER_BASE_URL: http://100.66.249.76:8002/v1
       RERANKER_MODEL: selfhosted/Qwen3-Reranker-0.6B
       RERANKER_MIN_SCORE: '0.01'
-      LLM_PROVIDER_SELFHOSTED_BASE_URL: http://100.66.249.76:8000/v1
 
       LLM_BASE_URL: https://api.openai.com/v1
       UNKNOWN_MODEL_POLICY: allow
@@ -68,6 +65,7 @@ app:
       LLM_PROVIDER_GOOGLE_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
       LLM_PROVIDER_XAI_BASE_URL: https://api.x.ai/v1
       LLM_PROVIDER_OPENROUTER_BASE_URL: https://openrouter.ai/api/v1
+      LLM_PROVIDER_SELFHOSTED_BASE_URL: https://llm.nyala-blenny.ts.net/v1
       MAX_RUN_DURATION_MS: '600000'
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
       PLUGINS_REPO: opspresso/agent-plugins
