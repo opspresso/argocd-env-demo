@@ -115,15 +115,19 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
     pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker")["spec"]["template"]["spec"]
     sandbox_config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]
-    assert sandbox_config["WORKSPACE_PROVIDER"] == "kubernetes"
-    assert sandbox_config["WORKSPACE_NAMESPACE"] == "agent-studio-workspaces"
-    assert sandbox_config["WORKSPACE_LEGACY_DOCKER"] == "true"
-    assert len(pod["containers"]) == 1
-    worker = pod["containers"][0]
-    assert worker["command"] == ["node", "build/workspace-worker.cjs"]
-    assert pod["automountServiceAccountToken"] is True
-    assert not pod.get("volumes")
-    docker = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-docker")["spec"]["template"]["spec"]["containers"][0]
+    if sandbox_config["WORKSPACE_PROVIDER"] == "kubernetes":
+        assert sandbox_config["WORKSPACE_NAMESPACE"] == "agent-studio-workspaces"
+        assert sandbox_config["WORKSPACE_LEGACY_DOCKER"] == "true"
+        assert len(pod["containers"]) == 1
+        worker = pod["containers"][0]
+        assert worker["command"] == ["node", "build/workspace-worker.cjs"]
+        assert pod["automountServiceAccountToken"] is True
+        assert not pod.get("volumes")
+        docker = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-docker")["spec"]["template"]["spec"]["containers"][0]
+    else:
+        assert sandbox_config["WORKSPACE_PROVIDER"] == "docker"
+        worker, docker = pod["containers"]
+        assert pod["automountServiceAccountToken"] is False
     assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
     assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
     script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]

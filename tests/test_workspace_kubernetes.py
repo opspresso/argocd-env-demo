@@ -13,7 +13,7 @@ def render(platform, *overrides):
     phase = "prod" if platform == "eks" else "alpha"
     result = subprocess.run(["helm", "template", "agent-studio", str(chart), "--namespace", "agent-studio",
                              "-f", str(chart / "values.yaml"), "-f", str(chart / f"values-{phase}.yaml"),
-                             "-f", str(chart / platform / f"values-{platform}-demo.yaml"), *overrides],
+                             "-f", str(chart / platform / f"values-{platform}-demo.yaml"), "--set", "workspaceWorker.backend=kubernetes", *overrides],
                             capture_output=True, text=True, check=True)
     return [item for item in yaml.safe_load_all(result.stdout) if item]
 
