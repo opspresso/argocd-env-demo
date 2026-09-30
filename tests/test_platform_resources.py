@@ -64,7 +64,7 @@ def test_workspace_docker_volume_has_only_one_owner_during_rollout():
     result = render("charts/agent-studio", ["values.yaml", "values-alpha.yaml", "k3s/values-k3s-demo.yaml"])
     assert result.returncode == 0, result.stderr
     documents = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    worker = next(doc for doc in documents if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "agent-studio-workspace-worker")
+    worker = next(doc for doc in documents if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "agent-studio-workspace-docker")
     spec = worker["spec"]
     docker = next(container for container in spec["template"]["spec"]["containers"] if container["name"] == "docker")
     mount = next(mount for mount in docker["volumeMounts"] if mount["mountPath"] == "/var/lib/docker")

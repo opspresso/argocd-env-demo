@@ -1,8 +1,9 @@
-{{- if and .Values.workspaceWorker.enabled .Values.workspaceWorker.registry.enabled }}
+{{- if and .Values.workspaceWorker.enabled (eq .Values.workspaceWorker.backend "kubernetes") }}
 apiVersion: generators.external-secrets.io/v1alpha1
 kind: ECRAuthorizationToken
 metadata:
-  name: agent-studio-workspace-ecr
+  name: agent-studio-sandbox-ecr
+  namespace: {{ .Values.workspaceWorker.kubernetes.namespace }}
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
@@ -13,6 +14,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: ecr-registry
+  namespace: {{ .Values.workspaceWorker.kubernetes.namespace }}
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
@@ -30,5 +32,5 @@ spec:
         generatorRef:
           apiVersion: generators.external-secrets.io/v1alpha1
           kind: ECRAuthorizationToken
-          name: agent-studio-workspace-ecr
+          name: agent-studio-sandbox-ecr
 {{- end }}

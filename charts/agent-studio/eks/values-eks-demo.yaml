@@ -12,6 +12,7 @@ app:
     enabled: true
     names:
       - agent-studio-workspace
+
   extraVolumes:
     - name: ecr-config
       secret:
@@ -23,6 +24,7 @@ app:
     - name: ecr-config
       mountPath: /home/app/.docker
       readOnly: true
+
 
 
   configmap:
@@ -146,6 +148,17 @@ audioWorker:
 
 workspaceWorker:
   enabled: true
+  backend: docker
+  legacyDocker:
+    enabled: True
+  kubernetes:
+    namespace: agent-studio-workspaces
+    nodePool: workspaces
+    maxPods: 8
+    dnsCidrs:
+      - 172.20.0.10/32
+    allowPublic: True
+    extraEgress: []
   replicas: 1
   dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
   workerConcurrency: 1
@@ -155,7 +168,6 @@ workspaceWorker:
   persistence:
     size: 40Gi
     storageClass: gp3
-
   registry:
-    enabled: true
+    enabled: True
     region: ap-northeast-2

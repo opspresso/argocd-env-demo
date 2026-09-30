@@ -6,5 +6,15 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 data:
+  WORKSPACE_PROVIDER: {{ .Values.workspaceWorker.backend | quote }}
+{{- if eq .Values.workspaceWorker.backend "kubernetes" }}
+  WORKSPACE_NAMESPACE: {{ .Values.workspaceWorker.kubernetes.namespace | quote }}
+  WORKSPACE_INSTANCE: {{ .Release.Name | quote }}
+  WORKSPACE_LEGACY_DOCKER: {{ .Values.workspaceWorker.legacyDocker.enabled | quote }}
+  WORKSPACE_IMAGE_PULL_SECRET: ecr-registry
+{{- if .Values.workspaceWorker.kubernetes.nodePool }}
+  WORKSPACE_NODE_POOL: {{ .Values.workspaceWorker.kubernetes.nodePool | quote }}
+{{- end }}
+{{- end }}
   WORKSPACE_IMAGE: {{ printf "%s:workspace-%s" .Values.app.image.repository .Values.app.image.tag | quote }}
 {{- end }}

@@ -19,6 +19,7 @@ app:
     enabled: true
     names:
       - agent-studio-workspace
+{% if workspace_backend | default("docker") == "docker" %}
   extraVolumes:
     - name: ecr-config
       secret:
@@ -30,6 +31,7 @@ app:
     - name: ecr-config
       mountPath: /home/app/.docker
       readOnly: true
+{% endif %}
 {% endif %}
 {% if not resources %}
   resources: null
@@ -179,6 +181,17 @@ audioWorker:
 {% if workspace_worker %}
 workspaceWorker:
   enabled: true
+  backend: {{workspace_backend | default('docker')}}
+  legacyDocker:
+    enabled: {{workspace_legacy_docker | default(true)}}
+  kubernetes:
+    namespace: agent-studio-workspaces
+    nodePool: {{ 'workspaces' if env == 'eks' else '""' }}
+    maxPods: {{workspace_max_pods | default(8)}}
+    dnsCidrs:
+      - {{ '172.20.0.10/32' if env == 'eks' else '10.43.0.10/32' }}
+    allowPublic: {{workspace_allow_public | default(true)}}
+    extraEgress: {{workspace_extra_egress | default([]) | tojson}}
   replicas: {{0 if maintenance else 1}}
   dockerImage: {{workspace_docker_image}}
   workerConcurrency: {{workspace_worker_concurrency}}
@@ -188,11 +201,9 @@ workspaceWorker:
   persistence:
     size: {{workspace_storage | default('10Gi')}}
     storageClass: {{workspace_storage_class | default('local-path')}}
-{% if env == 'eks' %}
   registry:
-    enabled: true
+    enabled: {{env == 'eks'}}
     region: {{aws_region}}
-{%- endif %}
 {%- endif %}
 {%- endif %}
 {%- endif %}

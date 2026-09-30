@@ -276,6 +276,17 @@ audioWorker:
 
 workspaceWorker:
   enabled: false
+  backend: docker
+  # Keep the old PVC/daemon until an operator approves retirement after cutover.
+  legacyDocker:
+    enabled: true
+  kubernetes:
+    namespace: agent-studio-workspaces
+    nodePool: ""
+    maxPods: 8
+    dnsCidrs: []
+    allowPublic: true
+    extraEgress: []
   registry:
     enabled: false
   persistence:
