@@ -13,6 +13,18 @@ app:
     names:
       - agent-studio-workspace
 
+  extraVolumes:
+    - name: ecr-config
+      secret:
+        secretName: ecr-registry
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+  extraVolumeMounts:
+    - name: ecr-config
+      mountPath: /home/app/.docker
+      readOnly: true
+
 
 
   configmap:
@@ -136,7 +148,7 @@ audioWorker:
 
 workspaceWorker:
   enabled: true
-  backend: kubernetes
+  backend: docker
   legacyDocker:
     enabled: True
   kubernetes:
