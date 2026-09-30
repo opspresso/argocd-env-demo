@@ -25,3 +25,26 @@ neo4jdb:
   services:
     neo4j:
       enabled: false
+
+raw:
+  templates:
+    - |
+        {{- $ssmPrefix := required "ssmPrefix is required; include <platform>/values-<cluster>.yaml" .Values.global.ssmPrefix -}}
+        apiVersion: external-secrets.io/v1
+        kind: ExternalSecret
+        metadata:
+          name: memory-neo4j-auth
+          annotations:
+            argocd.argoproj.io/sync-wave: "-1"
+        spec:
+          refreshInterval: 1h
+          secretStoreRef:
+            kind: ClusterSecretStore
+            name: parameter-store
+          target:
+            name: memory-neo4j-auth
+            creationPolicy: Owner
+          data:
+            - secretKey: NEO4J_AUTH
+              remoteRef:
+                key: {{ $ssmPrefix }}/agent-memory/neo4j-auth

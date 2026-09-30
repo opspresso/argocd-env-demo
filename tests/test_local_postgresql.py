@@ -39,11 +39,21 @@ def test_bootstrap_connects_as_the_user_created_by_the_image(manifests):
 
 
 def test_official_entrypoint_owns_empty_volume_initialization(manifests):
+    statefulset = manifests["StatefulSet"]
+    assert statefulset["metadata"]["name"] == "postgres"
+    assert statefulset["spec"]["serviceName"] == "postgres-hl"
+    assert statefulset["spec"]["selector"]["matchLabels"] == {
+        "app.kubernetes.io/name": "postgresql",
+        "app.kubernetes.io/instance": "postgresql-test",
+        "app.kubernetes.io/component": "primary",
+    }
+    assert statefulset["spec"]["volumeClaimTemplates"][0]["metadata"]["name"] == "data"
     pod = manifests["StatefulSet"]["spec"]["template"]["spec"]
     assert not pod.get("initContainers")
     container = pod["containers"][0]
     assert "command" not in container
     assert next(env["value"] for env in container["env"] if env["name"] == "PGDATA") == "/var/lib/postgresql/data"
+    assert next(mount["mountPath"] for mount in container["volumeMounts"] if mount["name"] == "data") == "/var/lib/postgresql"
     for probe in ["readinessProbe", "livenessProbe"]:
         command = container[probe]["exec"]["command"][-1]
         assert '"${POSTGRES_USER}"' in command

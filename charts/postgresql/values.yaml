@@ -1,23 +1,69 @@
 externalSecrets:
   enabled: true
 
+global:
+  security:
+    allowInsecureImages: true
+  postgresql:
+    auth:
+      username: agent_studio
+      database: agent_studio
+      existingSecret: postgresql-credentials
+      secretKeys:
+        adminPasswordKey: postgres-password
+        userPasswordKey: password
+
 postgresql:
   fullnameOverride: postgres
 
   image:
+    registry: docker.io
     repository: pgvector/pgvector
     tag: 0.8.6-pg18-trixie
     pullPolicy: IfNotPresent
 
+  # pgvector uses the Docker Official PostgreSQL entrypoint, not Bitnami's.
   auth:
-    username: agent_studio
-    database: agent_studio
-    existingSecret: postgresql-credentials
-    secretKeys:
-      adminPasswordKey: postgres-password
-      userPasswordKey: password
+    usePasswordFiles: false
+    enablePostgresUser: false
+  postgresqlDataDir: /var/lib/postgresql/data
+  serviceAccount:
+    create: false
+    name: default
+  volumePermissions:
+    enabled: false
+  shmVolume:
+    enabled: false
 
   primary:
+    terminationGracePeriodSeconds: 60
+    automountServiceAccountToken: true
+    podSecurityContext:
+      fsGroup: 999
+    containerSecurityContext:
+      enabled: false
+    resourcesPreset: none
+    pdb:
+      create: false
+    networkPolicy:
+      enabled: false
+    extraEnvVars:
+      - name: POSTGRES_DB
+        value: '{{ include "postgresql.v1.database" . }}'
+    customReadinessProbe:
+      exec:
+        command: [sh, -ec, 'pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -h 127.0.0.1 -p 5432']
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 6
+    customLivenessProbe:
+      exec:
+        command: [sh, -ec, 'pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -h 127.0.0.1 -p 5432']
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 6
     initdb:
       scripts:
         00-agent-memory.sql: |
@@ -25,6 +71,8 @@ postgresql:
           WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'agent_memory')\gexec
 
     persistence:
+      mountPath: /var/lib/postgresql
+      volumeName: data
       enabled: true
       size: 5Gi
     resources:
@@ -34,3 +82,80 @@ postgresql:
       limits:
         cpu: 1000m
         memory: 1Gi
+
+raw:
+  templates:
+    - |
+        {{- $ssmPrefix := required "ssmPrefix is required; include <platform>/values-<cluster>.yaml" .Values.global.ssmPrefix -}}
+        apiVersion: external-secrets.io/v1
+        kind: ExternalSecret
+        metadata:
+          name: postgresql-credentials
+          annotations:
+            argocd.argoproj.io/sync-wave: "-1"
+        spec:
+          refreshInterval: 1h
+          secretStoreRef:
+            kind: ClusterSecretStore
+            name: parameter-store
+          target:
+            name: postgresql-credentials
+            creationPolicy: Owner
+          data:
+            - secretKey: postgres-password
+              remoteRef:
+                key: {{ $ssmPrefix }}/agent-studio/postgres-password
+            - secretKey: password
+              remoteRef:
+                key: {{ $ssmPrefix }}/agent-studio/postgres-password
+
+# A pinned PostgreSQL client runs the idempotent server-side extension setup.
+bootstrap:
+  enabled: true
+  image:
+    repository: pgvector/pgvector
+    tag: 0.8.6-pg18-trixie
+  jobResources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  templates:
+    - |
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: postgres-bootstrap
+          annotations:
+            argocd.argoproj.io/hook: Sync
+            argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+            argocd.argoproj.io/sync-wave: "1"
+        spec:
+          backoffLimit: 12
+          template:
+            spec:
+              restartPolicy: OnFailure
+              containers:
+                - name: bootstrap
+                  image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        {{- with .Values.jobResources }}
+                  resources:
+        {{ toYaml . | nindent 12 }}
+        {{- end }}
+                  env:
+                    - name: PGPASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: {{ .Values.global.postgresql.auth.existingSecret }}
+                          key: {{ .Values.global.postgresql.auth.secretKeys.adminPasswordKey }}
+                  command:
+                    - sh
+                    - -ec
+                    - |
+                      until pg_isready -h postgres -U {{ .Values.global.postgresql.auth.username }} -d postgres; do sleep 2; done
+                      for database in agent_studio agent_memory; do
+                        psql -h postgres -U {{ .Values.global.postgresql.auth.username }} -d "${database}" -v ON_ERROR_STOP=1 \
+                          -c "CREATE EXTENSION IF NOT EXISTS vector;"
+                      done

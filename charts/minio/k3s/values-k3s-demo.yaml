@@ -1,4 +1,5 @@
-ssmPrefix: /k8s/k3s-demo
+global:
+  ssmPrefix: /k8s/k3s-demo
 
 minio:
 

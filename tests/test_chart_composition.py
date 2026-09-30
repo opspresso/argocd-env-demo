@@ -29,8 +29,8 @@ def render(chart, platform="k3s", *settings):
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
 @pytest.mark.parametrize("backend", ["docker", "kubernetes"])
 def test_workers_keep_selectors_images_and_env_precedence(platform, backend):
-    docs = render("agent-studio", platform, f"workspaceWorker.backend={backend}",
-                  "app.image.tag=v9.8.7", "audioWorker.replicas=2")
+    docs = render("agent-studio", platform, f"app.workloads.workspaceWorker.backend={backend}",
+                  "app.image.tag=v9.8.7", "app.workloads.audioWorker.replicas=2")
     deployments = {doc["metadata"]["name"]: doc for doc in docs if doc["kind"] == "Deployment"}
     for name in ["agent-studio-audio-worker", "agent-studio-workspace-worker"]:
         deployment = deployments[name]
@@ -53,15 +53,15 @@ def test_workers_keep_selectors_images_and_env_precedence(platform, backend):
 
 
 def test_disabled_workers_leave_no_workspace_resources():
-    docs = render("agent-studio", "k3s", "audioWorker.enabled=false", "workspaceWorker.enabled=false")
+    docs = render("agent-studio", "k3s", "app.workloads.audioWorker.enabled=false", "app.workloads.workspaceWorker.enabled=false")
     assert not any("workspace" in doc["metadata"]["name"] or "audio-worker" in doc["metadata"]["name"] for doc in docs)
 
 
 @pytest.mark.parametrize("backend", ["docker", "kubernetes"])
 def test_docker_image_can_be_pinned_by_digest(backend):
     image = "registry.example:5000/docker@sha256:" + "a" * 64
-    docs = render("agent-studio", "k3s", f"workspaceWorker.backend={backend}",
-                  f"workspaceWorker.dockerImage={image}")
+    docs = render("agent-studio", "k3s", f"app.workloads.workspaceWorker.backend={backend}",
+                  f"app.workloads.workspaceWorker.dockerImage={image}")
     containers = [container for doc in docs if doc["kind"] == "Deployment"
                   for container in doc["spec"]["template"]["spec"]["containers"]]
     assert next(c for c in containers if c["name"] == "docker")["image"] == image

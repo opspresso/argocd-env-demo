@@ -94,9 +94,9 @@ charts/<project>/
 - 자체 SemVer 를 쓴다 (`v1.3.0`). upstream chart 버전을 그대로 쓰는 addons 저장소와 다르다.
 - 애플리케이션 chart 는 `opspresso/helm-charts` 의 `app` chart 를 dependency 로 쓴다.
   `app` chart 버전을 올릴 때 wrapper `version` 도 함께 올린다.
-- `templates/` 사용을 최소화한다. `app` → `cronjob` → incubator `raw` 순서로 선택하며,
-  필요한 공통 기능은 `helm-charts`에서 먼저 확장한다. Studio의 `composition.yaml`은
-  부모 값 전달용 어댑터이며, Kubernetes 리소스 렌더링은 의존성 차트가 담당한다.
+- wrapper에는 `templates/`를 두지 않는다. `app` → `cronjob` → incubator `raw` 순서로 선택하며,
+  필요한 공통 기능은 `helm-charts`에서 확장한다. PostgreSQL·MinIO·Neo4j는 공식 또는 주요
+  배포처의 전용 차트를 사용한다. Studio worker는 `app.workloads`, 추가 리소스는 `app.raw`로 관리한다.
 - 한 chart 를 두 번 쓰거나 이름을 바꿔 붙일 때는 `alias` 로 values 키를 정한다
   (예: agent-studio 의 `cronjob` → `scan`).
 
@@ -128,6 +128,7 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `true`면 chart 기본 requests/limits를 유지하고, `false`면 템플릿이 resource block을
   제거한다. 공통 chart는 EKS 기본값이며 k3s·local은 반드시 `resources: false`를 사용한다.
   worker·초기화 컨테이너·CronJob에도 requests/limits를 두지 않고 HPA·VPA·KEDA를 생성하지 않는다.
+  단, 공식 Neo4j 차트가 강제하는 CPU `500m`·메모리 `2Gi` requests만 허용하며 limits는 두지 않는다.
   PVC의 storage 요청은 유지하고 `scripts/validate.py`의 렌더 결과 검사로 이 규칙을 검증한다.
 - `phase` 는 그 클러스터가 읽을 `values-<phase>.yaml` 을 정한다.
 - env 파일을 추가하면 `scripts/build.sh` 가 모든 chart 에 대해 렌더 결과를 새로 만든다.
@@ -167,14 +168,15 @@ TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" TG_PHASE="alpha" python3 scripts/gi
 ```bash
 ./scripts/build.sh                      # 전체 chart 렌더
 ./scripts/gen_values.py -r sample-node   # 한 chart 렌더
-./scripts/validate.py                   # helm template로 전체 검증
+./scripts/validate.py --all-charts      # 미배포 차트·환경까지 전체 검증
 ./scripts/validate.py -r sample-node    # 한 chart만
 pytest                                  # scripts/와 배포 구성 테스트
 ```
 
 `.github/workflows/validate.yml`은 PR에서 렌더 → Helm 검증 → pytest를 실행한다.
 `.github/workflows/push.yml`도 main에서 같은 검사를 수행한 뒤 생성 파일을 게시한다.
-`apps/` 에 ApplicationSet 이 없는 chart(`sample-spring`)는 배포되지 않으므로 검증 대상도 아니다.
+`--all-charts`는 `apps/`에 없는 chart(`sample-spring`, `sample-grpc`)와 미사용 클러스터 values도 검사한다.
+CI와 생성 파일 게시 workflow는 이 전체 검사를 사용한다. wrapper의 자체 템플릿은 검사에서 거부한다.
 
 `scripts/validate.py` 는 `helm dependency update` 로 upstream chart 를 내려받는다.
 결과물(`charts/*/charts/`, `charts/*/Chart.lock`)은 `.gitignore` 처리되어 있다.

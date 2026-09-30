@@ -1,4 +1,5 @@
-ssmPrefix: /k8s/eks-demo
+global:
+  ssmPrefix: /k8s/eks-demo
 
 neo4jdb:
 

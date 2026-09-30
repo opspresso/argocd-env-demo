@@ -52,3 +52,29 @@ minio:
   provisioning:
     resourcesPreset: none
     resources: null
+
+raw:
+  templates:
+    - |
+        {{- $ssmPrefix := required "ssmPrefix is required; include <platform>/values-<cluster>.yaml" .Values.global.ssmPrefix -}}
+        apiVersion: external-secrets.io/v1
+        kind: ExternalSecret
+        metadata:
+          name: minio-credentials
+          annotations:
+            argocd.argoproj.io/sync-wave: "-1"
+        spec:
+          refreshInterval: 1h
+          secretStoreRef:
+            kind: ClusterSecretStore
+            name: parameter-store
+          target:
+            name: minio-credentials
+            creationPolicy: Owner
+          data:
+            - secretKey: root-user
+              remoteRef:
+                key: {{ $ssmPrefix }}/agent-studio/minio-root-user
+            - secretKey: root-password
+              remoteRef:
+                key: {{ $ssmPrefix }}/agent-studio/minio-root-password

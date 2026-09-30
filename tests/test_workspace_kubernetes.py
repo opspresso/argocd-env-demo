@@ -14,7 +14,7 @@ def render(platform, *overrides):
     phase = "prod" if platform == "eks" else "alpha"
     result = subprocess.run(["helm", "template", "agent-studio", str(chart), "--namespace", "agent-studio",
                              "-f", str(chart / "values.yaml"), "-f", str(chart / f"values-{phase}.yaml"),
-                             "-f", str(chart / platform / f"values-{platform}-demo.yaml"), "--set", "workspaceWorker.backend=kubernetes", *overrides],
+                             "-f", str(chart / platform / f"values-{platform}-demo.yaml"), "--set", "app.workloads.workspaceWorker.backend=kubernetes", *overrides],
                             capture_output=True, text=True, check=True)
     return [item for item in yaml.safe_load_all(result.stdout) if item]
 
@@ -57,7 +57,7 @@ def test_isolation_permissions_and_total_capacity(platform, max_pods):
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
 def test_retirement_does_not_remove_pvc_or_bypass_drain_gate(platform):
-    docs = render(platform, "--set", "workspaceWorker.legacyDocker.enabled=false")
+    docs = render(platform, "--set", "app.workloads.workspaceWorker.legacyDocker.enabled=false")
     pvc = next(item for item in docs if item["kind"] == "PersistentVolumeClaim")
     assert pvc["metadata"]["annotations"]["argocd.argoproj.io/sync-options"] == "Prune=false,Delete=false"
     gate = next(item for item in docs if item["kind"] == "Job" and item["metadata"]["name"] == "agent-studio-workspace-migration")
@@ -73,7 +73,7 @@ def test_retirement_does_not_remove_pvc_or_bypass_drain_gate(platform):
 
 
 def test_docker_backend_still_renders_its_original_execution_path():
-    docs = render("k3s", "--set", "workspaceWorker.backend=docker")
+    docs = render("k3s", "--set", "app.workloads.workspaceWorker.backend=docker")
     worker = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-worker")
     assert [container["name"] for container in worker["spec"]["template"]["spec"]["containers"]] == ["workspace-worker", "docker"]
     assert not any(item["kind"] == "Role" and item["metadata"].get("namespace") == "agent-studio-workspaces" for item in docs)

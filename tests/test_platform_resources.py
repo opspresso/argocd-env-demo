@@ -40,7 +40,7 @@ def containers(value):
 
 
 @pytest.mark.parametrize("application", sorted(path for platform in ("k3s", "local") for path in (ROOT / "apps" / platform).glob("*.yaml")), ids=lambda path: f"{path.parent.name}-{path.stem}")
-def test_local_platforms_have_no_resources_or_autoscaling(application):
+def test_local_platforms_follow_resource_and_autoscaling_policy(application):
     source = yaml.safe_load(application.read_text())["spec"]["source"]
     result = render(source["path"], source["helm"]["valueFiles"])
     assert result.returncode == 0, result.stderr
@@ -48,11 +48,15 @@ def test_local_platforms_have_no_resources_or_autoscaling(application):
     checked = list(containers(list(yaml.safe_load_all(result.stdout))))
     assert checked
     for container in checked:
-        assert not container.get("resources"), container["name"]
+        if application.stem == "neo4j" and container["name"] == "neo4j":
+            assert container["resources"]["requests"] == {"cpu": "500m", "memory": "2Gi"}
+            assert not container["resources"].get("limits")
+        else:
+            assert not container.get("resources"), container["name"]
 
 
 def test_neo4j_default_resource_validation_is_preserved():
-    result = render("charts/neo4j", ["values.yaml"], ["--set", "ssmPrefix=/k8s/eks-demo"])
+    result = render("charts/neo4j", ["values.yaml"], ["--set", "global.ssmPrefix=/k8s/eks-demo"])
     assert result.returncode == 0, result.stderr
     workload = next(doc for doc in yaml.safe_load_all(result.stdout) if doc and doc["kind"] == "StatefulSet")
     resources = workload["spec"]["template"]["spec"]["containers"][0]["resources"]
@@ -77,7 +81,7 @@ def test_workspace_docker_volume_has_only_one_owner_during_rollout():
 
 @pytest.mark.parametrize("setting", ["cpu=100m", "memory=512Mi"])
 def test_neo4j_still_rejects_invalid_explicit_resources(setting):
-    result = render("charts/neo4j", ["values.yaml"], ["--set", "ssmPrefix=/k8s/eks-demo", "--set", f"neo4jdb.neo4j.resources.{setting}"])
+    result = render("charts/neo4j", ["values.yaml"], ["--set", "global.ssmPrefix=/k8s/eks-demo", "--set", f"neo4jdb.neo4j.resources.{setting}"])
     assert result.returncode != 0
     assert "less than minimum" in result.stderr
 

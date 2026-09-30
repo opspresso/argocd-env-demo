@@ -2,11 +2,14 @@ apiVersion: v2
 name: neo4j
 description: Neo4j for Agent Memory
 type: application
-version: v1.0.1
+version: v1.1.0
 appVersion: 2026.08.1
-
 dependencies:
-  - name: neo4j
-    alias: neo4jdb
-    repository: https://helm.neo4j.com/neo4j
-    version: 2026.8.1
+- name: neo4j
+  alias: neo4jdb
+  repository: https://helm.neo4j.com/neo4j
+  version: 2026.8.1
+- name: raw
+  repository: https://charts.helm.sh/incubator
+  version: 0.2.5
+  condition: externalSecrets.enabled

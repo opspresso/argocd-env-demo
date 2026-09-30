@@ -129,6 +129,40 @@ app:
     - key: /k8s/k3s-demo/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 
+  workloads:
+
+
+    audioWorker:
+      enabled: true
+      replicas: 1
+
+
+    workspaceWorker:
+      enabled: true
+      backend: kubernetes
+      legacyDocker:
+        enabled: True
+      kubernetes:
+        namespace: agent-studio-workspaces
+        nodePool: ""
+        maxPods: 2
+        dnsCidrs:
+          - 10.43.0.10/32
+        allowPublic: True
+        extraEgress: []
+      replicas: 1
+      dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
+      workerConcurrency: 1
+      memoryMb: 1024
+      diskMb: 2048
+      cpus: 1
+      persistence:
+        size: 10Gi
+        storageClass: local-path
+      registry:
+        enabled: False
+        region: ap-northeast-2
+
 scan:
   suspend: False
 
@@ -139,37 +173,3 @@ reindex:
   suspend: False
 
   resources: null
-
-
-
-
-audioWorker:
-  enabled: true
-  replicas: 1
-
-
-workspaceWorker:
-  enabled: true
-  backend: kubernetes
-  legacyDocker:
-    enabled: True
-  kubernetes:
-    namespace: agent-studio-workspaces
-    nodePool: ""
-    maxPods: 2
-    dnsCidrs:
-      - 10.43.0.10/32
-    allowPublic: True
-    extraEgress: []
-  replicas: 1
-  dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
-  workerConcurrency: 1
-  memoryMb: 1024
-  diskMb: 2048
-  cpus: 1
-  persistence:
-    size: 10Gi
-    storageClass: local-path
-  registry:
-    enabled: False
-    region: ap-northeast-2

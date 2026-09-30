@@ -37,8 +37,9 @@ metrics backend는 `metrics.backend`로 선택하며, k3s는 `victoria-metrics`,
 `prometheus`를 사용한다.
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
 환경에서는 템플릿이 해당 resource block을 제거한다. 컨테이너·초기화 컨테이너·worker·CronJob에도 같은 규칙을 적용한다.
+Neo4j는 공식 차트가 강제하는 최소 requests(CPU `500m`, 메모리 `2Gi`)만 허용하며 limits는 두지 않는다.
 HPA·VPA·KEDA autoscaler를 생성하지 않으며 PVC storage 요청은 유지한다.
-`scripts/validate.py`는 k3s·local 렌더 결과에 compute requests/limits나 autoscaler가 남으면 실패한다.
+`scripts/validate.py`는 위 Neo4j 최소 requests를 제외한 compute requests/limits나 autoscaler가 남으면 실패한다.
 
 ## 로컬 Kubernetes 개발 환경
 
@@ -49,19 +50,23 @@ MCP 인증 설정과 PostgreSQL 초기화 동작을 검증한다. 이 fixture는
 ## charts
 
 차트 구성은 `opspresso/helm-charts`의 `app` → `cronjob` → incubator `raw` 순서로
-선택한다. 공통 차트에 필요한 기능이 없으면 먼저 공통 차트를 확장하고, wrapper의
-`templates/`에는 리소스 정의를 추가하지 않는다.
+선택한다. PostgreSQL·MinIO·Neo4j 등 데이터 서비스는 공식 또는 주요 배포처의 전용 차트를
+사용한다. 공통 차트에 필요한 기능이 없으면 공통 차트를 확장하며, wrapper에는 `templates/`를 두지 않는다.
 
-Agent Studio의 audio/Workspace/Docker worker는 `app` alias를 사용하고, scan/reindex는
+Agent Studio의 audio/Workspace/Docker worker는 `app.workloads`를 사용하고, scan/reindex는
 `cronjob`, RBAC·네트워크 정책·보존용 PVC·마이그레이션 Job은 `raw`가 렌더한다.
-`templates/composition.yaml`은 phase·클러스터 값이 병합된 후 worker와 raw에 부모 값을
-전달하는 어댑터다. `app.image`를 단일 버전 원천으로 유지하므로 GitOps가 이미지 태그를
+공통 `app`이 phase·클러스터 값 병합 후 worker와 내장 `raw`에 필요한 값을 전달한다.
+`app.image`를 단일 버전 원천으로 유지하므로 GitOps가 이미지 태그를
 갱신하면 worker·마이그레이션 Job·workspace 이미지도 함께 바뀐다. worker별 설정은
-`audioWorker`, `workspaceWorker`, `workspaceDocker`에 두며, 부모 값 참조는 각 `overrides`와
-`raw.parentTemplates`에 둔다. Agent Memory의 인증된 메트릭 수집은
+`app.workloads.audioWorker`, `app.workloads.workspaceWorker`, `app.workloads.workspaceDocker`에 두며,
+부모 값 참조는 각 `overrides`와 `app.raw.parentTemplates`에 둔다. Agent Memory의 인증된 메트릭 수집은
 `app.serviceMonitor`로 관리한다.
 
-Studio와 Memory는 `app v1.6.0`을 사용한다. 공통 차트 의존성 버전을 올릴 때는
+PostgreSQL은 Bitnami 전용 차트를 사용하며, `pgvector/pgvector` 이미지의 entrypoint·인증 환경변수·
+probe·데이터 경로를 values로 지정한다. `postgres` StatefulSet과 `data-postgres-0` PVC를 유지한다.
+MinIO는 Bitnami, Neo4j는 공식 Neo4j 차트를 사용하고, ExternalSecret과 PostgreSQL 초기화 Job은 `raw`로 관리한다.
+
+공통 차트 의존성 버전을 올릴 때는
 `helm-charts`의 게시를 확인하고, 원격 의존성으로 검증한 뒤 이 저장소에 반영한다.
 
 ```
@@ -87,9 +92,9 @@ ApplicationSet 은 `env/*.yaml` 의 `phase` 필드로 어떤 `values-<phase>.yam
 앱과 MCP의 두 phase values를 별도로 관리한다.
 
 클러스터별 SSM 경로는 `values-template.yaml.j2`가 `env/<cluster>.yaml`의 `cluster`에서
-생성한다. 공통 `values.yaml`에는 특정 클러스터의 `ssmPrefix`를 두지 않는다.
+생성한다. 공통 `values.yaml`에는 특정 클러스터의 `global.ssmPrefix`를 두지 않는다.
 PostgreSQL·MinIO·Neo4j는 클러스터 values가 없으면 렌더링에 실패하며, `scripts/validate.py`는
-최종 `ssmPrefix`가 대상 클러스터와 다르면 실패한다. EKS 공통 기본값과 클러스터의
+최종 `global.ssmPrefix`가 대상 클러스터와 다르면 실패한다. EKS 공통 기본값과 클러스터의
 자격 증명 경로는 별개다.
 
 ## gitops
@@ -207,6 +212,9 @@ values 파일 누락이나 chart 오류를 Argo CD sync 가 아니라 CI 에서 
 
 ```bash
 ./scripts/validate.py
+
+# 배포하지 않는 차트·환경까지 포함한 전체 검사 (CI 기본)
+./scripts/validate.py --all-charts
 
 ./scripts/validate.py -r sample-node
 ```

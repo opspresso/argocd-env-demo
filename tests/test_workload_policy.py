@@ -9,6 +9,20 @@ def manifest(kind, spec, name="test"):
 
 
 class WorkloadPolicyTests(unittest.TestCase):
+    def test_only_official_neo4j_minimum_requests_are_allowed(self):
+        for platform in ("k3s", "local"):
+            for name, container, collection, resources, allowed in [
+                ("memory-neo4j", "neo4j", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, True),
+                ("other", "neo4j", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),
+                ("memory-neo4j", "sidecar", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),
+                ("memory-neo4j", "neo4j", "initContainers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),
+                ("memory-neo4j", "neo4j", "containers", {"requests": {"cpu": "1000m", "memory": "2Gi"}}, False),
+                ("memory-neo4j", "neo4j", "containers", {"limits": {"memory": "2Gi"}}, False),
+            ]:
+                with self.subTest(platform=platform, name=name, container=container, collection=collection, resources=resources):
+                    spec = {"template": {"spec": {collection: [{"name": container, "resources": resources}]}}}
+                    self.assertEqual(not policy_errors(manifest("StatefulSet", spec, name), platform), allowed)
+
     def test_eks_is_the_default_and_preserves_chart_policy(self):
         self.assertEqual(target_platform({"appset": "apps/example.yaml"}, {}), "eks")
         self.assertEqual(target_platform({"appset": "apps/eks/example.yaml"}, {"env": "eks"}), "eks")

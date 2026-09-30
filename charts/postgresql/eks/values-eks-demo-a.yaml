@@ -1,1 +1,2 @@
-ssmPrefix: /k8s/eks-demo-a
+global:
+  ssmPrefix: /k8s/eks-demo-a

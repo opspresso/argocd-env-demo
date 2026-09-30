@@ -1,4 +1,4 @@
-"""EKS keeps chart defaults; k3s/local must not reserve compute or autoscale."""
+"""k3s/local omit compute reservations except Neo4j's required minimum requests."""
 
 from pathlib import Path
 
@@ -9,6 +9,7 @@ PLATFORMS = {"eks", "k3s", "local"}
 UNRESERVED_PLATFORMS = {"k3s", "local"}
 AUTOSCALERS = {"HorizontalPodAutoscaler", "VerticalPodAutoscaler", "ScaledObject", "ScaledJob"}
 VM_WORKLOADS = {"VMAgent", "VMAlert", "VMAlertmanager", "VMAuth", "VMCluster", "VMSingle"}
+NEO4J_MINIMUM_REQUESTS = {"cpu": "500m", "memory": "2Gi"}
 
 
 def target_platform(target, env):
@@ -34,6 +35,16 @@ def policy_errors(manifests, platform):
                 if (key == "resources" or key.endswith("Resources")) and isinstance(child, dict):
                     for field in ("requests", "limits"):
                         quantities = child.get(field) or {}
+                        # The unmodified official chart rejects missing/zero requests.
+                        # Match the container path and exact minimum; sidecars, init
+                        # containers, larger reservations and limits remain forbidden.
+                        if (owner == "StatefulSet/memory-neo4j"
+                                and location.startswith("spec.template.spec.containers[")
+                                and location.count(".") == 4
+                                and value.get("name") == "neo4j"
+                                and field == "requests"
+                                and quantities == NEO4J_MINIMUM_REQUESTS):
+                            continue
                         if isinstance(quantities, dict) and any(name != "storage" for name in quantities):
                             errors.append(f"{owner} {location}.{field} reserves compute")
                 if key in {"autoscaling", "hpa", "vpa"} and isinstance(child, dict) and child.get("enabled") is True:

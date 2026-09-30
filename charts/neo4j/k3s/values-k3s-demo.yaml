@@ -1,9 +1,17 @@
-ssmPrefix: /k8s/k3s-demo
+global:
+  ssmPrefix: /k8s/k3s-demo
 
 neo4jdb:
 
   neo4j:
-    resources: null
+    # The official chart requires these minimum requests; no compute limits.
+    resources:
+      cpu: null
+      memory: null
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits: null
     operations:
       resources: null
 

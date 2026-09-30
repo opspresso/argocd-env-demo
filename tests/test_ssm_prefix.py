@@ -52,7 +52,7 @@ def test_empty_eks_service_settings_preserve_common_defaults(chart):
     context = yaml.safe_load((ROOT / "env/eks-demo.yaml").read_text())
     context[chart] = {}
     template = Environment(loader=FileSystemLoader(ROOT / "charts" / chart)).get_template("values-template.yaml.j2")
-    assert yaml.safe_load(template.render(context)) == {"ssmPrefix": "/k8s/eks-demo"}
+    assert yaml.safe_load(template.render(context)) == {"global": {"ssmPrefix": "/k8s/eks-demo"}}
 
 
 @pytest.mark.parametrize("chart", DATA_CHARTS)
@@ -67,9 +67,9 @@ def test_data_charts_render_only_the_selected_clusters_secrets(chart, env_file, 
         assert overrides["externalSecrets"]["enabled"] is False
         assert "ssmPrefix" not in overrides
     else:
-        assert overrides["ssmPrefix"] == prefix
+        assert overrides["global"]["ssmPrefix"] == prefix
     if chart not in context and context["resources"] and context["autoscaling"]:
-        assert overrides == {"ssmPrefix": prefix}
+        assert overrides == {"global": {"ssmPrefix": prefix}}
     values_file = tmp_path / "cluster.yaml"
     values_file.write_text(generated)
     result = helm(chart, values_file)
@@ -96,10 +96,12 @@ def test_application_secrets_follow_a_new_cluster_name(chart):
 
 
 @pytest.mark.parametrize("cluster", ["eks-demo", "k3s-demo", "local-demo"])
-def test_validator_rejects_wrong_prefix_before_helm(cluster, tmp_path):
+@pytest.mark.parametrize("scope", ["root", "global"])
+def test_validator_rejects_wrong_prefix_before_helm(cluster, scope, tmp_path):
     chart = tmp_path / "chart"
     chart.mkdir()
-    (chart / "values.yaml").write_text("ssmPrefix: /k8s/wrong-cluster\n")
+    values = {"ssmPrefix": "/k8s/wrong-cluster"}
+    (chart / "values.yaml").write_text(yaml.safe_dump({"global": values} if scope == "global" else values))
     target = {"name": "data", "namespace": "default", "cluster": cluster,
               "chart": str(chart), "appset": "apps/eks/data.yaml", "value_files": ["values.yaml"]}
     with patch.object(validate.subprocess, "run") as run:

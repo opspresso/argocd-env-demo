@@ -29,6 +29,7 @@ import sys
 import yaml
 
 from workload_policy import policy_errors, target_platform
+from chart import discover_phases
 
 
 APPSET_DIR = "apps"
@@ -44,6 +45,7 @@ PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
 def parse_args():
     p = argparse.ArgumentParser(description="Helm render check")
     p.add_argument("-r", "--reponame", help="only this chart")
+    p.add_argument("--all-charts", action="store_true", help="also render undeployed charts and generated cluster values")
     p.add_argument(
         "-d", "--dir", action="append", dest="dirs",
         help="ApplicationSet directory (repeatable, default: {})".format(APPSET_DIR),
@@ -127,7 +129,12 @@ def check_templates(only=None):
         if only and name != only:
             continue
 
-        if not os.path.isdir(chart) or os.path.exists(os.path.join(chart, TEMPLATE)):
+        if not os.path.isdir(chart):
+            continue
+        local_templates = [path for path in (Path(chart) / "templates").rglob("*") if path.is_file()]
+        if local_templates:
+            failures.append((chart, "wrapper templates are not allowed; use app, cronjob, vendor charts or raw dependencies"))
+        if os.path.exists(os.path.join(chart, TEMPLATE)):
             continue
 
         for entry in sorted(os.listdir(chart)):
@@ -147,6 +154,42 @@ def check_templates(only=None):
                 ))
 
     return failures
+
+
+def additional_targets(targets):
+    """Cover every wrapper and generated environment beyond deployed Applications."""
+    covered = set()
+    namespaces = {}
+    for target in targets:
+        namespaces[target["chart"]] = target["namespace"]
+        for env_file in target["env_files"]:
+            env = yaml.safe_load(Path(env_file).read_text()) if env_file else {}
+            covered.add((target["chart"], tuple(expand(value, env) for value in target["value_files"])))
+    extra = []
+    for definition in sorted(Path(CHARTS_DIR).glob("*/Chart.yaml")):
+        chart = definition.parent
+        phases = discover_phases(".", chart.name)
+        environments = sorted(path for platform in ("eks", "k3s", "local")
+                              for path in (chart / platform).glob("values-*.yaml"))
+        variants = []
+        for environment in environments:
+            cluster = environment.stem.removeprefix("values-")
+            config = yaml.safe_load((Path("env") / f"{cluster}.yaml").read_text())
+            files = ["values.yaml"]
+            if phases:
+                files.append(f"values-{config['phase']}.yaml")
+            files.append(str(environment.relative_to(chart)))
+            variants.append((cluster, files, str(environment)))
+        if not environments:
+            variants = [(None, ["values.yaml"] + ([f"values-{phase}.yaml"] if phase else []), str(chart))
+                        for phase in phases or [None]]
+        for cluster, files, source in variants:
+            if (str(chart), tuple(files)) in covered:
+                continue
+            extra.append({"chart": str(chart), "name": f"{chart.name}-{cluster}" if cluster else chart.name,
+                          "namespace": namespaces.get(str(chart), chart.name), "cluster": cluster,
+                          "appset": source, "value_files": files, "env_files": [None]})
+    return extra
 
 
 def update_dependencies(chart):
@@ -194,7 +237,13 @@ def render(target, env_file):
             return f"invalid YAML values file: {path}"
         if not isinstance(values, dict):
             return f"values file must contain a mapping: {path}"
-        if "ssmPrefix" in values:
+        global_values = values.get("global") or {}
+        if not isinstance(global_values, dict):
+            return f"global values must contain a mapping: {path}"
+        if "ssmPrefix" in global_values:
+            prefix_present = True
+            prefix = global_values["ssmPrefix"]
+        elif "ssmPrefix" in values:
             prefix_present = True
             prefix = values["ssmPrefix"]
         if resolved.parent.name in {"eks", "k3s", "local"} and resolved.stem.startswith("values-"):
@@ -229,6 +278,8 @@ def main():
 
     try:
         targets = load_targets(args.dirs or [APPSET_DIR])
+        if args.all_charts:
+            targets += additional_targets(targets)
     except (ValueError, KeyError, OSError, yaml.YAMLError) as error:
         print("FAIL {}".format(error))
         return 1

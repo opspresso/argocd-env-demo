@@ -46,7 +46,7 @@ done
 
 if [ "${GITHUB_PUSH}" == "true" ]; then
   # Nothing is published until both the rendered charts and Python contracts pass.
-  python3 "${SHELL_DIR}/validate.py"
+  python3 "${SHELL_DIR}/validate.py" --all-charts
   python3 -m pytest
 
   if [ "${#GENERATED_VALUES[@]}" -eq 0 ]; then

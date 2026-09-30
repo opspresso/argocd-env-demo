@@ -145,6 +145,655 @@ app:
       kind: ClusterSecretStore
       name: parameter-store
 
+  workspaceNetworkScript: |
+    #!/bin/sh
+    set -eu
+
+    # Runs inside the dedicated DinD Pod network namespace, never on the node.
+    bridge=ws-sandbox
+    ready=/workspace-network/ready
+    rm -f "$ready"
+    iptables -C INPUT -i "$bridge" -j REJECT 2>/dev/null || iptables -I INPUT 1 -i "$bridge" -j REJECT
+    iptables -t raw -C PREROUTING -i "$bridge" -j DROP 2>/dev/null || iptables -t raw -I PREROUTING 1 -i "$bridge" -j DROP
+
+    dockerd-entrypoint.sh "$@" &
+    daemon_pid=$!
+    trap 'kill -TERM "$daemon_pid" 2>/dev/null || true; wait "$daemon_pid" || true' EXIT
+    trap 'exit 143' TERM
+    trap 'exit 130' INT
+    until docker info >/dev/null 2>&1; do
+      kill -0 "$daemon_pid"
+      sleep 1
+    done
+
+    if [ "$WORKSPACE_NETWORK" != none ]; then
+      if ! docker network inspect "$WORKSPACE_NETWORK" >/dev/null 2>&1; then
+        docker network create --driver bridge \
+          --opt com.docker.network.bridge.name="$bridge" \
+          --opt com.docker.network.bridge.enable_icc=false \
+          "$WORKSPACE_NETWORK" >/dev/null
+      fi
+      actual=$(docker network inspect --format '{{.Driver}}|{{.Internal}}|{{.EnableIPv6}}|{{index .Options "com.docker.network.bridge.name"}}|{{index .Options "com.docker.network.bridge.enable_icc"}}' "$WORKSPACE_NETWORK")
+      if [ "$actual" != "bridge|false|false|ws-sandbox|false" ]; then
+        echo 'Workspace network has incompatible isolation settings' >&2
+        exit 1
+      fi
+
+      # The raw-table guard survives Docker inserting its own FORWARD jumps.
+      # Keep it until every egress rule is installed.
+      # INPUT also rejects connections to the Docker API and other processes in this Pod.
+      if iptables -nL STUDIO-EGRESS >/dev/null 2>&1; then
+        iptables -F STUDIO-EGRESS
+      else
+        iptables -N STUDIO-EGRESS
+      fi
+      # Docker's embedded resolver forwards queries to the Pod's configured DNS.
+      # Permit only DNS to those resolvers before rejecting internal destinations.
+      for resolver in $(awk '$1 == "nameserver" { print $2 }' /etc/resolv.conf); do
+        case "$resolver" in *:*) continue ;; esac
+        iptables -A STUDIO-EGRESS -d "$resolver" -p udp --dport 53 -j RETURN
+        iptables -A STUDIO-EGRESS -d "$resolver" -p tcp --dport 53 -j RETURN
+      done
+      for cidr in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 \
+        169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 \
+        192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 \
+        224.0.0.0/4 240.0.0.0/4; do
+        iptables -A STUDIO-EGRESS -d "$cidr" -j REJECT
+      done
+      iptables -A STUDIO-EGRESS -p tcp -m multiport --dports 80,443 -j RETURN
+      iptables -A STUDIO-EGRESS -j REJECT
+      iptables -C DOCKER-USER -i "$bridge" -j STUDIO-EGRESS 2>/dev/null || iptables -I DOCKER-USER 1 -i "$bridge" -j STUDIO-EGRESS
+    fi
+    iptables -t raw -D PREROUTING -i "$bridge" -j DROP
+    touch "$ready"
+    wait "$daemon_pid"
+
+  workloads:
+    # Workers inherit only the explicit image/config references below.
+    audioWorker:
+      enabled: false
+      fullnameOverride: agent-studio-audio-worker
+      controller:
+        strategy:
+          rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+      service:
+        enabled: false
+      containerName: audio-worker
+      serviceAccount:
+        name: agent-studio
+      terminationGracePeriodSeconds: 60
+      command: [node, build/audio-worker.cjs]
+      envFrom:
+        - configMapRef:
+            name: agent-studio
+        - secretRef:
+            name: agent-studio-external
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+      overrides: |
+        enabled: {{ .Values.workloads.audioWorker.enabled }}
+        replicaCount: {{ if hasKey .Values.workloads.audioWorker "replicas" }}{{ .Values.workloads.audioWorker.replicas }}{{ else }}1{{ end }}
+        image: {{ toYaml .Values.image | nindent 2 }}
+        imagePullSecrets: {{ toYaml .Values.imagePullSecrets | nindent 2 }}
+        podAnnotations:
+          checksum/config: {{ toYaml .Values.configmap | sha256sum }}
+        {{- if not .Values.resources }}
+        resources: null
+        {{- end }}
+
+    workspaceWorker:
+      enabled: false
+      fullnameOverride: agent-studio-workspace-worker
+      controller:
+        strategy:
+          type: Recreate
+      service:
+        enabled: false
+      containerName: workspace-worker
+      serviceAccount:
+        name: agent-studio
+      terminationGracePeriodSeconds: 60
+      imagePullSecrets:
+        - name: ecr-registry
+      envFrom:
+        - configMapRef:
+            name: agent-studio
+        - secretRef:
+            name: agent-studio-external
+        - configMapRef:
+            name: agent-studio-workspace
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 768Mi
+      readinessProbe:
+        exec:
+          command: [node, build/workspace-health.cjs, --worker]
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        timeoutSeconds: 15
+      livenessProbe:
+        exec:
+          command: [node, build/workspace-health.cjs, --heartbeat-only]
+        initialDelaySeconds: 60
+        periodSeconds: 20
+        timeoutSeconds: 15
+      backend: docker
+      # Keep the old PVC/daemon until an operator approves retirement after cutover.
+      legacyDocker:
+        enabled: true
+      kubernetes:
+        namespace: agent-studio-workspaces
+        nodePool: ""
+        maxPods: 8
+        dnsCidrs: []
+        allowPublic: true
+        extraEgress: []
+      registry:
+        enabled: false
+      persistence:
+        # This PVC is managed by raw, independently of the worker Deployment.
+        enabled: false
+        size: 10Gi
+        storageClass: local-path
+      overrides: |
+        enabled: {{ .Values.workloads.workspaceWorker.enabled }}
+        replicaCount: {{ if hasKey .Values.workloads.workspaceWorker "replicas" }}{{ .Values.workloads.workspaceWorker.replicas }}{{ else }}1{{ end }}
+        image: {{ toYaml .Values.image | nindent 2 }}
+        automountServiceAccountToken: {{ eq .Values.workloads.workspaceWorker.backend "kubernetes" }}
+        podAnnotations:
+          checksum/config: {{ toYaml .Values.configmap | sha256sum }}
+          checksum/workspace: {{ toYaml .Values.workloads.workspaceWorker.kubernetes | sha256sum }}
+          checksum/network: {{ .Values.workspaceNetworkScript | sha256sum }}
+        {{- if not .Values.resources }}
+        resources: null
+        {{- end }}
+        {{- if eq .Values.workloads.workspaceWorker.backend "docker" }}
+        command:
+          - /bin/sh
+          - -ec
+          - |
+            until test -f /workspace-network/ready && docker info >/dev/null 2>&1; do sleep 2; done
+            docker image inspect "$WORKSPACE_IMAGE" >/dev/null 2>&1 || docker pull "$WORKSPACE_IMAGE"
+            exec node build/workspace-worker.cjs
+        env:
+          - name: DOCKER_HOST
+            value: tcp://127.0.0.1:2375
+        extraVolumes:
+        {{ toYaml .Values.workloads.workspaceDocker.extraVolumes | indent 2 }}
+          - name: ecr-config
+            secret:
+              secretName: ecr-registry
+              items:
+                - key: .dockerconfigjson
+                  path: config.json
+        extraVolumeMounts:
+          - name: network-ready
+            mountPath: /workspace-network
+            readOnly: true
+          - name: ecr-config
+            mountPath: /home/app/.docker
+            readOnly: true
+        sidecars:
+          - {{ tpl .Values.workloads.workspaceDocker.container $ | nindent 4 | trim }}
+        {{- else }}
+        command: [node, build/workspace-worker.cjs]
+        {{- end }}
+
+    workspaceDocker:
+      revisionHistoryLimit: 10
+      fullnameOverride: agent-studio-workspace-docker
+      controller:
+        annotations:
+          argocd.argoproj.io/sync-options: Prune=false,Delete=false
+          # Wait until the worker releases its RWO data directory.
+          argocd.argoproj.io/sync-wave: "1"
+        strategy:
+          type: Recreate
+      service:
+        enabled: false
+      containerName: docker
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      extraVolumes:
+        - name: network-script
+          configMap:
+            name: agent-studio-workspace-network
+        - name: network-ready
+          emptyDir: {}
+        - name: docker-data
+          persistentVolumeClaim:
+            claimName: agent-studio-workspace-docker
+      container: |
+        name: docker
+        image: {{ .Values.workloads.workspaceWorker.dockerImage }}
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
+        env:
+          - name: DOCKER_TLS_CERTDIR
+            value: ""
+          - name: WORKSPACE_NETWORK
+            value: {{ .Values.configmap.data.WORKSPACE_NETWORK | quote }}
+        args: ["--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: network-script
+            mountPath: /opt/workspace-network
+            readOnly: true
+          - name: network-ready
+            mountPath: /workspace-network
+          - name: docker-data
+            mountPath: /var/lib/docker
+        {{- if .Values.resources }}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1536Mi
+        {{- end }}
+        readinessProbe:
+          exec:
+            command: ["/bin/sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null 2>&1"]
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command: ["/bin/sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null 2>&1"]
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+      overrides: |
+        enabled: {{ and .Values.workloads.workspaceWorker.enabled (eq .Values.workloads.workspaceWorker.backend "kubernetes") .Values.workloads.workspaceWorker.legacyDocker.enabled }}
+        replicaCount: {{ if hasKey .Values.workloads.workspaceWorker "replicas" }}{{ .Values.workloads.workspaceWorker.replicas }}{{ else }}1{{ end }}
+        {{- $container := tpl .Values.workloads.workspaceDocker.container $ | fromYaml }}
+        {{- if hasKey $container "Error" }}{{ fail (index $container "Error") }}{{ end }}
+        image:
+          reference: {{ .Values.workloads.workspaceWorker.dockerImage | quote }}
+        command: {{ toYaml $container.command | nindent 2 }}
+        args: {{ toYaml $container.args | nindent 2 }}
+        env: {{ toYaml $container.env | nindent 2 }}
+        securityContext: {{ toYaml $container.securityContext | nindent 2 }}
+        extraVolumeMounts: {{ toYaml $container.volumeMounts | nindent 2 }}
+        readinessProbe: {{ toYaml $container.readinessProbe | nindent 2 }}
+        livenessProbe: {{ toYaml $container.livenessProbe | nindent 2 }}
+        resources: {{ toYaml $container.resources | nindent 2 }}
+        podAnnotations:
+          checksum/network: {{ .Values.workspaceNetworkScript | sha256sum }}
+
+  raw:
+    enabled: true
+    parentTemplates:
+      - |
+          {{- if .Values.workloads.workspaceWorker.enabled }}
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: agent-studio-workspace
+            annotations:
+              argocd.argoproj.io/sync-wave: "-1"
+          data:
+            WORKSPACE_PROVIDER: {{ .Values.workloads.workspaceWorker.backend | quote }}
+          {{- if eq .Values.workloads.workspaceWorker.backend "kubernetes" }}
+            WORKSPACE_NAMESPACE: {{ .Values.workloads.workspaceWorker.kubernetes.namespace | quote }}
+            WORKSPACE_INSTANCE: {{ .Release.Name | quote }}
+            WORKSPACE_LEGACY_DOCKER: {{ .Values.workloads.workspaceWorker.legacyDocker.enabled | quote }}
+            WORKSPACE_IMAGE_PULL_SECRET: ecr-registry
+          {{- if .Values.workloads.workspaceWorker.kubernetes.nodePool }}
+            WORKSPACE_NODE_POOL: {{ .Values.workloads.workspaceWorker.kubernetes.nodePool | quote }}
+          {{- end }}
+          {{- end }}
+            WORKSPACE_IMAGE: {{ printf "%s:workspace-%s" .Values.image.repository .Values.image.tag | quote }}
+          {{- end }}
+      - |
+          {{- if .Values.workloads.workspaceWorker.enabled }}
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: agent-studio-workspace-network
+          data:
+            workspace-network.sh: |
+          {{ .Values.workspaceNetworkScript | indent 4 }}
+          {{- end }}
+      - |
+          {{- if .Values.workloads.workspaceWorker.enabled }}
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: agent-studio-workspace-docker
+            annotations:
+              argocd.argoproj.io/sync-options: Prune=false,Delete=false
+              helm.sh/resource-policy: keep
+            labels:
+              app.kubernetes.io/name: agent-studio-workspace-worker
+              app.kubernetes.io/instance: {{ .Release.Name }}
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: {{ .Values.workloads.workspaceWorker.persistence.storageClass }}
+            resources:
+              requests:
+                storage: {{ .Values.workloads.workspaceWorker.persistence.size }}
+          ---
+          {{- if or (eq .Values.workloads.workspaceWorker.backend "docker") .Values.workloads.workspaceWorker.legacyDocker.enabled }}
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: agent-studio-workspace-docker
+            labels:
+              app.kubernetes.io/name: agent-studio-workspace-worker
+              app.kubernetes.io/instance: {{ .Release.Name }}
+          spec:
+            type: ClusterIP
+            # Drain checks must reach the daemon even if its worker is unhealthy or pulling an image.
+            publishNotReadyAddresses: true
+            selector:
+              app.kubernetes.io/name: {{ if eq .Values.workloads.workspaceWorker.backend "kubernetes" }}agent-studio-workspace-docker{{ else }}agent-studio-workspace-worker{{ end }}
+              app.kubernetes.io/instance: {{ .Release.Name }}
+            ports:
+              # Docker exec hijacks HTTP with Upgrade: tcp; HTTP sniffing proxies reject it.
+              - name: tcp-docker
+                port: 2375
+                targetPort: 2375
+          ---
+          apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata:
+            name: agent-studio-workspace-docker
+            labels:
+              app.kubernetes.io/name: agent-studio-workspace-worker
+              app.kubernetes.io/instance: {{ .Release.Name }}
+          spec:
+            podSelector:
+              matchLabels:
+                app.kubernetes.io/name: {{ if eq .Values.workloads.workspaceWorker.backend "kubernetes" }}agent-studio-workspace-docker{{ else }}agent-studio-workspace-worker{{ end }}
+                app.kubernetes.io/instance: {{ .Release.Name }}
+            policyTypes: [Ingress]
+            ingress:
+              - from:
+                  - podSelector:
+                      matchExpressions:
+                        - key: app.kubernetes.io/name
+                          operator: In
+                          values: [agent-studio, agent-studio-workspace-worker, agent-studio-workspace-migration]
+                ports:
+                  - protocol: TCP
+                    port: 2375
+          ---
+          {{- end }}
+          {{- end }}
+      - |
+          {{- if and .Values.workloads.workspaceWorker.enabled (eq .Values.workloads.workspaceWorker.backend "kubernetes") }}
+          {{- $ns := .Values.workloads.workspaceWorker.kubernetes.namespace }}
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: {{ $ns }}
+            annotations:
+              argocd.argoproj.io/sync-wave: "-3"
+              argocd.argoproj.io/sync-options: Prune=false,Delete=false
+            labels:
+              pod-security.kubernetes.io/enforce: baseline
+              sidecar.istio.io/inject: "false"
+          ---
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            name: sandbox
+            namespace: {{ $ns }}
+          automountServiceAccountToken: false
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            name: agent-studio-sandbox
+            namespace: {{ $ns }}
+          rules:
+            - apiGroups: [""]
+              resources: [pods]
+              verbs: [get, list, create, delete]
+            - apiGroups: [""]
+              resources: [pods/exec]
+              verbs: [get, create]
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: agent-studio-sandbox
+            namespace: {{ $ns }}
+          subjects:
+            - kind: ServiceAccount
+              name: agent-studio
+              namespace: {{ .Release.Namespace }}
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: Role
+            name: agent-studio-sandbox
+          ---
+          apiVersion: v1
+          kind: ResourceQuota
+          metadata:
+            name: agent-studio-sandbox
+            namespace: {{ $ns }}
+          spec:
+            hard:
+              pods: {{ .Values.workloads.workspaceWorker.kubernetes.maxPods | quote }}
+              requests.cpu: {{ mulf .Values.workloads.workspaceWorker.cpus .Values.workloads.workspaceWorker.kubernetes.maxPods | quote }}
+              limits.cpu: {{ mulf .Values.workloads.workspaceWorker.cpus .Values.workloads.workspaceWorker.kubernetes.maxPods | quote }}
+              requests.memory: {{ printf "%dMi" (mul .Values.workloads.workspaceWorker.memoryMb .Values.workloads.workspaceWorker.kubernetes.maxPods) | quote }}
+              limits.memory: {{ printf "%dMi" (mul .Values.workloads.workspaceWorker.memoryMb .Values.workloads.workspaceWorker.kubernetes.maxPods) | quote }}
+              requests.ephemeral-storage: {{ printf "%dMi" (mul (add (mul .Values.workloads.workspaceWorker.diskMb 2) 512) .Values.workloads.workspaceWorker.kubernetes.maxPods) | quote }}
+              limits.ephemeral-storage: {{ printf "%dMi" (mul (add (mul .Values.workloads.workspaceWorker.diskMb 2) 512) .Values.workloads.workspaceWorker.kubernetes.maxPods) | quote }}
+          ---
+          apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata:
+            name: sandbox-isolation
+            namespace: {{ $ns }}
+          spec:
+            podSelector: {}
+            policyTypes: [Ingress, Egress]
+            ingress: []
+            egress: []
+          ---
+          apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata:
+            name: sandbox-egress
+            namespace: {{ $ns }}
+          spec:
+            podSelector:
+              matchLabels:
+                app.kubernetes.io/name: agent-studio-sandbox
+            policyTypes: [Egress]
+            egress:
+              - to:
+                  - namespaceSelector:
+                      matchLabels:
+                        kubernetes.io/metadata.name: kube-system
+                    podSelector:
+                      matchLabels:
+                        k8s-app: kube-dns
+          {{- range .Values.workloads.workspaceWorker.kubernetes.dnsCidrs }}
+                  - ipBlock:
+                      cidr: {{ . | quote }}
+          {{- end }}
+                ports:
+                  - {protocol: UDP, port: 53}
+                  - {protocol: TCP, port: 53}
+          {{- if .Values.workloads.workspaceWorker.kubernetes.allowPublic }}
+              # Both deployed clusters use IPv4; policy CIDRs must match the cluster IP family.
+              - to:
+                  - ipBlock:
+                      cidr: 0.0.0.0/0
+                      except: [0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.0.0.0/24, 192.0.2.0/24, 192.168.0.0/16, 198.18.0.0/15, 198.51.100.0/24, 203.0.113.0/24, 224.0.0.0/4, 240.0.0.0/4]
+                ports:
+                  - {protocol: TCP, port: 80}
+                  - {protocol: TCP, port: 443}
+          {{- end }}
+          {{- with .Values.workloads.workspaceWorker.kubernetes.extraEgress }}
+          {{ toYaml . | indent 4 }}
+          {{- end }}
+          {{- end }}
+      - |
+          {{- if and .Values.workloads.workspaceWorker.enabled .Values.workloads.workspaceWorker.registry.enabled }}
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: ECRAuthorizationToken
+          metadata:
+            name: agent-studio-workspace-ecr
+            annotations:
+              argocd.argoproj.io/sync-wave: "-2"
+              argocd.argoproj.io/sync-options: Prune=false,Delete=false
+          spec:
+            region: {{ .Values.workloads.workspaceWorker.registry.region }}
+          ---
+          apiVersion: external-secrets.io/v1
+          kind: ExternalSecret
+          metadata:
+            name: ecr-registry
+            annotations:
+              argocd.argoproj.io/sync-wave: "-1"
+              argocd.argoproj.io/sync-options: Prune=false,Delete=false
+          spec:
+            refreshInterval: 1h
+            target:
+              name: ecr-registry
+              template:
+                type: kubernetes.io/dockerconfigjson
+                data:
+                  .dockerconfigjson: |
+                    {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
+            dataFrom:
+              - sourceRef:
+                  generatorRef:
+                    apiVersion: generators.external-secrets.io/v1alpha1
+                    kind: ECRAuthorizationToken
+                    name: agent-studio-workspace-ecr
+          {{- end }}
+      - |
+          {{- if and .Values.workloads.workspaceWorker.enabled (eq .Values.workloads.workspaceWorker.backend "kubernetes") }}
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: ECRAuthorizationToken
+          metadata:
+            name: agent-studio-sandbox-ecr
+            namespace: {{ .Values.workloads.workspaceWorker.kubernetes.namespace }}
+            annotations:
+              argocd.argoproj.io/sync-wave: "-2"
+              argocd.argoproj.io/sync-options: Prune=false,Delete=false
+          spec:
+            region: {{ .Values.workloads.workspaceWorker.registry.region }}
+          ---
+          apiVersion: external-secrets.io/v1
+          kind: ExternalSecret
+          metadata:
+            name: ecr-registry
+            namespace: {{ .Values.workloads.workspaceWorker.kubernetes.namespace }}
+            annotations:
+              argocd.argoproj.io/sync-wave: "-1"
+              argocd.argoproj.io/sync-options: Prune=false,Delete=false
+          spec:
+            refreshInterval: 1h
+            target:
+              name: ecr-registry
+              template:
+                type: kubernetes.io/dockerconfigjson
+                data:
+                  .dockerconfigjson: |
+                    {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
+            dataFrom:
+              - sourceRef:
+                  generatorRef:
+                    apiVersion: generators.external-secrets.io/v1alpha1
+                    kind: ECRAuthorizationToken
+                    name: agent-studio-sandbox-ecr
+          {{- end }}
+      - |
+          {{- if and .Values.workloads.workspaceWorker.enabled (eq .Values.workloads.workspaceWorker.backend "kubernetes") }}
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            name: agent-studio-workspace-migration
+            annotations:
+              argocd.argoproj.io/hook: PreSync
+              argocd.argoproj.io/sync-wave: "-3"
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            name: agent-studio-workspace-migration
+            annotations:
+              argocd.argoproj.io/hook: PreSync
+              argocd.argoproj.io/sync-wave: "-3"
+          rules:
+            - apiGroups: [""]
+              resources: [pods]
+              verbs: [get, list]
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: agent-studio-workspace-migration
+            annotations:
+              argocd.argoproj.io/hook: PreSync
+              argocd.argoproj.io/sync-wave: "-3"
+          subjects:
+            - kind: ServiceAccount
+              name: agent-studio-workspace-migration
+              namespace: {{ .Release.Namespace }}
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: Role
+            name: agent-studio-workspace-migration
+          ---
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: agent-studio-workspace-migration
+            annotations:
+              argocd.argoproj.io/hook: PreSync
+              argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+          spec:
+            backoffLimit: 0
+            activeDeadlineSeconds: 120
+            template:
+              metadata:
+                annotations:
+                  sidecar.istio.io/inject: "false"
+                labels:
+                  # Existing DinD policy already allows app Pods; omit instance to avoid selecting this Job into the app Service.
+                  app.kubernetes.io/name: agent-studio
+              spec:
+                serviceAccountName: agent-studio-workspace-migration
+                restartPolicy: Never
+                imagePullSecrets:
+                  - name: ecr-registry
+                containers:
+                  - name: migration
+                    image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+                    command: [node, build/workspace-migration-check.cjs]
+                    env:
+                      - {name: WORKSPACE_CONTROL_NAMESPACE, value: {{ .Release.Namespace | quote }}}
+                      - {name: WORKSPACE_INSTANCE, value: {{ .Release.Name | quote }}}
+                      - {name: DOCKER_HOST, value: "tcp://agent-studio-workspace-docker.{{ .Release.Namespace }}.svc.cluster.local:2375"}
+          {{- if .Values.resources }}
+                    resources:
+                      requests: {cpu: 100m, memory: 128Mi}
+                      limits: {cpu: 500m, memory: 256Mi}
+          {{- end }}
+          {{- end }}
+
 # The schedule ticker (agent-studio docs/OPERATIONS.md#schedule-ticker).
 # Schedule triggers fire only when something POSTs /api/triggers/scan; this
 # CronJob is that something. It holds no state and no cron knowledge — which
@@ -263,592 +912,3 @@ reindex:
     limits:
       cpu: 50m
       memory: 32Mi
-
-# Workers reuse app.deployment. The composition adapter resolves overrides in
-# parent scope so app.image remains the single GitOps image/version source.
-audioWorker:
-  enabled: false
-  fullnameOverride: agent-studio-audio-worker
-  controller:
-    enabled: false
-    strategy:
-      rollingUpdate:
-        maxSurge: 25%
-        maxUnavailable: 25%
-  service:
-    enabled: false
-  containerName: audio-worker
-  serviceAccount:
-    name: agent-studio
-  terminationGracePeriodSeconds: 60
-  command: [node, build/audio-worker.cjs]
-  envFrom:
-    - configMapRef:
-        name: agent-studio
-    - secretRef:
-        name: agent-studio-external
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 1000m
-      memory: 2Gi
-  overrides: |
-    enabled: {{ .Values.audioWorker.enabled }}
-    replicaCount: {{ if hasKey .Values.audioWorker "replicas" }}{{ .Values.audioWorker.replicas }}{{ else }}1{{ end }}
-    image: {{ toYaml .Values.app.image | nindent 2 }}
-    imagePullSecrets: {{ toYaml .Values.app.imagePullSecrets | nindent 2 }}
-    podAnnotations:
-      checksum/config: {{ toYaml .Values.app.configmap | sha256sum }}
-    {{- if not .Values.app.resources }}
-    resources: null
-    {{- end }}
-
-workspaceWorker:
-  enabled: false
-  fullnameOverride: agent-studio-workspace-worker
-  controller:
-    enabled: false
-    strategy:
-      type: Recreate
-  service:
-    enabled: false
-  containerName: workspace-worker
-  serviceAccount:
-    name: agent-studio
-  terminationGracePeriodSeconds: 60
-  imagePullSecrets:
-    - name: ecr-registry
-  envFrom:
-    - configMapRef:
-        name: agent-studio
-    - secretRef:
-        name: agent-studio-external
-    - configMapRef:
-        name: agent-studio-workspace
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 768Mi
-  readinessProbe:
-    exec:
-      command: [node, build/workspace-health.cjs, --worker]
-    initialDelaySeconds: 20
-    periodSeconds: 10
-    timeoutSeconds: 15
-  livenessProbe:
-    exec:
-      command: [node, build/workspace-health.cjs, --heartbeat-only]
-    initialDelaySeconds: 60
-    periodSeconds: 20
-    timeoutSeconds: 15
-  backend: docker
-  # Keep the old PVC/daemon until an operator approves retirement after cutover.
-  legacyDocker:
-    enabled: true
-  kubernetes:
-    namespace: agent-studio-workspaces
-    nodePool: ""
-    maxPods: 8
-    dnsCidrs: []
-    allowPublic: true
-    extraEgress: []
-  registry:
-    enabled: false
-  persistence:
-    # This PVC is managed by raw, independently of the worker Deployment.
-    enabled: false
-    size: 10Gi
-    storageClass: local-path
-  overrides: |
-    enabled: {{ .Values.workspaceWorker.enabled }}
-    replicaCount: {{ if hasKey .Values.workspaceWorker "replicas" }}{{ .Values.workspaceWorker.replicas }}{{ else }}1{{ end }}
-    image: {{ toYaml .Values.app.image | nindent 2 }}
-    automountServiceAccountToken: {{ eq .Values.workspaceWorker.backend "kubernetes" }}
-    podAnnotations:
-      checksum/config: {{ toYaml .Values.app.configmap | sha256sum }}
-      checksum/workspace: {{ toYaml .Values.workspaceWorker.kubernetes | sha256sum }}
-      checksum/network: {{ .Files.Get "files/workspace-network.sh" | sha256sum }}
-    {{- if not .Values.app.resources }}
-    resources: null
-    {{- end }}
-    {{- if eq .Values.workspaceWorker.backend "docker" }}
-    command:
-      - /bin/sh
-      - -ec
-      - |
-        until test -f /workspace-network/ready && docker info >/dev/null 2>&1; do sleep 2; done
-        docker image inspect "$WORKSPACE_IMAGE" >/dev/null 2>&1 || docker pull "$WORKSPACE_IMAGE"
-        exec node build/workspace-worker.cjs
-    env:
-      - name: DOCKER_HOST
-        value: tcp://127.0.0.1:2375
-    extraVolumes:
-    {{ toYaml .Values.workspaceDocker.extraVolumes | indent 2 }}
-      - name: ecr-config
-        secret:
-          secretName: ecr-registry
-          items:
-            - key: .dockerconfigjson
-              path: config.json
-    extraVolumeMounts:
-      - name: network-ready
-        mountPath: /workspace-network
-        readOnly: true
-      - name: ecr-config
-        mountPath: /home/app/.docker
-        readOnly: true
-    sidecars:
-      - {{ tpl .Values.workspaceDocker.container $ | nindent 4 | trim }}
-    {{- else }}
-    command: [node, build/workspace-worker.cjs]
-    {{- end }}
-
-workspaceDocker:
-  revisionHistoryLimit: 10
-  fullnameOverride: agent-studio-workspace-docker
-  controller:
-    enabled: false
-    annotations:
-      argocd.argoproj.io/sync-options: Prune=false,Delete=false
-      # Wait until the worker releases its RWO data directory.
-      argocd.argoproj.io/sync-wave: "1"
-    strategy:
-      type: Recreate
-  service:
-    enabled: false
-  containerName: docker
-  automountServiceAccountToken: false
-  terminationGracePeriodSeconds: 60
-  extraVolumes:
-    - name: network-script
-      configMap:
-        name: agent-studio-workspace-network
-    - name: network-ready
-      emptyDir: {}
-    - name: docker-data
-      persistentVolumeClaim:
-        claimName: agent-studio-workspace-docker
-  container: |
-    name: docker
-    image: {{ .Values.workspaceWorker.dockerImage }}
-    imagePullPolicy: IfNotPresent
-    command: ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
-    env:
-      - name: DOCKER_TLS_CERTDIR
-        value: ""
-      - name: WORKSPACE_NETWORK
-        value: {{ .Values.app.configmap.data.WORKSPACE_NETWORK | quote }}
-    args: ["--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
-    securityContext:
-      privileged: true
-    volumeMounts:
-      - name: network-script
-        mountPath: /opt/workspace-network
-        readOnly: true
-      - name: network-ready
-        mountPath: /workspace-network
-      - name: docker-data
-        mountPath: /var/lib/docker
-    {{- if .Values.app.resources }}
-    resources:
-      requests:
-        cpu: 100m
-        memory: 512Mi
-      limits:
-        cpu: 1000m
-        memory: 1536Mi
-    {{- end }}
-    readinessProbe:
-      exec:
-        command: ["/bin/sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null 2>&1"]
-      initialDelaySeconds: 10
-      periodSeconds: 10
-      timeoutSeconds: 5
-    livenessProbe:
-      exec:
-        command: ["/bin/sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null 2>&1"]
-      initialDelaySeconds: 30
-      periodSeconds: 20
-      timeoutSeconds: 5
-  overrides: |
-    enabled: {{ and .Values.workspaceWorker.enabled (eq .Values.workspaceWorker.backend "kubernetes") .Values.workspaceWorker.legacyDocker.enabled }}
-    replicaCount: {{ if hasKey .Values.workspaceWorker "replicas" }}{{ .Values.workspaceWorker.replicas }}{{ else }}1{{ end }}
-    {{- $container := tpl .Values.workspaceDocker.container $ | fromYaml }}
-    {{- if hasKey $container "Error" }}{{ fail (index $container "Error") }}{{ end }}
-    image:
-      reference: {{ .Values.workspaceWorker.dockerImage | quote }}
-    command: {{ toYaml $container.command | nindent 2 }}
-    args: {{ toYaml $container.args | nindent 2 }}
-    env: {{ toYaml $container.env | nindent 2 }}
-    securityContext: {{ toYaml $container.securityContext | nindent 2 }}
-    extraVolumeMounts: {{ toYaml $container.volumeMounts | nindent 2 }}
-    readinessProbe: {{ toYaml $container.readinessProbe | nindent 2 }}
-    livenessProbe: {{ toYaml $container.livenessProbe | nindent 2 }}
-    resources: {{ toYaml $container.resources | nindent 2 }}
-    podAnnotations:
-      checksum/network: {{ .Files.Get "files/workspace-network.sh" | sha256sum }}
-
-raw:
-  # Evaluated by composition.yaml in parent scope, then rendered by incubator/raw.
-  parentTemplates:
-    - |
-        {{- if .Values.workspaceWorker.enabled }}
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: agent-studio-workspace
-          annotations:
-            argocd.argoproj.io/sync-wave: "-1"
-        data:
-          WORKSPACE_PROVIDER: {{ .Values.workspaceWorker.backend | quote }}
-        {{- if eq .Values.workspaceWorker.backend "kubernetes" }}
-          WORKSPACE_NAMESPACE: {{ .Values.workspaceWorker.kubernetes.namespace | quote }}
-          WORKSPACE_INSTANCE: {{ .Release.Name | quote }}
-          WORKSPACE_LEGACY_DOCKER: {{ .Values.workspaceWorker.legacyDocker.enabled | quote }}
-          WORKSPACE_IMAGE_PULL_SECRET: ecr-registry
-        {{- if .Values.workspaceWorker.kubernetes.nodePool }}
-          WORKSPACE_NODE_POOL: {{ .Values.workspaceWorker.kubernetes.nodePool | quote }}
-        {{- end }}
-        {{- end }}
-          WORKSPACE_IMAGE: {{ printf "%s:workspace-%s" .Values.app.image.repository .Values.app.image.tag | quote }}
-        {{- end }}
-    - |
-        {{- if .Values.workspaceWorker.enabled }}
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: agent-studio-workspace-network
-        data:
-          workspace-network.sh: |
-        {{ .Files.Get "files/workspace-network.sh" | indent 4 }}
-        {{- end }}
-    - |
-        {{- if .Values.workspaceWorker.enabled }}
-        apiVersion: v1
-        kind: PersistentVolumeClaim
-        metadata:
-          name: agent-studio-workspace-docker
-          annotations:
-            argocd.argoproj.io/sync-options: Prune=false,Delete=false
-            helm.sh/resource-policy: keep
-          labels:
-            app.kubernetes.io/name: agent-studio-workspace-worker
-            app.kubernetes.io/instance: {{ .Release.Name }}
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          storageClassName: {{ .Values.workspaceWorker.persistence.storageClass }}
-          resources:
-            requests:
-              storage: {{ .Values.workspaceWorker.persistence.size }}
-        ---
-        {{- if or (eq .Values.workspaceWorker.backend "docker") .Values.workspaceWorker.legacyDocker.enabled }}
-        apiVersion: v1
-        kind: Service
-        metadata:
-          name: agent-studio-workspace-docker
-          labels:
-            app.kubernetes.io/name: agent-studio-workspace-worker
-            app.kubernetes.io/instance: {{ .Release.Name }}
-        spec:
-          type: ClusterIP
-          # Drain checks must reach the daemon even if its worker is unhealthy or pulling an image.
-          publishNotReadyAddresses: true
-          selector:
-            app.kubernetes.io/name: {{ if eq .Values.workspaceWorker.backend "kubernetes" }}agent-studio-workspace-docker{{ else }}agent-studio-workspace-worker{{ end }}
-            app.kubernetes.io/instance: {{ .Release.Name }}
-          ports:
-            # Docker exec hijacks HTTP with Upgrade: tcp; HTTP sniffing proxies reject it.
-            - name: tcp-docker
-              port: 2375
-              targetPort: 2375
-        ---
-        apiVersion: networking.k8s.io/v1
-        kind: NetworkPolicy
-        metadata:
-          name: agent-studio-workspace-docker
-          labels:
-            app.kubernetes.io/name: agent-studio-workspace-worker
-            app.kubernetes.io/instance: {{ .Release.Name }}
-        spec:
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/name: {{ if eq .Values.workspaceWorker.backend "kubernetes" }}agent-studio-workspace-docker{{ else }}agent-studio-workspace-worker{{ end }}
-              app.kubernetes.io/instance: {{ .Release.Name }}
-          policyTypes: [Ingress]
-          ingress:
-            - from:
-                - podSelector:
-                    matchExpressions:
-                      - key: app.kubernetes.io/name
-                        operator: In
-                        values: [agent-studio, agent-studio-workspace-worker, agent-studio-workspace-migration]
-              ports:
-                - protocol: TCP
-                  port: 2375
-        ---
-        {{- end }}
-        {{- end }}
-    - |
-        {{- if and .Values.workspaceWorker.enabled (eq .Values.workspaceWorker.backend "kubernetes") }}
-        {{- $ns := .Values.workspaceWorker.kubernetes.namespace }}
-        apiVersion: v1
-        kind: Namespace
-        metadata:
-          name: {{ $ns }}
-          annotations:
-            argocd.argoproj.io/sync-wave: "-3"
-            argocd.argoproj.io/sync-options: Prune=false,Delete=false
-          labels:
-            pod-security.kubernetes.io/enforce: baseline
-            sidecar.istio.io/inject: "false"
-        ---
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata:
-          name: sandbox
-          namespace: {{ $ns }}
-        automountServiceAccountToken: false
-        ---
-        apiVersion: rbac.authorization.k8s.io/v1
-        kind: Role
-        metadata:
-          name: agent-studio-sandbox
-          namespace: {{ $ns }}
-        rules:
-          - apiGroups: [""]
-            resources: [pods]
-            verbs: [get, list, create, delete]
-          - apiGroups: [""]
-            resources: [pods/exec]
-            verbs: [get, create]
-        ---
-        apiVersion: rbac.authorization.k8s.io/v1
-        kind: RoleBinding
-        metadata:
-          name: agent-studio-sandbox
-          namespace: {{ $ns }}
-        subjects:
-          - kind: ServiceAccount
-            name: agent-studio
-            namespace: {{ .Release.Namespace }}
-        roleRef:
-          apiGroup: rbac.authorization.k8s.io
-          kind: Role
-          name: agent-studio-sandbox
-        ---
-        apiVersion: v1
-        kind: ResourceQuota
-        metadata:
-          name: agent-studio-sandbox
-          namespace: {{ $ns }}
-        spec:
-          hard:
-            pods: {{ .Values.workspaceWorker.kubernetes.maxPods | quote }}
-            requests.cpu: {{ mulf .Values.workspaceWorker.cpus .Values.workspaceWorker.kubernetes.maxPods | quote }}
-            limits.cpu: {{ mulf .Values.workspaceWorker.cpus .Values.workspaceWorker.kubernetes.maxPods | quote }}
-            requests.memory: {{ printf "%dMi" (mul .Values.workspaceWorker.memoryMb .Values.workspaceWorker.kubernetes.maxPods) | quote }}
-            limits.memory: {{ printf "%dMi" (mul .Values.workspaceWorker.memoryMb .Values.workspaceWorker.kubernetes.maxPods) | quote }}
-            requests.ephemeral-storage: {{ printf "%dMi" (mul (add (mul .Values.workspaceWorker.diskMb 2) 512) .Values.workspaceWorker.kubernetes.maxPods) | quote }}
-            limits.ephemeral-storage: {{ printf "%dMi" (mul (add (mul .Values.workspaceWorker.diskMb 2) 512) .Values.workspaceWorker.kubernetes.maxPods) | quote }}
-        ---
-        apiVersion: networking.k8s.io/v1
-        kind: NetworkPolicy
-        metadata:
-          name: sandbox-isolation
-          namespace: {{ $ns }}
-        spec:
-          podSelector: {}
-          policyTypes: [Ingress, Egress]
-          ingress: []
-          egress: []
-        ---
-        apiVersion: networking.k8s.io/v1
-        kind: NetworkPolicy
-        metadata:
-          name: sandbox-egress
-          namespace: {{ $ns }}
-        spec:
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/name: agent-studio-sandbox
-          policyTypes: [Egress]
-          egress:
-            - to:
-                - namespaceSelector:
-                    matchLabels:
-                      kubernetes.io/metadata.name: kube-system
-                  podSelector:
-                    matchLabels:
-                      k8s-app: kube-dns
-        {{- range .Values.workspaceWorker.kubernetes.dnsCidrs }}
-                - ipBlock:
-                    cidr: {{ . | quote }}
-        {{- end }}
-              ports:
-                - {protocol: UDP, port: 53}
-                - {protocol: TCP, port: 53}
-        {{- if .Values.workspaceWorker.kubernetes.allowPublic }}
-            # Both deployed clusters use IPv4; policy CIDRs must match the cluster IP family.
-            - to:
-                - ipBlock:
-                    cidr: 0.0.0.0/0
-                    except: [0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.0.0.0/24, 192.0.2.0/24, 192.168.0.0/16, 198.18.0.0/15, 198.51.100.0/24, 203.0.113.0/24, 224.0.0.0/4, 240.0.0.0/4]
-              ports:
-                - {protocol: TCP, port: 80}
-                - {protocol: TCP, port: 443}
-        {{- end }}
-        {{- with .Values.workspaceWorker.kubernetes.extraEgress }}
-        {{ toYaml . | indent 4 }}
-        {{- end }}
-        {{- end }}
-    - |
-        {{- if and .Values.workspaceWorker.enabled .Values.workspaceWorker.registry.enabled }}
-        apiVersion: generators.external-secrets.io/v1alpha1
-        kind: ECRAuthorizationToken
-        metadata:
-          name: agent-studio-workspace-ecr
-          annotations:
-            argocd.argoproj.io/sync-wave: "-2"
-            argocd.argoproj.io/sync-options: Prune=false,Delete=false
-        spec:
-          region: {{ .Values.workspaceWorker.registry.region }}
-        ---
-        apiVersion: external-secrets.io/v1
-        kind: ExternalSecret
-        metadata:
-          name: ecr-registry
-          annotations:
-            argocd.argoproj.io/sync-wave: "-1"
-            argocd.argoproj.io/sync-options: Prune=false,Delete=false
-        spec:
-          refreshInterval: 1h
-          target:
-            name: ecr-registry
-            template:
-              type: kubernetes.io/dockerconfigjson
-              data:
-                .dockerconfigjson: |
-                  {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
-          dataFrom:
-            - sourceRef:
-                generatorRef:
-                  apiVersion: generators.external-secrets.io/v1alpha1
-                  kind: ECRAuthorizationToken
-                  name: agent-studio-workspace-ecr
-        {{- end }}
-    - |
-        {{- if and .Values.workspaceWorker.enabled (eq .Values.workspaceWorker.backend "kubernetes") }}
-        apiVersion: generators.external-secrets.io/v1alpha1
-        kind: ECRAuthorizationToken
-        metadata:
-          name: agent-studio-sandbox-ecr
-          namespace: {{ .Values.workspaceWorker.kubernetes.namespace }}
-          annotations:
-            argocd.argoproj.io/sync-wave: "-2"
-            argocd.argoproj.io/sync-options: Prune=false,Delete=false
-        spec:
-          region: {{ .Values.workspaceWorker.registry.region }}
-        ---
-        apiVersion: external-secrets.io/v1
-        kind: ExternalSecret
-        metadata:
-          name: ecr-registry
-          namespace: {{ .Values.workspaceWorker.kubernetes.namespace }}
-          annotations:
-            argocd.argoproj.io/sync-wave: "-1"
-            argocd.argoproj.io/sync-options: Prune=false,Delete=false
-        spec:
-          refreshInterval: 1h
-          target:
-            name: ecr-registry
-            template:
-              type: kubernetes.io/dockerconfigjson
-              data:
-                .dockerconfigjson: |
-                  {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
-          dataFrom:
-            - sourceRef:
-                generatorRef:
-                  apiVersion: generators.external-secrets.io/v1alpha1
-                  kind: ECRAuthorizationToken
-                  name: agent-studio-sandbox-ecr
-        {{- end }}
-    - |
-        {{- if and .Values.workspaceWorker.enabled (eq .Values.workspaceWorker.backend "kubernetes") }}
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata:
-          name: agent-studio-workspace-migration
-          annotations:
-            argocd.argoproj.io/hook: PreSync
-            argocd.argoproj.io/sync-wave: "-3"
-        ---
-        apiVersion: rbac.authorization.k8s.io/v1
-        kind: Role
-        metadata:
-          name: agent-studio-workspace-migration
-          annotations:
-            argocd.argoproj.io/hook: PreSync
-            argocd.argoproj.io/sync-wave: "-3"
-        rules:
-          - apiGroups: [""]
-            resources: [pods]
-            verbs: [get, list]
-        ---
-        apiVersion: rbac.authorization.k8s.io/v1
-        kind: RoleBinding
-        metadata:
-          name: agent-studio-workspace-migration
-          annotations:
-            argocd.argoproj.io/hook: PreSync
-            argocd.argoproj.io/sync-wave: "-3"
-        subjects:
-          - kind: ServiceAccount
-            name: agent-studio-workspace-migration
-            namespace: {{ .Release.Namespace }}
-        roleRef:
-          apiGroup: rbac.authorization.k8s.io
-          kind: Role
-          name: agent-studio-workspace-migration
-        ---
-        apiVersion: batch/v1
-        kind: Job
-        metadata:
-          name: agent-studio-workspace-migration
-          annotations:
-            argocd.argoproj.io/hook: PreSync
-            argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
-        spec:
-          backoffLimit: 0
-          activeDeadlineSeconds: 120
-          template:
-            metadata:
-              annotations:
-                sidecar.istio.io/inject: "false"
-              labels:
-                # Existing DinD policy already allows app Pods; omit instance to avoid selecting this Job into the app Service.
-                app.kubernetes.io/name: agent-studio
-            spec:
-              serviceAccountName: agent-studio-workspace-migration
-              restartPolicy: Never
-              imagePullSecrets:
-                - name: ecr-registry
-              containers:
-                - name: migration
-                  image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}
-                  command: [node, build/workspace-migration-check.cjs]
-                  env:
-                    - {name: WORKSPACE_CONTROL_NAMESPACE, value: {{ .Release.Namespace | quote }}}
-                    - {name: WORKSPACE_INSTANCE, value: {{ .Release.Name | quote }}}
-                    - {name: DOCKER_HOST, value: "tcp://agent-studio-workspace-docker.{{ .Release.Namespace }}.svc.cluster.local:2375"}
-        {{- if .Values.app.resources }}
-                  resources:
-                    requests: {cpu: 100m, memory: 128Mi}
-                    limits: {cpu: 500m, memory: 256Mi}
-        {{- end }}
-        {{- end }}

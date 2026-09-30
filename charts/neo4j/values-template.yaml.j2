@@ -1,11 +1,19 @@
 {% if env == 'local' %}externalSecrets:
   enabled: false
-{% else %}ssmPrefix: /k8s/{{cluster}}
+{% else %}global:
+  ssmPrefix: /k8s/{{cluster}}
 {% endif %}{% if (neo4j is defined and (neo4j.storage is defined or (neo4j.config is defined and neo4j.config))) or not resources %}
 neo4jdb:
 {% if not resources %}
   neo4j:
-    resources: null
+    # The official chart requires these minimum requests; no compute limits.
+    resources:
+      cpu: null
+      memory: null
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits: null
     operations:
       resources: null
 {% endif %}

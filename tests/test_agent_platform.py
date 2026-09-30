@@ -131,7 +131,7 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
     assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
     script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]
-    assert script == (ROOT / "charts/agent-studio/files/workspace-network.sh").read_text()
+    assert script == yaml.safe_load((ROOT / "charts/agent-studio/values.yaml").read_text())["app"]["workspaceNetworkScript"]
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-health.cjs", "--heartbeat-only"]
     for cron in ["agent-studio-scan", "agent-studio-reindex"]:
         assert resource("agent-studio", platform, "CronJob", cron)["spec"]["suspend"] is maintenance

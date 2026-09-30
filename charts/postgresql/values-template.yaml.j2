@@ -1,6 +1,7 @@
 {% if env == 'local' %}externalSecrets:
   enabled: false
-{% else %}ssmPrefix: /k8s/{{cluster}}
+{% else %}global:
+  ssmPrefix: /k8s/{{cluster}}
 {% endif %}{% if (postgresql is defined and postgresql.storage is defined) or not resources %}
 postgresql:
   primary:
@@ -14,4 +15,9 @@ postgresql:
 {% if not resources %}
     resources: null
 {%- endif %}
+{%- endif %}
+
+{%- if not resources %}
+bootstrap:
+  jobResources: null
 {%- endif %}
