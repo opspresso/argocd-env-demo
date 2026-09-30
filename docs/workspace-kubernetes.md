@@ -9,6 +9,7 @@ NetworkPolicy는 ingress와 egress를 기본 거부한다. cluster DNS와 public
 사설망·다른 Pod·metadata endpoint는 차단한다. 폐쇄망이나 내부 모델은
 `workspace_allow_public: false`와 `workspace_extra_egress`에 정확한 목적지·포트를 선언한다.
 현재 DNS 허용 주소는 EKS `172.20.0.10/32`, k3s `10.43.0.10/32`다.
+두 클러스터는 IPv4를 사용하므로 CIDR 허용 규칙도 IPv4로만 구성한다. IPv6는 기본 차단을 유지한다.
 
 ## 승인 후 전환 순서
 
