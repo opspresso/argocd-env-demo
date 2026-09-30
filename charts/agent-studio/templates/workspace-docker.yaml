@@ -26,6 +26,8 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   type: ClusterIP
+  # Drain checks must reach the daemon even if its worker is unhealthy or pulling an image.
+  publishNotReadyAddresses: true
   selector:
     app.kubernetes.io/name: {{ if eq .Values.workspaceWorker.backend "kubernetes" }}agent-studio-workspace-docker{{ else }}agent-studio-workspace-worker{{ end }}
     app.kubernetes.io/instance: {{ .Release.Name }}
