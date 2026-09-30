@@ -102,7 +102,7 @@ def test_docker_service_preserves_exec_upgrade_streams(platform):
     assert policy["policyTypes"] == ["Ingress"]
     assert policy["ingress"][0]["ports"] == [{"protocol": "TCP", "port": 2375}]
     assert policy["ingress"][0]["from"][0]["podSelector"]["matchExpressions"][0]["values"] == [
-        "agent-studio", "agent-studio-workspace-worker"]
+        "agent-studio", "agent-studio-workspace-worker", "agent-studio-workspace-migration"]
 
 
 @pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
@@ -114,7 +114,16 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     assert config["GITHUB_WEB_URL"] == "https://github.com"
     assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
     pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker")["spec"]["template"]["spec"]
-    worker, docker = pod["containers"]
+    sandbox_config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]
+    assert sandbox_config["WORKSPACE_PROVIDER"] == "kubernetes"
+    assert sandbox_config["WORKSPACE_NAMESPACE"] == "agent-studio-workspaces"
+    assert sandbox_config["WORKSPACE_LEGACY_DOCKER"] == "true"
+    assert len(pod["containers"]) == 1
+    worker = pod["containers"][0]
+    assert worker["command"] == ["node", "build/workspace-worker.cjs"]
+    assert pod["automountServiceAccountToken"] is True
+    assert not pod.get("volumes")
+    docker = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-docker")["spec"]["template"]["spec"]["containers"][0]
     assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
     assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
     script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]

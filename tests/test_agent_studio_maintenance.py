@@ -38,7 +38,7 @@ def test_maintenance_stops_studio_writers_without_removing_dependencies(platform
     ], capture_output=True, text=True, check=True)
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
     deployments = {doc["metadata"]["name"]: doc for doc in docs if doc["kind"] == "Deployment"}
-    for name in ["agent-studio", "agent-studio-audio-worker", "agent-studio-workspace-worker"]:
+    for name in ["agent-studio", "agent-studio-audio-worker", "agent-studio-workspace-worker", "agent-studio-workspace-docker"]:
         assert deployments[name]["spec"]["replicas"] == 0
     assert not any(doc["kind"] == "HorizontalPodAutoscaler" and doc["metadata"]["name"] == "agent-studio" for doc in docs)
     cronjobs = {doc["metadata"]["name"]: doc for doc in docs if doc["kind"] == "CronJob"}
