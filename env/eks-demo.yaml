@@ -35,7 +35,7 @@ agent_memory:
 
 audio_worker: true
 workspace_worker: true
-workspace_backend: docker
+workspace_backend: kubernetes
 workspace_legacy_docker: true
 workspace_max_pods: 8
 workspace_docker_image: public.ecr.aws/docker/library/docker:27.5.1-dind
