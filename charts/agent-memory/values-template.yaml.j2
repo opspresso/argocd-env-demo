@@ -93,7 +93,7 @@ app:
       name: S3_SECRET_ACCESS_KEY
 {% endif %}
 
-serviceMonitor:
-  labels:
-    release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
+  serviceMonitor:
+    labels:
+      release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
 {% endif %}

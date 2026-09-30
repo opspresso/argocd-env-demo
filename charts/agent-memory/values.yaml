@@ -87,8 +87,16 @@ app:
             periodSeconds: 300
 
   serviceMonitor:
-    # app v1.4.0 drops endpoint authorization; the wrapper owns this monitor.
-    enabled: false
+    enabled: true
+    endpoints:
+      - interval: 15s
+        path: /api/metrics
+        port: http
+        authorization:
+          type: Bearer
+          credentials:
+            name: agent-memory-external
+            key: METRICS_BEARER_TOKEN
 
   routing:
     httpRoute:
@@ -117,6 +125,3 @@ app:
     secretStoreRef:
       kind: ClusterSecretStore
       name: parameter-store
-
-serviceMonitor:
-  enabled: true

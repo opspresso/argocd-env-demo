@@ -85,6 +85,6 @@ app:
       name: S3_SECRET_ACCESS_KEY
 
 
-serviceMonitor:
-  labels:
-    release: victoria-metrics-k3s-demo
+  serviceMonitor:
+    labels:
+      release: victoria-metrics-k3s-demo

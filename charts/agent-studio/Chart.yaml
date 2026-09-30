@@ -2,13 +2,13 @@ apiVersion: v2
 name: agent-studio
 description: Build and operate production AI agents.
 type: application
-version: v1.4.0
+version: v1.5.0
 appVersion: v1.0.0
 
 dependencies:
   - repository: https://opspresso.github.io/helm-charts
     name: app
-    version: "v1.4.0"
+    version: "v1.6.0"
   # The schedule ticker: a CronJob POSTing the app's scan endpoint once a
   # minute. Aliased so its values sit under `scan:` beside `app:`.
   - repository: https://opspresso.github.io/helm-charts
@@ -24,3 +24,18 @@ dependencies:
     name: cronjob
     version: "v1.1.2"
     alias: reindex
+  - repository: https://opspresso.github.io/helm-charts
+    name: app
+    version: "v1.6.0"
+    alias: audioWorker
+  - repository: https://opspresso.github.io/helm-charts
+    name: app
+    version: "v1.6.0"
+    alias: workspaceWorker
+  - repository: https://opspresso.github.io/helm-charts
+    name: app
+    version: "v1.6.0"
+    alias: workspaceDocker
+  - repository: https://charts.helm.sh/incubator
+    name: raw
+    version: "0.2.5"

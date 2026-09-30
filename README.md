@@ -48,6 +48,22 @@ MCP 인증 설정과 PostgreSQL 초기화 동작을 검증한다. 이 fixture는
 
 ## charts
 
+차트 구성은 `opspresso/helm-charts`의 `app` → `cronjob` → incubator `raw` 순서로
+선택한다. 공통 차트에 필요한 기능이 없으면 먼저 공통 차트를 확장하고, wrapper의
+`templates/`에는 리소스 정의를 추가하지 않는다.
+
+Agent Studio의 audio/Workspace/Docker worker는 `app` alias를 사용하고, scan/reindex는
+`cronjob`, RBAC·네트워크 정책·보존용 PVC·마이그레이션 Job은 `raw`가 렌더한다.
+`templates/composition.yaml`은 phase·클러스터 값이 병합된 후 worker와 raw에 부모 값을
+전달하는 어댑터다. `app.image`를 단일 버전 원천으로 유지하므로 GitOps가 이미지 태그를
+갱신하면 worker·마이그레이션 Job·workspace 이미지도 함께 바뀐다. worker별 설정은
+`audioWorker`, `workspaceWorker`, `workspaceDocker`에 두며, 부모 값 참조는 각 `overrides`와
+`raw.parentTemplates`에 둔다. Agent Memory의 인증된 메트릭 수집은
+`app.serviceMonitor`로 관리한다.
+
+Studio와 Memory는 `app v1.6.0`을 사용한다. 공통 차트 의존성 버전을 올릴 때는
+`helm-charts`의 게시를 확인하고, 원격 의존성으로 검증한 뒤 이 저장소에 반영한다.
+
 ```
 charts/<project>/
   Chart.yaml

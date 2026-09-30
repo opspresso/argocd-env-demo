@@ -1,0 +1,25 @@
+{{/* Resolve sibling image/config references after all phase and cluster values merge. */}}
+{{- range $name := list "audioWorker" "workspaceWorker" "workspaceDocker" }}
+{{- $component := index $.Subcharts $name }}
+{{- $overrides := tpl $component.Values.overrides $ | fromYaml }}
+{{- if hasKey $overrides "Error" }}{{ fail (index $overrides "Error") }}{{ end }}
+{{- if $overrides.enabled }}
+{{- $context := mergeOverwrite (deepCopy $component) (dict "Values" (mergeOverwrite (deepCopy $component.Values) $overrides)) }}
+---
+{{ include "app.deployment" $context }}
+{{- end }}
+{{- end }}
+
+{{/* raw receives parent scope so release identity and protected resources stay intact. */}}
+{{- $resources := list }}
+{{- range .Values.raw.parentTemplates }}
+{{- range regexSplit "(?m)^---[ \t]*$" (tpl . $) -1 }}
+{{- if trim . }}
+{{- $resource := fromYaml . }}
+{{- if hasKey $resource "Error" }}{{ fail (index $resource "Error") }}{{ end }}
+{{- $resources = append $resources $resource }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- $raw := mergeOverwrite (deepCopy .Subcharts.raw) (dict "Values" (mergeOverwrite (deepCopy .Subcharts.raw.Values) (dict "resources" $resources "templates" (list)))) }}
+{{ include (printf "%s/charts/raw/templates/resources.yaml" .Chart.Name) $raw }}

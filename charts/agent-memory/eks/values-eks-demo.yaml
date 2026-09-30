@@ -73,6 +73,6 @@ app:
       name: METRICS_BEARER_TOKEN
 
 
-serviceMonitor:
-  labels:
-    release: prometheus-eks-demo
+  serviceMonitor:
+    labels:
+      release: prometheus-eks-demo
