@@ -197,15 +197,10 @@ values 파일 누락이나 chart 오류를 Argo CD sync 가 아니라 CI 에서 
 
 ## k3s workers
 
-k3s의 `agent-studio`는 `audio-worker`를 별도 Deployment로 실행한다. Workspace 기능은
-`workspace-worker`와 Docker-in-Docker sidecar를 사용하며, sandbox Docker daemon은
-`agent-studio-workspace-docker` ClusterIP로 앱과 worker만 접근한다. Docker state는
-`agent-studio-workspace-docker` PVC에 보존하고, sandbox image는 private ECR의
-`agent-studio:workspace-<version>` tag를 사용한다.
-
-Workspace worker Pod는 DinD 때문에 privileged 권한이 필요하다. `ecr-registry` Secret은
-kubelet image pull뿐 아니라 worker와 앱의 Docker client config에도 mount해야 하며,
-Agent Studio image와 matching Workspace image를 함께 release해야 한다.
+k3s와 EKS는 별도 audio/Workspace worker를 실행한다. Workspace는 실행 전용 namespace의
+단일 Pod와 제한된 emptyDir를 사용하며, Studio image와 같은 릴리스의 `workspace-<version>` 이미지를 사용한다.
+실행 Pod의 토큰·네트워크·자원 격리와 전환 절차는 [Kubernetes Workspace 운영](docs/workspace-kubernetes.md)을 따른다.
+기존 DinD PVC·daemon·ECR 인증은 전환 중 보존하며, 신규 접수 차단과 기존 작업의 체크포인트·종료가 먼저다.
 
 ## test
 

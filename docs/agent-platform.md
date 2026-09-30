@@ -14,8 +14,9 @@
 | Neo4j | `agent-memory/memory-neo4j`, 5Gi | 같은 서비스, 20Gi 기본 StorageClass(gp3) |
 | Object storage | MinIO의 `agent-studio-static`, `agent-memory` | AWS S3 `agent-studio-static` |
 | Secret 경로 | `/k8s/k3s-demo/` | `/k8s/eks-demo/` |
-| Studio audio·workspace | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
-| Workspace Docker PVC | 10Gi local-path | 20Gi gp3 |
+| Studio control workers | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
+| Workspace 실행 Pod | CPU·메모리·디스크 한도, 최대 2개 | 같은 한도, 최대 8개·Auto Mode 전용 pool |
+| 전환용 legacy Docker PVC | 10Gi local-path 보존 | 40Gi gp3 보존 |
 
 k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
 `*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
@@ -57,13 +58,13 @@ credential chain을 허용하는 S3 설정 코드가 포함되어 있어야 한�
 DynamoDB·Bedrock·S3 Vectors 권한을 두지 않는다. k3s는 MinIO를 사용하므로 노드에
 Studio S3 policy를 연결하지 않는다.
 
-EKS의 workspace Docker client credential은 External Secrets의 `ECRAuthorizationToken`
-generator로 매시간 갱신한다. AWS 접근은 External Secrets controller의 Pod Identity가
-담당한다. k3s의 `ecr-registry`는 기존 노드 갱신 절차가 소유한다. Workspace image는
-Studio와 함께 발행된 tag를 사용한다. `agent-studio-workspace` ConfigMap은 최종 `app.image.repository`와
-phase의 `app.image.tag`로 `WORKSPACE_IMAGE=<repository>:workspace-<tag>`를 만들며 앱과 worker가 함께
-읽는다. 환경 파일에 Workspace 버전을 따로 고정하지 않는다. workspace worker는 단일 PVC 때문에
-`Recreate`로 배포한다.
+앱 namespace의 기존 ECR 인증 리소스는 유지한다. 실행 전용 namespace에는 External Secrets의
+`ECRAuthorizationToken` generator로 imagePullSecret을 공급한다. EKS는 controller의 Pod Identity,
+k3s는 기존 EC2 역할로 인증한다. Workspace image는 Studio와 함께 발행된 tag를 사용한다.
+`agent-studio-workspace` ConfigMap은 최종 `app.image.repository`와 phase의 `app.image.tag`로
+`WORKSPACE_IMAGE=<repository>:workspace-<tag>`를 만들며 앱과 worker가 함께 읽는다.
+환경 파일에 Workspace 버전을 따로 고정하지 않는다. 전환·PVC 보존·drain gate는
+[Kubernetes Workspace 운영](workspace-kubernetes.md)을 따른다.
 
 EKS의 embedding과 knowledge extraction은 공개 provider를 사용한다. k3s에서 접근하는
 `100.66.249.76`의 self-hosted endpoint를 EKS에서 접근 가능하다고 가정하지 않는다.
@@ -71,28 +72,17 @@ EKS의 embedding과 knowledge extraction은 공개 provider를 사용한다. k3s
 
 ## 코딩·오디오 실행 준비
 
-두 환경의 Workspace는 `agent-studio-public` 전용 Docker bridge를 사용한다. DinD 시작 스크립트는
-방화벽을 먼저 구성한 뒤 worker를 시작한다. 공개 HTTP(S)와 Pod의 지정 DNS만 허용하고 사설망·
-link-local·메타데이터·다른 Sandbox·Pod 내부 Docker API 접근은 차단한다. IPv6와 컨테이너 간 통신은
-비활성화한다. 이는 Docker의 [DOCKER-USER 방화벽 계약](https://docs.docker.com/engine/network/firewall-iptables/)을 따른다.
-내부 모델 endpoint를 사용할 설치는 해당 네트워크 정책을 별도로 설계해야 한다.
+두 환경의 Workspace는 `agent-studio-workspaces` namespace의 Pod로 실행한다. 기본 거부
+NetworkPolicy, 명시적 DNS·egress, 최소 RBAC와 ResourceQuota를 함께 적용한다. 내부 모델 endpoint를
+사용하는 설치는 정확한 목적지와 포트를 추가한다. 실제 격리는 테스트 Pod의 요청으로 확인한다.
 
-Studio가 사용하는 Docker ClusterIP Service의 포트 이름은 `tcp-docker`다. Docker exec의
-`Upgrade: tcp` 스트림을 HTTP로 자동 감지하면 서비스 메시가 403으로 거절할 수 있으므로
-명시적인 TCP 전달을 사용한다. 네트워크 격리와 허용 Pod selector는 그대로 적용한다.
-`/_ping` 성공만으로 exec 경로를 검증하지 말고 테스트 Workspace에서 부작용 없는 명령도 확인한다.
+EKS의 NetworkPolicy는 addons의 `eks-network-policy-eks-demo` controller에 의존한다.
+Auto Mode의 전용 NodeClass는 DefaultDeny를 사용하며, k3s는 기본 network policy controller를 유지한다.
 
-EKS의 Pod 간 NetworkPolicy는 addons의 `eks-network-policy-eks-demo`가 활성화한 관리형
-controller에 의존한다. NetworkPolicy 리소스가 존재하거나 Argo CD가 Healthy라는 사실만으로
-격리가 적용됐다고 판단하지 않는다. Studio → Docker API 허용과 다른 namespace → Docker API
-차단을 실제 요청으로 확인한 뒤 Workspace 외부 통신을 활성화한다.
-
-```bash
-python3 scripts/check_agent_network.py --context eks-demo
-```
-
-이 검사는 기존 Ready Pod에서 DNS와 Docker `/_ping`만 조회한다. Studio의 정상 접근을 전후로
-확인하고 모든 Ready Memory Pod의 접근 거절을 검사하므로 Docker 장애를 격리 성공으로 해석하지 않는다.
+`agent-studio-public` Docker bridge와 `tcp-docker` Service는 legacy Docker 핸들 정리를 위해 유지한다.
+`python3 scripts/check_agent_network.py --context eks-demo`는 이 legacy 경로를 검사한다.
+새 실행 Pod의 RBAC·DNS·통신 차단·quota·복원은 Agent Studio의 Kubernetes 통합 검사와
+승인 후 클러스터 검증으로 확인한다.
 
 Workspace Git 작업은 `WORKSPACE_GITHUB_AUTH=token`으로 서버의 기존 GitHub 연결을 사용한다.
 Sandbox에 GitHub token을 넘기지 않는다. 프로젝트의 저장소 정책, 기본 Runtime, Models의 Runtime별
@@ -100,7 +90,7 @@ Sandbox에 GitHub token을 넘기지 않는다. 프로젝트의 저장소 정책
 
 worker liveness는 `workspace-health.cjs --heartbeat-only`로 실제 heartbeat 만료를 확인한다.
 이 옵션을 포함한 Studio·Workspace 이미지를 먼저 릴리스한 뒤 변경한 chart를 동기화한다.
-readiness는 기존 `--worker` 모드로 Docker·이미지·모델 설정도 확인한다.
+readiness는 `--worker` 모드로 선택한 Sandbox 백엔드·모델 설정을 확인한다.
 
 scan과 reindex CronJob은 `suspend: false`를 명시해 GitOps가 실행 여부를 관리한다. `helm-charts`의
 cronjob v1.1.1을 먼저 게시한 뒤 이 chart의 의존성을 갱신한다. scan 중지는 정기 실행·보존 정리와
