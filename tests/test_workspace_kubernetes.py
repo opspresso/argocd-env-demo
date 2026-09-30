@@ -1,5 +1,6 @@
 """Rendered isolation and migration contracts shared by alpha and prod."""
 from pathlib import Path
+from ipaddress import ip_network
 import subprocess
 
 import pytest
@@ -41,6 +42,12 @@ def test_isolation_permissions_and_total_capacity(platform, max_pods):
     assert egress[0]["ports"] == [{"protocol": "UDP", "port": 53}, {"protocol": "TCP", "port": 53}]
     assert "169.254.0.0/16" in egress[1]["to"][0]["ipBlock"]["except"]
     assert "10.0.0.0/8" in egress[1]["to"][0]["ipBlock"]["except"]
+    # Auto Mode compiles these rules for the cluster IP family, including DNS allowances.
+    for rule in egress:
+        for destination in rule["to"]:
+            if "ipBlock" in destination:
+                block = destination["ipBlock"]
+                assert all(ip_network(cidr).version == 4 for cidr in [block["cidr"], *block.get("except", [])])
     assert scoped["ExternalSecret/ecr-registry"]["spec"]["target"]["name"] == "ecr-registry"
     assert not any(item["kind"] == "ClusterRoleBinding" for item in docs)
     daemon = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-docker")
