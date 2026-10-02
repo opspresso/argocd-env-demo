@@ -63,6 +63,8 @@ Studio S3 policy를 연결하지 않는다.
 k3s는 기존 EC2 역할로 인증한다. Workspace image는 Studio와 함께 발행된 tag를 사용한다.
 `agent-studio-workspace` ConfigMap은 최종 `app.image.repository`와 phase의 `app.image.tag`로
 `WORKSPACE_IMAGE=<repository>:workspace-<tag>`를 만들며 앱과 worker가 함께 읽는다.
+같은 ConfigMap의 `WORKSPACE_MODEL_GATEWAY_URL`은 최종 Studio Service 이름·namespace·서비스
+포트로 구성한다. Native CLI는 이 주소의 인증된 모델 Gateway를 호출하며 공급자 키를 받지 않는다.
 환경 파일에 Workspace 버전을 따로 고정하지 않는다. 전환·PVC 보존·drain gate는
 [Kubernetes Workspace 운영](workspace-kubernetes.md)을 따른다.
 
@@ -74,7 +76,9 @@ EKS의 embedding과 knowledge extraction은 공개 provider를 사용한다. k3s
 
 두 환경의 Workspace는 `agent-studio-workspaces` namespace의 Pod로 실행한다. 기본 거부
 NetworkPolicy, 명시적 DNS·egress, 최소 RBAC와 ResourceQuota를 함께 적용한다. 내부 모델 endpoint를
-사용하는 설치는 정확한 목적지와 포트를 추가한다. 실제 격리는 테스트 Pod의 요청으로 확인한다.
+호출하는 Studio만 공급자 연결을 사용한다. Sandbox에는 해당 Studio 앱 Pod·컨테이너 포트만
+추가 허용하며 같은 namespace의 다른 서비스나 Kubernetes API를 허용하지 않는다.
+그 밖의 내부 endpoint가 필요한 설치는 정확한 목적지와 포트를 추가한다. 실제 격리는 테스트 Pod의 요청으로 확인한다.
 
 EKS의 NetworkPolicy는 addons의 `eks-network-policy-eks-demo` controller에 의존한다.
 Auto Mode의 전용 NodeClass는 DefaultDeny를 사용하며, k3s는 기본 network policy controller를 유지한다.

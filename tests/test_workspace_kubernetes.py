@@ -77,3 +77,21 @@ def test_docker_backend_still_renders_its_original_execution_path():
     worker = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-worker")
     assert [container["name"] for container in worker["spec"]["template"]["spec"]["containers"]] == ["workspace-worker", "docker"]
     assert not any(item["kind"] == "Role" and item["metadata"].get("namespace") == "agent-studio-workspaces" for item in docs)
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_native_gateway_uses_the_app_service_and_only_allows_its_pods(platform):
+    docs = render(platform, "--set", "app.fullnameOverride=studio-gateway-fixture", "--set", "app.service.port=8080", "--set", "app.service.targetPort=3100")
+    service = next(item for item in docs if item["kind"] == "Service" and item["metadata"]["name"] == "studio-gateway-fixture")
+    config = next(item for item in docs if item["kind"] == "ConfigMap" and item["metadata"]["name"] == "agent-studio-workspace")
+    assert config["data"]["WORKSPACE_MODEL_GATEWAY_URL"] == "http://studio-gateway-fixture.agent-studio.svc.cluster.local:8080"
+    policy = next(item for item in docs if item["kind"] == "NetworkPolicy" and item["metadata"]["name"] == "sandbox-egress")
+    expected = {"to": [{"namespaceSelector": {"matchLabels": {"kubernetes.io/metadata.name": "agent-studio"}},
+                         "podSelector": {"matchLabels": service["spec"]["selector"]}}],
+                "ports": [{"protocol": "TCP", "port": 3100}]}
+    assert expected in policy["spec"]["egress"]
+    deployments = [item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] in ["studio-gateway-fixture", "agent-studio-workspace-worker"]]
+    assert {deployment["metadata"]["name"] for deployment in deployments} == {"studio-gateway-fixture", "agent-studio-workspace-worker"}
+    for deployment in deployments:
+        worker = deployment["spec"]["template"]["spec"]["containers"][0]
+        assert {"configMapRef": {"name": "agent-studio-workspace"}} in worker["envFrom"]
