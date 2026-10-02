@@ -447,6 +447,7 @@ app:
               argocd.argoproj.io/sync-wave: "-1"
           data:
             WORKSPACE_PROVIDER: {{ .Values.workloads.workspaceWorker.backend | quote }}
+            WORKSPACE_MODEL_GATEWAY_URL: {{ printf "http://%s.%s.svc.cluster.local:%v" (include "app.fullname" .) (include "app.namespace" .) .Values.service.port | quote }}
           {{- if eq .Values.workloads.workspaceWorker.backend "kubernetes" }}
             WORKSPACE_NAMESPACE: {{ .Values.workloads.workspaceWorker.kubernetes.namespace | quote }}
             WORKSPACE_INSTANCE: {{ .Release.Name | quote }}
@@ -643,6 +644,16 @@ app:
                   - {protocol: TCP, port: 80}
                   - {protocol: TCP, port: 443}
           {{- end }}
+              # Native CLIs reach only this installation's authenticated Studio Gateway.
+              - to:
+                  - namespaceSelector:
+                      matchLabels:
+                        kubernetes.io/metadata.name: {{ include "app.namespace" . | quote }}
+                    podSelector:
+                      matchLabels:
+          {{- include "app.selectorLabels" . | nindent 14 }}
+                ports:
+                  - {protocol: TCP, port: {{ .Values.service.targetPort }}}
           {{- with .Values.workloads.workspaceWorker.kubernetes.extraEgress }}
           {{ toYaml . | indent 4 }}
           {{- end }}
