@@ -35,6 +35,10 @@ def test_ticker_is_one_resident_unprivileged_deployment(platform, chart, name):
     assert len(pod['spec']['containers']) == 1
     container = pod['spec']['containers'][0]
     assert not container.get('envFrom')
+    security = container['securityContext']
+    assert security['runAsNonRoot'] is True
+    assert isinstance(security['runAsUser'], int) and security['runAsUser'] > 0
+    assert security['runAsGroup'] > 0
     assert not container.get('livenessProbe')
     if chart == 'agent-studio':
         assert container['env'] == [{'name': 'SCHEDULE_SCAN_TOKEN', 'valueFrom': {
