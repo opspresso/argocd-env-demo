@@ -133,7 +133,8 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]
     assert script == yaml.safe_load((ROOT / "charts/agent-studio/values.yaml").read_text())["app"]["workspaceNetworkScript"]
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-heartbeat-check.cjs"]
-    assert worker["readinessProbe"]["periodSeconds"] * worker["readinessProbe"]["failureThreshold"] == 30
+    assert worker["readinessProbe"]["periodSeconds"] == 30
+    assert worker["readinessProbe"]["failureThreshold"] == 1
     assert resource("agent-studio", platform, "Deployment", "agent-studio-ticker")["spec"]["replicas"] == (0 if maintenance else 1)
 
 
