@@ -367,15 +367,18 @@ app:
         limits:
           cpu: 500m
           memory: 768Mi
+      # Backend/model checks start a fresh SDK process; sample twice per minute.
+      # One failed sample preserves the nominal 30s readiness failure window.
       readinessProbe:
         exec:
           command: [node, build/workspace-health.cjs, --worker]
         initialDelaySeconds: 20
-        periodSeconds: 10
+        periodSeconds: 30
+        failureThreshold: 1
         timeoutSeconds: 15
       livenessProbe:
         exec:
-          command: [node, build/workspace-health.cjs, --heartbeat-only]
+          command: [node, build/workspace-heartbeat-check.cjs]
         initialDelaySeconds: 60
         periodSeconds: 20
         timeoutSeconds: 15
