@@ -92,9 +92,10 @@ Workspace Git 작업은 `WORKSPACE_GITHUB_AUTH=token`으로 서버의 기존 Git
 Sandbox에 GitHub token을 넘기지 않는다. 프로젝트의 저장소 정책, 기본 Runtime, Models의 Runtime별
 모델 선택과 배포 workflow 허용 목록은 Studio에서 관리한다. GitHub MCP 연결만으로 이 준비가 끝나지는 않는다.
 
-worker liveness는 `workspace-health.cjs --heartbeat-only`로 실제 heartbeat 만료를 확인한다.
-이 옵션을 포함한 Studio·Workspace 이미지를 먼저 릴리스한 뒤 변경한 chart를 동기화한다.
-readiness는 `--worker` 모드로 선택한 Sandbox 백엔드·모델 설정을 확인한다.
+worker liveness는 `workspace-heartbeat-check.cjs`로 실제 heartbeat 만료를 확인한다.
+이 실행파일을 포함하는 Studio 이미지를 먼저 릴리스·배포한 뒤 변경한 chart를 동기화한다.
+readiness는 `--worker` 모드로 선택한 Sandbox 백엔드·모델 설정을 확인한다. 30초마다 검사하고
+실패 1회로 readiness를 내리므로 명목 실패 감지 시간은 30초다. liveness는 외부 의존성을 호출하지 않는다.
 
 scan·plugin sync·reindex는 하나의 `agent-studio-ticker` Deployment가 호출한다. scan과 plugin sync는
 요청 시간을 포함해 매분, reindex는 시작 시와 매시간 실행한다. HTTP 실패는 각각 기록하고 다음 정기
