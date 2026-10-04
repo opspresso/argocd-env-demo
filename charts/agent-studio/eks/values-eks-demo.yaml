@@ -61,7 +61,7 @@ app:
       WORKSPACE_GITHUB_AUTH: token
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
-      WORKSPACE_MEMORY_MB: '1024'
+      WORKSPACE_MEMORY_MB: '2048'
       WORKSPACE_DISK_MB: '2048'
       WORKSPACE_CPUS: '1'
       WORKSPACE_WORKER_CONCURRENCY: '1'
@@ -120,6 +120,9 @@ app:
       name: EMBEDDING_API_KEY
 
   workloads:
+    scheduleTicker:
+      enabled: true
+      replicas: 1
 
 
     audioWorker:
@@ -143,7 +146,7 @@ app:
       replicas: 1
       dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
       workerConcurrency: 1
-      memoryMb: 1024
+      memoryMb: 2048
       diskMb: 2048
       cpus: 1
       persistence:
@@ -152,10 +155,3 @@ app:
       registry:
         enabled: True
         region: ap-northeast-2
-
-scan:
-  suspend: False
-
-
-reindex:
-  suspend: False

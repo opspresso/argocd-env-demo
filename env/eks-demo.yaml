@@ -40,7 +40,7 @@ workspace_legacy_docker: true
 workspace_max_pods: 8
 workspace_docker_image: public.ecr.aws/docker/library/docker:27.5.1-dind
 workspace_network: agent-studio-public
-workspace_memory_mb: 1024
+workspace_memory_mb: 2048
 workspace_disk_mb: 2048
 workspace_cpus: 1
 workspace_worker_concurrency: 1

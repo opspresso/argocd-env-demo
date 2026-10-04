@@ -11,6 +11,21 @@ NetworkPolicy는 ingress와 egress를 기본 거부한다. cluster DNS와 public
 현재 DNS 허용 주소는 EKS `172.20.0.10/32`, k3s `10.43.0.10/32`다.
 두 클러스터는 IPv4를 사용하므로 CIDR 허용 규칙도 IPv4로만 구성한다. IPv6는 기본 차단을 유지한다.
 
+## 디스크와 메모리
+
+Kubernetes 실행의 `/workspace`, `/control`, `/tmp`와 이미지 캐시는 전용 노드의 ephemeral 디스크를
+사용한다. EKS `WORKSPACE_DISK_MB=2048`에서는 Pod당 4608Mi를 예약·제한하며 namespace의
+8개 Pod 상한은 36Gi 예약량이다. 현재 Workspace NodeClass의 디스크는 160Gi다. 이미지·호스트
+로그는 이 Pod 예약량과 별개이므로 node-exporter 파일시스템과 kubelet 사용량을 함께 확인한다.
+
+파일과 native Session은 암호화한 체크포인트로 복원한다. Pod별 영구 PVC는 만들지 않으며,
+Pod 삭제·퇴거 시 마지막 체크포인트 이후의 파일은 복구되지 않는다. `emptyDir.sizeLimit`은
+즉시 쓰기를 막는 quota가 아니라 kubelet 퇴거 기준이다. EBS PVC는 이 보존 계약을 바꾸거나
+더 큰 작업 디스크가 필요할 때 별도로 설계한다. CNI의 커널 메모리 누수는 PVC로 해결되지 않는다.
+
+`workspace_storage`는 Kubernetes 실행 Pod가 아니라 기존 DinD PVC의 용량이다.
+EKS 실행 메모리는 2Gi로 설정하며 한도 초과는 cgroup OOM과 Workspace 중단으로 확인한다.
+
 ## 승인 후 전환 순서
 
 1. 각 Agent의 Workspace 도구를 꺼서 신규 접수를 막고 기존 Workspace를 정상 종료한다.
