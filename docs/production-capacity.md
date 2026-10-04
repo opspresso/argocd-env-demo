@@ -3,6 +3,10 @@
 `eks-demo`는 production이다. 현재 용량 목표는 동시에 활성화된 Workspace Pod 32개다.
 실제 처리량은 모델 응답 시간·명령·파일 크기에 따라 달라지므로 이 수치를 사용자 수나 RPS로 해석하지 않는다.
 
+EKS 배포 알림은 Argo CD의 공통 구독을 통해 `noti-eks-demo`로 전달한다.
+ApplicationSet에는 별도 Slack 구독 annotation을 추가하지 않는다. 토큰과 구독 설정은
+[`argocd-env-addons/charts/argo-cd`](https://github.com/opspresso/argocd-env-addons/tree/main/charts/argo-cd)가 소유한다.
+
 ## 예산과 확장
 
 | 워크로드 | requests CPU / memory | limits CPU / memory | 확장 |

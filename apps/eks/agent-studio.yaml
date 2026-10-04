@@ -13,8 +13,6 @@ spec:
   template:
     metadata:
       name: "agent-studio-{{cluster}}"
-      annotations:
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-{{env}}
       labels:
         app.kubernetes.io/instance: "apps-{{cluster}}"
         opspresso.com/cluster: "{{cluster}}"
