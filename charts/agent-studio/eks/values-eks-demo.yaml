@@ -19,6 +19,9 @@ app:
     enabled: true
     data:
       STAGE: 'prod'
+
+      DATABASE_POOL_SIZE: '4'
+
       SERVICE_NAME: 'Axleon AgentOps'
       SERVICE_LOGO: 'agentops'
       ADMIN_EMAILS: me@nalbam.com
@@ -61,10 +64,6 @@ app:
       WORKSPACE_GITHUB_AUTH: token
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
-      WORKSPACE_MEMORY_MB: '2048'
-      WORKSPACE_DISK_MB: '2048'
-      WORKSPACE_CPUS: '1'
-      WORKSPACE_WORKER_CONCURRENCY: '1'
 
   routing:
     hosts:
@@ -138,14 +137,16 @@ app:
       kubernetes:
         namespace: agent-studio-workspaces
         nodePool: workspaces
-        maxPods: 8
+        maxPods: 32
         dnsCidrs:
           - 172.20.0.10/32
         allowPublic: True
         extraEgress: []
-      replicas: 1
+      replicas: 2
       dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
-      workerConcurrency: 1
+      workerConcurrency: 16
+      continuationConcurrency: 2
+      checkpointHistory: retention
       memoryMb: 2048
       diskMb: 2048
       cpus: 1

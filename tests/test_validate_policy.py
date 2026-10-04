@@ -21,7 +21,7 @@ class ValidatePolicyTests(unittest.TestCase):
             with self.subTest(platform=platform), patch.object(validate.subprocess, "run", return_value=result):
                 error = validate.render(target, None)
                 if platform == "eks":
-                    self.assertIsNone(error)
+                    self.assertIn("limits.memory", error)
                 else:
                     self.assertIn("reserves compute", error)
 

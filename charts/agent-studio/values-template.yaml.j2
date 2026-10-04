@@ -40,6 +40,9 @@ app:
     enabled: true
     data:
       STAGE: '{{phase}}'
+{% if env == 'eks' %}
+      DATABASE_POOL_SIZE: '4'
+{% endif %}
       SERVICE_NAME: '{{agent_studio.service.name}}'
       SERVICE_LOGO: '{{agent_studio.service.logo}}'
       ADMIN_EMAILS: me@nalbam.com
@@ -92,10 +95,6 @@ app:
       WORKSPACE_GITHUB_AUTH: token
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
-      WORKSPACE_MEMORY_MB: '{{workspace_memory_mb}}'
-      WORKSPACE_DISK_MB: '{{workspace_disk_mb}}'
-      WORKSPACE_CPUS: '{{workspace_cpus}}'
-      WORKSPACE_WORKER_CONCURRENCY: '{{workspace_worker_concurrency}}'
 {% endif %}
   routing:
     hosts:
@@ -184,9 +183,11 @@ app:
           - {{ '172.20.0.10/32' if env == 'eks' else '10.43.0.10/32' }}
         allowPublic: {{workspace_allow_public | default(true)}}
         extraEgress: {{workspace_extra_egress | default([]) | tojson}}
-      replicas: {{0 if maintenance else 1}}
+      replicas: {{0 if maintenance else workspace_worker_replicas | default(1)}}
       dockerImage: {{workspace_docker_image}}
       workerConcurrency: {{workspace_worker_concurrency}}
+      continuationConcurrency: {{workspace_continuation_concurrency | default([workspace_worker_concurrency, 2] | min)}}
+      checkpointHistory: {{workspace_checkpoint_history | default('retention')}}
       memoryMb: {{workspace_memory_mb}}
       diskMb: {{workspace_disk_mb}}
       cpus: {{workspace_cpus}}

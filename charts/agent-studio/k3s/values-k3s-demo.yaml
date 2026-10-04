@@ -24,6 +24,7 @@ app:
     enabled: true
     data:
       STAGE: 'alpha'
+
       SERVICE_NAME: 'Axleon AgentOps'
       SERVICE_LOGO: 'agentops'
       ADMIN_EMAILS: me@nalbam.com
@@ -68,10 +69,6 @@ app:
       WORKSPACE_GITHUB_AUTH: token
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
-      WORKSPACE_MEMORY_MB: '1024'
-      WORKSPACE_DISK_MB: '2048'
-      WORKSPACE_CPUS: '1'
-      WORKSPACE_WORKER_CONCURRENCY: '1'
 
   routing:
     hosts:
@@ -156,6 +153,8 @@ app:
       replicas: 1
       dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
       workerConcurrency: 1
+      continuationConcurrency: 1
+      checkpointHistory: retention
       memoryMb: 1024
       diskMb: 2048
       cpus: 1

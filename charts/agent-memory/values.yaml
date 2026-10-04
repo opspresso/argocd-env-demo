@@ -66,9 +66,10 @@ app:
     minReplicas: 2
     maxReplicas: 6
     metrics:
-      - type: Resource
-        resource:
+      - type: ContainerResource
+        containerResource:
           name: cpu
+          container: app
           target:
             type: Utilization
             averageUtilization: 70

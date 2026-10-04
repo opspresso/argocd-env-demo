@@ -165,6 +165,9 @@ TG_PROJECT="sample-grpc" TG_VERSION="v0.0.0" TG_PHASE="alpha" python3 scripts/gi
 
 ## 재생성 · 검증
 
+EKS 컨테이너·init·테스트 작업은 양수 CPU/memory requests와 memory limit이 필요하다.
+CPU limit은 필수가 아니다. 실제 Helm 렌더의 자원 정책과 최대 replica의 DB 연결 예산을 검증한다.
+
 ```bash
 ./scripts/build.sh                      # 전체 chart 렌더
 ./scripts/gen_values.py -r sample-node   # 한 chart 렌더
