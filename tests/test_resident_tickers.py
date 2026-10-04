@@ -10,6 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def render(chart, platform):
     path = ROOT / 'charts' / chart
+    definition = yaml.safe_load((path / 'Chart.yaml').read_text())
+    if definition.get('dependencies') and not list((path / 'charts').glob('*.tgz')):
+        pytest.skip(f"Run helm dependency update {path}")
     phase = 'prod' if platform == 'eks' else 'alpha'
     result = subprocess.run(['helm', 'template', chart, str(path), '--namespace', chart,
                              '-f', str(path / 'values.yaml'), '-f', str(path / f'values-{phase}.yaml'),
