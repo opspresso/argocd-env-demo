@@ -5,6 +5,7 @@ env: eks
 metrics:
   backend: prometheus
 phase: prod
+group: eks-demo
 role: mgmt
 
 replicas: 1
