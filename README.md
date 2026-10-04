@@ -35,8 +35,10 @@ ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리�
 replica 수, autoscaling 여부와 resource 사용 여부는 `env/<cluster>.yaml`이 원천이다.
 공통 `values.yaml`은 EKS를 기본으로 하며 EKS는 기존 env 설정을 적용한다.
 k3s·local 환경은 `replicas: 1`, `autoscaling: false`, `resources: false`로 선언한다.
-metrics backend는 `metrics.backend`로 선택하며, k3s는 `victoria-metrics`, EKS는
+metrics backend는 `metrics.backend`로 선택하며, k3s는 `grafana-cloud`, EKS는
 `prometheus`를 사용한다.
+k3s Alloy가 앱의 `/api/metrics`를 직접 수집하므로 ServiceMonitor CRD와 로컬 metrics DB가
+필요하지 않다. `prometheus` backend만 ServiceMonitor를 생성한다.
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
 환경에서는 템플릿이 해당 resource block을 제거한다. 컨테이너·초기화 컨테이너·worker·CronJob에도 같은 규칙을 적용한다.
 Neo4j는 공식 차트가 강제하는 최소 requests(CPU `500m`, 메모리 `2Gi`)만 허용하며 limits는 두지 않는다.

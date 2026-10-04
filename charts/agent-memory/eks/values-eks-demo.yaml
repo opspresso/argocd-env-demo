@@ -74,5 +74,6 @@ app:
 
 
   serviceMonitor:
+    enabled: true
     labels:
       release: prometheus-eks-demo

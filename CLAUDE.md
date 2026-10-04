@@ -122,8 +122,8 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 - `agent_studio_maintenance`는 Agent Studio만 위한 boolean이다. `true`이면 해당 클러스터의
   앱·오디오/Workspace worker를 0개로 내리고 HPA를 끄며 scan/reindex CronJob을 중지한다.
   PostgreSQL과 Agent Memory는 건드리지 않는다. 기본값은 `false`다.
-- `metrics.backend` 는 ServiceMonitor 라벨의 원천이다. k3s는 `victoria-metrics`, EKS는
-  `prometheus`를 사용한다.
+- `metrics.backend`는 수집 방식을 정한다. k3s는 Alloy가 직접 수집하는 `grafana-cloud`,
+  EKS는 `prometheus`를 사용한다. ServiceMonitor는 `prometheus`에서만 생성한다.
 - `resources` 는 workload의 requests/limits 사용 여부를 제어하는 env 원천값이다.
   `true`면 chart 기본 requests/limits를 유지하고, `false`면 템플릿이 resource block을
   제거한다. 공통 chart는 EKS 기본값이며 k3s·local은 반드시 `resources: false`를 사용한다.

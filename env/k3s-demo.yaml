@@ -3,7 +3,7 @@ cluster: k3s-demo
 country: kr
 env: k3s
 metrics:
-  backend: victoria-metrics
+  backend: grafana-cloud
 phase: alpha
 group: k3s-demo
 role: k3s

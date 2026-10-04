@@ -80,6 +80,7 @@ app:
     link.argocd.argoproj.io/external-link: https://agentops.demo.clush.net
 
   serviceMonitor:
+    enabled: true
     labels:
       release: prometheus-eks-demo
 

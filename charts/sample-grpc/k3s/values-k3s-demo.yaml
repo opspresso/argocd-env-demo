@@ -24,6 +24,6 @@ app:
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-grpc.demo.opsp.dev
   serviceMonitor:
-    enabled: true
+    enabled: false
     labels:
-      release: victoria-metrics-k3s-demo
+      release: prometheus-k3s-demo
