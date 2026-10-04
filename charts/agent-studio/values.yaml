@@ -227,6 +227,8 @@ app:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 101
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
         capabilities:
