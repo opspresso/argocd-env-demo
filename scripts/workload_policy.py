@@ -90,34 +90,49 @@ def policy_errors(manifests, platform):
     return errors
 
 def production_resource_errors(manifests):
-    """Every EKS container reserves CPU/memory and has a memory ceiling."""
+    """Check Pod specs and operator resources, never arbitrary ConfigMap data."""
     errors = []
 
     def positive(quantity):
         if isinstance(quantity, bool):
             return False
-        match = re.fullmatch(r"([+]?(?:\d+(?:\.\d*)?|\.\d+))(?:(?:[eE][+-]?\d+)|[EPTGMKk]i?|[num])?", str(quantity))
+        match = re.fullmatch(r"([+]?(?:\d+(?:\.\d*)?|\.\d+))(?:(?:[eE][+-]?\d+)|[KMGTPE]i|[numkMGTPE])?", str(quantity))
         return bool(match and float(match.group(1)) > 0)
 
     def budget(resources, owner, path):
         resources = resources or {}
+        if not isinstance(resources, dict):
+            errors.append(f"{owner} {path} must be an object")
+            return
         for section, resource in (("requests", "cpu"), ("requests", "memory"), ("limits", "memory")):
             quantities = resources.get(section) or {}
-            if not positive(quantities.get(resource)):
+            if not isinstance(quantities, dict) or not positive(quantities.get(resource)):
                 errors.append(f"{owner} {path}.{section}.{resource} must reserve a positive EKS budget")
 
-    def inspect(value, owner, path=""):
-        if isinstance(value, dict):
-            for key, child in value.items():
-                location = f"{path}.{key}" if path else key
-                if key in {"containers", "initContainers"}:
-                    for index, container in enumerate(child or []):
-                        budget(container.get("resources"), owner, f"{location}[{index}].resources")
+    def at(value, *keys):
+        for key in keys:
+            if not isinstance(value, dict):
+                return None
+            value = value.get(key)
+        return value
+
+    def pod(spec, owner, path):
+        if spec is None:
+            return
+        if not isinstance(spec, dict):
+            errors.append(f"{owner} {path} must be a Pod spec object")
+            return
+        for field in ("containers", "initContainers"):
+            containers = spec.get(field) or []
+            if not isinstance(containers, list):
+                errors.append(f"{owner} {path}.{field} must be a list")
+                continue
+            for index, container in enumerate(containers):
+                location = f"{path}.{field}[{index}]"
+                if not isinstance(container, dict):
+                    errors.append(f"{owner} {location} must be a container object")
                 else:
-                    inspect(child, owner, location)
-        elif isinstance(value, list):
-            for index, child in enumerate(value):
-                inspect(child, owner, f"{path}[{index}]")
+                    budget(container.get("resources"), owner, location + ".resources")
 
     for document in yaml.safe_load_all(manifests):
         if not document or document.get("kind") == "CustomResourceDefinition":
@@ -125,6 +140,17 @@ def production_resource_errors(manifests):
         kind = document.get("kind")
         owner = f"{kind}/{document.get('metadata', {}).get('name', '?')}"
         if kind in {"Prometheus", "Alertmanager", "ThanosRuler"}:
-            budget(document.get("spec", {}).get("resources"), owner, "spec.resources")
-        inspect(document, owner)
+            budget(at(document, "spec", "resources"), owner, "spec.resources")
+            pod(document.get("spec"), owner, "spec")
+        elif kind == "Pod":
+            pod(document.get("spec"), owner, "spec")
+        pod(at(document, "spec", "template", "spec"), owner, "spec.template.spec")
+        if kind == "PodTemplate":
+            pod(at(document, "template", "spec"), owner, "template.spec")
+        if kind == "CronJob":
+            pod(at(document, "spec", "jobTemplate", "spec", "template", "spec"), owner, "spec.jobTemplate.spec.template.spec")
+        if kind in {"AnalysisTemplate", "ClusterAnalysisTemplate"}:
+            for index, metric in enumerate(at(document, "spec", "metrics") or []):
+                pod(at(metric, "provider", "job", "spec", "template", "spec"), owner,
+                    f"spec.metrics[{index}].provider.job.spec.template.spec")
     return errors

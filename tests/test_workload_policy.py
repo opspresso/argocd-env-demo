@@ -9,6 +9,20 @@ def manifest(kind, spec, name="test"):
 
 
 class WorkloadPolicyTests(unittest.TestCase):
+    def test_eks_ignores_configmap_data_and_checks_nested_job_pod_specs(self):
+        config = json.dumps({"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": "config"}, "data": {"containers": "[]", "initContainers": "{}"}})
+        self.assertEqual(policy_errors(config, "eks"), [])
+        pod = {"containers": [{"name": "unreserved"}]}
+        cron = manifest("CronJob", {"jobTemplate": {"spec": {"template": {"spec": pod}}}})
+        analysis = manifest("ClusterAnalysisTemplate", {"metrics": [{"provider": {"job": {"spec": {"template": {"spec": pod}}}}}]})
+        self.assertEqual(len(policy_errors(cron, "eks")), 3)
+        self.assertEqual(len(policy_errors(analysis, "eks")), 3)
+
+    def test_eks_quantity_suffixes_are_case_sensitive(self):
+        for memory, valid in [("128Ki", True), ("128ki", False), ("1K", False), ("1k", True), ("1e6", True)]:
+            resources = {"requests": {"cpu": "100m", "memory": memory}, "limits": {"memory": "256Mi"}}
+            self.assertEqual(not policy_errors(manifest("Pod", {"containers": [{"resources": resources}]}), "eks"), valid)
+
     def test_only_official_neo4j_minimum_requests_are_allowed(self):
         for platform in ("k3s", "local"):
             for name, container, collection, resources, allowed in [
