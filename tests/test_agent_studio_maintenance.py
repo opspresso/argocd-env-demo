@@ -25,8 +25,7 @@ def test_maintenance_stops_studio_writers_without_removing_dependencies(platform
     assert values["app"]["autoscaling"]["enabled"] is False
     assert values["app"]["workloads"]["audioWorker"]["replicas"] == 0
     assert values["app"]["workloads"]["workspaceWorker"]["replicas"] == 0
-    assert values["scan"]["suspend"] is True
-    assert values["reindex"]["suspend"] is True
+    assert values["app"]["workloads"]["scheduleTicker"]["replicas"] == 0
 
     target = tmp_path / "maintenance.yaml"
     target.write_text(rendered)
@@ -38,14 +37,10 @@ def test_maintenance_stops_studio_writers_without_removing_dependencies(platform
     ], capture_output=True, text=True, check=True)
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
     deployments = {doc["metadata"]["name"]: doc for doc in docs if doc["kind"] == "Deployment"}
-    names = ["agent-studio", "agent-studio-audio-worker", "agent-studio-workspace-worker"]
+    names = ["agent-studio", "agent-studio-audio-worker", "agent-studio-workspace-worker", "agent-studio-ticker"]
     if values["app"]["workloads"]["workspaceWorker"]["backend"] == "kubernetes":
         names.append("agent-studio-workspace-docker")
     for name in names:
         assert deployments[name]["spec"]["replicas"] == 0
     assert not any(doc["kind"] == "HorizontalPodAutoscaler" and doc["metadata"]["name"] == "agent-studio" for doc in docs)
-    cronjobs = {doc["metadata"]["name"]: doc for doc in docs if doc["kind"] == "CronJob"}
-    for name in ["agent-studio-scan", "agent-studio-reindex"]:
-        assert cronjobs[name]["spec"]["suspend"] is True
-    assert cronjobs["agent-studio-scan"]["spec"]["startingDeadlineSeconds"] == 60
-    assert cronjobs["agent-studio-reindex"]["spec"]["startingDeadlineSeconds"] == 3600
+    assert not any(doc["kind"] == "CronJob" for doc in docs)

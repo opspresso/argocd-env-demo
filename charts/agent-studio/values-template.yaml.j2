@@ -161,6 +161,9 @@ app:
       name: EMBEDDING_API_KEY
 {% endif %}
   workloads:
+    scheduleTicker:
+      enabled: true
+      replicas: {{0 if maintenance else 1}}
 {% if audio_worker or workspace_worker %}
 {% if audio_worker %}
     audioWorker:
@@ -195,17 +198,5 @@ app:
         region: {{aws_region}}
 {%- endif %}
 {%- endif %}
-
-scan:
-  suspend: {{maintenance}}
-{% if not resources %}
-  resources: null
-{% endif %}
-
-reindex:
-  suspend: {{maintenance}}
-{% if not resources %}
-  resources: null
-{% endif %}
 
 {%- endif %}

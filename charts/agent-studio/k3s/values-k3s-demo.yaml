@@ -130,6 +130,9 @@ app:
       name: S3_SECRET_ACCESS_KEY
 
   workloads:
+    scheduleTicker:
+      enabled: true
+      replicas: 1
 
 
     audioWorker:
@@ -162,14 +165,3 @@ app:
       registry:
         enabled: False
         region: ap-northeast-2
-
-scan:
-  suspend: False
-
-  resources: null
-
-
-reindex:
-  suspend: False
-
-  resources: null

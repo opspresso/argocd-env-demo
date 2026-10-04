@@ -32,9 +32,9 @@ Studio의 `agent_studio.allowed_hosts`는 정확한 호스트 목록이며, 생�
 PostgreSQL은 pgvector가 포함된 이미지로 `agent_studio`와 `agent_memory` database를
 초기화한다. 두 앱은 기존 배포 계약에 따라 `agent_studio` 사용자를 공유한다.
 Agent Studio의 DB 전환 중에는 대상 `env/<cluster>.yaml`의 `agent_studio_maintenance: true`를
-GitOps에 반영한다. 이 설정은 Studio 앱·오디오/Workspace worker를 0개로 내리고 두 CronJob을
+GitOps에 반영한다. 이 설정은 Studio 앱·오디오/Workspace worker를 0개로 내리고 ticker를
 중지하지만 PostgreSQL·Agent Memory는 유지한다. Studio 앱·오디오/Workspace worker Pod가
-모두 종료되고 이미 시작된 scan/reindex Job이 끝난 것을 확인한 뒤 백업·복원을 진행한다.
+모두 종료되고 진행 중인 ticker 요청이 끝난 것을 확인한 뒤 백업·복원을 진행한다.
 새 DB와 이미지 검증 뒤 `false`로 되돌려 기동한다.
 `postgres-bootstrap` Sync hook은 두 database에 vector extension을 활성화한다.
 Studio와 Memory는 자기 이미지가 제공하는 시작 절차로 빈 DB를 초기화한다.
@@ -96,9 +96,9 @@ worker liveness는 `workspace-health.cjs --heartbeat-only`로 실제 heartbeat �
 이 옵션을 포함한 Studio·Workspace 이미지를 먼저 릴리스한 뒤 변경한 chart를 동기화한다.
 readiness는 `--worker` 모드로 선택한 Sandbox 백엔드·모델 설정을 확인한다.
 
-scan과 reindex CronJob은 `suspend: false`를 명시해 GitOps가 실행 여부를 관리한다. `helm-charts`의
-cronjob v1.1.1을 먼저 게시한 뒤 이 chart의 의존성을 갱신한다. scan 중지는 정기 실행·보존 정리와
-Plugin 동기화를 함께 멈추므로, 운영 작업으로 중지할 때도 대상 환경의 Git 선언을 갱신한다.
+scan·plugin sync·reindex는 하나의 `agent-studio-ticker` Deployment가 호출한다. scan과 plugin sync는
+요청 시간을 포함해 매분, reindex는 시작 시와 매시간 실행한다. HTTP 실패는 각각 기록하고 다음 정기
+호출을 기다린다. 유지보수 설정은 ticker도 0개로 내린다. 매분 Job Pod를 생성하지 않는다.
 
 오디오에는 등록된 transcription 모델, Plaud OAuth, 프로젝트 AudioJob config, 비공개 저장소와
 audio-worker가 모두 필요하다. 테스트·운영의 설정과 연결은 각각 확인한다. 모델이 없어진 config를
