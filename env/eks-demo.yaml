@@ -48,6 +48,7 @@ workspace_storage: 48Gi
 workspace_storage_class: gp3
 
 postgresql:
+  max_connections: 350
   storage: 20Gi
   storageClass: gp3
 neo4j:

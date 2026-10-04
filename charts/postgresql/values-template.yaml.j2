@@ -5,6 +5,10 @@
 {% endif %}{% if (postgresql is defined and postgresql.storage is defined) or not resources %}
 postgresql:
   primary:
+{% if postgresql is defined and postgresql.max_connections is defined %}
+    # Docker Official PostgreSQL applies these flags to existing data directories.
+    args: ["-c", {{ ('max_connections=' ~ postgresql.max_connections) | tojson }}, "-c", "shared_buffers=256MB", "-c", "effective_cache_size=1GB", "-c", "work_mem=4MB"]
+{% endif %}
 {% if postgresql is defined and postgresql.storage is defined %}
     persistence:
       size: {{postgresql.storage}}
