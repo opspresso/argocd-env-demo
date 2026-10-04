@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import yaml
+import re
 
 
 PLATFORMS = {"eks", "k3s", "local"}
@@ -19,6 +20,8 @@ def target_platform(target, env):
 
 
 def policy_errors(manifests, platform):
+    if platform == "eks":
+        return production_resource_errors(manifests)
     if platform not in UNRESERVED_PLATFORMS:
         return []
     errors = []
@@ -84,4 +87,44 @@ def policy_errors(manifests, platform):
                     errors.append(f"{owner} valuesContent.resources must keep a map with requests/limits explicitly null")
                 if values.get("autoscaling", {}).get("enabled") is not False:
                     errors.append(f"{owner} valuesContent.autoscaling.enabled must be false")
+    return errors
+
+def production_resource_errors(manifests):
+    """Every EKS container reserves CPU/memory and has a memory ceiling."""
+    errors = []
+
+    def positive(quantity):
+        if isinstance(quantity, bool):
+            return False
+        match = re.fullmatch(r"([+]?(?:\d+(?:\.\d*)?|\.\d+))(?:(?:[eE][+-]?\d+)|[EPTGMKk]i?|[num])?", str(quantity))
+        return bool(match and float(match.group(1)) > 0)
+
+    def budget(resources, owner, path):
+        resources = resources or {}
+        for section, resource in (("requests", "cpu"), ("requests", "memory"), ("limits", "memory")):
+            quantities = resources.get(section) or {}
+            if not positive(quantities.get(resource)):
+                errors.append(f"{owner} {path}.{section}.{resource} must reserve a positive EKS budget")
+
+    def inspect(value, owner, path=""):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                location = f"{path}.{key}" if path else key
+                if key in {"containers", "initContainers"}:
+                    for index, container in enumerate(child or []):
+                        budget(container.get("resources"), owner, f"{location}[{index}].resources")
+                else:
+                    inspect(child, owner, location)
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                inspect(child, owner, f"{path}[{index}]")
+
+    for document in yaml.safe_load_all(manifests):
+        if not document or document.get("kind") == "CustomResourceDefinition":
+            continue
+        kind = document.get("kind")
+        owner = f"{kind}/{document.get('metadata', {}).get('name', '?')}"
+        if kind in {"Prometheus", "Alertmanager", "ThanosRuler"}:
+            budget(document.get("spec", {}).get("resources"), owner, "spec.resources")
+        inspect(document, owner)
     return errors

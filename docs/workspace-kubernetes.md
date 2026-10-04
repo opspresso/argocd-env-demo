@@ -3,7 +3,7 @@
 `agent-studio-workspaces` namespace의 실행 Pod 하나가 Workspace 하나를 담당한다. 앱·worker는
 해당 namespace의 Pod get/list/create/delete와 exec만 사용할 수 있다. 실행 Pod에는 서비스 계정
 토큰·운영 Secret·호스트 경로를 mount하지 않는다. CPU·메모리·emptyDir·ephemeral-storage는
-Agent Studio 실행기가 제한하며 namespace quota는 EKS 8개, k3s 2개의 실행 Pod를 허용한다.
+Agent Studio 실행기가 제한하며 namespace quota는 EKS 32개, k3s 2개의 실행 Pod를 허용한다.
 
 NetworkPolicy는 ingress와 egress를 기본 거부한다. cluster DNS와 public HTTP/HTTPS만 허용하며
 사설망·다른 Pod·metadata endpoint는 차단한다. 폐쇄망이나 내부 모델은
@@ -15,7 +15,7 @@ NetworkPolicy는 ingress와 egress를 기본 거부한다. cluster DNS와 public
 
 Kubernetes 실행의 `/workspace`, `/control`, `/tmp`와 이미지 캐시는 전용 노드의 ephemeral 디스크를
 사용한다. EKS `WORKSPACE_DISK_MB=2048`에서는 Pod당 4608Mi를 예약·제한하며 namespace의
-8개 Pod 상한은 36Gi 예약량이다. 현재 Workspace NodeClass의 디스크는 160Gi다. 이미지·호스트
+32개 Pod 상한은 144Gi 예약량이다. 현재 Workspace NodeClass의 노드별 디스크는 160Gi다. 이미지·호스트
 로그는 이 Pod 예약량과 별개이므로 node-exporter 파일시스템과 kubelet 사용량을 함께 확인한다.
 
 파일과 native Session은 암호화한 체크포인트로 복원한다. Pod별 영구 PVC는 만들지 않으며,
@@ -25,6 +25,11 @@ Pod 삭제·퇴거 시 마지막 체크포인트 이후의 파일은 복구되�
 
 `workspace_storage`는 Kubernetes 실행 Pod가 아니라 기존 DinD PVC의 용량이다.
 EKS 실행 메모리는 2Gi로 설정하며 한도 초과는 cgroup OOM과 Workspace 중단으로 확인한다.
+
+EKS worker는 2 replicas이며 각각 native 작업 16개와 Chat 후속 실행 2개를 처리한다.
+체크포인트 저장·복원은 프로세스당 2개로 제한한다. legacy Docker daemon은 worker replica와
+독립적으로 1개만 실행한다. 추가 ConfigMap 입력의 checksum으로 앱과 worker가 함께 새 설정을 읽는다.
+새 지표와 동시성 설정을 지원하는 Studio 이미지를 먼저 배포한 뒤 이 chart를 sync한다.
 
 ## 승인 후 전환 순서
 

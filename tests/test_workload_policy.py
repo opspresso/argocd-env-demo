@@ -23,11 +23,21 @@ class WorkloadPolicyTests(unittest.TestCase):
                     spec = {"template": {"spec": {collection: [{"name": container, "resources": resources}]}}}
                     self.assertEqual(not policy_errors(manifest("StatefulSet", spec, name), platform), allowed)
 
-    def test_eks_is_the_default_and_preserves_chart_policy(self):
+    def test_eks_requires_reservations_and_memory_limits_without_forcing_cpu_limits(self):
         self.assertEqual(target_platform({"appset": "apps/example.yaml"}, {}), "eks")
         self.assertEqual(target_platform({"appset": "apps/eks/example.yaml"}, {"env": "eks"}), "eks")
         self.assertEqual(policy_errors(manifest("HorizontalPodAutoscaler", {}), "eks"), [])
-        self.assertEqual(policy_errors(manifest("Pod", {"containers": [{"resources": {"requests": {"cpu": "100m"}}}]}), "eks"), [])
+        complete = {"requests": {"cpu": "100m", "memory": "128Mi"}, "limits": {"memory": "256Mi"}}
+        self.assertEqual(policy_errors(manifest("Pod", {"containers": [{"resources": complete}]}), "eks"), [])
+        for field in ("containers", "initContainers"):
+            self.assertEqual(len(policy_errors(manifest("Pod", {field: [{"name": "unreserved"}]}), "eks")), 3)
+        self.assertEqual(len(policy_errors(manifest("Prometheus", {"resources": complete}), "eks")), 0)
+        self.assertEqual(len(policy_errors(manifest("Prometheus", {}), "eks")), 3)
+
+    def test_eks_rejects_zero_or_invalid_quantities(self):
+        for cpu in ("0", "0m", "bad", False):
+            resources = {"requests": {"cpu": cpu, "memory": "128Mi"}, "limits": {"memory": "256Mi"}}
+            self.assertTrue(policy_errors(manifest("Pod", {"containers": [{"resources": resources}]}), "eks"))
 
     def test_both_low_reservation_platforms_are_detected(self):
         for platform in ("k3s", "local"):

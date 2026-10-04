@@ -48,3 +48,5 @@ redis:
       inject: true
 
   resources: null
+  master:
+    resources: null

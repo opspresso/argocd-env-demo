@@ -75,7 +75,7 @@ def test_memory_monitor_authenticates_and_selects_the_application_service(platfo
 def test_memory_hpa_uses_a_metric_memory_actually_provides():
     hpa = resource("agent-memory", "eks", "HorizontalPodAutoscaler", "agent-memory")
     assert hpa["spec"]["metrics"] == [{
-        "type": "Resource", "resource": {"name": "cpu", "target": {
+        "type": "ContainerResource", "containerResource": {"name": "cpu", "container": "app", "target": {
             "type": "Utilization", "averageUtilization": 70
         }}
     }]

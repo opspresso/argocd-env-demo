@@ -19,7 +19,7 @@ def render(platform, *overrides):
     return [item for item in yaml.safe_load_all(result.stdout) if item]
 
 
-@pytest.mark.parametrize("platform,max_pods", [("eks", "8"), ("k3s", "2")])
+@pytest.mark.parametrize("platform,max_pods", [("eks", "32"), ("k3s", "2")])
 def test_isolation_permissions_and_total_capacity(platform, max_pods):
     docs = render(platform)
     namespace = "agent-studio-workspaces"
@@ -53,6 +53,32 @@ def test_isolation_permissions_and_total_capacity(platform, max_pods):
     daemon = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-docker")
     assert daemon["metadata"]["annotations"]["argocd.argoproj.io/sync-wave"] == "1"
     assert daemon["spec"]["strategy"]["type"] == "Recreate"
+    assert daemon["spec"]["replicas"] == 1
+
+
+def test_production_worker_capacity_and_single_writer_legacy_daemon():
+    docs = render("eks")
+    worker = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-worker")
+    assert worker["spec"]["replicas"] == 2
+    assert worker["spec"]["template"]["spec"]["terminationGracePeriodSeconds"] >= 120
+    assert worker["spec"]["strategy"] == {"type": "RollingUpdate", "rollingUpdate": {"maxSurge": 1, "maxUnavailable": 0}}
+    config = next(item for item in docs if item["kind"] == "ConfigMap" and item["metadata"]["name"] == "agent-studio-workspace")
+    assert int(config["data"]["WORKSPACE_WORKER_CONCURRENCY"]) * worker["spec"]["replicas"] == 32
+    pdb = next(item for item in docs if item["kind"] == "PodDisruptionBudget" and item["metadata"]["name"] == "agent-studio-workspace-worker")
+    assert pdb["spec"]["selector"]["matchLabels"] == worker["spec"]["selector"]["matchLabels"]
+    assert pdb["spec"]["maxUnavailable"] == 1
+    daemon = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-docker")
+    assert daemon["spec"]["replicas"] == 1
+
+
+@pytest.mark.parametrize("setting", ["workerConcurrency=8", "memoryMb=4096", "cpus=2"])
+def test_workspace_configuration_restarts_both_web_and_worker(setting):
+    before = render("eks")
+    after = render("eks", "--set", "app.workloads.workspaceWorker." + setting)
+    for name in ("agent-studio", "agent-studio-workspace-worker"):
+        old = next(item for item in before if item["kind"] == "Deployment" and item["metadata"]["name"] == name)
+        new = next(item for item in after if item["kind"] == "Deployment" and item["metadata"]["name"] == name)
+        assert old["spec"]["template"]["metadata"]["annotations"]["checksum/workspace"] != new["spec"]["template"]["metadata"]["annotations"]["checksum/workspace"]
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])

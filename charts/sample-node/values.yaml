@@ -221,6 +221,14 @@ redis:
 
   architecture: standalone
 
+  master:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
+
 
 raw:
   enabled: false

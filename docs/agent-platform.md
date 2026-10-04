@@ -6,7 +6,7 @@
 
 | 항목 | k3s | EKS |
 | --- | --- | --- |
-| 용도 | c6i.xlarge 단일 노드 테스트 | requests/limits·HPA·PDB를 적용하는 환경 |
+| 용도 | c6i.xlarge 단일 노드 테스트 | production, requests/limits·HPA·PDB 적용 |
 | Phase | `alpha` | `prod` |
 | Studio | `studio.opsp.dev` | `studio.opspresso.com`, `agentops.demo.clush.net` |
 | Memory | `memory.opsp.dev` | `memory.opspresso.com` |
@@ -15,8 +15,8 @@
 | Object storage | MinIO의 `agent-studio-static`, `agent-memory` | AWS S3 `agent-studio-static` |
 | Secret 경로 | `/k8s/k3s-demo/` | `/k8s/eks-demo/` |
 | Studio control workers | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
-| Workspace 실행 Pod | CPU·메모리·디스크 한도, 최대 2개 | 같은 한도, 최대 8개·Auto Mode 전용 pool |
-| 전환용 legacy Docker PVC | 10Gi local-path 보존 | 40Gi gp3 보존 |
+| Workspace 실행 Pod | CPU·메모리·디스크 한도, 최대 2개 | 최대 32개·Auto Mode 전용 pool |
+| 전환용 legacy Docker PVC | 10Gi local-path 보존 | 48Gi gp3 보존, daemon은 항상 1개 |
 
 k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
 `*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
@@ -73,6 +73,8 @@ EKS의 embedding과 knowledge extraction은 공개 provider를 사용한다. k3s
 기존 DB의 Settings override는 환경변수보다 우선하므로 provider 변경 시 함께 확인한다.
 
 ## 코딩·오디오 실행 준비
+
+production의 동시성·DB 연결·노드 용량은 [용량 운영](production-capacity.md)을 따른다.
 
 두 환경의 Workspace는 `agent-studio-workspaces` namespace의 Pod로 실행한다. 기본 거부
 NetworkPolicy, 명시적 DNS·egress, 최소 RBAC와 ResourceQuota를 함께 적용한다. 내부 모델 endpoint를

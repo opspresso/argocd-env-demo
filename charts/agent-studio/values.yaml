@@ -8,14 +8,17 @@ app:
   resources:
     requests:
       cpu: 100m
-      memory: 256Mi
+      memory: 512Mi
     limits:
       # cpu: 200m
-      memory: 512Mi
+      memory: 2Gi
 
   service:
     name: http
     targetPort: 3000
+
+  podAnnotations:
+    checksum/workspace: '{{ toYaml .Values.workloads.workspaceWorker | sha256sum }}'
 
   # Draining a pod takes up to the grace period below, so replacing pods one at a
   # time would stretch a rollout to that many multiples. Surging the whole new set
@@ -77,14 +80,9 @@ app:
       exec:
         command: ["/bin/sh", "-c", "sleep 15"]
 
-  # Runs are I/O bound — a pod saturated with in-flight runs sits at near-zero
-  # CPU — so CPU utilization is not a usable scaling signal here. It would fail to
-  # scale up under real load and would scale down pods that are busy streaming.
-  # Scale on the in-flight run gauge the app exposes at /api/metrics instead.
-  #
-  # Requires prometheus-adapter to publish agent_studio_active_runs as a pods
-  # metric. Until it does, the HPA reports FailedGetPodsMetric and holds the
-  # replica count steady — it does not scale on anything else.
+  # Long Agent runs and native Workspace model calls are I/O bound. Their sum
+  # covers both execution paths; app-container CPU also covers parsing and UI load.
+  # The custom metric requires the matching prometheus-adapter rule and image.
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -93,10 +91,17 @@ app:
       - type: Pods
         pods:
           metric:
-            name: agent_studio_active_runs
+            name: agent_studio_active_execution_requests
           target:
             type: AverageValue
             averageValue: "8"
+      - type: ContainerResource
+        containerResource:
+          name: cpu
+          container: app
+          target:
+            type: Utilization
+            averageUtilization: 70
     # Pods take minutes to terminate, so scaling down eagerly is expensive and
     # hard to undo. Scale up promptly, shed slowly.
     behavior:
@@ -362,11 +367,11 @@ app:
             name: agent-studio-workspace
       resources:
         requests:
-          cpu: 100m
-          memory: 256Mi
+          cpu: 200m
+          memory: 512Mi
         limits:
-          cpu: 500m
-          memory: 768Mi
+          cpu: 1000m
+          memory: 2Gi
       # Backend/model checks start a fresh SDK process; sample twice per minute.
       # One failed sample preserves the nominal 30s readiness failure window.
       readinessProbe:
@@ -407,7 +412,7 @@ app:
         automountServiceAccountToken: {{ eq .Values.workloads.workspaceWorker.backend "kubernetes" }}
         podAnnotations:
           checksum/config: {{ toYaml .Values.configmap | sha256sum }}
-          checksum/workspace: {{ toYaml .Values.workloads.workspaceWorker.kubernetes | sha256sum }}
+          checksum/workspace: {{ toYaml .Values.workloads.workspaceWorker | sha256sum }}
           checksum/network: {{ .Values.workspaceNetworkScript | sha256sum }}
         {{- if not .Values.resources }}
         resources: null
@@ -442,6 +447,16 @@ app:
           - {{ tpl .Values.workloads.workspaceDocker.container $ | nindent 4 | trim }}
         {{- else }}
         command: [node, build/workspace-worker.cjs]
+        # Allow the bounded 120s control call to finish before lease handoff.
+        terminationGracePeriodSeconds: 180
+        controller:
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
+        podAntiAffinity:
+          topologyKey: kubernetes.io/hostname
         {{- end }}
 
     workspaceDocker:
@@ -512,7 +527,8 @@ app:
           timeoutSeconds: 5
       overrides: |
         enabled: {{ and .Values.workloads.workspaceWorker.enabled (eq .Values.workloads.workspaceWorker.backend "kubernetes") .Values.workloads.workspaceWorker.legacyDocker.enabled }}
-        replicaCount: {{ if hasKey .Values.workloads.workspaceWorker "replicas" }}{{ .Values.workloads.workspaceWorker.replicas }}{{ else }}1{{ end }}
+        # The legacy RWO daemon has exactly one writer, independent of worker scaling.
+        replicaCount: {{ if and (hasKey .Values.workloads.workspaceWorker "replicas") (eq (int .Values.workloads.workspaceWorker.replicas) 0) }}0{{ else }}1{{ end }}
         {{- $container := tpl .Values.workloads.workspaceDocker.container $ | fromYaml }}
         {{- if hasKey $container "Error" }}{{ fail (index $container "Error") }}{{ end }}
         image:
@@ -532,6 +548,19 @@ app:
     enabled: true
     parentTemplates:
       - |
+          {{- if and .Values.resources .Values.workloads.workspaceWorker.enabled (eq .Values.workloads.workspaceWorker.backend "kubernetes") (gt (int .Values.workloads.workspaceWorker.replicas) 1) }}
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          metadata:
+            name: agent-studio-workspace-worker
+          spec:
+            maxUnavailable: 1
+            selector:
+              matchLabels:
+                app.kubernetes.io/name: agent-studio-workspace-worker
+                app.kubernetes.io/instance: {{ .Release.Name | quote }}
+          {{- end }}
+      - |
           {{- if .Values.workloads.workspaceWorker.enabled }}
           apiVersion: v1
           kind: ConfigMap
@@ -541,6 +570,12 @@ app:
               argocd.argoproj.io/sync-wave: "-1"
           data:
             WORKSPACE_PROVIDER: {{ .Values.workloads.workspaceWorker.backend | quote }}
+            WORKSPACE_MEMORY_MB: {{ .Values.workloads.workspaceWorker.memoryMb | quote }}
+            WORKSPACE_DISK_MB: {{ .Values.workloads.workspaceWorker.diskMb | quote }}
+            WORKSPACE_CPUS: {{ .Values.workloads.workspaceWorker.cpus | quote }}
+            WORKSPACE_WORKER_CONCURRENCY: {{ .Values.workloads.workspaceWorker.workerConcurrency | quote }}
+            WORKSPACE_CONTINUATION_CONCURRENCY: {{ .Values.workloads.workspaceWorker.continuationConcurrency | quote }}
+            WORKSPACE_CHECKPOINT_HISTORY: {{ .Values.workloads.workspaceWorker.checkpointHistory | quote }}
             WORKSPACE_MODEL_GATEWAY_URL: {{ printf "http://%s.%s.svc.cluster.local:%v" (include "app.fullname" .) (include "app.namespace" .) .Values.service.port | quote }}
           {{- if eq .Values.workloads.workspaceWorker.backend "kubernetes" }}
             WORKSPACE_NAMESPACE: {{ .Values.workloads.workspaceWorker.kubernetes.namespace | quote }}

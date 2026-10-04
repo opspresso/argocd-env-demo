@@ -1,5 +1,7 @@
 # argocd-env-demo
 
+`eks-demo` production의 자원·확장 상한은 [용량 운영](docs/production-capacity.md)을 따른다.
+
 Agent Studio·Memory의 k3s/EKS 구성, 저장소별 책임, Secret 준비와 배포 순서는
 [Agent Platform 배포](docs/agent-platform.md)를 따른다.
 
