@@ -4,6 +4,7 @@ global:
 postgresql:
   primary:
 
+
     persistence:
       size: 5Gi
 
