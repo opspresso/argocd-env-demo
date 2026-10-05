@@ -86,8 +86,9 @@ app:
     link.argocd.argoproj.io/external-link: https://studio.opsp.dev
 
   serviceMonitor:
+    enabled: false
     labels:
-      release: victoria-metrics-k3s-demo
+      release: prometheus-k3s-demo
 
   externalSecrets:
     enabled: true

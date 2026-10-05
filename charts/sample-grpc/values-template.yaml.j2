@@ -27,6 +27,6 @@ app:
   podAnnotations:
     link.argocd.argoproj.io/external-link: https://sample-grpc.{{hostname.public}}
   serviceMonitor:
-    enabled: true
+    enabled: {{ (metrics is defined and metrics.backend == 'prometheus') | lower }}
     labels:
-      release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
+      release: prometheus-{{cluster}}

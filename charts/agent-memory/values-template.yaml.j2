@@ -94,6 +94,7 @@ app:
 {% endif %}
 
   serviceMonitor:
+    enabled: {{ (metrics is defined and metrics.backend == 'prometheus') | lower }}
     labels:
-      release: {{ 'victoria-metrics-' if metrics.backend == 'victoria-metrics' else 'prometheus-' }}{{cluster}}
+      release: prometheus-{{cluster}}
 {% endif %}

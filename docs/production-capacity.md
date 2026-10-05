@@ -25,6 +25,11 @@ Studio의 HPA는 `agent_studio_active_execution_requests`를 사용한다. 일�
 Workspace 모델 요청을 합한 값이다. 별도 app CPU 신호는 파일 처리·요청 파싱·콘솔 부하를 포함한다.
 Istio sidecar CPU를 앱 CPU에 합산하지 않는다. 종료 유예와 느린 scale-down은 진행 중인 실행을 보호한다.
 
+노드 예산은 HPA 신호와 달리 Istio sidecar와 DaemonSet까지 포함한다. 현재 requests에 각 HPA의
+최대 replica 증가분을 더한 뒤, 가장 큰 노드 한 대의 allocatable을 제외한 용량과 비교한다.
+sidecar는 admission 때 추가되므로 Deployment 템플릿만으로 합산하지 말고 실제 Pod 예산을 확인한다.
+낮은 유휴 CPU만으로 production 기준 노드를 줄이지 않는다. 롤링 배포의 추가 Pod도 별도로 고려한다.
+
 DB 연결은 롤링 배포에서 구세대·신세대가 함께 살아 있는 상황까지 계산한다. Studio는 프로세스당
 일반 pool 4개, readiness 1개, content lock 4개를 허용한다. Agent Memory는 10개다.
 최대 replica의 두 세대는 282개, worker exec readiness는 최대 16개를 추가한다. 350개 중 나머지는

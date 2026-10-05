@@ -60,14 +60,23 @@ def test_application_credentials_match_cluster_dependencies(chart, platform):
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_memory_monitor_authenticates_and_selects_the_application_service(platform):
-    monitor = resource("agent-memory", platform, "ServiceMonitor", "agent-memory")["spec"]
+def test_memory_metrics_credentials_and_service_match_the_collector(platform):
     service = resource("agent-memory", platform, "Service", "agent-memory")
-    assert monitor["endpoints"][0]["authorization"]["credentials"] == {
-        "name": "agent-memory-external", "key": "METRICS_BEARER_TOKEN"
-    }
-    assert monitor["selector"]["matchLabels"].items() <= service["metadata"]["labels"].items()
-    container = resource("agent-memory", platform, "Deployment", "agent-memory")["spec"]["template"]["spec"]["containers"][0]
+    secret = resource("agent-memory", platform, "ExternalSecret", "agent-memory-external")
+    refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
+    assert refs["METRICS_BEARER_TOKEN"] == f"/k8s/{platform}-demo/agent-memory/metrics-bearer-token"
+    deployment = resource("agent-memory", platform, "Deployment", "agent-memory")
+    assert service["spec"]["selector"].items() <= deployment["spec"]["template"]["metadata"]["labels"].items()
+    if platform == "eks":
+        monitor = resource("agent-memory", platform, "ServiceMonitor", "agent-memory")["spec"]
+        assert monitor["endpoints"][0]["authorization"]["credentials"] == {
+            "name": "agent-memory-external", "key": "METRICS_BEARER_TOKEN"
+        }
+        assert monitor["selector"]["matchLabels"].items() <= service["metadata"]["labels"].items()
+    else:
+        assert not any(item["kind"] == "ServiceMonitor" for item in manifests("agent-memory", platform))
+        assert any(port["port"] == 80 for port in service["spec"]["ports"])
+    container = deployment["spec"]["template"]["spec"]["containers"][0]
     assert container["readinessProbe"]["httpGet"]["path"] == "/api/health"
     assert container["livenessProbe"]["tcpSocket"]["port"] == 3000
 

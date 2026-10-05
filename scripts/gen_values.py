@@ -54,6 +54,12 @@ def gen_values(t, reponame, platform=PLATFORM):
                 for key in ("resources", "autoscaling", "agent_studio_maintenance"):
                     if key in v and not isinstance(v[key], bool):
                         raise ValueError("{} {} must be a boolean".format(env_path, key))
+                metrics = v.get("metrics")
+                if metrics is not None and (
+                    not isinstance(metrics, dict)
+                    or metrics.get("backend") not in {"prometheus", "grafana-cloud"}
+                ):
+                    raise ValueError("{} metrics.backend must be prometheus or grafana-cloud".format(env_path))
 
                 if v.get("env") != platform:
                     continue
