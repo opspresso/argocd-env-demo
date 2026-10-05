@@ -61,7 +61,8 @@ def test_disabled_workers_leave_no_workspace_resources():
 def test_docker_image_can_be_pinned_by_digest(backend):
     image = "registry.example:5000/docker@sha256:" + "a" * 64
     docs = render("agent-studio", "k3s", f"app.workloads.workspaceWorker.backend={backend}",
-                  f"app.workloads.workspaceWorker.dockerImage={image}")
+                  f"app.workloads.workspaceWorker.dockerImage={image}",
+                  "app.workloads.workspaceWorker.legacyDocker.enabled=true")
     containers = [container for doc in docs if doc["kind"] == "Deployment"
                   for container in doc["spec"]["template"]["spec"]["containers"]]
     assert next(c for c in containers if c["name"] == "docker")["image"] == image

@@ -37,7 +37,7 @@ agent_memory:
 audio_worker: true
 workspace_worker: true
 workspace_backend: kubernetes
-workspace_legacy_docker: true
+workspace_legacy_docker: false
 workspace_max_pods: 32
 workspace_docker_image: public.ecr.aws/docker/library/docker:27.5.1-dind
 workspace_network: agent-studio-public

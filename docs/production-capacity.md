@@ -56,6 +56,9 @@ Pod는 1 CPU·2Gi 메모리·4608Mi ephemeral storage를 예약한다. node의 �
 커널 메모리는 이 값 밖에 있으므로 호스트 메모리·파일시스템도 함께 감시한다.
 quota가 차면 작업은 원래 실행 기한 안에서 대기한다. CPU·메모리·디스크 상한을 없애지 않는다.
 
+두 환경 모두 기존 Docker 실행기를 비활성화한다. Workspace는 Kubernetes Pod에서 실행하며,
+보존된 Docker PVC는 복구용 캐시다. 사용하지 않는 daemon·Service·NetworkPolicy는 상시 실행하지 않는다.
+
 ## 저장과 가용성
 
 Workspace 파일은 checkpoint로 복원하고 Pod 디스크는 일시적이다. `WORKSPACE_CHECKPOINT_HISTORY`

@@ -50,6 +50,12 @@ def test_isolation_permissions_and_total_capacity(platform, max_pods):
                 assert all(ip_network(cidr).version == 4 for cidr in [block["cidr"], *block.get("except", [])])
     assert scoped["ExternalSecret/ecr-registry"]["spec"]["target"]["name"] == "ecr-registry"
     assert not any(item["kind"] == "ClusterRoleBinding" for item in docs)
+    assert not any(item["metadata"]["name"] == "agent-studio-workspace-docker" and item["kind"] in {"Deployment", "Service", "NetworkPolicy"} for item in docs)
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_optional_legacy_daemon_preserves_migration_order(platform):
+    docs = render(platform, "--set", "app.workloads.workspaceWorker.legacyDocker.enabled=true")
     daemon = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-docker")
     assert daemon["metadata"]["annotations"]["argocd.argoproj.io/sync-wave"] == "1"
     assert daemon["spec"]["strategy"]["type"] == "Recreate"
@@ -57,7 +63,7 @@ def test_isolation_permissions_and_total_capacity(platform, max_pods):
 
 
 def test_production_worker_capacity_and_single_writer_legacy_daemon():
-    docs = render("eks")
+    docs = render("eks", "--set", "app.workloads.workspaceWorker.legacyDocker.enabled=true")
     worker = next(item for item in docs if item["kind"] == "Deployment" and item["metadata"]["name"] == "agent-studio-workspace-worker")
     assert worker["spec"]["replicas"] == 2
     assert worker["spec"]["template"]["spec"]["terminationGracePeriodSeconds"] >= 120
@@ -85,6 +91,8 @@ def test_workspace_configuration_restarts_both_web_and_worker(setting):
 def test_retirement_does_not_remove_pvc_or_bypass_drain_gate(platform):
     docs = render(platform, "--set", "app.workloads.workspaceWorker.legacyDocker.enabled=false")
     pvc = next(item for item in docs if item["kind"] == "PersistentVolumeClaim")
+    legacy_docs = render(platform, "--set", "app.workloads.workspaceWorker.legacyDocker.enabled=true")
+    assert pvc == next(item for item in legacy_docs if item["kind"] == "PersistentVolumeClaim")
     assert pvc["metadata"]["annotations"]["argocd.argoproj.io/sync-options"] == "Prune=false,Delete=false"
     gate = next(item for item in docs if item["kind"] == "Job" and item["metadata"]["name"] == "agent-studio-workspace-migration")
     assert gate["metadata"]["annotations"]["argocd.argoproj.io/hook"] == "PreSync"
