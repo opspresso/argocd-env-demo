@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @lru_cache
-def manifests(chart, platform, image_tag=None):
+def manifests(chart, platform, image_tag=None, *, legacy_docker=None):
     path = ROOT / "charts" / chart
     definition = yaml.safe_load((path / "Chart.yaml").read_text())
     if definition.get("dependencies") and not list((path / "charts").glob("*.tgz")):
@@ -27,13 +27,15 @@ def manifests(chart, platform, image_tag=None):
     args += ["-f", str(path / platform / f"values-{platform}-demo.yaml")]
     if image_tag:
         args += ["--set-string", f"app.image.tag={image_tag}"]
+    if legacy_docker is not None:
+        args += ["--set", f"app.workloads.workspaceWorker.legacyDocker.enabled={str(legacy_docker).lower()}"]
     result = subprocess.run(args, capture_output=True, text=True, check=True)
     assert not policy_errors(result.stdout, platform)
     return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
 
 
-def resource(chart, platform, kind, name):
-    return next(doc for doc in manifests(chart, platform)
+def resource(chart, platform, kind, name, **overrides):
+    return next(doc for doc in manifests(chart, platform, **overrides)
                 if doc["kind"] == kind and doc["metadata"]["name"] == name)
 
 
@@ -104,10 +106,10 @@ def test_eks_workers_have_resources_identity_and_registry_refresh():
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
 def test_docker_service_preserves_exec_upgrade_streams(platform):
-    service = resource("agent-studio", platform, "Service", "agent-studio-workspace-docker")
+    service = resource("agent-studio", platform, "Service", "agent-studio-workspace-docker", legacy_docker=True)
     assert service["spec"]["type"] == "ClusterIP"
     assert service["spec"]["ports"] == [{"name": "tcp-docker", "port": 2375, "targetPort": 2375}]
-    policy = resource("agent-studio", platform, "NetworkPolicy", "agent-studio-workspace-docker")["spec"]
+    policy = resource("agent-studio", platform, "NetworkPolicy", "agent-studio-workspace-docker", legacy_docker=True)["spec"]
     assert policy["policyTypes"] == ["Ingress"]
     assert policy["ingress"][0]["ports"] == [{"protocol": "TCP", "port": 2375}]
     assert policy["ingress"][0]["from"][0]["podSelector"]["matchExpressions"][0]["values"] == [
@@ -115,30 +117,31 @@ def test_docker_service_preserves_exec_upgrade_streams(platform):
 
 
 @pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
-def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage):
+@pytest.mark.parametrize("legacy_docker", [False, True])
+def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage, legacy_docker):
     maintenance = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())["agent_studio_maintenance"]
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
     assert config["STAGE"] == stage
     assert config["WORKSPACE_GITHUB_AUTH"] == "token"
     assert config["GITHUB_WEB_URL"] == "https://github.com"
     assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
-    pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker")["spec"]["template"]["spec"]
-    sandbox_config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]
-    if sandbox_config["WORKSPACE_PROVIDER"] == "kubernetes":
-        assert sandbox_config["WORKSPACE_NAMESPACE"] == "agent-studio-workspaces"
-        assert sandbox_config["WORKSPACE_LEGACY_DOCKER"] == "true"
-        assert len(pod["containers"]) == 1
-        worker = pod["containers"][0]
-        assert worker["command"] == ["node", "build/workspace-worker.cjs"]
-        assert pod["automountServiceAccountToken"] is True
-        assert not pod.get("volumes")
-        docker = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-docker")["spec"]["template"]["spec"]["containers"][0]
+    pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker", legacy_docker=legacy_docker)["spec"]["template"]["spec"]
+    sandbox_config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace", legacy_docker=legacy_docker)["data"]
+    assert sandbox_config["WORKSPACE_PROVIDER"] == "kubernetes"
+    assert sandbox_config["WORKSPACE_NAMESPACE"] == "agent-studio-workspaces"
+    assert sandbox_config["WORKSPACE_LEGACY_DOCKER"] == str(legacy_docker).lower()
+    assert len(pod["containers"]) == 1
+    worker = pod["containers"][0]
+    assert worker["command"] == ["node", "build/workspace-worker.cjs"]
+    assert pod["automountServiceAccountToken"] is True
+    assert not pod.get("volumes")
+    if legacy_docker:
+        docker = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-docker", legacy_docker=True)["spec"]["template"]["spec"]["containers"][0]
+        assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
+        assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
     else:
-        assert sandbox_config["WORKSPACE_PROVIDER"] == "docker"
-        worker, docker = pod["containers"]
-        assert pod["automountServiceAccountToken"] is False
-    assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
-    assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
+        assert not any(doc["metadata"]["name"] == "agent-studio-workspace-docker" and doc["kind"] in {"Deployment", "Service", "NetworkPolicy"}
+                       for doc in manifests("agent-studio", platform, legacy_docker=False))
     script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]
     assert script == yaml.safe_load((ROOT / "charts/agent-studio/values.yaml").read_text())["app"]["workspaceNetworkScript"]
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-heartbeat-check.cjs"]

@@ -23,12 +23,12 @@ Pod 삭제·퇴거 시 마지막 체크포인트 이후의 파일은 복구되�
 즉시 쓰기를 막는 quota가 아니라 kubelet 퇴거 기준이다. EBS PVC는 이 보존 계약을 바꾸거나
 더 큰 작업 디스크가 필요할 때 별도로 설계한다. CNI의 커널 메모리 누수는 PVC로 해결되지 않는다.
 
-`workspace_storage`는 Kubernetes 실행 Pod가 아니라 기존 DinD PVC의 용량이다.
+`workspace_storage`는 Kubernetes 실행 Pod가 아니라 보존된 DinD 복구용 PVC의 용량이다.
 EKS 실행 메모리는 2Gi로 설정하며 한도 초과는 cgroup OOM과 Workspace 중단으로 확인한다.
 
 EKS worker는 2 replicas이며 각각 native 작업 16개와 Chat 후속 실행 2개를 처리한다.
-체크포인트 저장·복원은 프로세스당 2개로 제한한다. legacy Docker daemon은 worker replica와
-독립적으로 1개만 실행한다. 추가 ConfigMap 입력의 checksum으로 앱과 worker가 함께 새 설정을 읽는다.
+체크포인트 저장·복원은 프로세스당 2개로 제한한다. EKS와 k3s는 `workspace_legacy_docker: false`로
+Kubernetes 실행기만 사용한다. 추가 ConfigMap 입력의 checksum으로 앱과 worker가 함께 새 설정을 읽는다.
 새 지표와 동시성 설정을 지원하는 Studio 이미지를 먼저 배포한 뒤 이 chart를 sync한다.
 
 ## 승인 후 전환 순서
@@ -45,12 +45,17 @@ EKS worker는 2 replicas이며 각각 native 작업 16개와 Chat 후속 실행 
 5. 앱·worker의 Kubernetes RBAC, task namespace의 ECR Secret, Pod 실행·취소·체크포인트·복원을 확인한 뒤
    Workspace 도구를 다시 켠다. k3s의 새 namespace도 ESO ECR generator를 사용하며 기존 EC2 역할로 인증한다.
 
-첫 전환은 `workspace_legacy_docker: true`를 유지한다. 기존 PVC를 별도 legacy daemon에 연결하여
-오래된 Docker 핸들의 조회·정리를 계속 처리한다. PVC와 기존 ECR generator/ExternalSecret에는
-Argo CD의 `Prune=false,Delete=false`를 적용한다. legacy daemon도 자동 prune하지 않는다.
-legacy daemon은 sync wave 1에서 생성하여 wave 0의 기존 worker 교체가 완료된 뒤 PVC를 연다.
-모든 기존 Workspace의 종료·중지와 체크포인트 복원을 확인한 뒤, **별도 삭제 승인**으로
-legacy daemon·Service·PVC를 철거한다. ECR 인증은 앱과 실행 Pod에서도 사용하므로 함께 제거하지 않는다.
+Docker에서 처음 전환하는 설치는 기존 핸들의 조회·정리가 끝날 때까지
+`workspace_legacy_docker: true`를 사용한다. 이때 legacy daemon은 worker 수와 독립적으로
+1개만 실행하며, sync wave 1에서 기존 worker 교체 후 PVC를 연다.
+
+기존 Docker 참조와 컨테이너가 없고 Kubernetes 실행·체크포인트 복원 검사가 통과하면,
+승인된 정리에서 `workspace_legacy_docker: false`로 전환한다. Service와 전용 NetworkPolicy는
+GitOps가 제거한다. 자동 prune을 막은 기존 daemon Deployment는 새 앱·worker가 Ready이고
+`WORKSPACE_LEGACY_DOCKER=false`를 읽는 것을 확인한 뒤 운영자가 삭제한다.
+
+복구용 PVC와 ECR generator/ExternalSecret은 `Prune=false,Delete=false`로 계속 보존한다.
+PVC·체크포인트의 데이터 삭제는 별도 승인이 필요하다. ECR 인증은 앱과 Kubernetes 실행 Pod도 사용한다.
 
 ## 검증
 

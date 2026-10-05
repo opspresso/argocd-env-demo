@@ -142,7 +142,7 @@ app:
       enabled: true
       backend: kubernetes
       legacyDocker:
-        enabled: True
+        enabled: False
       kubernetes:
         namespace: agent-studio-workspaces
         nodePool: ""
