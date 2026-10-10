@@ -13,8 +13,6 @@ spec:
   template:
     metadata:
       name: "agent-memory-{{cluster}}"
-      annotations:
-        argocd.argoproj.io/skip-reconcile: "true"
       labels:
         app.kubernetes.io/instance: "apps-{{cluster}}"
         opspresso.com/cluster: "{{cluster}}"
