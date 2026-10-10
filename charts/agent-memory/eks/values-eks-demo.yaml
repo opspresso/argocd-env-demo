@@ -35,7 +35,7 @@ app:
       KNOWLEDGE_EXTRACTION_BASE_URL: https://openrouter.ai/api/v1
       KNOWLEDGE_EXTRACTION_MODEL: openai/gpt-6-luna
 
-      KNOWLEDGE_ENRICHMENT_CONCURRENCY: '4'
+      KNOWLEDGE_ENRICHMENT_CONCURRENCY: '12'
 
   routing:
     hosts:
