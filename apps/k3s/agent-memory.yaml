@@ -4,7 +4,6 @@ metadata:
   name: agent-memory-k3s
   namespace: argocd
   annotations:
-    argocd.argoproj.io/skip-reconcile: "true"
     notifications.argoproj.io/subscribe.on-sync-succeeded.slack: noti-argocd-k3s
   labels:
     app.kubernetes.io/instance: apps-k3s-demo
