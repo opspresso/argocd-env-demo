@@ -36,10 +36,8 @@ app:
       KNOWLEDGE_EXTRACTION_MODEL: openai/gpt-6-luna
 
       KNOWLEDGE_ENRICHMENT_CONCURRENCY: '12'
-
       AI_PROVIDER_MAX_CONCURRENCY: '12'
       AI_USER_REQUESTS_PER_MINUTE: '60'
-
 
   routing:
     hosts:
