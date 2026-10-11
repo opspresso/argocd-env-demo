@@ -37,6 +37,10 @@ app:
 
       KNOWLEDGE_ENRICHMENT_CONCURRENCY: '12'
 
+      AI_PROVIDER_MAX_CONCURRENCY: '12'
+      AI_USER_REQUESTS_PER_MINUTE: '60'
+
+
   routing:
     hosts:
     - memory.opspresso.com
