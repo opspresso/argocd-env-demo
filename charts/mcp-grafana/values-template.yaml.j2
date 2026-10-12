@@ -10,19 +10,11 @@ app:
     sidecar.istio.io/inject: "true"
 {% endif %}
 
-{% if env != 'local' %}  configmap:
-    enabled: true
-    data:
-      # In-cluster Grafana. This is mcp-grafana's own outbound call, so Agent
-      # Studio's SSRF guard has nothing to say about it — that guard only bounds
-      # what Agent Studio itself dials.
-      GRAFANA_URL: http://grafana.addon-grafana.svc.cluster.local
-{% else %}
   configmap:
     enabled: true
     data:
-      GRAFANA_URL: {{grafana_url}}
-{% endif %}{% if env != 'eks' %}
+      GRAFANA_URL: {{grafana_url | tojson}}
+{% if env != 'eks' %}
   destinationRule:
     enabled: false
 {% endif %}

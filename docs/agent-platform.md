@@ -31,6 +31,10 @@ Studio의 `agent_studio.allowed_hosts`는 정확한 호스트 목록이며, 생�
 EKS의 ALB·Istio 경로는 VPC CIDR을 사용하고, Traefik 하나를 거치는 k3s는 빈 목록으로
 단일 client 주소만 허용한다. 이 값이 없거나 실제 경로와 다르면 여러 사용자가 인증 요청 제한을 공유할 수 있다.
 
+Grafana MCP의 대상은 `grafana_url`로 지정한다. EKS management 클러스터는 내부 Service를,
+Grafana가 설치되지 않은 k3s는 같은 Grafana의 HTTPS 주소를 사용한다. 관측 지표의 저장소와
+MCP가 접속하는 Grafana API 주소를 구분한다.
+
 ## 연결과 권한
 
 PostgreSQL은 pgvector가 포함된 이미지로 `agent_studio`와 `agent_memory` database를
