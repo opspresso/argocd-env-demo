@@ -135,7 +135,6 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     maintenance = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())["agent_studio_maintenance"]
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
     assert config["STAGE"] == stage
-    assert config["WORKSPACE_GITHUB_AUTH"] == "token"
     assert config["GITHUB_WEB_URL"] == "https://github.com"
     assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
     pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker", legacy_docker=legacy_docker)["spec"]["template"]["spec"]

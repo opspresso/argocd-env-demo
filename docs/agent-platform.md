@@ -15,7 +15,7 @@
 | Object storage | MinIO의 `agent-studio-static`, `agent-memory` | AWS S3 `agent-studio-static` |
 | Secret 경로 | `/k8s/k3s-demo/` | `/k8s/eks-demo/` |
 | Studio control workers | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
-| Workspace 실행 Pod | CPU·메모리·디스크 한도, 최대 2개 | 최대 32개·Auto Mode 전용 pool |
+| Workspace 실행 Pod | requests·limits 미선언, 볼륨 크기 제한·최대 2개 | CPU·메모리·디스크 한도, 최대 32개·Auto Mode 전용 pool |
 | 전환용 legacy Docker PVC | 10Gi local-path 보존 | 48Gi gp3 보존, daemon은 항상 1개 |
 
 k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
@@ -90,7 +90,7 @@ Auto Mode의 전용 NodeClass는 DefaultDeny를 사용하며, k3s는 기본 netw
 새 실행 Pod의 RBAC·DNS·통신 차단·quota·복원은 Agent Studio의 Kubernetes 통합 검사와
 승인 후 클러스터 검증으로 확인한다.
 
-Workspace Git 작업은 `WORKSPACE_GITHUB_AUTH=token`으로 서버의 기존 GitHub 연결을 사용한다.
+Workspace Git 작업은 해당 Agent에 연결된 GitHub MCP의 호출자 개인 OAuth 권한을 사용한다.
 Sandbox에 GitHub token을 넘기지 않는다. 프로젝트의 저장소 정책, 기본 Runtime, Models의 Runtime별
 모델 선택과 배포 workflow 허용 목록은 Studio에서 관리한다. GitHub MCP 연결만으로 이 준비가 끝나지는 않는다.
 
