@@ -57,14 +57,15 @@ MCP 인증 설정과 PostgreSQL 초기화 동작을 검증한다. 이 fixture는
 선택한다. PostgreSQL·MinIO·Neo4j 등 데이터 서비스는 공식 또는 주요 배포처의 전용 차트를
 사용한다. 공통 차트에 필요한 기능이 없으면 공통 차트를 확장하며, wrapper에는 `templates/`를 두지 않는다.
 
-Agent Studio의 audio/Workspace/Docker worker는 `app.workloads`를 사용하고, scan/reindex는
-`cronjob`, RBAC·네트워크 정책·보존용 PVC·마이그레이션 Job은 `raw`가 렌더한다.
+Agent Studio의 audio/Workspace/Docker worker와 scan·plugin sync·reindex ticker는
+`app.workloads`를 사용한다. RBAC·네트워크 정책·보존용 PVC·마이그레이션 Job은 `raw`가 렌더한다.
 공통 `app`이 phase·클러스터 값 병합 후 worker와 내장 `raw`에 필요한 값을 전달한다.
 `app.image`를 단일 버전 원천으로 유지하므로 GitOps가 이미지 태그를
 갱신하면 worker·마이그레이션 Job·workspace 이미지도 함께 바뀐다. worker별 설정은
 `app.workloads.audioWorker`, `app.workloads.workspaceWorker`, `app.workloads.workspaceDocker`에 두며,
 부모 값 참조는 각 `overrides`와 `app.raw.parentTemplates`에 둔다. Agent Memory의 인증된 메트릭 수집은
-`app.serviceMonitor`로 관리한다.
+`app.serviceMonitor`로 관리한다. Memory의 queue 소비는 `app.workloads.worker`가 담당하며
+웹 HPA와 별도로 replica를 지정한다.
 
 PostgreSQL은 Bitnami 전용 차트를 사용하며, `pgvector/pgvector` 이미지의 entrypoint·인증 환경변수·
 probe·데이터 경로를 values로 지정한다. `postgres` StatefulSet과 `data-postgres-0` PVC를 유지한다.

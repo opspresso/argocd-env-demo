@@ -100,8 +100,10 @@ raw:
                   matchLabels:
                     kubernetes.io/metadata.name: agent-studio
                 podSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: agent-studio
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: [agent-studio, agent-studio-audio-worker, agent-studio-workspace-worker]
             ports:
               - protocol: TCP
                 port: 3000

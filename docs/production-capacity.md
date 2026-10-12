@@ -14,7 +14,8 @@ ApplicationSet에는 별도 Slack 구독 annotation을 추가하지 않는다. �
 | Studio web | 100m / 512Mi | CPU ceiling 없음 / 2Gi | 2~6 replicas; 실행 부하 8/Pod 및 app CPU 70% |
 | Workspace worker | 200m / 512Mi | 1 / 2Gi | 2 replicas × native 16개; Chat 후속 실행은 각각 2개 |
 | Audio worker | 100m / 256Mi | 1 / 2Gi | 1 replica, 작업 큐·처리 지연 관찰 |
-| Agent Memory | 100m / 256Mi | CPU ceiling 없음 / 512Mi | 2~6 replicas; app CPU 70% |
+| Memory web | 100m / 256Mi | CPU ceiling 없음 / 512Mi | 2~6 replicas; app CPU 70% |
+| Memory worker | 200m / 512Mi | CPU ceiling 없음 / 2Gi | 2 replicas; 웹 HPA와 분리 |
 | PostgreSQL | 250m / 768Mi | 2 / 2Gi | 350 connections, shared buffers 256MB |
 | Neo4j | 1 / 2Gi | 1 / 2Gi | heap 512Mi·page cache 512Mi; 쿼리 지연·GC 확인 |
 | MCP 4개 | 각 chart의 자원 예산 | 각 chart의 메모리 한도 | 현재 각 1 replica; 다중화 전 세션·재연결 동작 검증 |
@@ -31,10 +32,13 @@ sidecar는 admission 때 추가되므로 Deployment 템플릿만으로 합산하
 낮은 유휴 CPU만으로 production 기준 노드를 줄이지 않는다. 롤링 배포의 추가 Pod도 별도로 고려한다.
 
 DB 연결은 롤링 배포에서 구세대·신세대가 함께 살아 있는 상황까지 계산한다. Studio는 프로세스당
-일반 pool 4개, readiness 1개, content lock 4개를 허용한다. Agent Memory는 10개다.
-최대 replica의 두 세대는 282개, worker exec readiness는 최대 16개를 추가한다. 350개 중 나머지는
-운영·초기화 여유다. `test_production_capacity.py`가 이 합계를 검사한다. 동시에 여러 세대의
-배포를 누적하지 말고 이전 rollout의 종료를 확인한다.
+일반 pool 4개, readiness 1개, content lock 4개를 허용한다. Memory의 웹·worker는 각각
+일반 pool 4개, pg-boss 2개, readiness 1개이며 worker마다 maintenance 전용 연결 1개를 추가한다.
+최대 replica의 두 세대는 278개, Workspace worker의 exec readiness는 최대 16개다.
+350개 중 56개가 운영·초기화 여유로 남는다. Alpha도 같은 연결 풀 상한을 적용하며,
+두 세대와 exec readiness를 합친 92개를 PostgreSQL의 150개 한도 안에서 처리한다.
+`test_production_capacity.py`는 두 환경 모두 최소 20개의 운영 여유를 요구한다.
+동시에 여러 세대의 배포를 누적하지 말고 이전 rollout의 종료를 확인한다.
 Kubernetes worker는 제어 호출 상한 120초보다 긴 180초 종료 유예를 사용하여 lease를 넘긴다.
 
 ## Workspace 용량 변경

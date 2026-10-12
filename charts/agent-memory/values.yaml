@@ -34,22 +34,28 @@ app:
       path: /api/health
       port: 3000
     initialDelaySeconds: 5
-    periodSeconds: 5
+    # PostgreSQL checkout/query (2.5s) + Neo4j response deadline (2s).
+    timeoutSeconds: 6
+    periodSeconds: 10
 
   # Dependency outages must remove readiness without restarting every replica.
   livenessProbe:
-    tcpSocket:
+    httpGet:
+      path: /api/live
       port: 3000
+    timeoutSeconds: 2
     initialDelaySeconds: 10
     periodSeconds: 10
 
   startupProbe:
-    tcpSocket:
+    httpGet:
+      path: /api/live
       port: 3000
+    timeoutSeconds: 2
     periodSeconds: 5
     failureThreshold: 60
 
-  # Leave time for the document worker to release its PostgreSQL queue leases.
+  # Next.js drains in-flight HTTP requests before exiting; workers drain separately.
   terminationGracePeriodSeconds: 660
 
   # SIGTERM makes Next.js stop accepting new connections immediately, while
@@ -126,3 +132,93 @@ app:
     secretStoreRef:
       kind: ClusterSecretStore
       name: parameter-store
+
+  workloads:
+    worker:
+      enabled: false
+      fullnameOverride: agent-memory-worker
+      containerName: worker
+      command: [node, build/worker.cjs]
+      service:
+        enabled: false
+      serviceAccount:
+        name: agent-memory
+      automountServiceAccountToken: false
+      podAnnotations:
+        sidecar.istio.io/inject: 'false'
+      terminationGracePeriodSeconds: 60
+      podAntiAffinity:
+        topologyKey: kubernetes.io/hostname
+      controller:
+        strategy:
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 0
+      envFrom:
+        - configMapRef:
+            name: agent-memory
+        - secretRef:
+            name: agent-memory-external
+      startupProbe:
+        httpGet: {path: /api/health, port: 3000}
+        periodSeconds: 5
+        timeoutSeconds: 2
+        failureThreshold: 60
+      readinessProbe:
+        httpGet: {path: /api/health, port: 3000}
+        periodSeconds: 10
+        timeoutSeconds: 2
+      livenessProbe:
+        httpGet: {path: /api/health, port: 3000}
+        periodSeconds: 10
+        timeoutSeconds: 2
+      resources:
+        requests: {cpu: 200m, memory: 512Mi}
+        limits: {memory: 2Gi}
+      overrides: |
+        enabled: {{ .Values.workloads.worker.enabled }}
+        replicaCount: {{ .Values.workloads.worker.replicas | default 1 }}
+        image: {{ toYaml .Values.image | nindent 2 }}
+        imagePullSecrets: {{ toYaml .Values.imagePullSecrets | nindent 2 }}
+        podAnnotations:
+          checksum/config: {{ toYaml .Values.configmap | sha256sum }}
+        {{- if not .Values.resources }}
+        resources: null
+        {{- end }}
+
+  raw:
+    enabled: true
+    parentTemplates:
+      - |
+          {{- if .Values.workloads.worker.enabled }}
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: agent-memory-worker
+            namespace: {{ include "app.namespace" . }}
+            labels:
+          {{ include "app.labels" . | indent 4 }}
+              app.kubernetes.io/component: worker
+          spec:
+            ports:
+              - name: http
+                port: 80
+                targetPort: 3000
+            selector:
+              app.kubernetes.io/name: agent-memory-worker
+              app.kubernetes.io/instance: {{ .Release.Name }}
+          {{- end }}
+      - |
+          {{- if and .Values.workloads.worker.enabled .Values.resources (gt (int .Values.workloads.worker.replicas) 1) }}
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          metadata:
+            name: agent-memory-worker
+            namespace: {{ include "app.namespace" . }}
+          spec:
+            maxUnavailable: 1
+            selector:
+              matchLabels:
+                app.kubernetes.io/name: agent-memory-worker
+                app.kubernetes.io/instance: {{ .Release.Name }}
+          {{- end }}

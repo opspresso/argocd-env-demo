@@ -46,6 +46,7 @@ def test_application_credentials_match_cluster_dependencies(chart, platform):
     refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
     assert refs["DATABASE_URL"] == f"/k8s/{platform}-demo/{chart}/database-url"
     config = resource(chart, platform, "ConfigMap", chart)["data"]
+    assert config["TRUSTED_PROXY_CIDRS"] == ("10.10.0.0/16" if platform == "eks" else "")
     assert not any("BEDROCK" in key or "DYNAMO" in key for key in config)
     if platform == "eks":
         assert "S3_ENDPOINT" not in config
@@ -80,7 +81,9 @@ def test_memory_metrics_credentials_and_service_match_the_collector(platform):
         assert any(port["port"] == 80 for port in service["spec"]["ports"])
     container = deployment["spec"]["template"]["spec"]["containers"][0]
     assert container["readinessProbe"]["httpGet"]["path"] == "/api/health"
-    assert container["livenessProbe"]["tcpSocket"]["port"] == 3000
+    assert container["readinessProbe"]["timeoutSeconds"] > 4.5
+    assert container["livenessProbe"]["httpGet"] == {"path": "/api/live", "port": 3000}
+    assert container["startupProbe"]["httpGet"] == {"path": "/api/live", "port": 3000}
 
 
 def test_memory_hpa_uses_a_metric_memory_actually_provides():
@@ -90,6 +93,56 @@ def test_memory_hpa_uses_a_metric_memory_actually_provides():
             "type": "Utilization", "averageUtilization": 70
         }}
     }]
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_argocd_mcp_accepts_all_trusted_agent_execution_processes(platform):
+    policy = resource("mcp-argocd", platform, "NetworkPolicy", "mcp-argocd")["spec"]
+    source = policy["ingress"][0]["from"][0]
+    assert source["namespaceSelector"]["matchLabels"] == {"kubernetes.io/metadata.name": "agent-studio"}
+    expression = source["podSelector"]["matchExpressions"][0]
+    assert expression["key"] == "app.kubernetes.io/name" and expression["operator"] == "In"
+    expected = {doc["metadata"]["name"] for doc in manifests("agent-studio", platform)
+                if doc["kind"] == "Deployment" and doc["spec"]["template"]["spec"].get("serviceAccountName") == "agent-studio"}
+    assert set(expression["values"]) == expected
+
+
+@pytest.mark.parametrize("platform,replicas", [("eks", 2), ("k3s", 1)])
+def test_memory_consumers_are_separate_from_web_scaling_and_share_metrics_auth(platform, replicas):
+    worker = resource("agent-memory", platform, "Deployment", "agent-memory-worker")
+    web = resource("agent-memory", platform, "Deployment", "agent-memory")
+    assert worker["spec"]["replicas"] == replicas
+    pod = worker["spec"]["template"]["spec"]
+    container = pod["containers"][0]
+    assert container["command"] == ["node", "build/worker.cjs"]
+    assert container["image"] == web["spec"]["template"]["spec"]["containers"][0]["image"]
+    assert pod["terminationGracePeriodSeconds"] > 30
+    assert pod["serviceAccountName"] == "agent-memory"
+    assert container["envFrom"] == [{"configMapRef": {"name": "agent-memory"}},
+                                   {"secretRef": {"name": "agent-memory-external"}}]
+    service = resource("agent-memory", platform, "Service", "agent-memory-worker")
+    assert service["spec"]["selector"] == worker["spec"]["selector"]["matchLabels"]
+    assert resource("agent-memory", platform, "Service", "agent-memory")["spec"]["selector"] != service["spec"]["selector"]
+    if platform == "eks":
+        monitor = resource("agent-memory", platform, "ServiceMonitor", "agent-memory")
+        assert monitor["spec"]["selector"]["matchLabels"].items() <= service["metadata"]["labels"].items()
+        pdb = resource("agent-memory", platform, "PodDisruptionBudget", "agent-memory-worker")
+        assert pdb["spec"]["selector"]["matchLabels"] == service["spec"]["selector"]
+    else:
+        assert not container.get("resources")
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_workspace_pod_policy_matches_namespace_admission(platform):
+    config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]
+    quota = resource("agent-studio", platform, "ResourceQuota", "agent-studio-sandbox")["spec"]["hard"]
+    assert config["WORKSPACE_KUBERNETES_RESOURCES"] == str(platform == "eks").lower()
+    if platform == "k3s":
+        assert quota == {"pods": "2"}
+    else:
+        assert quota == {"pods": "32", "requests.cpu": "32", "limits.cpu": "32",
+                         "requests.memory": "65536Mi", "limits.memory": "65536Mi",
+                         "requests.ephemeral-storage": "147456Mi", "limits.ephemeral-storage": "147456Mi"}
 
 
 def test_eks_workers_have_resources_identity_and_registry_refresh():
@@ -122,7 +175,6 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     maintenance = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())["agent_studio_maintenance"]
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
     assert config["STAGE"] == stage
-    assert config["WORKSPACE_GITHUB_AUTH"] == "token"
     assert config["GITHUB_WEB_URL"] == "https://github.com"
     assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
     pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker", legacy_docker=legacy_docker)["spec"]["template"]["spec"]

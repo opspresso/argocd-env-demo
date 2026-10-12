@@ -12,6 +12,8 @@ replicas: 1
 autoscaling: true
 agent_studio_maintenance: false
 resources: true
+trusted_proxy_cidrs: [10.10.0.0/16]
+grafana_url: http://grafana.addon-grafana.svc.cluster.local
 
 aws_account_id: "396608815058"
 aws_region: ap-northeast-2
@@ -33,6 +35,7 @@ agent_studio:
 
 agent_memory:
   hostname: memory.opspresso.com
+  worker_replicas: 2
 
 audio_worker: true
 workspace_worker: true

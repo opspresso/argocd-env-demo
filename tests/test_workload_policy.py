@@ -81,6 +81,17 @@ class WorkloadPolicyTests(unittest.TestCase):
                 with self.subTest(kind=kind, platform=platform):
                     self.assertEqual(len(policy_errors(manifest(kind, {}), platform)), 1)
 
+    def test_compute_quotas_cannot_force_dynamic_pod_reservations(self):
+        for platform in ("k3s", "local"):
+            for name in ("cpu", "memory", "ephemeral-storage", "requests.cpu", "limits.memory",
+                         "requests.ephemeral-storage", "requests.nvidia.com/gpu"):
+                with self.subTest(platform=platform, name=name):
+                    self.assertTrue(policy_errors(manifest("ResourceQuota", {"hard": {name: "1"}}), platform))
+            self.assertEqual(policy_errors(manifest("ResourceQuota", {"hard": {
+                "pods": "2", "persistentvolumeclaims": "2", "requests.storage": "10Gi"
+            }}), platform), [])
+        self.assertEqual(policy_errors(manifest("ResourceQuota", {"hard": {"requests.cpu": "2"}}), "eks"), [])
+
     def test_helmchartconfig_cannot_reenable_traefik_defaults(self):
         valid = manifest("HelmChartConfig", {"valuesContent": "resources:\n  requests: null\n  limits: null\nautoscaling:\n  enabled: false\n"}, "traefik")
         missing = manifest("HelmChartConfig", {"valuesContent": "providers: {}"}, "traefik")

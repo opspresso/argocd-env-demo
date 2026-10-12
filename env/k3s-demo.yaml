@@ -12,6 +12,10 @@ replicas: 1
 autoscaling: false
 agent_studio_maintenance: false
 resources: false
+# Traefik is the sole HTTP proxy; only a single forwarded client address is trusted.
+trusted_proxy_cidrs: []
+# Grafana runs in EKS; k3s has only the Grafana Cloud collector.
+grafana_url: https://grafana.demo.opspresso.com
 
 aws_account_id: "396608815058"
 aws_region: ap-northeast-2
@@ -46,6 +50,7 @@ workspace_cpus: 1
 workspace_worker_concurrency: 1
 
 postgresql:
+  max_connections: 150
   storage: 5Gi
 minio:
   storage: 10Gi

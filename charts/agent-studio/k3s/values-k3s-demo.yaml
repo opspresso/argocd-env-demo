@@ -24,7 +24,7 @@ app:
     enabled: true
     data:
       STAGE: 'alpha'
-
+      DATABASE_POOL_SIZE: '4'
       SERVICE_NAME: 'Axleon AgentOps'
       SERVICE_LOGO: 'agentops'
       ADMIN_EMAILS: me@nalbam.com
@@ -40,13 +40,10 @@ app:
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
-      TRUSTED_PROXY_CIDRS: 10.10.0.0/16
-      EMBEDDING_PROVIDER: openai
-
-      EMBEDDING_MODEL: selfhosted/Qwen3-Embedding-4B
+      TRUSTED_PROXY_CIDRS: ''
       EMBEDDING_DIM: native
       CATALOG_MIN_SCORE: '0.2'
-      RERANKER_MODEL: selfhosted/Qwen3-Reranker-0.6B
+
       RERANKER_MIN_SCORE: '0.01'
 
       UNKNOWN_MODEL_POLICY: allow
@@ -66,7 +63,6 @@ app:
 
       DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
       WORKSPACE_NETWORK: agent-studio-public
-      WORKSPACE_GITHUB_AUTH: token
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
 
@@ -113,8 +109,6 @@ app:
       name: LLM_PROVIDER_SELFHOSTED_API_KEY
     - key: /k8s/common/agent-studio/aes-encryption-key
       name: AES_ENCRYPTION_KEY
-    - key: /k8s/common/agent-studio/a2a-api-key
-      name: A2A_API_KEY
     - key: /k8s/common/agent-studio/github-token
       name: GITHUB_TOKEN
     - key: /k8s/common/agent-studio/schedule-scan-token

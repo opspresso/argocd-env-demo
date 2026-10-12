@@ -4,6 +4,7 @@ phase: alpha
 replicas: 1
 autoscaling: false
 resources: false
+trusted_proxy_cidrs: []
 aws_region: ap-northeast-2
 aws_local:
   profile: test

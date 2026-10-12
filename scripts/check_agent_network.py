@@ -33,6 +33,19 @@ def check(context=None):
         result = subprocess.run(kubectl + list(args), check=True, capture_output=True, text=True, timeout=25)
         return json.loads(result.stdout)
 
+    services = command("-n", "agent-studio", "get", "services", "--field-selector",
+                       "metadata.name=agent-studio-workspace-docker", "-o", "json")["items"]
+    if not services:
+        pods = command("-n", "agent-studio", "get", "pods", "-l",
+                       "app.kubernetes.io/name in (agent-studio-workspace-worker,agent-studio-workspace-docker)",
+                       "-o", "json")["items"]
+        if any(pod["metadata"]["labels"]["app.kubernetes.io/name"] == "agent-studio-workspace-docker"
+               or any(container["name"] == "docker" for container in pod["spec"]["containers"])
+               for pod in pods):
+            raise RuntimeError("Legacy Docker Pods remain without their control Service")
+        print("SKIP: legacy Docker is not deployed; use the Kubernetes Workspace deployment check")
+        return
+
     def ready_pods(namespace):
         pods = command("-n", namespace, "get", "pods", "-l", f"app.kubernetes.io/name={namespace}", "-o", "json")["items"]
         ready = [pod["metadata"]["name"] for pod in pods if not pod["metadata"].get("deletionTimestamp")
