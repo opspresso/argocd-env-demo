@@ -1,7 +1,7 @@
 app:
   fullnameOverride: agent-studio
 
-  replicaCount: 1
+  replicaCount: 0
   autoscaling:
     enabled: False
   image:
@@ -124,12 +124,12 @@ app:
   workloads:
     scheduleTicker:
       enabled: true
-      replicas: 1
+      replicas: 0
 
 
     audioWorker:
       enabled: true
-      replicas: 1
+      replicas: 0
 
 
     workspaceWorker:
@@ -145,7 +145,7 @@ app:
           - 10.43.0.10/32
         allowPublic: True
         extraEgress: []
-      replicas: 1
+      replicas: 0
       dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
       workerConcurrency: 1
       continuationConcurrency: 1

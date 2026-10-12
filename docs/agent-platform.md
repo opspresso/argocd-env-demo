@@ -44,6 +44,12 @@ GitOps에 반영한다. 이 설정은 Studio 앱·오디오/Workspace worker를 
 중지하지만 PostgreSQL·Agent Memory는 유지한다. Studio 앱·오디오/Workspace worker Pod가
 모두 종료되고 진행 중인 ticker 요청이 끝난 것을 확인한 뒤 백업·복원을 진행한다.
 새 DB와 이미지 검증 뒤 `false`로 되돌려 기동한다.
+Memory의 웹·queue worker는 `agent_memory_maintenance: true`로 함께 중지한다.
+첫 Sync에서 두 앱의 웹·worker·ticker Pod가 종료되고 실행 중 queue 작업이 없는지 확인한다.
+그 뒤 별도 Sync에서 `neo4j.offline_maintenance: true`로 Neo4j를 offline 모드로 전환한다.
+이 모드는 PVC를 유지하고 DB process를 중지한 채 dump·load 명령을 실행할 수 있게 한다.
+복원 후에는 먼저 `neo4j.offline_maintenance: false`로 되돌리고 Neo4j readiness와 데이터를 검증한다.
+그 검증이 끝난 뒤 별도 Sync에서 서비스할 환경의 앱·worker·ticker만 재개한다.
 `postgres-bootstrap` Sync hook은 두 database에 vector extension을 활성화한다.
 Studio와 Memory는 자기 이미지가 제공하는 시작 절차로 빈 DB를 초기화한다.
 Memory의 기존 schema fingerprint가 다르면 시작을 거부하며 자동으로 데이터를 초기화하지 않는다.

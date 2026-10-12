@@ -4,6 +4,10 @@ global:
 neo4jdb:
 
   neo4j:
+
+    offlineMaintenanceModeEnabled: false
+
+
     # The official chart requires these minimum requests; no compute limits.
     resources:
       cpu: null
@@ -14,6 +18,7 @@ neo4jdb:
       limits: null
     operations:
       resources: null
+
 
 
 

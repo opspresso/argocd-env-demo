@@ -10,7 +10,8 @@ role: mgmt
 
 replicas: 1
 autoscaling: true
-agent_studio_maintenance: false
+agent_studio_maintenance: true
+agent_memory_maintenance: true
 resources: true
 trusted_proxy_cidrs: [10.10.0.0/16]
 grafana_url: http://grafana.addon-grafana.svc.cluster.local
@@ -58,6 +59,7 @@ postgresql:
   storage: 20Gi
   storageClass: gp3
 neo4j:
+  offline_maintenance: false
   storage: 20Gi
   config:
     server.memory.heap.initial_size: 512m

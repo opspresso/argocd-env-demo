@@ -1,9 +1,10 @@
+{% set maintenance = agent_memory_maintenance | default(false) -%}
 app:
   fullnameOverride: agent-memory
 {% if agent_memory is defined %}
-  replicaCount: {{replicas}}
+  replicaCount: {{0 if maintenance else replicas}}
   autoscaling:
-    enabled: {{autoscaling}}
+    enabled: {{false if maintenance else autoscaling}}
   image:
     repository: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-memory
 {% if env == 'k3s' %}
@@ -104,5 +105,5 @@ app:
   workloads:
     worker:
       enabled: true
-      replicas: {{agent_memory.worker_replicas | default(1)}}
+      replicas: {{0 if maintenance else agent_memory.worker_replicas | default(1)}}
 {% endif %}

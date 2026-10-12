@@ -3,6 +3,12 @@ global:
 
 neo4jdb:
 
+  neo4j:
+
+    offlineMaintenanceModeEnabled: false
+
+
+
 
   config:
 

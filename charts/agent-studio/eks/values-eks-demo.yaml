@@ -1,9 +1,9 @@
 app:
   fullnameOverride: agent-studio
 
-  replicaCount: 1
+  replicaCount: 0
   autoscaling:
-    enabled: True
+    enabled: False
   image:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
 
@@ -111,12 +111,12 @@ app:
   workloads:
     scheduleTicker:
       enabled: true
-      replicas: 1
+      replicas: 0
 
 
     audioWorker:
       enabled: true
-      replicas: 1
+      replicas: 0
 
 
     workspaceWorker:
@@ -132,7 +132,7 @@ app:
           - 172.20.0.10/32
         allowPublic: True
         extraEgress: []
-      replicas: 2
+      replicas: 0
       dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
       workerConcurrency: 16
       continuationConcurrency: 2
