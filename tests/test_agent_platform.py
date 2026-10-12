@@ -92,6 +92,31 @@ def test_memory_hpa_uses_a_metric_memory_actually_provides():
     }]
 
 
+@pytest.mark.parametrize("platform,replicas", [("eks", 2), ("k3s", 1)])
+def test_memory_consumers_are_separate_from_web_scaling_and_share_metrics_auth(platform, replicas):
+    worker = resource("agent-memory", platform, "Deployment", "agent-memory-worker")
+    web = resource("agent-memory", platform, "Deployment", "agent-memory")
+    assert worker["spec"]["replicas"] == replicas
+    pod = worker["spec"]["template"]["spec"]
+    container = pod["containers"][0]
+    assert container["command"] == ["node", "build/worker.cjs"]
+    assert container["image"] == web["spec"]["template"]["spec"]["containers"][0]["image"]
+    assert pod["terminationGracePeriodSeconds"] > 30
+    assert pod["serviceAccountName"] == "agent-memory"
+    assert container["envFrom"] == [{"configMapRef": {"name": "agent-memory"}},
+                                   {"secretRef": {"name": "agent-memory-external"}}]
+    service = resource("agent-memory", platform, "Service", "agent-memory-worker")
+    assert service["spec"]["selector"] == worker["spec"]["selector"]["matchLabels"]
+    assert resource("agent-memory", platform, "Service", "agent-memory")["spec"]["selector"] != service["spec"]["selector"]
+    if platform == "eks":
+        monitor = resource("agent-memory", platform, "ServiceMonitor", "agent-memory")
+        assert monitor["spec"]["selector"]["matchLabels"].items() <= service["metadata"]["labels"].items()
+        pdb = resource("agent-memory", platform, "PodDisruptionBudget", "agent-memory-worker")
+        assert pdb["spec"]["selector"]["matchLabels"] == service["spec"]["selector"]
+    else:
+        assert not container.get("resources")
+
+
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
 def test_workspace_pod_policy_matches_namespace_admission(platform):
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]

@@ -33,6 +33,7 @@ agent_studio:
 
 agent_memory:
   hostname: memory.opspresso.com
+  worker_replicas: 2
 
 audio_worker: true
 workspace_worker: true

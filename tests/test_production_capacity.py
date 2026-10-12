@@ -9,9 +9,13 @@ def test_database_budget_covers_application_growth_and_rollout_overlap():
     audio = resource("agent-studio", "eks", "Deployment", "agent-studio-audio-worker")["spec"]["replicas"]
     config = resource("agent-studio", "eks", "ConfigMap", "agent-studio")["data"]
     pool = int(config["DATABASE_POOL_SIZE"])
+    memory_config = resource("agent-memory", "eks", "ConfigMap", "agent-memory")["data"]
+    memory_workers = resource("agent-memory", "eks", "Deployment", "agent-memory-worker")["spec"]["replicas"]
+    memory_pool = int(memory_config["DATABASE_POOL_SIZE"]) + int(memory_config["DATABASE_QUEUE_POOL_SIZE"])
     # Studio: ordinary pool + isolated readiness + four content-lock connections.
-    # Memory owns a 10-connection pool. Exec readiness also opens a temporary process.
-    application_connections = 2 * ((studio + worker + audio) * (pool + 1 + 4) + memory * 10)
+    # Memory: separate application/pg-boss pools, plus one maintenance advisory lock per worker.
+    application_connections = 2 * ((studio + worker + audio) * (pool + 1 + 4)
+                                  + (memory + memory_workers) * memory_pool + memory_workers)
     readiness_connections = 2 * worker * pool
     postgres = resource("postgresql", "eks", "StatefulSet", "postgres")["spec"]["template"]["spec"]["containers"][0]
     capacity = int(next(arg.split("=", 1)[1] for arg in postgres["args"] if arg.startswith("max_connections=")))
