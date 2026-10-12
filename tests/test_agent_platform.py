@@ -92,6 +92,19 @@ def test_memory_hpa_uses_a_metric_memory_actually_provides():
     }]
 
 
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_workspace_pod_policy_matches_namespace_admission(platform):
+    config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]
+    quota = resource("agent-studio", platform, "ResourceQuota", "agent-studio-sandbox")["spec"]["hard"]
+    assert config["WORKSPACE_KUBERNETES_RESOURCES"] == str(platform == "eks").lower()
+    if platform == "k3s":
+        assert quota == {"pods": "2"}
+    else:
+        assert quota == {"pods": "32", "requests.cpu": "32", "limits.cpu": "32",
+                         "requests.memory": "65536Mi", "limits.memory": "65536Mi",
+                         "requests.ephemeral-storage": "147456Mi", "limits.ephemeral-storage": "147456Mi"}
+
+
 def test_eks_workers_have_resources_identity_and_registry_refresh():
     for name in ["agent-studio-audio-worker", "agent-studio-workspace-worker"]:
         pod = resource("agent-studio", "eks", "Deployment", name)["spec"]["template"]["spec"]

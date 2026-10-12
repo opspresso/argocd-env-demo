@@ -35,7 +35,10 @@ def test_isolation_permissions_and_total_capacity(platform, max_pods):
     assert scoped["ServiceAccount/sandbox"]["automountServiceAccountToken"] is False
     quota = scoped["ResourceQuota/agent-studio-sandbox"]["spec"]["hard"]
     assert quota["pods"] == max_pods
-    assert int(quota["requests.ephemeral-storage"][:-2]) == (2048 * 2 + 512) * int(max_pods)
+    if platform == "eks":
+        assert int(quota["requests.ephemeral-storage"][:-2]) == (2048 * 2 + 512) * int(max_pods)
+    else:
+        assert quota == {"pods": max_pods}
     isolation = scoped["NetworkPolicy/sandbox-isolation"]["spec"]
     assert isolation == {"podSelector": {}, "policyTypes": ["Ingress", "Egress"], "ingress": [], "egress": []}
     egress = scoped["NetworkPolicy/sandbox-egress"]["spec"]["egress"]
@@ -77,10 +80,12 @@ def test_production_worker_capacity_and_single_writer_legacy_daemon():
     assert daemon["spec"]["replicas"] == 1
 
 
-@pytest.mark.parametrize("setting", ["workerConcurrency=8", "memoryMb=4096", "cpus=2"])
+@pytest.mark.parametrize("setting", ["workloads.workspaceWorker.workerConcurrency=8",
+                                     "workloads.workspaceWorker.memoryMb=4096",
+                                     "workloads.workspaceWorker.cpus=2", "resources=null"])
 def test_workspace_configuration_restarts_both_web_and_worker(setting):
     before = render("eks")
-    after = render("eks", "--set", "app.workloads.workspaceWorker." + setting)
+    after = render("eks", "--set", "app." + setting)
     for name in ("agent-studio", "agent-studio-workspace-worker"):
         old = next(item for item in before if item["kind"] == "Deployment" and item["metadata"]["name"] == name)
         new = next(item for item in after if item["kind"] == "Deployment" and item["metadata"]["name"] == name)

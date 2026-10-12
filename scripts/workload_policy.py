@@ -63,6 +63,12 @@ def policy_errors(manifests, platform):
         owner = f"{kind}/{document.get('metadata', {}).get('name', '?')}"
         if kind in AUTOSCALERS:
             errors.append(f"{owner} is not allowed on {platform}")
+        if kind == "ResourceQuota":
+            for name in document.get("spec", {}).get("hard", {}):
+                # Compute quotas force dynamic Pods to declare resources too.
+                if (name in {"cpu", "memory", "ephemeral-storage"}
+                        or (name.startswith(("requests.", "limits.")) and name != "requests.storage")):
+                    errors.append(f"{owner} spec.hard.{name} requires compute resources on {platform}")
         if kind == "VMCluster":
             for component in ("vminsert", "vmselect", "vmstorage"):
                 config = document.get("spec", {}).get(component)

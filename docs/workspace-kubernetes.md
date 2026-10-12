@@ -2,8 +2,10 @@
 
 `agent-studio-workspaces` namespace의 실행 Pod 하나가 Workspace 하나를 담당한다. 앱·worker는
 해당 namespace의 Pod get/list/create/delete와 exec만 사용할 수 있다. 실행 Pod에는 서비스 계정
-토큰·운영 Secret·호스트 경로를 mount하지 않는다. CPU·메모리·emptyDir·ephemeral-storage는
-Agent Studio 실행기가 제한하며 namespace quota는 EKS 32개, k3s 2개의 실행 Pod를 허용한다.
+토큰·운영 Secret·호스트 경로를 mount하지 않는다. namespace quota는 EKS 32개, k3s 2개의
+실행 Pod를 허용한다. env의 `resources`가 앱·worker와 동적 실행 Pod의 자원 정책을 함께 결정한다.
+EKS는 CPU·메모리·ephemeral-storage requests·limits와 quota를 사용한다. k3s는
+`WORKSPACE_KUBERNETES_RESOURCES=false`로 이 선언을 생략하며 Pod 수와 `emptyDir.sizeLimit`은 유지한다.
 
 NetworkPolicy는 ingress와 egress를 기본 거부한다. cluster DNS와 public HTTP/HTTPS만 허용하며
 사설망·다른 Pod·metadata endpoint는 차단한다. 폐쇄망이나 내부 모델은
