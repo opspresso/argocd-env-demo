@@ -95,6 +95,18 @@ def test_memory_hpa_uses_a_metric_memory_actually_provides():
     }]
 
 
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_argocd_mcp_accepts_all_trusted_agent_execution_processes(platform):
+    policy = resource("mcp-argocd", platform, "NetworkPolicy", "mcp-argocd")["spec"]
+    source = policy["ingress"][0]["from"][0]
+    assert source["namespaceSelector"]["matchLabels"] == {"kubernetes.io/metadata.name": "agent-studio"}
+    expression = source["podSelector"]["matchExpressions"][0]
+    assert expression["key"] == "app.kubernetes.io/name" and expression["operator"] == "In"
+    expected = {doc["metadata"]["name"] for doc in manifests("agent-studio", platform)
+                if doc["kind"] == "Deployment" and doc["spec"]["template"]["spec"].get("serviceAccountName") == "agent-studio"}
+    assert set(expression["values"]) == expected
+
+
 @pytest.mark.parametrize("platform,replicas", [("eks", 2), ("k3s", 1)])
 def test_memory_consumers_are_separate_from_web_scaling_and_share_metrics_auth(platform, replicas):
     worker = resource("agent-memory", platform, "Deployment", "agent-memory-worker")
