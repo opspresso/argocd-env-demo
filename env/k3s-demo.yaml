@@ -56,5 +56,5 @@ postgresql:
 minio:
   storage: 10Gi
 neo4j:
-  offline_maintenance: true
+  offline_maintenance: false
   storage: 5Gi
