@@ -79,11 +79,9 @@ app:
   serviceAccount:
     create: true
 
-  # The one stateful MCP server: streamable-http sessions live in the pod's
-  # memory (calls without a valid Mcp-Session-Id get "Invalid session ID"), so
-  # every request of a session must land on the pod that created it. With one
-  # replica this changes nothing; it exists so that raising replicas is a
-  # one-line change instead of a source of randomly broken runs.
+  # Hash repeated session requests in the mesh. Current deployments use one
+  # replica. Verify session creation, reconnect and rollout behavior before
+  # increasing the replica count; backend replacement can lose session-local state.
   destinationRule:
     enabled: true
     trafficPolicy:

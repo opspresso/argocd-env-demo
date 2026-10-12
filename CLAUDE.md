@@ -98,7 +98,7 @@ charts/<project>/
   필요한 공통 기능은 `helm-charts`에서 확장한다. PostgreSQL·MinIO·Neo4j는 공식 또는 주요
   배포처의 전용 차트를 사용한다. Studio worker는 `app.workloads`, 추가 리소스는 `app.raw`로 관리한다.
 - 한 chart 를 두 번 쓰거나 이름을 바꿔 붙일 때는 `alias` 로 values 키를 정한다
-  (예: agent-studio 의 `cronjob` → `scan`).
+  (예: postgresql 의 `raw` → `bootstrap`).
 
 ### values 병합 순서
 
@@ -120,7 +120,7 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 - `replicas` 와 `autoscaling` 은 애플리케이션 템플릿의 `app.replicaCount` 및
   `app.autoscaling.enabled`의 원천이다. k3s·local은 각각 `1`, `false`를 사용한다.
 - `agent_studio_maintenance`는 Agent Studio만 위한 boolean이다. `true`이면 해당 클러스터의
-  앱·오디오/Workspace worker를 0개로 내리고 HPA를 끄며 scan/reindex CronJob을 중지한다.
+  앱·오디오/Workspace worker와 ticker를 0개로 내리고 HPA를 끈다.
   PostgreSQL과 Agent Memory는 건드리지 않는다. 기본값은 `false`다.
 - `metrics.backend`는 수집 방식을 정한다. k3s는 Alloy가 직접 수집하는 `grafana-cloud`,
   EKS는 `prometheus`를 사용한다. ServiceMonitor는 `prometheus`에서만 생성한다.

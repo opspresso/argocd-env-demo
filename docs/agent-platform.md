@@ -16,7 +16,7 @@
 | Secret 경로 | `/k8s/k3s-demo/` | `/k8s/eks-demo/` |
 | Studio control workers | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
 | Workspace 실행 Pod | requests·limits 미선언, 볼륨 크기 제한·최대 2개 | CPU·메모리·디스크 한도, 최대 32개·Auto Mode 전용 pool |
-| 전환용 legacy Docker PVC | 10Gi local-path 보존 | 48Gi gp3 보존, daemon은 항상 1개 |
+| 복구용 legacy Docker PVC | 10Gi local-path 보존, daemon 비활성 | 48Gi gp3 보존, daemon 비활성 |
 
 k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
 `*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
@@ -93,8 +93,9 @@ NetworkPolicy, 명시적 DNS·egress, 최소 RBAC와 ResourceQuota를 함께 적
 EKS의 NetworkPolicy는 addons의 `eks-network-policy-eks-demo` controller에 의존한다.
 Auto Mode의 전용 NodeClass는 DefaultDeny를 사용하며, k3s는 기본 network policy controller를 유지한다.
 
-`agent-studio-public` Docker bridge와 `tcp-docker` Service는 legacy Docker 핸들 정리를 위해 유지한다.
-`python3 scripts/check_agent_network.py --context eks-demo`는 이 legacy 경로를 검사한다.
+`workspace_legacy_docker=true`로 복구하는 동안 `agent-studio-public` Docker bridge와
+`tcp-docker` Service를 사용한다. `python3 scripts/check_agent_network.py --context eks-demo`는
+legacy 경로를 검사하고, Docker Pod·Service가 없는 현재 구성에서는 `SKIP`을 보고한다.
 새 실행 Pod의 RBAC·DNS·통신 차단·quota·복원은 Agent Studio의 Kubernetes 통합 검사와
 승인 후 클러스터 검증으로 확인한다.
 
@@ -125,48 +126,41 @@ python3 scripts/check_workspace_network.py
 
 ## 최초 배포 순서
 
-1. `agent-memory`의 S3 Pod Identity 지원 코드를 검증·릴리즈하고, 해당 이미지 tag를
-   GitOps `alpha`·`prod` values에 반영한다. 기존 `v0.28.14` 이미지는 정적 S3 키를 요구한다.
-2. `terraform-env-demo/demo/4-role`을 plan/apply하여 두 S3 policy와 Memory role을 만든다.
-   이어서 `demo/5-eks`를 plan/apply하여 Memory Pod Identity를 연결한다.
-   `demo/9-agent-studio`의 plan에서 S3 비공개 설정과 k3s policy attachment 변경을 확인한다.
-   기존 EC2·volume·bucket의 교체나 삭제 없이 적용한다. k3s의 cert-manager에는
-   `opsp.dev` hosted zone의 DNS-01 권한이 필요하다. 옛 `mcp-memory` Bedrock policy·role은
-   EKS의 해당 Pod Identity association을 먼저 제거한 뒤 삭제한다.
-3. 이 저장소에서 EKS 연결 Secret을 확인하고, 없을 때만 생성한다.
+1. 앱 릴리스의 검증·image 게시를 확인한다. Memory 이미지는 `build/worker.cjs`,
+   Studio 이미지는 같은 tag의 Workspace 이미지를 함께 제공해야 한다.
+2. `terraform-env-demo/demo/4-role`, `demo/5-eks`, `demo/8-agent-studio`에서
+   S3·ECR·Pod Identity·k3s 인프라와 DNS/TLS 연결을 준비한다. 변경 전 plan을 검토하고
+   기존 EC2·volume·bucket을 보존한다. k3s의 cert-manager에는 `opsp.dev` DNS-01 권한이 필요하다.
+3. EKS의 연결 Secret을 확인하고, 승인된 최초 설치에서 없을 때만 생성한다.
 
    ```bash
    python3 scripts/bootstrap_agent_platform.py --cluster eks-demo
    python3 scripts/bootstrap_agent_platform.py --cluster eks-demo --apply
    ```
 
-   생성 대상은 `agent-studio/postgres-password`, `agent-studio/database-url`,
-   `agent-memory/database-url`, `agent-memory/neo4j-password`, `agent-memory/neo4j-auth`,
-   `agent-memory/metrics-bearer-token`이다. 값은 SecureString으로 전달하고 로그에 출력하지 않는다.
-   기존 값은 덮어쓰지 않으며, 서로 맞지 않는 부분 설정은 변경 없이 거부한다.
-   OAuth·provider·암호화·scan token은 기존 `/k8s/common/agent-*` 경로를 사용한다.
-4. 승인된 Git 변경을 반영하고 EKS `apps-eks`를 Sync하여 PostgreSQL·Neo4j ApplicationSet을 등록한다.
-   `postgresql-eks-demo`, `neo4j-eks-demo`를 먼저 Sync하고 Secret·PVC·서비스 readiness를 확인한다.
-5. k3s의 `traefik-gateway-k3s`를 Sync하여 새 `opsp.dev` 호스트와 인증서를 준비한다.
-   `agent-studio-k3s`, `agent-memory-k3s`를 Sync하고 새 도메인과 OAuth를 확인한다.
-6. `agent-studio-eks-demo`, `agent-memory-eks-demo`를 수동 Sync한다. 앱 자동 Sync 설정은
-   변경하지 않는다. 기존 DB·MinIO 데이터는 유지한다.
-7. EKS 앱의 내부 health와 Host 기반 라우팅을 확인한 뒤 `demo/3-alb`의 plan/apply로
-   `studio.opspresso.com`, `memory.opspresso.com`의 기존 A 레코드를 import하여 ALB alias로
-   전환하고 `*.opspresso.com` ACM 인증서를 연결한다. DNS 전환은 EKS 준비 후 수행한다.
+   생성 대상은 PostgreSQL·Neo4j 연결과 Memory metrics token이다. 값은 SecureString으로
+   전달하고 로그에 출력하지 않는다. 기존 값은 덮어쓰지 않으며 서로 맞지 않는 부분 설정은 거부한다.
+   OAuth·provider·암호화·scan token은 각 chart의 ExternalSecret 참조를 확인한다.
+4. App of Apps를 등록하고 PostgreSQL·Neo4j, k3s의 MinIO를 준비한다.
+   Secret 동기화, 기존 PVC의 보존, DB readiness를 확인한 뒤 앱을 배포한다.
+5. phase의 image tag와 생성 values를 GitOps로 반영한다. 웹·worker가 모두 Ready이고
+   Argo CD가 `Synced/Healthy`인지 확인한다. Memory의 웹만 실행하면 queue는 소비되지 않는다.
+6. 공개 호스트의 DNS·TLS·인증, 앱 readiness·metrics, worker 처리와 MCP의 하류 API 호출을
+   확인한다. 필요한 Workspace 검사는 [Kubernetes Workspace 운영](workspace-kubernetes.md)을 따른다.
 
 ## 검증
 
 ```bash
 GITHUB_PUSH=false bash scripts/build.sh
-python3 scripts/validate.py
+python3 scripts/validate.py --all-charts
 pytest
 ```
 
-Memory의 readiness `/api/health`는 PostgreSQL·schema·Neo4j를 검사한다. Liveness는
-TCP로 검사하여 공유 DB 장애가 모든 Pod의 재시작으로 이어지지 않게 한다.
-Memory HPA는 CPU 지표를 사용하고, Studio HPA는 `agent_studio_active_runs`를 사용한다.
-Memory ServiceMonitor는 전용 `METRICS_BEARER_TOKEN`으로 인증한다.
+Memory 웹의 readiness `/api/health`는 PostgreSQL·schema·Neo4j를 제한된 시간 안에 검사한다.
+Startup·liveness `/api/live`는 의존 서비스와 분리해 HTTP event loop의 응답을 확인한다.
+Memory HPA는 웹 CPU를, Studio HPA는 `agent_studio_active_execution_requests`와 앱 CPU를 사용한다.
+Memory worker는 별도 replica·종료 유예를 사용하며 startup 이후 probe HTTP를 제공한다.
+Memory 웹·worker metrics는 같은 전용 `METRICS_BEARER_TOKEN`으로 인증한다.
 
 배포 후에는 Argo CD health와 함께 각 앱의 DB readiness, S3/MinIO 쓰기·읽기·정리,
 Memory 문서 처리, Studio audio·workspace worker, OAuth 로그인, Prometheus scrape를 확인한다.
