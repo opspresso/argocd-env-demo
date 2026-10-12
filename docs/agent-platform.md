@@ -165,3 +165,21 @@ Memory 웹·worker metrics는 같은 전용 `METRICS_BEARER_TOKEN`으로 인증�
 배포 후에는 Argo CD health와 함께 각 앱의 DB readiness, S3/MinIO 쓰기·읽기·정리,
 Memory 문서 처리, Studio audio·workspace worker, OAuth 로그인, Prometheus scrape를 확인한다.
 Health 응답만으로 object storage·provider·worker 처리 성공을 판정하지 않는다.
+
+### PostgreSQL 이미지와 정렬 규칙
+
+PostgreSQL 이미지의 OS·libc가 바뀌면 기존 DB의 정렬 규칙 버전도 확인한다. 접속 가능한
+DB에서 다음 조회를 실행하고 앱 DB뿐 아니라 새 DB의 원본인 `template1`도 대조한다.
+
+```sql
+SELECT datname, datcollversion,
+       pg_database_collation_actual_version(oid) AS actual_version
+FROM pg_database;
+```
+
+버전이 다르면 해당 DB에 연결해 의존하는 인덱스·저장 객체를 확인하고 먼저 재구성한다.
+그 뒤에 `ALTER DATABASE ... REFRESH COLLATION VERSION`을 실행한다. 명명된 collation도
+현재 DB의 encoding에 적용 가능한 항목을 확인한다. 빈 기본 DB에서 버전 정보만 갱신하려면
+사용자 객체와 해당 collation에 의존하는 객체가 없음을 먼저 증명해야 한다.
+앱 DB·보관 DB를 일괄 초기화하거나 경고를 없애기 위해 버전만 덮어쓰지 않는다.
+[PostgreSQL의 collation 복구 절차](https://www.postgresql.org/docs/18/sql-altercollation.html#SQL-ALTERCOLLATION-NOTES)를 따른다.
