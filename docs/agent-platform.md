@@ -6,7 +6,7 @@
 
 | 항목 | k3s | EKS |
 | --- | --- | --- |
-| 용도 | c6i.xlarge 단일 노드 테스트 | production, requests/limits·HPA·PDB 적용 |
+| 용도 | 현재 서비스, c6i.xlarge 단일 노드 | Studio·Memory 서비스 중지, 이전 원본 보존 |
 | Phase | `alpha` | `prod` |
 | Studio | `studio.opsp.dev` | `studio.opspresso.com`, `agentops.demo.clush.net` |
 | Memory | `memory.opsp.dev` | `memory.opspresso.com` |
@@ -17,6 +17,8 @@
 | Studio control workers | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
 | Workspace 실행 Pod | requests·limits 미선언, 볼륨 크기 제한·최대 2개 | CPU·메모리·디스크 한도, 최대 32개·Auto Mode 전용 pool |
 | 복구용 legacy Docker PVC | 10Gi local-path 보존, daemon 비활성 | 48Gi gp3 보존, daemon 비활성 |
+
+현재 Studio와 Memory는 alpha에서 서비스한다. EKS의 두 앱은 유지보수 설정으로 웹·worker·ticker를 중지하며 Neo4j도 offline 상태를 유지한다. PostgreSQL·원본 S3·PVC는 삭제하지 않는다. 릴리즈 워크플로는 그대로 유지한다.
 
 k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
 `*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
