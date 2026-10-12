@@ -52,6 +52,9 @@ def test_missing_template_fails(project):
     "env: eks\ncluster: eks-demo\nreplicas: 2\nagent_studio_maintenance: 'false'\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nmetrics: {backend: typo}\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nmetrics: prometheus\n",
+    "env: eks\ncluster: eks-demo\nreplicas: 2\ntrusted_proxy_cidrs: '10.10.0.0/16'\n",
+    "env: eks\ncluster: eks-demo\nreplicas: 2\ntrusted_proxy_cidrs: [42]\n",
+    "env: eks\ncluster: eks-demo\nreplicas: 2\ntrusted_proxy_cidrs: [10.10.0.0/99]\n",
     "[]\n",
 ])
 def test_rejects_invalid_cluster_identity(project, body):

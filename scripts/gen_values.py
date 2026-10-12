@@ -3,6 +3,7 @@
 
 import argparse
 import os
+from ipaddress import ip_network
 import yaml
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -54,6 +55,16 @@ def gen_values(t, reponame, platform=PLATFORM):
                 for key in ("resources", "autoscaling", "agent_studio_maintenance"):
                     if key in v and not isinstance(v[key], bool):
                         raise ValueError("{} {} must be a boolean".format(env_path, key))
+                proxies = v.get("trusted_proxy_cidrs", [])
+                if not isinstance(proxies, list):
+                    raise ValueError("{} trusted_proxy_cidrs must be a list".format(env_path))
+                for proxy in proxies:
+                    if not isinstance(proxy, str):
+                        raise ValueError("{} trusted_proxy_cidrs must contain IP/CIDR strings".format(env_path))
+                    try:
+                        ip_network(proxy, strict=False)
+                    except ValueError as error:
+                        raise ValueError("{} trusted_proxy_cidrs must contain valid IP/CIDR ranges".format(env_path)) from error
                 metrics = v.get("metrics")
                 if metrics is not None and (
                     not isinstance(metrics, dict)

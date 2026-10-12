@@ -27,6 +27,10 @@ Studio의 `agent_studio.allowed_hosts`는 정확한 호스트 목록이며, 생�
 `BETTER_AUTH_URL`은 기본 도메인의 HTTPS origin을 유지하고, 프록시는 원래 `Host`를 전달해야 한다.
 추가 도메인의 DNS·TLS 인증서·Gateway 연결은 인프라 저장소에서 구성한다.
 
+`trusted_proxy_cidrs`는 두 앱의 인증 요청에서 신뢰할 프록시 hop 범위를 함께 정한다.
+EKS의 ALB·Istio 경로는 VPC CIDR을 사용하고, Traefik 하나를 거치는 k3s는 빈 목록으로
+단일 client 주소만 허용한다. 이 값이 없거나 실제 경로와 다르면 여러 사용자가 인증 요청 제한을 공유할 수 있다.
+
 ## 연결과 권한
 
 PostgreSQL은 pgvector가 포함된 이미지로 `agent_studio`와 `agent_memory` database를

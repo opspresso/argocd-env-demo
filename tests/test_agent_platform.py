@@ -46,6 +46,7 @@ def test_application_credentials_match_cluster_dependencies(chart, platform):
     refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
     assert refs["DATABASE_URL"] == f"/k8s/{platform}-demo/{chart}/database-url"
     config = resource(chart, platform, "ConfigMap", chart)["data"]
+    assert config["TRUSTED_PROXY_CIDRS"] == ("10.10.0.0/16" if platform == "eks" else "")
     assert not any("BEDROCK" in key or "DYNAMO" in key for key in config)
     if platform == "eks":
         assert "S3_ENDPOINT" not in config

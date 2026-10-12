@@ -12,6 +12,8 @@ replicas: 1
 autoscaling: false
 agent_studio_maintenance: false
 resources: false
+# Traefik is the sole HTTP proxy; only a single forwarded client address is trusted.
+trusted_proxy_cidrs: []
 
 aws_account_id: "396608815058"
 aws_region: ap-northeast-2

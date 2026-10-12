@@ -35,7 +35,7 @@ app:
       ARTIFACT_ACCESS_MODE: proxied
       CATALOG_ENABLED: 'true'
       SLACK_LOADING_INDICATOR: ':loading:'
-      TRUSTED_PROXY_CIDRS: 10.10.0.0/16
+      TRUSTED_PROXY_CIDRS: '10.10.0.0/16'
       EMBEDDING_DIM: native
       CATALOG_MIN_SCORE: '0.2'
 

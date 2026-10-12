@@ -12,6 +12,7 @@ replicas: 1
 autoscaling: true
 agent_studio_maintenance: false
 resources: true
+trusted_proxy_cidrs: [10.10.0.0/16]
 
 aws_account_id: "396608815058"
 aws_region: ap-northeast-2
