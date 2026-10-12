@@ -48,6 +48,7 @@ workspace_cpus: 1
 workspace_worker_concurrency: 1
 
 postgresql:
+  max_connections: 150
   storage: 5Gi
 minio:
   storage: 10Gi

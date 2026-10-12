@@ -19,7 +19,8 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-
+      DATABASE_POOL_SIZE: '4'
+      DATABASE_QUEUE_POOL_SIZE: '2'
       BETTER_AUTH_URL: https://memory.opsp.dev
       TRUSTED_PROXY_CIDRS: ''
       NEO4J_URI: bolt://memory-neo4j.agent-memory.svc.cluster.local:7687

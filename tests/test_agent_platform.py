@@ -81,7 +81,9 @@ def test_memory_metrics_credentials_and_service_match_the_collector(platform):
         assert any(port["port"] == 80 for port in service["spec"]["ports"])
     container = deployment["spec"]["template"]["spec"]["containers"][0]
     assert container["readinessProbe"]["httpGet"]["path"] == "/api/health"
-    assert container["livenessProbe"]["tcpSocket"]["port"] == 3000
+    assert container["readinessProbe"]["timeoutSeconds"] > 4.5
+    assert container["livenessProbe"]["httpGet"] == {"path": "/api/live", "port": 3000}
+    assert container["startupProbe"]["httpGet"] == {"path": "/api/live", "port": 3000}
 
 
 def test_memory_hpa_uses_a_metric_memory_actually_provides():

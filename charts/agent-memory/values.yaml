@@ -34,18 +34,24 @@ app:
       path: /api/health
       port: 3000
     initialDelaySeconds: 5
-    periodSeconds: 5
+    # PostgreSQL checkout/query (2.5s) + Neo4j response deadline (2s).
+    timeoutSeconds: 6
+    periodSeconds: 10
 
   # Dependency outages must remove readiness without restarting every replica.
   livenessProbe:
-    tcpSocket:
+    httpGet:
+      path: /api/live
       port: 3000
+    timeoutSeconds: 2
     initialDelaySeconds: 10
     periodSeconds: 10
 
   startupProbe:
-    tcpSocket:
+    httpGet:
+      path: /api/live
       port: 3000
+    timeoutSeconds: 2
     periodSeconds: 5
     failureThreshold: 60
 
@@ -141,6 +147,8 @@ app:
       podAnnotations:
         sidecar.istio.io/inject: 'false'
       terminationGracePeriodSeconds: 60
+      podAntiAffinity:
+        topologyKey: kubernetes.io/hostname
       controller:
         strategy:
           rollingUpdate:

@@ -40,9 +40,7 @@ app:
     enabled: true
     data:
       STAGE: '{{phase}}'
-{% if env == 'eks' %}
       DATABASE_POOL_SIZE: '4'
-{% endif %}
       SERVICE_NAME: '{{agent_studio.service.name}}'
       SERVICE_LOGO: '{{agent_studio.service.logo}}'
       ADMIN_EMAILS: me@nalbam.com
