@@ -7,8 +7,10 @@ image and official Alpine/Python fixtures; removes its own container and volumes
 import json
 from pathlib import Path
 import subprocess
+import tempfile
 import time
 import uuid
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 IMAGE = "docker:27.5.1-dind"
@@ -21,7 +23,7 @@ def run(*args, check=True, timeout=120):
     return subprocess.run(args, text=True, capture_output=True, check=check, timeout=timeout)
 
 
-def main():
+def check_network(script_directory):
     name = f"studio-network-check-{uuid.uuid4().hex[:12]}"
     created = False
 
@@ -51,9 +53,9 @@ def main():
     try:
         run("docker", "run", "--detach", "--name", name, "--privileged",
             "--env", "DOCKER_TLS_CERTDIR=", "--env", f"WORKSPACE_NETWORK={NETWORK}",
-            "--mount", f"type=bind,source={ROOT / 'charts/agent-studio/files'},target=/opt/workspace-network,readonly",
+            "--mount", f"type=bind,source={script_directory},target=/opt/workspace-network,readonly",
             "--tmpfs", "/workspace-network", "--entrypoint", "/bin/sh", IMAGE,
-            "/opt/workspace-network/workspace-network.sh", "--host=unix:///var/run/docker.sock")
+            "/opt/workspace-network/workspace-network.sh", "--host=unix:///var/run/docker.sock", "--host=tcp://0.0.0.0:2375")
         created = True
         ready()
         inner("pull", FIXTURE)
@@ -83,12 +85,21 @@ def main():
         sandbox_get("https://registry.npmjs.org/is-number", True)
         sandbox_get(f"http://{gateway}/index.html", False)
         sandbox_get(f"http://{peer}/index.html", False)
+        assert execute("wget", "-qO-", "http://127.0.0.1:2375/_ping").stdout.strip() == "OK"
         sandbox_get(f"http://{gateway}:2375/_ping", False)
         sandbox_get("http://169.254.169.254/latest/meta-data/", False)
         print("PASS: restart, DNS/public HTTPS, host/peer isolation, Docker API and metadata blocking")
     finally:
         if created:
             run("docker", "rm", "--force", "--volumes", name)
+
+
+def main():
+    values = yaml.safe_load((ROOT / "charts/agent-studio/values.yaml").read_text())
+    # Test the script the chart actually ships; there is no separate files/ copy.
+    with tempfile.TemporaryDirectory(prefix="studio-network-script-") as directory:
+        (Path(directory) / "workspace-network.sh").write_text(values["app"]["workspaceNetworkScript"])
+        check_network(directory)
 
 
 if __name__ == "__main__":
