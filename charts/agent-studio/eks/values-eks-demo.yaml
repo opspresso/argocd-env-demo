@@ -19,9 +19,7 @@ app:
     enabled: true
     data:
       STAGE: 'prod'
-
       DATABASE_POOL_SIZE: '4'
-
       SERVICE_NAME: 'Axleon AgentOps'
       SERVICE_LOGO: 'agentops'
       ADMIN_EMAILS: me@nalbam.com
