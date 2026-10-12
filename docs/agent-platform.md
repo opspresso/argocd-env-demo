@@ -8,8 +8,8 @@
 | --- | --- | --- |
 | 용도 | 현재 서비스, c6i.xlarge 단일 노드 | Studio·Memory 서비스 중지, 이전 원본 보존 |
 | Phase | `alpha` | `prod` |
-| Studio | `studio.opsp.dev` | `studio.opspresso.com`, `agentops.demo.clush.net` |
-| Memory | `memory.opsp.dev` | `memory.opspresso.com` |
+| Studio | `studio.opsp.dev`, `studio.agrt.dev` | `studio.opspresso.com`, `agentops.demo.clush.net` |
+| Memory | `memory.opsp.dev`, `memory.agrt.dev` | `memory.opspresso.com` |
 | PostgreSQL | `agent-studio/postgres`, 5Gi | 같은 서비스, 20Gi gp3 |
 | Neo4j | `agent-memory/memory-neo4j`, 5Gi | 같은 서비스, 20Gi 기본 StorageClass(gp3) |
 | Object storage | MinIO의 `agent-studio-static`, `agent-memory` | AWS S3 `agent-studio-static` |
@@ -24,10 +24,13 @@ k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS�
 `*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
 `https://<hostname>/api/auth/callback/google` redirect URI를 등록해야 한다.
 
-Studio의 `agent_studio.allowed_hosts`는 정확한 호스트 목록이며, 생략하면 `agent_studio.hostname`만 사용한다.
-이 목록으로 `BETTER_AUTH_ALLOWED_HOSTS`와 HTTPRoute의 호스트를 함께 생성한다.
+Studio의 `agent_studio.allowed_hosts`와 Memory의 `agent_memory.allowed_hosts`는 정확한 호스트 목록이다.
+생략하면 각 서비스의 `hostname`만 사용한다. 이 목록으로 `BETTER_AUTH_ALLOWED_HOSTS`와 HTTPRoute의 호스트를 함께 생성한다.
 `BETTER_AUTH_URL`은 기본 도메인의 HTTPS origin을 유지하고, 프록시는 원래 `Host`를 전달해야 한다.
 추가 도메인의 DNS·TLS 인증서·Gateway 연결은 인프라 저장소에서 구성한다.
+Memory는 멀티도메인을 지원하는 v0.33.0 이상을 사용하고, Google OAuth에는
+`https://memory.opsp.dev/api/auth/callback/google`과 `https://memory.agrt.dev/api/auth/callback/google`을 모두 등록한다.
+각 도메인의 로그인 세션은 호스트별로 저장되며 조직과 자료는 같은 설치를 공유한다.
 
 `trusted_proxy_cidrs`는 두 앱의 인증 요청에서 신뢰할 프록시 hop 범위를 함께 정한다.
 EKS의 ALB·Istio 경로는 VPC CIDR을 사용하고, Traefik 하나를 거치는 k3s는 빈 목록으로

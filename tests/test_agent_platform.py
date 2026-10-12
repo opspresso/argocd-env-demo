@@ -64,6 +64,20 @@ def test_application_credentials_match_cluster_dependencies(chart, platform):
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
+@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory"])
+def test_authentication_hosts_match_public_routes(chart, platform):
+    config = resource(chart, platform, "ConfigMap", chart)["data"]
+    route = resource(chart, platform, "HTTPRoute", chart)["spec"]
+    environment = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())
+    service = environment[chart.replace("-", "_")]
+    hosts = service.get("allowed_hosts", [service["hostname"]])
+    assert config["BETTER_AUTH_ALLOWED_HOSTS"].split(",") == hosts
+    assert route["hostnames"] == hosts
+    assert config["BETTER_AUTH_URL"] == f"https://{service['hostname']}"
+    assert service["hostname"] in hosts
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
 def test_memory_metrics_credentials_and_service_match_the_collector(platform):
     service = resource("agent-memory", platform, "Service", "agent-memory")
     secret = resource("agent-memory", platform, "ExternalSecret", "agent-memory-external")
