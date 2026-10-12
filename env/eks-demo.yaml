@@ -59,7 +59,7 @@ postgresql:
   storage: 20Gi
   storageClass: gp3
 neo4j:
-  offline_maintenance: false
+  offline_maintenance: true
   storage: 20Gi
   config:
     server.memory.heap.initial_size: 512m
