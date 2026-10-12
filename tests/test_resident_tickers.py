@@ -4,6 +4,7 @@ import subprocess
 
 import pytest
 import yaml
+from running_environment import running_values
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -16,8 +17,8 @@ def render(chart, platform):
     phase = 'prod' if platform == 'eks' else 'alpha'
     result = subprocess.run(['helm', 'template', chart, str(path), '--namespace', chart,
                              '-f', str(path / 'values.yaml'), '-f', str(path / f'values-{phase}.yaml'),
-                             '-f', str(path / platform / f'values-{platform}-demo.yaml')],
-                            capture_output=True, text=True, check=True)
+                             '-f', '-'],
+                            input=running_values(chart, platform), capture_output=True, text=True, check=True)
     return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
 
 

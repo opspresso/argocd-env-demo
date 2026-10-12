@@ -2,10 +2,14 @@
   enabled: false
 {% else %}global:
   ssmPrefix: /k8s/{{cluster}}
-{% endif %}{% if (neo4j is defined and (neo4j.storage is defined or (neo4j.config is defined and neo4j.config))) or not resources %}
+{% endif %}{% if (neo4j is defined and (neo4j.storage is defined or (neo4j.config is defined and neo4j.config) or neo4j.offline_maintenance is defined)) or not resources %}
 neo4jdb:
-{% if not resources %}
+{% if not resources or (neo4j is defined and neo4j.offline_maintenance is defined) %}
   neo4j:
+{% if neo4j is defined and neo4j.offline_maintenance is defined %}
+    offlineMaintenanceModeEnabled: {{neo4j.offline_maintenance | lower}}
+{% endif %}
+{% if not resources %}
     # The official chart requires these minimum requests; no compute limits.
     resources:
       cpu: null
@@ -16,6 +20,7 @@ neo4jdb:
       limits: null
     operations:
       resources: null
+{% endif %}
 {% endif %}
 {% if neo4j is defined and neo4j.config is defined and neo4j.config %}
   config:

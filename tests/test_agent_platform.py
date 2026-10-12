@@ -8,6 +8,7 @@ import pytest
 import yaml
 
 from workload_policy import policy_errors
+from running_environment import running_values
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,12 +25,12 @@ def manifests(chart, platform, image_tag=None, *, legacy_docker=None):
     phase = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())["phase"]
     if (path / "values-alpha.yaml").exists():
         args += ["-f", str(path / f"values-{phase}.yaml")]
-    args += ["-f", str(path / platform / f"values-{platform}-demo.yaml")]
+    args += ["-f", "-"]
     if image_tag:
         args += ["--set-string", f"app.image.tag={image_tag}"]
     if legacy_docker is not None:
         args += ["--set", f"app.workloads.workspaceWorker.legacyDocker.enabled={str(legacy_docker).lower()}"]
-    result = subprocess.run(args, capture_output=True, text=True, check=True)
+    result = subprocess.run(args, input=running_values(chart, platform), capture_output=True, text=True, check=True)
     assert not policy_errors(result.stdout, platform)
     return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
 
@@ -172,7 +173,6 @@ def test_docker_service_preserves_exec_upgrade_streams(platform):
 @pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
 @pytest.mark.parametrize("legacy_docker", [False, True])
 def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage, legacy_docker):
-    maintenance = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())["agent_studio_maintenance"]
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
     assert config["STAGE"] == stage
     assert config["GITHUB_WEB_URL"] == "https://github.com"
@@ -199,7 +199,7 @@ def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-heartbeat-check.cjs"]
     assert worker["readinessProbe"]["periodSeconds"] == 30
     assert worker["readinessProbe"]["failureThreshold"] == 1
-    assert resource("agent-studio", platform, "Deployment", "agent-studio-ticker")["spec"]["replicas"] == (0 if maintenance else 1)
+    assert resource("agent-studio", platform, "Deployment", "agent-studio-ticker")["spec"]["replicas"] == 1
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])

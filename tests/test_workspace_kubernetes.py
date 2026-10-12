@@ -5,6 +5,7 @@ import subprocess
 
 import pytest
 import yaml
+from running_environment import running_values
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -14,8 +15,8 @@ def render(platform, *overrides):
     phase = "prod" if platform == "eks" else "alpha"
     result = subprocess.run(["helm", "template", "agent-studio", str(chart), "--namespace", "agent-studio",
                              "-f", str(chart / "values.yaml"), "-f", str(chart / f"values-{phase}.yaml"),
-                             "-f", str(chart / platform / f"values-{platform}-demo.yaml"), "--set", "app.workloads.workspaceWorker.backend=kubernetes", *overrides],
-                            capture_output=True, text=True, check=True)
+                             "-f", "-", "--set", "app.workloads.workspaceWorker.backend=kubernetes", *overrides],
+                            input=running_values("agent-studio", platform), capture_output=True, text=True, check=True)
     return [item for item in yaml.safe_load_all(result.stdout) if item]
 
 

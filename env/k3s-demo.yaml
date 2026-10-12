@@ -10,7 +10,8 @@ role: k3s
 
 replicas: 1
 autoscaling: false
-agent_studio_maintenance: false
+agent_studio_maintenance: true
+agent_memory_maintenance: true
 resources: false
 # Traefik is the sole HTTP proxy; only a single forwarded client address is trusted.
 trusted_proxy_cidrs: []
@@ -55,4 +56,5 @@ postgresql:
 minio:
   storage: 10Gi
 neo4j:
+  offline_maintenance: true
   storage: 5Gi

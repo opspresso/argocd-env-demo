@@ -136,6 +136,7 @@ app:
   workloads:
     worker:
       enabled: false
+      replicas: 1
       fullnameOverride: agent-memory-worker
       containerName: worker
       command: [node, build/worker.cjs]
@@ -177,7 +178,7 @@ app:
         limits: {memory: 2Gi}
       overrides: |
         enabled: {{ .Values.workloads.worker.enabled }}
-        replicaCount: {{ .Values.workloads.worker.replicas | default 1 }}
+        replicaCount: {{ .Values.workloads.worker.replicas }}
         image: {{ toYaml .Values.image | nindent 2 }}
         imagePullSecrets: {{ toYaml .Values.imagePullSecrets | nindent 2 }}
         podAnnotations:
