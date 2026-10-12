@@ -1,7 +1,7 @@
 app:
   fullnameOverride: agent-memory
 
-  replicaCount: 0
+  replicaCount: 1
   autoscaling:
     enabled: False
   image:
@@ -94,4 +94,4 @@ app:
   workloads:
     worker:
       enabled: true
-      replicas: 0
+      replicas: 1
