@@ -39,7 +39,11 @@ def check_network(script_directory):
             if not status["Running"]:
                 raise RuntimeError(run("docker", "logs", "--tail", "20", name).stdout)
             if execute("sh", "-ec", "test -f /workspace-network/ready && docker info >/dev/null", check=False).returncode == 0:
-                return
+                # Isolation checks use TCP; the Unix socket alone is not its readiness contract.
+                ping = execute("wget", "-q", "-T", "2", "-O-", "http://127.0.0.1:2375/_ping",
+                               check=False, timeout=5)
+                if ping.returncode == 0 and ping.stdout.strip() == "OK":
+                    return
             time.sleep(0.5)
         raise RuntimeError("DinD did not become ready")
 
@@ -85,7 +89,6 @@ def check_network(script_directory):
         sandbox_get("https://registry.npmjs.org/is-number", True)
         sandbox_get(f"http://{gateway}/index.html", False)
         sandbox_get(f"http://{peer}/index.html", False)
-        assert execute("wget", "-qO-", "http://127.0.0.1:2375/_ping").stdout.strip() == "OK"
         sandbox_get(f"http://{gateway}:2375/_ping", False)
         sandbox_get("http://169.254.169.254/latest/meta-data/", False)
         print("PASS: restart, DNS/public HTTPS, host/peer isolation, Docker API and metadata blocking")
