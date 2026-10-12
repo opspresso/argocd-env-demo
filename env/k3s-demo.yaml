@@ -37,6 +37,9 @@ agent_studio:
 
 agent_memory:
   hostname: memory.opsp.dev
+  allowed_hosts:
+    - memory.opsp.dev
+    - memory.agrt.dev
 
 audio_worker: true
 workspace_worker: true
