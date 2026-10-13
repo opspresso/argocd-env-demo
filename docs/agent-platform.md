@@ -87,6 +87,7 @@ Forge의 조직은 설정된 namespace이며 기본값은 `agent-platform-<clust
 Studio issuer는 `https://studio.agrt.dev`입니다. 위임 토큰은 서비스별 audience·scope·현재 사용자와
 조직을 고정합니다. Forge/Librio의 고정 callback은 내부 Studio Service의
 `/api/services/forge/model-policy`, `/api/services/librio/model-policy`를 사용하며 별도 키로 인증합니다.
+callback의 내부 Studio 주소는 `http://agent-studio.agent-studio.svc.cluster.local:3000`입니다.
 임의 callback URL이나 요청 body의 owner를 신뢰하지 않습니다.
 모니터링용 Forge principal은 `workspace:read`만 가지며 controller에는 토큰의 SHA256만 전달합니다.
 
@@ -111,7 +112,12 @@ Sandbox 이미지는 같은 release의 `agent-forge:sandbox-<full-v-tag>`이며 
 공급자·Git 장기 키는 Sandbox에 전달하지 않습니다. 자세한 권한·보존 계약은
 [Kubernetes Workspace 운영](workspace-kubernetes.md)을 따릅니다.
 
+내부 Service와 Pod 포트는 Studio·Memory·Librio(웹/worker) `3000`, Forge `3103`으로 같습니다.
+HTTPRoute backend, Studio 서비스 연결, callback, ticker와 지표 수집도 이 포트를 사용합니다.
 앱 ingress는 해당 플랫폼 Gateway, 수집기, 같은 namespace와 명시된 서비스 peer만 허용합니다.
+k3s Gateway 리소스는 `traefik-gateway` namespace에 있지만 실제 출발 Pod는 `kube-system`에 있습니다.
+Gateway 접근은 `app.kubernetes.io/name=traefik`, `app.kubernetes.io/instance=traefik-kube-system`을
+함께 가진 Pod로 제한하며 다른 `kube-system` Pod를 허용하지 않습니다.
 Studio에는 Forge/Librio callback, Forge에는 Sandbox의 인증된 Gateway 연결을 허용합니다.
 신뢰된 control-plane의 외부 LLM·MCP egress는 기존 동작을 유지합니다.
 Sandbox는 별도 기본 거부 정책으로 DNS·public HTTP/HTTPS·Forge Pod 포트만 허용합니다.

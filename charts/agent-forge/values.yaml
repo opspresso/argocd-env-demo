@@ -11,6 +11,7 @@ app:
       memory: 2Gi
   service:
     name: http
+    port: 3103
     targetPort: 3103
   controller:
     strategy:
@@ -342,7 +343,10 @@ app:
         ingress:
           - from:
               - podSelector: {}
-      {{- range concat .Values.ingressNamespaces .Values.servicePeers }}
+      {{- with .Values.ingressPeers }}
+      {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- range .Values.servicePeers }}
               - namespaceSelector:
                   matchLabels:
                     kubernetes.io/metadata.name: {{ . | quote }}
@@ -369,10 +373,16 @@ app:
   podAnnotations:
     checksum/sandbox: '{{ dict "sandbox" .Values.sandbox "resources" .Values.resources "image" .Values.image | toYaml
       | sha256sum }}'
-  ingressNamespaces:
-  - istio-system
-  - addon-prometheus
-  - addon-alloy
+  ingressPeers:
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: istio-system
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: addon-prometheus
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: addon-alloy
   servicePeers:
   - agent-studio
   - agent-forge-workspaces

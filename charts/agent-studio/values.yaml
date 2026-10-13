@@ -11,6 +11,7 @@ app:
       memory: 2Gi
   service:
     name: http
+    port: 3000
     targetPort: 3000
   controller:
     strategy:
@@ -136,7 +137,7 @@ app:
 
         set -u
 
-        APP="${TICK_TARGET:-http://agent-studio}"
+        APP="${TICK_TARGET:-http://agent-studio:3000}"
 
         if [ -z "${SCHEDULE_SCAN_TOKEN:-}" ]; then
           echo "SCHEDULE_SCAN_TOKEN is required" >&2
@@ -402,7 +403,10 @@ app:
         ingress:
           - from:
               - podSelector: {}
-      {{- range concat .Values.ingressNamespaces .Values.servicePeers }}
+      {{- with .Values.ingressPeers }}
+      {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- range .Values.servicePeers }}
               - namespaceSelector:
                   matchLabels:
                     kubernetes.io/metadata.name: {{ . | quote }}
@@ -454,10 +458,16 @@ app:
     preserve: true
     size: 10Gi
     storageClass: local-path
-  ingressNamespaces:
-  - istio-system
-  - addon-prometheus
-  - addon-alloy
+  ingressPeers:
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: istio-system
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: addon-prometheus
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: addon-alloy
   servicePeers:
   - agent-studio
   - agent-forge

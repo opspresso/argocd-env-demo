@@ -145,7 +145,9 @@ def test_studio_observer_has_no_execution_or_cluster_authority(platform):
     worker = pod["containers"][0]
     assert worker["command"] == ["node", "build/workspace-worker.cjs"]
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-heartbeat-check.cjs"]
-    assert config["FORGE_URL"] == "http://agent-forge.agent-forge.svc.cluster.local"
+    assert config["FORGE_URL"] == "http://agent-forge.agent-forge.svc.cluster.local:3103"
+    assert config["MEMORY_URL"] == "http://agent-memory.agent-memory.svc.cluster.local:3000"
+    assert config["LIBRIO_URL"] == "http://agent-librio.agent-librio.svc.cluster.local:3000"
     assert config["FORGE_ISSUER"] == config["MEMORY_ISSUER"] == config["LIBRIO_ISSUER"] == "https://studio.agrt.dev"
     assert not any(doc["kind"] in {"Role", "RoleBinding", "Job"} for doc in manifests("agent-studio", platform))
     assert resource("agent-studio", platform, "Deployment", "agent-studio-ticker")["spec"]["replicas"] == 1
@@ -172,7 +174,13 @@ def test_namespace_registry_refresh_and_explicit_ingress(chart, platform):
     policy = resource(chart, platform, "NetworkPolicy", chart)["spec"]
     peers = {item["namespaceSelector"]["matchLabels"]["kubernetes.io/metadata.name"] for item in policy["ingress"][0]["from"] if "namespaceSelector" in item}
     assert "agent-studio" in peers
-    assert ("traefik-gateway" if platform == "k3s" else "istio-system") in peers
+    assert ("kube-system" if platform == "k3s" else "istio-system") in peers
+    if platform == "k3s":
+        gateway = [peer for peer in policy["ingress"][0]["from"]
+                   if peer.get("namespaceSelector", {}).get("matchLabels") == {"kubernetes.io/metadata.name": "kube-system"}]
+        assert gateway == [{"namespaceSelector": {"matchLabels": {"kubernetes.io/metadata.name": "kube-system"}},
+                            "podSelector": {"matchLabels": {"app.kubernetes.io/name": "traefik", "app.kubernetes.io/instance": "traefik-kube-system"}}}]
+        assert "traefik-gateway" not in peers
     if chart == "agent-studio":
         assert {"agent-forge", "agent-librio"} <= peers
     assert "agent-forge-workspaces" in peers if chart == "agent-forge" else "agent-forge-workspaces" not in peers
@@ -211,3 +219,24 @@ def test_librio_pool_preserves_provider_slots_and_cleanup_capacity(platform):
     config = resource("agent-librio", platform, "ConfigMap", "agent-librio")["data"]
     assert int(config["AI_ADMISSION_POOL_SIZE"]) >= int(config["AI_PROVIDER_MAX_CONCURRENCY"]) + 1
     assert 0 < int(config["AI_BATCH_MAX_CONCURRENCY"]) < int(config["AI_PROVIDER_MAX_CONCURRENCY"])
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+@pytest.mark.parametrize("chart,port", [("agent-studio", 3000), ("agent-memory", 3000), ("agent-librio", 3000), ("agent-forge", 3103)])
+def test_agent_service_route_and_pod_share_the_same_port(chart, port, platform):
+    service = resource(chart, platform, "Service", chart)["spec"]
+    deployment = resource(chart, platform, "Deployment", chart)["spec"]["template"]["spec"]
+    route = resource(chart, platform, "HTTPRoute", chart)["spec"]
+    service_port = service["ports"][0]
+    container_ports = {item["name"]: item["containerPort"] for item in deployment["containers"][0]["ports"]}
+    target = service_port["targetPort"]
+    resolved_target = container_ports[target] if isinstance(target, str) else target
+    assert service_port["port"] == resolved_target == port
+    assert service_port["name"] in container_ports
+    assert all(backend["port"] == port for rule in route["rules"] for backend in rule.get("backendRefs", []))
+    if chart == "agent-librio":
+        worker = resource(chart, platform, "Service", "agent-librio-worker")["spec"]["ports"][0]
+        assert worker["port"] == worker["targetPort"] == port
+    if chart == "agent-studio":
+        ticker = resource(chart, platform, "Deployment", "agent-studio-ticker")["spec"]["template"]["spec"]["containers"][0]
+        assert "http://agent-studio:3000" in ticker["command"][-1]

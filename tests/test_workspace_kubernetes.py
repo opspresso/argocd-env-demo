@@ -52,13 +52,13 @@ def test_forge_isolation_permissions_and_total_capacity(platform, max_pods):
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_gateway_uses_service_port_and_policy_uses_actual_pod_port(platform):
-    docs = render(platform, "--set", "app.fullnameOverride=forge-gateway-fixture", "--set", "app.service.port=8080", "--set", "app.service.targetPort=3100")
+def test_gateway_and_policy_use_the_same_application_port(platform):
+    docs = render(platform, "--set", "app.fullnameOverride=forge-gateway-fixture", "--set", "app.service.port=3103", "--set", "app.service.targetPort=3103")
     service = next(item for item in docs if item["kind"] == "Service" and item["metadata"]["name"] == "forge-gateway-fixture")
     config = next(item for item in docs if item["kind"] == "ConfigMap" and item["metadata"]["name"] == "agent-forge-sandbox")
-    assert config["data"]["FORGE_SANDBOX_API_URL"] == "http://forge-gateway-fixture.agent-forge.svc.cluster.local:8080"
+    assert config["data"]["FORGE_SANDBOX_API_URL"] == "http://forge-gateway-fixture.agent-forge.svc.cluster.local:3103"
     policy = next(item for item in docs if item["kind"] == "NetworkPolicy" and item["metadata"]["name"] == "sandbox-egress")
-    expected = {"to": [{"namespaceSelector": {"matchLabels": {"kubernetes.io/metadata.name": "agent-forge"}}, "podSelector": {"matchLabels": service["spec"]["selector"]}}], "ports": [{"protocol": "TCP", "port": 3100}]}
+    expected = {"to": [{"namespaceSelector": {"matchLabels": {"kubernetes.io/metadata.name": "agent-forge"}}, "podSelector": {"matchLabels": service["spec"]["selector"]}}], "ports": [{"protocol": "TCP", "port": 3103}]}
     assert expected in policy["spec"]["egress"]
 
 

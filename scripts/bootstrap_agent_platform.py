@@ -62,7 +62,7 @@ def parameter_values(prefix, existing):
     }], separators=(",", ":"))
     for service in ("forge", "librio"):
         policy = {"issuer": issuer,
-                  "url": f"http://agent-studio.agent-studio.svc.cluster.local/api/services/{service}/model-policy",
+                  "url": f"http://agent-studio.agent-studio.svc.cluster.local:3000/api/services/{service}/model-policy",
                   "secret": values[f"{prefix}/agent-{service}/policy-secret"]}
         if service == "librio":
             policy["mode"] = "required"

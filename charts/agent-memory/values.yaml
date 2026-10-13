@@ -11,6 +11,7 @@ app:
       memory: 512Mi
   service:
     name: http
+    port: 3000
     targetPort: 3000
   controller:
     strategy:
@@ -151,7 +152,10 @@ app:
         ingress:
           - from:
               - podSelector: {}
-      {{- range concat .Values.ingressNamespaces .Values.servicePeers }}
+      {{- with .Values.ingressPeers }}
+      {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- range .Values.servicePeers }}
               - namespaceSelector:
                   matchLabels:
                     kubernetes.io/metadata.name: {{ . | quote }}
@@ -162,9 +166,15 @@ app:
   registry:
     region: ap-northeast-2
   automountServiceAccountToken: false
-  ingressNamespaces:
-  - istio-system
-  - addon-prometheus
-  - addon-alloy
+  ingressPeers:
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: istio-system
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: addon-prometheus
+  - namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: addon-alloy
   servicePeers:
   - agent-studio

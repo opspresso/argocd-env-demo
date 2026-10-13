@@ -44,13 +44,13 @@ app:
       MAX_RUN_DURATION_MS: '600000'
       MAX_CONCURRENT_RUNS_PER_ACTOR: '60'
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local,agent-librio.svc.cluster.local,agent-forge.svc.cluster.local
-      FORGE_URL: http://agent-forge.agent-forge.svc.cluster.local
+      FORGE_URL: http://agent-forge.agent-forge.svc.cluster.local:3103
       FORGE_ISSUER: https://studio.agrt.dev
       FORGE_OBSERVER_CONCURRENCY: '16'
       WORKSPACE_CONTINUATION_CONCURRENCY: '2'
-      MEMORY_URL: http://agent-memory.agent-memory.svc.cluster.local
+      MEMORY_URL: http://agent-memory.agent-memory.svc.cluster.local:3000
       MEMORY_ISSUER: https://studio.agrt.dev
-      LIBRIO_URL: http://agent-librio.agent-librio.svc.cluster.local
+      LIBRIO_URL: http://agent-librio.agent-librio.svc.cluster.local:3000
       LIBRIO_ISSUER: https://studio.agrt.dev
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
@@ -122,9 +122,14 @@ app:
       name: LIBRIO_DELEGATION_SECRET
     - key: /k8s/eks-demo/agent-librio/policy-secret
       name: LIBRIO_POLICY_SECRET
-  ingressNamespaces:
-    - istio-system
-    - addon-prometheus
+  ingressPeers:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: addon-prometheus
   registry:
     region: ap-northeast-2
   legacyExecution:

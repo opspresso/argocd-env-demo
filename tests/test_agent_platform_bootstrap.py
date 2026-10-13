@@ -53,7 +53,7 @@ def test_apply_preserves_db_password_and_derives_scoped_secrets_without_logging(
         policy = json.loads(values[f"{PREFIX}/agent-{name}/issuer-policies"])[0]
         assert policy["secret"] == values[f"{PREFIX}/agent-{name}/policy-secret"]
         assert policy["secret"] != values[f"{PREFIX}/agent-{name}/delegation-secret"]
-        assert policy["url"].endswith(f"/api/services/{name}/model-policy")
+        assert policy["url"] == f"http://agent-studio.agent-studio.svc.cluster.local:3000/api/services/{name}/model-policy"
     output = capsys.readouterr().out
     assert all(value not in output for value in values.values())
 

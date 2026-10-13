@@ -11,9 +11,14 @@ app:
   imagePullSecrets:
     - name: ecr-registry
 
-  ingressNamespaces:
-    - istio-system
-    - addon-prometheus
+  ingressPeers:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: addon-prometheus
   registry:
     region: ap-northeast-2
   configmap:
