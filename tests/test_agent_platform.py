@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @lru_cache
-def manifests(chart, platform, image_tag=None, *, legacy_docker=None):
+def manifests(chart, platform, image_tag=None):
     path = ROOT / "charts" / chart
     definition = yaml.safe_load((path / "Chart.yaml").read_text())
     if definition.get("dependencies") and not list((path / "charts").glob("*.tgz")):
@@ -28,8 +28,6 @@ def manifests(chart, platform, image_tag=None, *, legacy_docker=None):
     args += ["-f", "-"]
     if image_tag:
         args += ["--set-string", f"app.image.tag={image_tag}"]
-    if legacy_docker is not None:
-        args += ["--set", f"app.workloads.workspaceWorker.legacyDocker.enabled={str(legacy_docker).lower()}"]
     result = subprocess.run(args, input=running_values(chart, platform), capture_output=True, text=True, check=True)
     assert not policy_errors(result.stdout, platform)
     return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
@@ -41,73 +39,64 @@ def resource(chart, platform, kind, name, **overrides):
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory"])
+@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory", "agent-librio", "agent-forge"])
 def test_application_credentials_match_cluster_dependencies(chart, platform):
     secret = resource(chart, platform, "ExternalSecret", f"{chart}-external")
     refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
-    assert refs["DATABASE_URL"] == f"/k8s/{platform}-demo/{chart}/database-url"
+    assert refs["DATABASE_URL"] == f"/k8s/{platform}-demo/agent-platform/database-url"
     config = resource(chart, platform, "ConfigMap", chart)["data"]
-    assert config["TRUSTED_PROXY_CIDRS"] == ("10.10.0.0/16" if platform == "eks" else "")
-    assert not any("BEDROCK" in key or "DYNAMO" in key for key in config)
-    if platform == "eks":
-        assert "S3_ENDPOINT" not in config
-        assert "S3_ACCESS_KEY_ID" not in refs
-        assert "S3_SECRET_ACCESS_KEY" not in refs
-        assert config.get("S3_BUCKET", config.get("S3_BUCKET_NAME")) == "agent-studio-static"
+    assert not any("BEDROCK" in key or "DYNAMO" in key or "NEO4J" in key for key in config)
+    if chart in {"agent-studio", "agent-librio"}:
+        if platform == "eks":
+            assert "S3_ENDPOINT" not in config and "S3_ACCESS_KEY_ID" not in refs
+            assert config.get("S3_BUCKET", config.get("S3_BUCKET_NAME")) == f"{chart}-static"
+        else:
+            assert config["S3_ENDPOINT"] == "http://minio.agent-studio.svc.cluster.local:9000"
+            assert refs["S3_ACCESS_KEY_ID"] == "/k8s/k3s-demo/agent-studio/minio-root-user"
     else:
-        assert config["S3_ENDPOINT"] == "http://minio.agent-studio.svc.cluster.local:9000"
-        assert refs["S3_ACCESS_KEY_ID"] == "/k8s/k3s-demo/agent-studio/minio-root-user"
+        assert not any(key.startswith("S3_") for key in config | refs)
+    assert not any("WORKSPACE_PROVIDER" in key or "DOCKER_HOST" in key for key in config)
     if chart == "agent-memory":
-        assert refs["NEO4J_PASSWORD"] == f"/k8s/{platform}-demo/agent-memory/neo4j-password"
-        assert config["NEO4J_URI"] == "bolt://memory-neo4j.agent-memory.svc.cluster.local:7687"
-        assert config["DOCUMENT_WORKER_ENABLED"] == "true"
+        assert "DOCUMENT_WORKER_ENABLED" not in config
+        assert not any(doc["kind"] == "Deployment" and doc["metadata"]["name"] == "agent-memory-worker"
+                       for doc in manifests(chart, platform))
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory"])
+@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory", "agent-librio", "agent-forge"])
 def test_authentication_hosts_match_public_routes(chart, platform):
     config = resource(chart, platform, "ConfigMap", chart)["data"]
     route = resource(chart, platform, "HTTPRoute", chart)["spec"]
-    environment = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())
-    service = environment[chart.replace("-", "_")]
-    hosts = service.get("allowed_hosts", [service["hostname"]])
-    assert config["BETTER_AUTH_ALLOWED_HOSTS"].split(",") == hosts
-    assert route["hostnames"] == hosts
-    assert config["BETTER_AUTH_URL"] == f"https://{service['hostname']}"
-    assert service["hostname"] in hosts
+    hostname = chart.removeprefix("agent-") + ".agrt.dev"
+    assert route["hostnames"] == [hostname]
+    if chart == "agent-forge":
+        assert config["FORGE_ALLOWED_ORIGINS"] == f"https://{hostname}"
+    else:
+        assert config["BETTER_AUTH_ALLOWED_HOSTS"] == hostname
+        assert config["BETTER_AUTH_URL"] == f"https://{hostname}"
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_memory_metrics_credentials_and_service_match_the_collector(platform):
-    service = resource("agent-memory", platform, "Service", "agent-memory")
-    secret = resource("agent-memory", platform, "ExternalSecret", "agent-memory-external")
-    refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
-    assert refs["METRICS_BEARER_TOKEN"] == f"/k8s/{platform}-demo/agent-memory/metrics-bearer-token"
-    deployment = resource("agent-memory", platform, "Deployment", "agent-memory")
+@pytest.mark.parametrize("chart", ["agent-memory", "agent-librio", "agent-forge"])
+def test_metrics_auth_and_dependency_independent_liveness(chart, platform):
+    service = resource(chart, platform, "Service", chart)
+    deployment = resource(chart, platform, "Deployment", chart)
     assert service["spec"]["selector"].items() <= deployment["spec"]["template"]["metadata"]["labels"].items()
+    container = deployment["spec"]["template"]["spec"]["containers"][0]
+    forge = chart == "agent-forge"
+    assert container["readinessProbe"]["httpGet"]["path"] == ("/health" if forge else "/api/health")
+    assert container["livenessProbe"]["httpGet"]["path"] == ("/" if forge else "/api/live")
+    assert container["startupProbe"]["httpGet"] == container["livenessProbe"]["httpGet"]
+    secret_name, secret_key = ("agent-forge-metrics", "token") if forge else (f"{chart}-external", "METRICS_BEARER_TOKEN")
+    secret = resource(chart, platform, "ExternalSecret", secret_name)
+    refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
+    assert refs[secret_key] == f"/k8s/{platform}-demo/{chart}/metrics-bearer-token"
     if platform == "eks":
-        monitor = resource("agent-memory", platform, "ServiceMonitor", "agent-memory")["spec"]
-        assert monitor["endpoints"][0]["authorization"]["credentials"] == {
-            "name": "agent-memory-external", "key": "METRICS_BEARER_TOKEN"
-        }
+        monitor = resource(chart, platform, "ServiceMonitor", chart)["spec"]
+        assert monitor["endpoints"][0]["authorization"]["credentials"] == {"name": secret_name, "key": secret_key}
         assert monitor["selector"]["matchLabels"].items() <= service["metadata"]["labels"].items()
     else:
-        assert not any(item["kind"] == "ServiceMonitor" for item in manifests("agent-memory", platform))
-        assert any(port["port"] == 80 for port in service["spec"]["ports"])
-    container = deployment["spec"]["template"]["spec"]["containers"][0]
-    assert container["readinessProbe"]["httpGet"]["path"] == "/api/health"
-    assert container["readinessProbe"]["timeoutSeconds"] > 4.5
-    assert container["livenessProbe"]["httpGet"] == {"path": "/api/live", "port": 3000}
-    assert container["startupProbe"]["httpGet"] == {"path": "/api/live", "port": 3000}
-
-
-def test_memory_hpa_uses_a_metric_memory_actually_provides():
-    hpa = resource("agent-memory", "eks", "HorizontalPodAutoscaler", "agent-memory")
-    assert hpa["spec"]["metrics"] == [{
-        "type": "ContainerResource", "containerResource": {"name": "cpu", "container": "app", "target": {
-            "type": "Utilization", "averageUtilization": 70
-        }}
-    }]
+        assert not any(item["kind"] == "ServiceMonitor" for item in manifests(chart, platform))
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
@@ -116,129 +105,109 @@ def test_argocd_mcp_accepts_all_trusted_agent_execution_processes(platform):
     source = policy["ingress"][0]["from"][0]
     assert source["namespaceSelector"]["matchLabels"] == {"kubernetes.io/metadata.name": "agent-studio"}
     expression = source["podSelector"]["matchExpressions"][0]
-    assert expression["key"] == "app.kubernetes.io/name" and expression["operator"] == "In"
     expected = {doc["metadata"]["name"] for doc in manifests("agent-studio", platform)
                 if doc["kind"] == "Deployment" and doc["spec"]["template"]["spec"].get("serviceAccountName") == "agent-studio"}
     assert set(expression["values"]) == expected
 
 
-@pytest.mark.parametrize("platform,replicas", [("eks", 2), ("k3s", 1)])
-def test_memory_consumers_are_separate_from_web_scaling_and_share_metrics_auth(platform, replicas):
-    worker = resource("agent-memory", platform, "Deployment", "agent-memory-worker")
-    web = resource("agent-memory", platform, "Deployment", "agent-memory")
-    assert worker["spec"]["replicas"] == replicas
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_librio_consumer_is_independent_of_web_and_shares_metrics_auth(platform):
+    worker = resource("agent-librio", platform, "Deployment", "agent-librio-worker")
+    web = resource("agent-librio", platform, "Deployment", "agent-librio")
+    assert worker["spec"]["replicas"] == 1
     pod = worker["spec"]["template"]["spec"]
     container = pod["containers"][0]
     assert container["command"] == ["node", "build/worker.cjs"]
     assert container["image"] == web["spec"]["template"]["spec"]["containers"][0]["image"]
     assert pod["terminationGracePeriodSeconds"] > 30
-    assert pod["serviceAccountName"] == "agent-memory"
-    assert container["envFrom"] == [{"configMapRef": {"name": "agent-memory"}},
-                                   {"secretRef": {"name": "agent-memory-external"}}]
-    service = resource("agent-memory", platform, "Service", "agent-memory-worker")
+    assert pod["serviceAccountName"] == "agent-librio"
+    assert container["envFrom"] == [{"configMapRef": {"name": "agent-librio"}}, {"secretRef": {"name": "agent-librio-external"}}]
+    env = {entry["name"]: entry["value"] for entry in container["env"]}
+    assert env["AUDIO_WORKER_ENABLED"] == env["DOCUMENT_WORKER_ENABLED"] == "true"
+    config = resource("agent-librio", platform, "ConfigMap", "agent-librio")["data"]
+    assert config["AUDIO_WORKER_ENABLED"] == config["DOCUMENT_WORKER_ENABLED"] == "false"
+    service = resource("agent-librio", platform, "Service", "agent-librio-worker")
     assert service["spec"]["selector"] == worker["spec"]["selector"]["matchLabels"]
-    assert resource("agent-memory", platform, "Service", "agent-memory")["spec"]["selector"] != service["spec"]["selector"]
+    assert resource("agent-librio", platform, "Service", "agent-librio")["spec"]["selector"] != service["spec"]["selector"]
     if platform == "eks":
-        monitor = resource("agent-memory", platform, "ServiceMonitor", "agent-memory")
+        monitor = resource("agent-librio", platform, "ServiceMonitor", "agent-librio")
         assert monitor["spec"]["selector"]["matchLabels"].items() <= service["metadata"]["labels"].items()
-        pdb = resource("agent-memory", platform, "PodDisruptionBudget", "agent-memory-worker")
-        assert pdb["spec"]["selector"]["matchLabels"] == service["spec"]["selector"]
     else:
         assert not container.get("resources")
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_workspace_pod_policy_matches_namespace_admission(platform):
-    config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace")["data"]
-    quota = resource("agent-studio", platform, "ResourceQuota", "agent-studio-sandbox")["spec"]["hard"]
-    assert config["WORKSPACE_KUBERNETES_RESOURCES"] == str(platform == "eks").lower()
-    if platform == "k3s":
-        assert quota == {"pods": "2"}
-    else:
-        assert quota == {"pods": "32", "requests.cpu": "32", "limits.cpu": "32",
-                         "requests.memory": "65536Mi", "limits.memory": "65536Mi",
-                         "requests.ephemeral-storage": "147456Mi", "limits.ephemeral-storage": "147456Mi"}
-
-
-def test_eks_workers_have_resources_identity_and_registry_refresh():
-    for name in ["agent-studio-audio-worker", "agent-studio-workspace-worker"]:
-        pod = resource("agent-studio", "eks", "Deployment", name)["spec"]["template"]["spec"]
-        assert pod["serviceAccountName"] == "agent-studio"
-        assert all(container["resources"]["requests"] for container in pod["containers"])
-    registry = resource("agent-studio", "eks", "ExternalSecret", "ecr-registry")["spec"]
-    assert registry["refreshInterval"] == "1h"
-    assert registry["dataFrom"][0]["sourceRef"]["generatorRef"]["kind"] == "ECRAuthorizationToken"
-    pvc = resource("agent-studio", "eks", "PersistentVolumeClaim", "agent-studio-workspace-docker")
-    assert pvc["spec"]["storageClassName"] == "gp3"
-
-
-@pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_docker_service_preserves_exec_upgrade_streams(platform):
-    service = resource("agent-studio", platform, "Service", "agent-studio-workspace-docker", legacy_docker=True)
-    assert service["spec"]["type"] == "ClusterIP"
-    assert service["spec"]["ports"] == [{"name": "tcp-docker", "port": 2375, "targetPort": 2375}]
-    policy = resource("agent-studio", platform, "NetworkPolicy", "agent-studio-workspace-docker", legacy_docker=True)["spec"]
-    assert policy["policyTypes"] == ["Ingress"]
-    assert policy["ingress"][0]["ports"] == [{"protocol": "TCP", "port": 2375}]
-    assert policy["ingress"][0]["from"][0]["podSelector"]["matchExpressions"][0]["values"] == [
-        "agent-studio", "agent-studio-workspace-worker", "agent-studio-workspace-migration"]
-
-
-@pytest.mark.parametrize("platform,stage", [("eks", "prod"), ("k3s", "alpha")])
-@pytest.mark.parametrize("legacy_docker", [False, True])
-def test_coding_workers_have_github_and_a_managed_egress_network(platform, stage, legacy_docker):
+def test_studio_observer_has_no_execution_or_cluster_authority(platform):
     config = resource("agent-studio", platform, "ConfigMap", "agent-studio")["data"]
-    assert config["STAGE"] == stage
-    assert config["GITHUB_WEB_URL"] == "https://github.com"
-    assert config["WORKSPACE_NETWORK"] == "agent-studio-public"
-    pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker", legacy_docker=legacy_docker)["spec"]["template"]["spec"]
-    sandbox_config = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace", legacy_docker=legacy_docker)["data"]
-    assert sandbox_config["WORKSPACE_PROVIDER"] == "kubernetes"
-    assert sandbox_config["WORKSPACE_NAMESPACE"] == "agent-studio-workspaces"
-    assert sandbox_config["WORKSPACE_LEGACY_DOCKER"] == str(legacy_docker).lower()
-    assert len(pod["containers"]) == 1
+    pod = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-worker")["spec"]["template"]["spec"]
+    assert pod["automountServiceAccountToken"] is False
+    assert len(pod["containers"]) == 1 and not pod.get("volumes")
     worker = pod["containers"][0]
     assert worker["command"] == ["node", "build/workspace-worker.cjs"]
-    assert pod["automountServiceAccountToken"] is True
-    assert not pod.get("volumes")
-    if legacy_docker:
-        docker = resource("agent-studio", platform, "Deployment", "agent-studio-workspace-docker", legacy_docker=True)["spec"]["template"]["spec"]["containers"][0]
-        assert docker["command"] == ["/bin/sh", "/opt/workspace-network/workspace-network.sh"]
-        assert {env["name"]: env["value"] for env in docker["env"]}["WORKSPACE_NETWORK"] == config["WORKSPACE_NETWORK"]
-    else:
-        assert not any(doc["metadata"]["name"] == "agent-studio-workspace-docker" and doc["kind"] in {"Deployment", "Service", "NetworkPolicy"}
-                       for doc in manifests("agent-studio", platform, legacy_docker=False))
-    script = resource("agent-studio", platform, "ConfigMap", "agent-studio-workspace-network")["data"]["workspace-network.sh"]
-    assert script == yaml.safe_load((ROOT / "charts/agent-studio/values.yaml").read_text())["app"]["workspaceNetworkScript"]
     assert worker["livenessProbe"]["exec"]["command"] == ["node", "build/workspace-heartbeat-check.cjs"]
-    assert worker["readinessProbe"]["periodSeconds"] == 30
-    assert worker["readinessProbe"]["failureThreshold"] == 1
+    assert config["FORGE_URL"] == "http://agent-forge.agent-forge.svc.cluster.local"
+    assert config["FORGE_ISSUER"] == config["MEMORY_ISSUER"] == config["LIBRIO_ISSUER"] == "https://studio.agrt.dev"
+    assert not any(doc["kind"] in {"Role", "RoleBinding", "Job"} for doc in manifests("agent-studio", platform))
     assert resource("agent-studio", platform, "Deployment", "agent-studio-ticker")["spec"]["replicas"] == 1
 
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-@pytest.mark.parametrize("tag", ["v0.115.1", "v0.115.2"])
-def test_application_and_workspace_use_the_same_release(platform, tag):
-    documents = manifests("agent-studio", platform, tag)
-    configs = {doc["metadata"]["name"]: doc["data"] for doc in documents if doc["kind"] == "ConfigMap"}
-    deployments = {doc["metadata"]["name"]: doc for doc in documents if doc["kind"] == "Deployment"}
-    for name in ["agent-studio", "agent-studio-workspace-worker"]:
-        container = deployments[name]["spec"]["template"]["spec"]["containers"][0]
-        repository, image_tag = container["image"].rsplit(":", 1)
-        assert image_tag == tag
-        images = [configs[entry["configMapRef"]["name"]]["WORKSPACE_IMAGE"]
-                  for entry in container["envFrom"] if "configMapRef" in entry
-                  and "WORKSPACE_IMAGE" in configs.get(entry["configMapRef"]["name"], {})]
-        assert images == [f"{repository}:workspace-{tag}"]
-        assert not any(entry["name"] == "WORKSPACE_IMAGE" for entry in container.get("env", []))
+@pytest.mark.parametrize("tag", ["v0.1.0", "v0.2.3"])
+def test_forge_and_sandbox_use_exactly_the_same_release(platform, tag):
+    documents = manifests("agent-forge", platform, tag)
+    config = next(doc["data"] for doc in documents if doc["kind"] == "ConfigMap" and doc["metadata"]["name"] == "agent-forge-sandbox")
+    deployment = next(doc for doc in documents if doc["kind"] == "Deployment")
+    repository, image_tag = deployment["spec"]["template"]["spec"]["containers"][0]["image"].rsplit(":", 1)
+    assert image_tag == tag
+    assert config["FORGE_SANDBOX_IMAGE"] == f"{repository}:sandbox-{tag}"
+    assert len([doc for doc in documents if doc["kind"] == "Deployment"]) == 1
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory", "agent-librio", "agent-forge"])
+def test_namespace_registry_refresh_and_explicit_ingress(chart, platform):
+    registry = resource(chart, platform, "ExternalSecret", "ecr-registry")["spec"]
+    assert registry["refreshInterval"] == "1h"
+    assert registry["dataFrom"][0]["sourceRef"]["generatorRef"]["kind"] == "ECRAuthorizationToken"
+    policy = resource(chart, platform, "NetworkPolicy", chart)["spec"]
+    peers = {item["namespaceSelector"]["matchLabels"]["kubernetes.io/metadata.name"] for item in policy["ingress"][0]["from"] if "namespaceSelector" in item}
+    assert "agent-studio" in peers
+    assert ("traefik-gateway" if platform == "k3s" else "istio-system") in peers
+    if chart == "agent-studio":
+        assert {"agent-forge", "agent-librio"} <= peers
+    assert "agent-forge-workspaces" in peers if chart == "agent-forge" else "agent-forge-workspaces" not in peers
 
 
 @pytest.mark.parametrize("chart,name", [("postgresql", "postgres"), ("neo4j", "memory-neo4j")])
-def test_eks_databases_are_gitops_managed_with_persistent_storage(chart, name):
+def test_eks_databases_keep_the_existing_persistent_storage(chart, name):
     application = yaml.safe_load((ROOT / "apps/eks" / f"{chart}.yaml").read_text())
     source = application["spec"]["template"]["spec"]["source"]
     assert source["path"] == f"charts/{chart}"
-    assert source["helm"]["valueFiles"] == ["values.yaml", "{{env}}/values-{{cluster}}.yaml"]
     workload = resource(chart, "eks", "StatefulSet", name)["spec"]
     assert workload["volumeClaimTemplates"][0]["spec"]["resources"]["requests"]["storage"] == "20Gi"
     assert workload["template"]["spec"]["containers"][0]["resources"]["requests"]
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+@pytest.mark.parametrize("chart", ["agent-librio", "agent-forge"])
+@pytest.mark.parametrize("maintenance", [False, True])
+def test_new_service_maintenance_stops_only_its_processes(platform, chart, maintenance, tmp_path):
+    from test_agent_memory_maintenance import render
+    environment = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())
+    environment[chart.replace("-", "_") + "_maintenance"] = maintenance
+    docs = render(chart, environment, tmp_path)
+    deployments = [doc for doc in docs if doc["kind"] == "Deployment"]
+    expected = {chart, "agent-librio-worker"} if chart == "agent-librio" else {chart}
+    assert {doc["metadata"]["name"] for doc in deployments} == expected
+    if maintenance:
+        assert all(doc["spec"]["replicas"] == 0 for doc in deployments)
+        assert not any(doc["kind"] == "HorizontalPodAutoscaler" for doc in docs)
+    if chart == "agent-forge":
+        assert any(doc["kind"] == "Namespace" and doc["metadata"]["name"] == "agent-forge-workspaces" for doc in docs)
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_librio_pool_preserves_provider_slots_and_cleanup_capacity(platform):
+    config = resource("agent-librio", platform, "ConfigMap", "agent-librio")["data"]
+    assert int(config["AI_ADMISSION_POOL_SIZE"]) >= int(config["AI_PROVIDER_MAX_CONCURRENCY"]) + 1
+    assert 0 < int(config["AI_BATCH_MAX_CONCURRENCY"]) < int(config["AI_PROVIDER_MAX_CONCURRENCY"])

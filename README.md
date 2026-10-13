@@ -1,8 +1,8 @@
 # argocd-env-demo
 
-`eks-demo` production의 자원·확장 상한은 [용량 운영](docs/production-capacity.md)을 따른다.
+현재 k3s alpha와 미래 EKS 선언의 자원·확장 상한은 [용량 운영](docs/production-capacity.md)을 따른다.
 
-Agent Studio·Memory의 k3s/EKS 구성, 저장소별 책임, Secret 준비와 배포 순서는
+Agent Studio·Memory·Librio·Forge의 k3s/EKS 구성, 저장소별 책임, Secret 준비와 배포 순서는
 [Agent Platform 배포](docs/agent-platform.md)를 따른다.
 
 ## 저장소 구조
@@ -25,19 +25,18 @@ docs/             # 운영 문서
 > apps 를 등록 합니다.
 
 ```bash
-kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps-eks.yaml
 kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps-k3s.yaml
 ```
 
-ApplicationSet은 `apps/eks/`와 `apps/k3s/`로 분리한다. 각 디렉터리는 해당 플랫폼의
-클러스터만 읽는다.
+현재 k3s는 `apps/k3s/`의 Application을 등록한다. 미래 EKS를 준비한 뒤에는
+`apps-eks.yaml`을 해당 클러스터에 등록하며 `apps/eks/`의 ApplicationSet이 선택한 env만 읽는다.
 
 replica 수, autoscaling 여부와 resource 사용 여부는 `env/<cluster>.yaml`이 원천이다.
 공통 `values.yaml`은 EKS를 기본으로 하며 EKS는 기존 env 설정을 적용한다.
 k3s·local 환경은 `replicas: 1`, `autoscaling: false`, `resources: false`로 선언한다.
 metrics backend는 `metrics.backend`로 선택하며, k3s는 `grafana-cloud`, EKS는
 `prometheus`를 사용한다.
-k3s Alloy가 앱의 `/api/metrics`를 직접 수집하므로 ServiceMonitor CRD와 로컬 metrics DB가
+k3s Alloy가 `/api/metrics`(Forge는 `/metrics`)를 직접 수집하므로 ServiceMonitor CRD와 로컬 metrics DB가
 필요하지 않다. `prometheus` backend만 ServiceMonitor를 생성한다.
 각 chart의 기본 values가 운영용 requests/limits를 제공하며, `resources: false`인
 환경에서는 템플릿이 해당 resource block을 제거한다. 컨테이너·초기화 컨테이너·worker·CronJob에도 같은 규칙을 적용한다.
@@ -47,7 +46,7 @@ HPA·VPA·KEDA autoscaler를 생성하지 않으며 PVC storage 요청은 유지
 
 ## 로컬 Kubernetes 개발 환경
 
-현재 배포 구성은 EKS와 k3s다. `apps-local.yaml`, `apps/local/`, `env/local-demo.yaml`은
+현재 클러스터는 k3s만 존재하며 EKS는 미래 배포 선언이다. `apps-local.yaml`, `apps/local/`, `env/local-demo.yaml`은
 제공하지 않는다. 템플릿의 `local` 분기는 `tests/fixtures/local-env.yaml`을 사용해
 MCP 인증 설정과 PostgreSQL 초기화 동작을 검증한다. 이 fixture는 배포 대상이 아니다.
 
@@ -57,15 +56,12 @@ MCP 인증 설정과 PostgreSQL 초기화 동작을 검증한다. 이 fixture는
 선택한다. PostgreSQL·MinIO·Neo4j 등 데이터 서비스는 공식 또는 주요 배포처의 전용 차트를
 사용한다. 공통 차트에 필요한 기능이 없으면 공통 차트를 확장하며, wrapper에는 `templates/`를 두지 않는다.
 
-Agent Studio의 audio/Workspace/Docker worker와 scan·plugin sync·reindex ticker는
-`app.workloads`를 사용한다. RBAC·네트워크 정책·보존용 PVC·마이그레이션 Job은 `raw`가 렌더한다.
-공통 `app`이 phase·클러스터 값 병합 후 worker와 내장 `raw`에 필요한 값을 전달한다.
-`app.image`를 단일 버전 원천으로 유지하므로 GitOps가 이미지 태그를
-갱신하면 worker·마이그레이션 Job·workspace 이미지도 함께 바뀐다. worker별 설정은
-`app.workloads.audioWorker`, `app.workloads.workspaceWorker`, `app.workloads.workspaceDocker`에 두며,
-부모 값 참조는 각 `overrides`와 `app.raw.parentTemplates`에 둔다. Agent Memory의 인증된 메트릭 수집은
-`app.serviceMonitor`로 관리한다. Memory의 queue 소비는 `app.workloads.worker`가 담당하며
-웹 HPA와 별도로 replica를 지정한다.
+Studio의 audio/Workspace observer와 scan·plugin sync·reindex ticker, Librio의 queue worker는
+`app.workloads`를 사용한다. Forge가 별도 실행 namespace의 Sandbox를 소유하며 RBAC·네트워크
+정책·보존용 PVC는 `raw`가 렌더한다. Studio에는 Docker daemon이나 Sandbox 실행 권한이 없다.
+`app.image`를 단일 버전 원천으로 유지하여 각 서비스 worker가 같은 release image를 사용한다.
+Forge Sandbox는 controller의 full v-tag에 `sandbox-` 접두어를 붙인다.
+Memory에는 queue worker가 없으며 문서·전사 처리는 Librio가 담당한다.
 
 PostgreSQL은 Bitnami 전용 차트를 사용하며, `pgvector/pgvector` 이미지의 entrypoint·인증 환경변수·
 probe·데이터 경로를 values로 지정한다. `postgres` StatefulSet과 `data-postgres-0` PVC를 유지한다.
@@ -224,12 +220,12 @@ values 파일 누락이나 chart 오류를 Argo CD sync 가 아니라 CI 에서 
 ./scripts/validate.py -r sample-node
 ```
 
-## k3s workers
+## 서비스 실행 경계
 
-k3s와 EKS는 별도 audio/Workspace worker를 실행한다. Workspace는 실행 전용 namespace의
-단일 Pod와 제한된 emptyDir를 사용하며, Studio image와 같은 릴리스의 `workspace-<version>` 이미지를 사용한다.
-실행 Pod의 토큰·네트워크·자원 격리와 전환 절차는 [Kubernetes Workspace 운영](docs/workspace-kubernetes.md)을 따른다.
-기존 DinD PVC·daemon·ECR 인증은 전환 중 보존하며, 신규 접수 차단과 기존 작업의 체크포인트·종료가 먼저다.
+Studio observer는 Forge/Librio의 원격 작업을 관찰하고 대화를 재개한다. Librio는 별도 queue
+worker 하나로 문서·오디오를 처리한다. Forge는 HTTP·MCP·Gateway·worker를 한 서비스로 실행한다.
+Sandbox는 `agent-forge-workspaces`의 controller-owned Pod와 제한된 emptyDir를 사용한다.
+실행·네트워크·자원·기존 PVC 보존은 [Kubernetes Workspace 운영](docs/workspace-kubernetes.md)을 따른다.
 
 ## test
 

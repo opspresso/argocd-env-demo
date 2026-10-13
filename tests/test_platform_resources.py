@@ -64,20 +64,16 @@ def test_neo4j_default_resource_validation_is_preserved():
     assert resources["limits"] == resources["requests"]
 
 
-def test_workspace_docker_volume_has_only_one_owner_during_rollout():
-    result = render("charts/agent-studio", ["values.yaml", "values-alpha.yaml", "k3s/values-k3s-demo.yaml"],
-                    ["--set", "app.workloads.workspaceWorker.legacyDocker.enabled=true"])
+def test_retained_workspace_storage_has_no_live_writer():
+    result = render("charts/agent-studio", ["values.yaml", "values-alpha.yaml", "k3s/values-k3s-demo.yaml"])
     assert result.returncode == 0, result.stderr
     documents = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    worker = next(doc for doc in documents if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "agent-studio-workspace-docker")
-    spec = worker["spec"]
-    docker = next(container for container in spec["template"]["spec"]["containers"] if container["name"] == "docker")
-    mount = next(mount for mount in docker["volumeMounts"] if mount["mountPath"] == "/var/lib/docker")
-    volume = next(volume for volume in spec["template"]["spec"]["volumes"] if volume["name"] == mount["name"])
-    assert volume["persistentVolumeClaim"]["claimName"] == "agent-studio-workspace-docker"
-    maintenance = yaml.safe_load((ROOT / "env/k3s-demo.yaml").read_text())["agent_studio_maintenance"]
-    assert spec["replicas"] == (0 if maintenance else 1)
-    assert spec.get("strategy", {}).get("type") == "Recreate"
+    pvc = next(doc for doc in documents if doc["kind"] == "PersistentVolumeClaim")
+    assert pvc["metadata"]["name"] == "agent-studio-workspace-docker"
+    for doc in documents:
+        if doc["kind"] == "Deployment":
+            assert not any(volume.get("persistentVolumeClaim", {}).get("claimName") == pvc["metadata"]["name"]
+                           for volume in doc["spec"]["template"]["spec"].get("volumes", []))
 
 
 @pytest.mark.parametrize("setting", ["cpu=100m", "memory=512Mi"])

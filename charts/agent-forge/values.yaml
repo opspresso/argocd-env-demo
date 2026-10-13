@@ -1,0 +1,378 @@
+app:
+  fullnameOverride: agent-forge
+  image:
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-forge
+    tag: latest
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      memory: 2Gi
+  service:
+    name: http
+    targetPort: 3103
+  controller:
+    strategy:
+      rollingUpdate:
+        maxSurge: 100%
+        maxUnavailable: 0
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /health
+      port: 3103
+    initialDelaySeconds: 5
+    timeoutSeconds: 6
+    periodSeconds: 10
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 3103
+    timeoutSeconds: 2
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  startupProbe:
+    httpGet:
+      path: /
+      port: 3103
+    timeoutSeconds: 2
+    periodSeconds: 5
+    failureThreshold: 60
+  terminationGracePeriodSeconds: 180
+  lifecycle:
+    preStop:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - sleep 15
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 2
+    metrics:
+    - type: ContainerResource
+      containerResource:
+        name: cpu
+        container: app
+        target:
+          type: Utilization
+          averageUtilization: 70
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 900
+        policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 300
+  serviceMonitor:
+    enabled: true
+    endpoints:
+    - interval: 15s
+      path: /metrics
+      port: http
+      authorization:
+        type: Bearer
+        credentials:
+          name: agent-forge-metrics
+          key: token
+  routing:
+    httpRoute:
+      parentRefs:
+      - name: istio-ingressgateway
+        namespace: istio-system
+  serviceAccount:
+    create: true
+  podAntiAffinity:
+    topologyKey: kubernetes.io/hostname
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: parameter-store
+  raw:
+    enabled: true
+    parentTemplates:
+    - |
+      apiVersion: generators.external-secrets.io/v1alpha1
+      kind: ECRAuthorizationToken
+      metadata:
+        name: agent-forge-ecr
+        namespace: {{ include "app.namespace" . }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-2"
+      spec:
+        region: {{ .Values.registry.region }}
+      ---
+      apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: ecr-registry
+        namespace: {{ include "app.namespace" . }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-1"
+      spec:
+        refreshInterval: 1h
+        target:
+          name: ecr-registry
+          template:
+            type: kubernetes.io/dockerconfigjson
+            data:
+              .dockerconfigjson: |
+                {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
+        dataFrom:
+          - sourceRef:
+              generatorRef:
+                apiVersion: generators.external-secrets.io/v1alpha1
+                kind: ECRAuthorizationToken
+                name: agent-forge-ecr
+    - |
+      apiVersion: generators.external-secrets.io/v1alpha1
+      kind: ECRAuthorizationToken
+      metadata:
+        name: agent-forge-sandbox-ecr
+        namespace: {{ .Values.sandbox.namespace }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-2"
+      spec:
+        region: {{ .Values.registry.region }}
+      ---
+      apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: ecr-registry
+        namespace: {{ .Values.sandbox.namespace }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-1"
+      spec:
+        refreshInterval: 1h
+        target:
+          name: ecr-registry
+          template:
+            type: kubernetes.io/dockerconfigjson
+            data:
+              .dockerconfigjson: |
+                {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
+        dataFrom:
+          - sourceRef:
+              generatorRef:
+                apiVersion: generators.external-secrets.io/v1alpha1
+                kind: ECRAuthorizationToken
+                name: agent-forge-sandbox-ecr
+    - |
+      {{- $ns := .Values.sandbox.namespace }}
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: {{ $ns }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-3"
+          argocd.argoproj.io/sync-options: Prune=false,Delete=false
+        labels:
+          pod-security.kubernetes.io/enforce: baseline
+          sidecar.istio.io/inject: "false"
+      ---
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: sandbox
+        namespace: {{ $ns }}
+      automountServiceAccountToken: false
+      ---
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: Role
+      metadata:
+        name: agent-forge-sandbox
+        namespace: {{ $ns }}
+      rules:
+        - apiGroups: [""]
+          resources: [pods]
+          verbs: [get, list]
+        - apiGroups: [batch]
+          resources: [jobs]
+          verbs: [get, list, create, delete]
+        - apiGroups: [""]
+          resources: [pods/exec]
+          verbs: [get, create]
+      ---
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        name: agent-forge-sandbox
+        namespace: {{ $ns }}
+      subjects:
+        - kind: ServiceAccount
+          name: agent-forge
+          namespace: {{ .Release.Namespace }}
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: agent-forge-sandbox
+      ---
+      apiVersion: v1
+      kind: ResourceQuota
+      metadata:
+        name: agent-forge-sandbox
+        namespace: {{ $ns }}
+      spec:
+        hard:
+          pods: {{ .Values.sandbox.maxPods | quote }}
+          count/jobs.batch: {{ .Values.sandbox.maxPods | quote }}
+      {{- if .Values.resources }}
+          requests.cpu: {{ mulf .Values.sandbox.cpus .Values.sandbox.maxPods | quote }}
+          limits.cpu: {{ mulf .Values.sandbox.cpus .Values.sandbox.maxPods | quote }}
+          requests.memory: {{ printf "%dMi" (mul .Values.sandbox.memoryMb .Values.sandbox.maxPods) | quote }}
+          limits.memory: {{ printf "%dMi" (mul .Values.sandbox.memoryMb .Values.sandbox.maxPods) | quote }}
+          requests.ephemeral-storage: {{ printf "%dMi" (mul (add (mul .Values.sandbox.diskMb 2) 512) .Values.sandbox.maxPods) | quote }}
+          limits.ephemeral-storage: {{ printf "%dMi" (mul (add (mul .Values.sandbox.diskMb 2) 512) .Values.sandbox.maxPods) | quote }}
+      {{- end }}
+      ---
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: sandbox-isolation
+        namespace: {{ $ns }}
+      spec:
+        podSelector: {}
+        policyTypes: [Ingress, Egress]
+        ingress: []
+        egress: []
+      ---
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: sandbox-egress
+        namespace: {{ $ns }}
+      spec:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: agent-forge-sandbox
+        policyTypes: [Egress]
+        egress:
+          - to:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: kube-system
+                podSelector:
+                  matchLabels:
+                    k8s-app: kube-dns
+      {{- range .Values.sandbox.dnsCidrs }}
+              - ipBlock:
+                  cidr: {{ . | quote }}
+      {{- end }}
+            ports:
+              - {protocol: UDP, port: 53}
+              - {protocol: TCP, port: 53}
+      {{- if .Values.sandbox.allowPublic }}
+          # The declared clusters use IPv4; policy CIDRs must match the cluster IP family.
+          - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  except: [0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.0.0.0/24, 192.0.2.0/24, 192.168.0.0/16, 198.18.0.0/15, 198.51.100.0/24, 203.0.113.0/24, 224.0.0.0/4, 240.0.0.0/4]
+            ports:
+              - {protocol: TCP, port: 80}
+              - {protocol: TCP, port: 443}
+      {{- end }}
+          # Native CLIs reach only this installation's authenticated Forge Gateway.
+          - to:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: {{ include "app.namespace" . | quote }}
+                podSelector:
+                  matchLabels:
+      {{- include "app.selectorLabels" . | nindent 14 }}
+            ports:
+              - {protocol: TCP, port: {{ .Values.service.targetPort }}}
+      {{- with .Values.sandbox.extraEgress }}
+      {{ toYaml . | indent 4 }}
+      {{- end }}
+    - |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: agent-forge-sandbox
+      data:
+        FORGE_SANDBOX_IMAGE: {{ printf "%s:sandbox-%s" .Values.image.repository .Values.image.tag | quote }}
+        FORGE_SANDBOX_API_URL: {{ printf "http://%s.%s.svc.cluster.local:%v" (include "app.fullname" .) (include "app.namespace" .) .Values.service.port | quote }}
+        FORGE_SANDBOX_MEMORY_MB: {{ .Values.sandbox.memoryMb | quote }}
+        FORGE_SANDBOX_DISK_MB: {{ .Values.sandbox.diskMb | quote }}
+        FORGE_SANDBOX_CPUS: {{ .Values.sandbox.cpus | quote }}
+        FORGE_KUBE_NAMESPACE: {{ .Values.sandbox.namespace | quote }}
+        FORGE_INSTANCE: {{ .Release.Name | quote }}
+        FORGE_KUBE_RESOURCES_ENABLED: {{ not (empty .Values.resources) | quote }}
+    - |
+      apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: agent-forge-metrics
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          kind: ClusterSecretStore
+          name: parameter-store
+        target:
+          name: agent-forge-metrics
+          creationPolicy: Owner
+        data:
+          - secretKey: token
+            remoteRef:
+              key: {{ .Values.ssmPrefix }}/agent-forge/metrics-bearer-token
+    - |
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: {{ include "app.fullname" . }}
+        namespace: {{ include "app.namespace" . }}
+      spec:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/instance: {{ .Release.Name }}
+        policyTypes: [Ingress]
+        ingress:
+          - from:
+              - podSelector: {}
+      {{- range concat .Values.ingressNamespaces .Values.servicePeers }}
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: {{ . | quote }}
+      {{- end }}
+            ports:
+              - protocol: TCP
+                port: {{ .Values.service.targetPort }}
+  registry:
+    region: ap-northeast-2
+  automountServiceAccountToken: true
+  sandbox:
+    namespace: agent-forge-workspaces
+    maxPods: 2
+    memoryMb: 1024
+    diskMb: 2048
+    cpus: 1
+    dnsCidrs: []
+    allowPublic: true
+    extraEgress: []
+  additionalConfigmap:
+    enabled: true
+    names:
+    - agent-forge-sandbox
+  podAnnotations:
+    checksum/sandbox: '{{ dict "sandbox" .Values.sandbox "resources" .Values.resources "image" .Values.image | toYaml
+      | sha256sum }}'
+  ingressNamespaces:
+  - istio-system
+  - addon-prometheus
+  - addon-alloy
+  servicePeers:
+  - agent-studio
+  - agent-forge-workspaces

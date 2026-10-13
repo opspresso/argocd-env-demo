@@ -1,44 +1,30 @@
 app:
   fullnameOverride: agent-memory
-
   image:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-memory
     tag: latest
-
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
-      # cpu: 200m
       memory: 512Mi
-
   service:
     name: http
     targetPort: 3000
-
-  # Draining a pod takes up to the grace period below, so replacing pods one at a
-  # time would stretch a rollout to that many multiples. Surging the whole new set
-  # at once keeps a rollout to roughly a single drain, at the cost of briefly
-  # running double the pods. maxUnavailable stays 0 — capacity never dips.
   controller:
     strategy:
       rollingUpdate:
         maxSurge: 100%
         maxUnavailable: 0
-
-  # Readiness checks PostgreSQL schema and Neo4j connectivity.
   readinessProbe:
     failureThreshold: 3
     httpGet:
       path: /api/health
       port: 3000
     initialDelaySeconds: 5
-    # PostgreSQL checkout/query (2.5s) + Neo4j response deadline (2s).
     timeoutSeconds: 6
     periodSeconds: 10
-
-  # Dependency outages must remove readiness without restarting every replica.
   livenessProbe:
     httpGet:
       path: /api/live
@@ -46,7 +32,6 @@ app:
     timeoutSeconds: 2
     initialDelaySeconds: 10
     periodSeconds: 10
-
   startupProbe:
     httpGet:
       path: /api/live
@@ -54,172 +39,132 @@ app:
     timeoutSeconds: 2
     periodSeconds: 5
     failureThreshold: 60
-
-  # Next.js drains in-flight HTTP requests before exiting; workers drain separately.
   terminationGracePeriodSeconds: 660
-
-  # SIGTERM makes Next.js stop accepting new connections immediately, while
-  # removing the pod from Service endpoints propagates asynchronously. Without
-  # this pause, requests routed during that window hit a closed listener and fail.
   lifecycle:
     preStop:
       exec:
-        command: ["/bin/sh", "-c", "sleep 15"]
-
-  # Memory exports process metrics; Studio active-run metrics do not apply.
+        command:
+        - /bin/sh
+        - -c
+        - sleep 15
   autoscaling:
     enabled: true
     minReplicas: 2
     maxReplicas: 6
     metrics:
-      - type: ContainerResource
-        containerResource:
-          name: cpu
-          container: app
-          target:
-            type: Utilization
-            averageUtilization: 70
+    - type: ContainerResource
+      containerResource:
+        name: cpu
+        container: app
+        target:
+          type: Utilization
+          averageUtilization: 70
     behavior:
       scaleUp:
         stabilizationWindowSeconds: 60
         policies:
-          - type: Percent
-            value: 100
-            periodSeconds: 60
+        - type: Percent
+          value: 100
+          periodSeconds: 60
       scaleDown:
         stabilizationWindowSeconds: 900
         policies:
-          - type: Pods
-            value: 1
-            periodSeconds: 300
-
+        - type: Pods
+          value: 1
+          periodSeconds: 300
   serviceMonitor:
     enabled: true
     endpoints:
-      - interval: 15s
-        path: /api/metrics
-        port: http
-        authorization:
-          type: Bearer
-          credentials:
-            name: agent-memory-external
-            key: METRICS_BEARER_TOKEN
-
+    - interval: 15s
+      path: /api/metrics
+      port: http
+      authorization:
+        type: Bearer
+        credentials:
+          name: agent-memory-external
+          key: METRICS_BEARER_TOKEN
   routing:
     httpRoute:
       parentRefs:
-        - name: istio-ingressgateway
-          namespace: istio-system
-
+      - name: istio-ingressgateway
+        namespace: istio-system
   serviceAccount:
     create: true
-
-  # Keeps replicas off a single node so one node's loss cannot take the service
-  # with it — and, with the long grace period, cannot stall every in-flight run.
   podAntiAffinity:
     topologyKey: kubernetes.io/hostname
-
-  # maxUnavailable, not minAvailable: minAvailable equal to minReplicas would
-  # leave no disruption budget at the floor and block node drains outright.
-  # One pod at a time holds at every fleet size.
   pdb:
     enabled: true
     maxUnavailable: 1
-
   externalSecrets:
     enabled: true
     refreshInterval: 1h
     secretStoreRef:
       kind: ClusterSecretStore
       name: parameter-store
-
-  workloads:
-    worker:
-      enabled: false
-      replicas: 1
-      fullnameOverride: agent-memory-worker
-      containerName: worker
-      command: [node, build/worker.cjs]
-      service:
-        enabled: false
-      serviceAccount:
-        name: agent-memory
-      automountServiceAccountToken: false
-      podAnnotations:
-        sidecar.istio.io/inject: 'false'
-      terminationGracePeriodSeconds: 60
-      podAntiAffinity:
-        topologyKey: kubernetes.io/hostname
-      controller:
-        strategy:
-          rollingUpdate:
-            maxSurge: 1
-            maxUnavailable: 0
-      envFrom:
-        - configMapRef:
-            name: agent-memory
-        - secretRef:
-            name: agent-memory-external
-      startupProbe:
-        httpGet: {path: /api/health, port: 3000}
-        periodSeconds: 5
-        timeoutSeconds: 2
-        failureThreshold: 60
-      readinessProbe:
-        httpGet: {path: /api/health, port: 3000}
-        periodSeconds: 10
-        timeoutSeconds: 2
-      livenessProbe:
-        httpGet: {path: /api/health, port: 3000}
-        periodSeconds: 10
-        timeoutSeconds: 2
-      resources:
-        requests: {cpu: 200m, memory: 512Mi}
-        limits: {memory: 2Gi}
-      overrides: |
-        enabled: {{ .Values.workloads.worker.enabled }}
-        replicaCount: {{ .Values.workloads.worker.replicas }}
-        image: {{ toYaml .Values.image | nindent 2 }}
-        imagePullSecrets: {{ toYaml .Values.imagePullSecrets | nindent 2 }}
-        podAnnotations:
-          checksum/config: {{ toYaml .Values.configmap | sha256sum }}
-        {{- if not .Values.resources }}
-        resources: null
-        {{- end }}
-
   raw:
     enabled: true
     parentTemplates:
-      - |
-          {{- if .Values.workloads.worker.enabled }}
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: agent-memory-worker
-            namespace: {{ include "app.namespace" . }}
-            labels:
-          {{ include "app.labels" . | indent 4 }}
-              app.kubernetes.io/component: worker
-          spec:
+    - |
+      apiVersion: generators.external-secrets.io/v1alpha1
+      kind: ECRAuthorizationToken
+      metadata:
+        name: agent-memory-ecr
+        namespace: {{ include "app.namespace" . }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-2"
+      spec:
+        region: {{ .Values.registry.region }}
+      ---
+      apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: ecr-registry
+        namespace: {{ include "app.namespace" . }}
+        annotations:
+          argocd.argoproj.io/sync-wave: "-1"
+      spec:
+        refreshInterval: 1h
+        target:
+          name: ecr-registry
+          template:
+            type: kubernetes.io/dockerconfigjson
+            data:
+              .dockerconfigjson: |
+                {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
+        dataFrom:
+          - sourceRef:
+              generatorRef:
+                apiVersion: generators.external-secrets.io/v1alpha1
+                kind: ECRAuthorizationToken
+                name: agent-memory-ecr
+    - |
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: {{ include "app.fullname" . }}
+        namespace: {{ include "app.namespace" . }}
+      spec:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/instance: {{ .Release.Name }}
+        policyTypes: [Ingress]
+        ingress:
+          - from:
+              - podSelector: {}
+      {{- range concat .Values.ingressNamespaces .Values.servicePeers }}
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: {{ . | quote }}
+      {{- end }}
             ports:
-              - name: http
-                port: 80
-                targetPort: 3000
-            selector:
-              app.kubernetes.io/name: agent-memory-worker
-              app.kubernetes.io/instance: {{ .Release.Name }}
-          {{- end }}
-      - |
-          {{- if and .Values.workloads.worker.enabled .Values.resources (gt (int .Values.workloads.worker.replicas) 1) }}
-          apiVersion: policy/v1
-          kind: PodDisruptionBudget
-          metadata:
-            name: agent-memory-worker
-            namespace: {{ include "app.namespace" . }}
-          spec:
-            maxUnavailable: 1
-            selector:
-              matchLabels:
-                app.kubernetes.io/name: agent-memory-worker
-                app.kubernetes.io/instance: {{ .Release.Name }}
-          {{- end }}
+              - protocol: TCP
+                port: {{ .Values.service.targetPort }}
+  registry:
+    region: ap-northeast-2
+  automountServiceAccountToken: false
+  ingressNamespaces:
+  - istio-system
+  - addon-prometheus
+  - addon-alloy
+  servicePeers:
+  - agent-studio

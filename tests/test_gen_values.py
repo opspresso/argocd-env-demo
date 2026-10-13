@@ -49,6 +49,8 @@ def test_missing_template_fails(project):
     "env: eks\nreplicas: 2\n",
     "env: typo\ncluster: eks-demo\nreplicas: 2\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nresources: 'false'\n",
+    "env: eks\ncluster: eks-demo\nreplicas: 2\nagent_librio_maintenance: 'false'\n",
+    "env: eks\ncluster: eks-demo\nreplicas: 2\nagent_forge_maintenance: 'false'\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nagent_studio_maintenance: 'false'\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nmetrics: {backend: typo}\n",
     "env: eks\ncluster: eks-demo\nreplicas: 2\nmetrics: prometheus\n",
