@@ -1,163 +1,146 @@
 # Agent Platform 배포
 
-`argocd-env-demo`는 앱·worker와 PostgreSQL·Neo4j·MinIO Helm chart를,
-`argocd-env-addons`는 Argo CD·External Secrets·Gateway·관측성을,
-`terraform-env-demo`는 AWS 인프라·IAM·EKS Pod Identity·S3를 소유한다.
+현재 실행 환경은 **k3s `k3s-demo` alpha**입니다. EKS 클러스터는 존재하지 않으며
+`eks-demo` prod 값은 향후 설치를 위한 선언입니다. EKS 렌더 성공은 실제 배포·격리 검증을 뜻하지 않습니다.
 
-| 항목 | k3s | EKS |
+| 저장소 | 책임 |
+| --- | --- |
+| `terraform-env-demo` | AWS 리소스, IAM, ECR, EKS Pod Identity, S3 |
+| `argocd-env-addons` | Argo CD, External Secrets, Gateway/TLS, CNI, 관측성 |
+| `argocd-env-demo` | 네 앱, worker, 실행 namespace/RBAC/NetworkPolicy, PostgreSQL·MinIO·보존 Neo4j |
+
+| 앱 | 공개 호스트 | 처리 책임 |
 | --- | --- | --- |
-| 용도 | 현재 서비스, c6i.xlarge 단일 노드 | Studio·Memory 서비스 중지, 이전 원본 보존 |
-| Phase | `alpha` | `prod` |
-| Studio | `studio.opsp.dev`, `studio.agrt.dev` | `studio.opspresso.com`, `agentops.demo.clush.net` |
-| Memory | `memory.opsp.dev`, `memory.agrt.dev` | `memory.opspresso.com` |
-| PostgreSQL | `agent-studio/postgres`, 5Gi | 같은 서비스, 20Gi gp3 |
-| Neo4j | `agent-memory/memory-neo4j`, 5Gi | 같은 서비스, 20Gi 기본 StorageClass(gp3) |
-| Object storage | MinIO의 `agent-studio-static`, `agent-memory` | AWS S3 `agent-studio-static` |
-| Secret 경로 | `/k8s/k3s-demo/` | `/k8s/eks-demo/` |
-| Studio control workers | 활성화, compute resources 미선언 | 활성화, requests/limits 선언 |
-| Workspace 실행 Pod | requests·limits 미선언, 볼륨 크기 제한·최대 2개 | CPU·메모리·디스크 한도, 최대 32개·Auto Mode 전용 pool |
-| 복구용 legacy Docker PVC | 10Gi local-path 보존, daemon 비활성 | 48Gi gp3 보존, daemon 비활성 |
+| Studio | `studio.agrt.dev` | Agent·Chat, 승인, 서비스 위임, 오디오/Workspace 관찰·대화 재개 |
+| Memory | `memory.agrt.dev` | 사용자·팀·조직의 단기/장기 메모리, recall/remember/handoff |
+| Librio | `librio.agrt.dev` | 문서·검색·지식 그래프, 원본 녹음·전사·회의록, durable queue worker |
+| Forge | `forge.agrt.dev` | Workspace·Sandbox·Run·Session·Git, native 모델 Gateway |
 
-현재 Studio와 Memory는 alpha에서 서비스한다. EKS의 두 앱은 유지보수 설정으로 웹·worker·ticker를 중지하며 Neo4j도 offline 상태를 유지한다. PostgreSQL·원본 S3·PVC는 삭제하지 않는다. 릴리즈 워크플로는 그대로 유지한다.
+모든 Agent 앱은 `.agrt.dev` 호스트 하나만 사용합니다. `BETTER_AUTH_URL`,
+`BETTER_AUTH_ALLOWED_HOSTS`, HTTPRoute는 같은 호스트를 가리킵니다. Forge는
+`FORGE_ALLOWED_ORIGINS`를 사용합니다. 프록시는 원래 `Host`를 전달해야 합니다.
+OAuth 클라이언트에 `https://<hostname>/api/auth/callback/google`을 등록합니다.
+Librio는 기존 Memory Google 클라이언트를 명시적으로 참조하고, 세션 Secret은 별도로 사용합니다.
+`trusted_proxy_cidrs`는 실제 프록시 hop에 맞춰 EKS는 VPC CIDR, k3s 단일 Traefik은 빈 목록을 사용합니다.
 
-k3s의 `*.opsp.dev` 앱은 Traefik Gateway와 cert-manager를 사용한다. EKS의
-`*.opspresso.com` 앱은 ALB의 ACM 인증서와 Istio Gateway를 사용한다. Google OAuth 클라이언트에는 사용하는 각 도메인의
-`https://<hostname>/api/auth/callback/google` redirect URI를 등록해야 한다.
+## DB와 원본 보존
 
-Studio의 `agent_studio.allowed_hosts`와 Memory의 `agent_memory.allowed_hosts`는 정확한 호스트 목록이다.
-생략하면 각 서비스의 `hostname`만 사용한다. 이 목록으로 `BETTER_AUTH_ALLOWED_HOSTS`와 HTTPRoute의 호스트를 함께 생성한다.
-`BETTER_AUTH_URL`은 기본 도메인의 HTTPS origin을 유지하고, 프록시는 원래 `Host`를 전달해야 한다.
-추가 도메인의 DNS·TLS 인증서·Gateway 연결은 인프라 저장소에서 구성한다.
-Memory는 멀티도메인을 지원하는 v0.33.0 이상을 사용하고, Google OAuth에는
-`https://memory.opsp.dev/api/auth/callback/google`과 `https://memory.agrt.dev/api/auth/callback/google`을 모두 등록한다.
-각 도메인의 로그인 세션은 호스트별로 저장되며 조직과 자료는 같은 설치를 공유한다.
+네 서비스의 `DATABASE_URL`은 `/k8s/<cluster>/agent-platform/database-url` 하나입니다.
+PostgreSQL의 새 빈 `agent_platform` DB를 사용하고, 업무 테이블은 각각
+`agent_studio_`, `agent_memory_`, `agent_librio_`, `agent_forge_` 접두어로 구분합니다.
+Librio pg-boss도 같은 DB에 전용 queue namespace를 사용합니다.
 
-`trusted_proxy_cidrs`는 두 앱의 인증 요청에서 신뢰할 프록시 hop 범위를 함께 정한다.
-EKS의 ALB·Istio 경로는 VPC CIDR을 사용하고, Traefik 하나를 거치는 k3s는 빈 목록으로
-단일 client 주소만 허용한다. 이 값이 없거나 실제 경로와 다르면 여러 사용자가 인증 요청 제한을 공유할 수 있다.
+`postgres` StatefulSet, `data-postgres-0` PVC, 기존 `agent_studio` DB 사용자와 비밀번호는 유지합니다.
+`postgres-bootstrap`은 새 DB가 없을 때만 만들고 `vector` extension을 활성화합니다.
+이미 있는 `agent_studio`·`agent_memory` DB를 삭제하거나 복사하지 않습니다.
+앱 이미지는 자신의 namespace만 초기화하며 운영 DB reset은 배포 절차에 없습니다.
+PostgreSQL readiness는 기존 DB와 새 DB 어느 쪽에도 의존하지 않는 `postgres` DB로 확인합니다.
+`max_connections` 변경은 기존 StatefulSet의 재시작을 수반합니다.
 
-Grafana MCP의 대상은 `grafana_url`로 지정한다. EKS management 클러스터는 내부 Service를,
-Grafana가 설치되지 않은 k3s는 같은 Grafana의 HTTPS 주소를 사용한다. 관측 지표의 저장소와
-MCP가 접속하는 Grafana API 주소를 구분한다.
+k3s MinIO는 기존 PVC와 `agent-studio-static`, `agent-memory` 버킷을 보존하고
+`agent-librio` 버킷을 추가합니다. Studio Artifact와 Librio 원본은 각 앱의 인증된 API로 접근합니다.
+Memory와 Forge에는 S3 자격 증명을 주입하지 않습니다.
+기존 `agent-memory/memory-neo4j` Application·PVC도 보존합니다. Librio는 기본 PostgreSQL graph를
+사용하므로 Neo4j 환경변수를 주입하지 않습니다. 기존 Neo4j 중지·삭제는 별도 운영 변경입니다.
 
-## 연결과 권한
+미래 EKS의 S3 SDK는 Pod Identity를 사용합니다. MinIO endpoint와 정적 S3 키는 주입하지 않습니다.
 
-PostgreSQL은 pgvector가 포함된 이미지로 `agent_studio`와 `agent_memory` database를
-초기화한다. 두 앱은 기존 배포 계약에 따라 `agent_studio` 사용자를 공유한다.
-Agent Studio의 DB 전환 중에는 대상 `env/<cluster>.yaml`의 `agent_studio_maintenance: true`를
-GitOps에 반영한다. 이 설정은 Studio 앱·오디오/Workspace worker를 0개로 내리고 ticker를
-중지하지만 PostgreSQL·Agent Memory는 유지한다. Studio 앱·오디오/Workspace worker Pod가
-모두 종료되고 진행 중인 ticker 요청이 끝난 것을 확인한 뒤 백업·복원을 진행한다.
-새 DB와 이미지 검증 뒤 `false`로 되돌려 기동한다.
-Memory의 웹·queue worker는 `agent_memory_maintenance: true`로 함께 중지한다.
-첫 Sync에서 두 앱의 웹·worker·ticker Pod가 종료되고 실행 중 queue 작업이 없는지 확인한다.
-그 뒤 별도 Sync에서 `neo4j.offline_maintenance: true`로 Neo4j를 offline 모드로 전환한다.
-이 모드는 PVC를 유지하고 DB process를 중지한 채 dump·load 명령을 실행할 수 있게 한다.
-복원 후에는 먼저 `neo4j.offline_maintenance: false`로 되돌리고 Neo4j readiness와 데이터를 검증한다.
-그 검증이 끝난 뒤 별도 Sync에서 서비스할 환경의 앱·worker·ticker만 재개한다.
-`postgres-bootstrap` Sync hook은 두 database에 vector extension을 활성화한다.
-Studio와 Memory는 자기 이미지가 제공하는 시작 절차로 빈 DB를 초기화한다.
-Memory의 기존 schema fingerprint가 다르면 시작을 거부하며 자동으로 데이터를 초기화하지 않는다.
-
-Neo4j는 공식 Helm chart의 Community 단일 인스턴스다. 앱은 내부 Bolt 서비스만 사용한다.
-PostgreSQL·Neo4j는 두 환경 모두 단일 인스턴스이며, EKS 리소스 설정이 DB 고가용성이나
-백업을 제공하는 것은 아니다. 별도 백업·복구 운영이 필요하다.
-
-EKS에서 S3 SDK는 service account에 연결된 Pod Identity를 사용한다. MinIO endpoint와
-정적 S3 credential은 EKS에 주입하지 않는다. `agent-memory` 이미지에는 기본 AWS
-credential chain을 허용하는 S3 설정 코드가 포함되어 있어야 한다.
-
-| IAM role | 서비스 계정 | S3 객체 범위 |
+| ServiceAccount | IAM role | 버킷 |
 | --- | --- | --- |
-| `pod-role--agent-studio` | `agent-studio/agent-studio` | `artifacts/*`, `images/*`, `source-files/*` |
-| `pod-role--agent-memory` | `agent-memory/agent-memory` | `organizations/*/documents/*` |
+| `agent-studio/agent-studio` | `pod-role--agent-studio` | `agent-studio-static` |
+| `agent-librio/agent-librio` | `pod-role--agent-librio` | `agent-librio-static` |
 
-버킷은 비공개로 설정하고 TLS 접근만 허용한다. Studio는 `ARTIFACT_ACCESS_MODE=proxied`로
-접근 권한을 검사하고 Memory는 인증된 문서 API를 사용한다. Studio IAM policy에는
-DynamoDB·Bedrock·S3 Vectors 권한을 두지 않는다. k3s는 MinIO를 사용하므로 노드에
-Studio S3 policy를 연결하지 않는다.
+## 인증과 Secret 준비
 
-앱 namespace의 기존 ECR 인증 리소스는 유지한다. 실행 전용 namespace에는 External Secrets의
-`ECRAuthorizationToken` generator로 imagePullSecret을 공급한다. EKS는 controller의 Pod Identity,
-k3s는 기존 EC2 역할로 인증한다. Workspace image는 Studio와 함께 발행된 tag를 사용한다.
-`agent-studio-workspace` ConfigMap은 최종 `app.image.repository`와 phase의 `app.image.tag`로
-`WORKSPACE_IMAGE=<repository>:workspace-<tag>`를 만들며 앱과 worker가 함께 읽는다.
-같은 ConfigMap의 `WORKSPACE_MODEL_GATEWAY_URL`은 최종 Studio Service 이름·namespace·서비스
-포트로 구성한다. Native CLI는 이 주소의 인증된 모델 Gateway를 호출하며 공급자 키를 받지 않는다.
-환경 파일에 Workspace 버전을 따로 고정하지 않는다. 전환·PVC 보존·drain gate는
-[Kubernetes Workspace 운영](workspace-kubernetes.md)을 따른다.
-
-EKS의 embedding과 knowledge extraction은 공개 provider를 사용한다. k3s에서 접근하는
-`100.66.249.76`의 self-hosted endpoint를 EKS에서 접근 가능하다고 가정하지 않는다.
-기존 DB의 Settings override는 환경변수보다 우선하므로 provider 변경 시 함께 확인한다.
-
-## 코딩·오디오 실행 준비
-
-production의 동시성·DB 연결·노드 용량은 [용량 운영](production-capacity.md)을 따른다.
-
-두 환경의 Workspace는 `agent-studio-workspaces` namespace의 Pod로 실행한다. 기본 거부
-NetworkPolicy, 명시적 DNS·egress, 최소 RBAC와 ResourceQuota를 함께 적용한다. 내부 모델 endpoint를
-호출하는 Studio만 공급자 연결을 사용한다. Sandbox에는 해당 Studio 앱 Pod·컨테이너 포트만
-추가 허용하며 같은 namespace의 다른 서비스나 Kubernetes API를 허용하지 않는다.
-그 밖의 내부 endpoint가 필요한 설치는 정확한 목적지와 포트를 추가한다. 실제 격리는 테스트 Pod의 요청으로 확인한다.
-
-EKS의 NetworkPolicy는 addons의 `eks-network-policy-eks-demo` controller에 의존한다.
-Auto Mode의 전용 NodeClass는 DefaultDeny를 사용하며, k3s는 기본 network policy controller를 유지한다.
-
-`workspace_legacy_docker=true`로 복구하는 동안 `agent-studio-public` Docker bridge와
-`tcp-docker` Service를 사용한다. `python3 scripts/check_agent_network.py --context eks-demo`는
-legacy 경로를 검사하고, Docker Pod·Service가 없는 현재 구성에서는 `SKIP`을 보고한다.
-새 실행 Pod의 RBAC·DNS·통신 차단·quota·복원은 Agent Studio의 Kubernetes 통합 검사와
-승인 후 클러스터 검증으로 확인한다.
-
-Workspace Git 작업은 해당 Agent에 연결된 GitHub MCP의 호출자 개인 OAuth 권한을 사용한다.
-Sandbox에 GitHub token을 넘기지 않는다. 프로젝트의 저장소 정책, 기본 Runtime, Models의 Runtime별
-모델 선택과 배포 workflow 허용 목록은 Studio에서 관리한다. GitHub MCP 연결만으로 이 준비가 끝나지는 않는다.
-
-worker liveness는 `workspace-heartbeat-check.cjs`로 실제 heartbeat 만료를 확인한다.
-이 실행파일을 포함하는 Studio 이미지를 먼저 릴리스·배포한 뒤 변경한 chart를 동기화한다.
-readiness는 `--worker` 모드로 선택한 Sandbox 백엔드·모델 설정을 확인한다. 30초마다 검사하고
-실패 1회로 readiness를 내리므로 명목 실패 감지 시간은 30초다. liveness는 외부 의존성을 호출하지 않는다.
-
-scan·plugin sync·reindex는 하나의 `agent-studio-ticker` Deployment가 호출한다. scan과 plugin sync는
-요청 시간을 포함해 매분, reindex는 시작 시와 매시간 실행한다. HTTP 실패는 각각 기록하고 다음 정기
-호출을 기다린다. 유지보수 설정은 ticker도 0개로 내린다. 매분 Job Pod를 생성하지 않는다.
-
-오디오에는 등록된 transcription 모델, Plaud OAuth, 프로젝트 AudioJob config, 비공개 저장소와
-audio-worker가 모두 필요하다. 테스트·운영의 설정과 연결은 각각 확인한다. 모델이 없어진 config를
-그대로 재사용하지 않는다. `agent-plugins`의 [Audio 프로필](https://github.com/opspresso/agent-plugins/blob/main/docs/audio-agent.md)과
-[Workspace 프로필](https://github.com/opspresso/agent-plugins/blob/main/docs/code-agent.md)을 따른다.
-
-로컬 Docker에서 실제 방화벽 동작을 확인한다. 이 검사는 별도 DinD에서 공개 HTTPS와 정상 동작하는
-내부 HTTP fixture를 사용하며, 자신의 컨테이너·볼륨만 정리한다.
+External Secrets는 `/k8s/<cluster>/` 경로를 읽습니다. 앱 namespace와 Forge 실행 namespace에는
+각각 ECR generator와 `ecr-registry` Secret이 있습니다. k3s 기존 EC2 역할,
+미래 EKS External Secrets의 IAM 연결을 사용하며 앱에 ECR 장기 키를 전달하지 않습니다.
 
 ```bash
-python3 scripts/check_workspace_network.py
+python3 scripts/bootstrap_agent_platform.py --cluster k3s-demo
+python3 scripts/bootstrap_agent_platform.py --cluster k3s-demo --apply
 ```
 
-## 최초 배포 순서
+첫 명령은 누락 경로만 출력합니다. `--apply`는 누락된 SecureString만 만들고 기존 값을 덮어쓰지 않습니다.
+기존 PostgreSQL 비밀번호에서 공통 DB URL을 만들며, 위임 키·정책 callback 키·체크포인트 키는
+서로 독립적으로 생성합니다. 연결 URL이나 파생 JSON이 기존 키와 모순되면 쓰기 전에 중단합니다.
+Secret 환경변수를 변경한 뒤에는 소비자 Deployment를 새 설정으로 rollout해야 합니다.
+추가 personal credential 또는 key rotation은 이 최초 bootstrap과 분리해 모든 소비자를 함께 갱신합니다.
 
-1. 앱 릴리스의 검증·image 게시를 확인한다. Memory 이미지는 `build/worker.cjs`,
-   Studio 이미지는 같은 tag의 Workspace 이미지를 함께 제공해야 한다.
-2. `terraform-env-demo/demo/4-role`, `demo/5-eks`, `demo/8-agent-studio`에서
-   S3·ECR·Pod Identity·k3s 인프라와 DNS/TLS 연결을 준비한다. 변경 전 plan을 검토하고
-   기존 EC2·volume·bucket을 보존한다. k3s의 cert-manager에는 `opsp.dev` DNS-01 권한이 필요하다.
-3. EKS의 연결 Secret을 확인하고, 승인된 최초 설치에서 없을 때만 생성한다.
+| SSM 경로 (`/k8s/<cluster>/` 아래) | 소비자 |
+| --- | --- |
+| `agent-platform/database-url` | 네 서비스 |
+| `agent-memory/delegation-secret`, `organization-id` | Memory와 Studio |
+| `agent-librio/delegation-secret`, `organization-id` | Librio와 Studio |
+| `agent-librio/policy-secret`, `issuer-policies` | Studio callback / Librio |
+| `agent-librio/better-auth-secret`, `metrics-bearer-token`, `audio-models` | Librio web·worker |
+| `agent-forge/delegation-secret`, `organization-id`, `delegators` | Studio / Forge |
+| `agent-forge/policy-secret`, `issuer-policies` | Studio callback / Forge |
+| `agent-forge/credentials`, `metrics-bearer-token` | Forge의 hash / 수집기의 bearer |
+| `agent-forge/checkpoint-secret`, `credential-secret`, `model-secret`, `model-channels` | Forge |
 
-   ```bash
-   python3 scripts/bootstrap_agent_platform.py --cluster eks-demo
-   python3 scripts/bootstrap_agent_platform.py --cluster eks-demo --apply
-   ```
+bootstrap은 Memory/Librio 조직 ID와 모델 JSON을 생성하지 않습니다. Memory/Librio 초기화가
+완료된 새 DB에서 실제 installation UUID를 읽어 `organization-id`에 기록해야 합니다.
+각 사용자는 대상 서비스에서 인증한 계정과 명시적으로 연결합니다. 이메일 일치로 binding을 만들지 않습니다.
+Forge의 조직은 설정된 namespace이며 기본값은 `agent-platform-<cluster>`입니다.
 
-   생성 대상은 PostgreSQL·Neo4j 연결과 Memory metrics token이다. 값은 SecureString으로
-   전달하고 로그에 출력하지 않는다. 기존 값은 덮어쓰지 않으며 서로 맞지 않는 부분 설정은 거부한다.
-   OAuth·provider·암호화·scan token은 각 chart의 ExternalSecret 참조를 확인한다.
-4. App of Apps를 등록하고 PostgreSQL·Neo4j, k3s의 MinIO를 준비한다.
-   Secret 동기화, 기존 PVC의 보존, DB readiness를 확인한 뒤 앱을 배포한다.
-5. phase의 image tag와 생성 values를 GitOps로 반영한다. 웹·worker가 모두 Ready이고
-   Argo CD가 `Synced/Healthy`인지 확인한다. Memory의 웹만 실행하면 queue는 소비되지 않는다.
-6. 공개 호스트의 DNS·TLS·인증, 앱 readiness·metrics, worker 처리와 MCP의 하류 API 호출을
-   확인한다. 필요한 Workspace 검사는 [Kubernetes Workspace 운영](workspace-kubernetes.md)을 따른다.
+Studio issuer는 `https://studio.agrt.dev`입니다. 위임 토큰은 서비스별 audience·scope·현재 사용자와
+조직을 고정합니다. Forge/Librio의 고정 callback은 내부 Studio Service의
+`/api/services/forge/model-policy`, `/api/services/librio/model-policy`를 사용하며 별도 키로 인증합니다.
+callback의 내부 Studio 주소는 `http://agent-studio.agent-studio.svc.cluster.local:3000`입니다.
+임의 callback URL이나 요청 body의 owner를 신뢰하지 않습니다.
+모니터링용 Forge principal은 `workspace:read`만 가지며 controller에는 토큰의 SHA256만 전달합니다.
+
+Librio `audio-models`와 Forge `model-channels`는 실제 등록 provider/model을 기준으로 준비합니다.
+provider wire ID, 공개 model ID, catalog ID를 구분하고 미확인 가격을 0원으로 만들지 않습니다.
+빈 배열이나 존재하지 않는 모델로 음성·native 실행이 준비됐다고 판단하지 않습니다.
+
+## 실행과 네트워크
+
+Studio의 `agent-studio-audio-worker`와 `agent-studio-workspace-worker`는 원격 작업을 관찰하고
+후속 Agent/Chat을 실행합니다. Studio에는 Sandbox 실행 권한·Docker daemon·Kubernetes token이 없습니다.
+Workspace readiness는 Studio DB와 observer 설정/heartbeat를 확인합니다. Forge 장애는
+Studio observer의 liveness를 실패시키지 않습니다. ticker는 scan/plugin sync를 매분, reindex를 매시간 호출합니다.
+
+Librio는 웹과 별도 `agent-librio-worker` 하나를 사용합니다. 문서/Audio 소비는 worker에서만 활성화합니다.
+웹과 worker는 같은 이미지·모델·AI admission 정책을 사용합니다. quota는 동일 PostgreSQL에서
+interactive/batch와 전체 provider 상한을 합산합니다. pg-boss에는 별도 DB를 만들지 않습니다.
+
+Forge는 `agent-forge` 하나의 프로세스에서 HTTP·MCP·worker·native Gateway를 제공합니다.
+`agent-forge-workspaces` namespace의 controller-owned 실행 Pod만 다룹니다.
+Sandbox 이미지는 같은 release의 `agent-forge:sandbox-<full-v-tag>`이며 독립 `latest`를 쓰지 않습니다.
+공급자·Git 장기 키는 Sandbox에 전달하지 않습니다. 자세한 권한·보존 계약은
+[Kubernetes Workspace 운영](workspace-kubernetes.md)을 따릅니다.
+
+내부 Service와 Pod 포트는 Studio·Memory·Librio(웹/worker) `3000`, Forge `3103`으로 같습니다.
+HTTPRoute backend, Studio 서비스 연결, callback, ticker와 지표 수집도 이 포트를 사용합니다.
+앱 ingress는 해당 플랫폼 Gateway, 수집기, 같은 namespace와 명시된 서비스 peer만 허용합니다.
+k3s Gateway 리소스는 `traefik-gateway` namespace에 있지만 실제 출발 Pod는 `kube-system`에 있습니다.
+Gateway 접근은 `app.kubernetes.io/name=traefik`, `app.kubernetes.io/instance=traefik-kube-system`을
+함께 가진 Pod로 제한하며 다른 `kube-system` Pod를 허용하지 않습니다.
+Studio에는 Forge/Librio callback, Forge에는 Sandbox의 인증된 Gateway 연결을 허용합니다.
+신뢰된 control-plane의 외부 LLM·MCP egress는 기존 동작을 유지합니다.
+Sandbox는 별도 기본 거부 정책으로 DNS·public HTTP/HTTPS·Forge Pod 포트만 허용합니다.
+
+## 최초 전환 순서
+
+1. 네 앱의 필수 검사와 release image 게시를 확인합니다. 전환 동안 `GITOPS_AUTO_DEPLOY=false`로
+   자동 버전 dispatch를 멈추고 Studio·Memory·Librio·Forge controller+Sandbox image를 모두 준비합니다.
+2. Terraform의 ECR/IAM, addons의 `.agrt.dev` DNS/TLS·ESO·Gateway·관측성 계약을 확인합니다.
+   이 절차로 EKS를 만들지 않습니다. k3s의 기존 node·PVC·bucket은 보존합니다.
+3. 기존 Studio 작업 신규 접수를 막고 진행 중 실행의 체크포인트·종료를 확인합니다.
+   새 앱을 올리기 전에 Secret, `agent_platform`, MinIO Librio 버킷을 준비합니다.
+4. 새 이미지로 Memory/Librio 초기화를 완료하고 실제 organization ID와 모델 설정을 검증합니다.
+   사용자 연결은 로그인한 계정으로 설정합니다. 조직 ID가 준비되기 전에 Studio 연결을 활성화하지 않습니다.
+5. `scripts/gitops.py deploy --dry-run`으로 phase 버전과 이력을 생성하고 chart 변경과 함께 반영합니다.
+   phase 값을 직접 편집하지 않습니다. 동일 배포에서 새 이미지·DB URL·서비스 경계를 전환합니다.
+6. Argo CD `Synced/Healthy`, 정확한 image tag, DB readiness와 metrics를 확인합니다.
+   로그인, Memory recall/remember, Librio 원본 upload→전사/회의록→검색, Forge 실행→로그→취소/복원을 확인합니다.
+7. 정상 동작을 확인한 뒤 앱 release의 자동 GitOps gate를 원래 설정으로 복원합니다.
+
+`agent_<service>_maintenance: true`는 해당 서비스의 웹·worker/HPA만 정지합니다.
+Studio는 ticker도 정지합니다. 각 flag는 다른 앱·DB·storage를 삭제하지 않습니다.
+이전 Workspace PVC/namespace는 보존하며 구 실행기 재활성화 경로는 제공하지 않습니다.
 
 ## 검증
 
@@ -167,30 +150,13 @@ python3 scripts/validate.py --all-charts
 pytest
 ```
 
-Memory 웹의 readiness `/api/health`는 PostgreSQL·schema·Neo4j를 제한된 시간 안에 검사한다.
-Startup·liveness `/api/live`는 의존 서비스와 분리해 HTTP event loop의 응답을 확인한다.
-Memory HPA는 웹 CPU를, Studio HPA는 `agent_studio_active_execution_requests`와 앱 CPU를 사용한다.
-Memory worker는 별도 replica·종료 유예를 사용하며 startup 이후 probe HTTP를 제공한다.
-Memory 웹·worker metrics는 같은 전용 `METRICS_BEARER_TOKEN`으로 인증한다.
+Helm/pytest는 alpha와 미래 EKS의 resource 정책, 같은 DB URL, 인증·metrics, 이미지 연동,
+RBAC·NetworkPolicy·quota·보존 계약을 검사합니다. 실제 환경 검증은 별도입니다.
+Memory/Librio web은 `/api/live`와 DB readiness `/api/health`를 나누고, Librio worker는 초기화 후
+`/api/health`를 제공합니다. Forge `/health`는 DB/backend readiness, `/`는 독립 HTTP liveness입니다.
+Librio/Memory `/api/metrics`, Forge `/metrics`는 전용 bearer를 요구합니다.
+health 성공만으로 원본 storage·provider·작업 성공을 판정하지 않습니다.
 
-배포 후에는 Argo CD health와 함께 각 앱의 DB readiness, S3/MinIO 쓰기·읽기·정리,
-Memory 문서 처리, Studio audio·workspace worker, OAuth 로그인, Prometheus scrape를 확인한다.
-Health 응답만으로 object storage·provider·worker 처리 성공을 판정하지 않는다.
-
-### PostgreSQL 이미지와 정렬 규칙
-
-PostgreSQL 이미지의 OS·libc가 바뀌면 기존 DB의 정렬 규칙 버전도 확인한다. 접속 가능한
-DB에서 다음 조회를 실행하고 앱 DB뿐 아니라 새 DB의 원본인 `template1`도 대조한다.
-
-```sql
-SELECT datname, datcollversion,
-       pg_database_collation_actual_version(oid) AS actual_version
-FROM pg_database;
-```
-
-버전이 다르면 해당 DB에 연결해 의존하는 인덱스·저장 객체를 확인하고 먼저 재구성한다.
-그 뒤에 `ALTER DATABASE ... REFRESH COLLATION VERSION`을 실행한다. 명명된 collation도
-현재 DB의 encoding에 적용 가능한 항목을 확인한다. 빈 기본 DB에서 버전 정보만 갱신하려면
-사용자 객체와 해당 collation에 의존하는 객체가 없음을 먼저 증명해야 한다.
-앱 DB·보관 DB를 일괄 초기화하거나 경고를 없애기 위해 버전만 덮어쓰지 않는다.
-[PostgreSQL의 collation 복구 절차](https://www.postgresql.org/docs/18/sql-altercollation.html#SQL-ALTERCOLLATION-NOTES)를 따른다.
+DB 용량과 롤링 배포 연결 예산은 [용량 운영](production-capacity.md)을 따릅니다.
+PostgreSQL OS/libc를 바꿀 때는 기존·보관 DB와 `template1`의 collation 버전도 확인합니다.
+경고를 없애려고 데이터나 인덱스 재구성 없이 버전만 덮어쓰지 않습니다.

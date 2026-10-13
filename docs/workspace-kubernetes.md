@@ -1,70 +1,82 @@
 # Kubernetes Workspace 운영
 
-`agent-studio-workspaces` namespace의 실행 Pod 하나가 Workspace 하나를 담당한다. 앱·worker는
-해당 namespace의 Pod get/list/create/delete와 exec만 사용할 수 있다. 실행 Pod에는 서비스 계정
-토큰·운영 Secret·호스트 경로를 mount하지 않는다. namespace quota는 EKS 32개, k3s 2개의
-실행 Pod를 허용한다. env의 `resources`가 앱·worker와 동적 실행 Pod의 자원 정책을 함께 결정한다.
-EKS는 CPU·메모리·ephemeral-storage requests·limits와 quota를 사용한다. k3s는
-`WORKSPACE_KUBERNETES_RESOURCES=false`로 이 선언을 생략하며 Pod 수와 `emptyDir.sizeLimit`은 유지한다.
+실행 소유자는 Forge입니다. `agent-forge` ServiceAccount는 `agent-forge-workspaces`에서
+`jobs.batch` get/list/create/delete, Pod get/list, Pod exec get/create만 사용할 수 있습니다.
+Studio는 Forge API를 관찰하며 실행 namespace의 RBAC를 갖지 않습니다.
 
-NetworkPolicy는 ingress와 egress를 기본 거부한다. cluster DNS와 public HTTP/HTTPS만 허용하며
-사설망·다른 Pod·metadata endpoint는 차단한다. 폐쇄망이나 내부 모델은
-`workspace_allow_public: false`와 `workspace_extra_egress`에 정확한 목적지·포트를 선언한다.
-현재 DNS 허용 주소는 EKS `172.20.0.10/32`, k3s `10.43.0.10/32`다.
-두 클러스터는 IPv4를 사용하므로 CIDR 허용 규칙도 IPv4로만 구성한다. IPv6는 기본 차단을 유지한다.
+Forge의 Job은 passive supervisor를 실행합니다. 사용자 명령은 저장된 Job·Pod UID를 검증한
+뒤 exec로 시작합니다. `backoffLimit: 0`, `restartPolicy: Never`와 단일 parallelism을 사용하여
+Kubernetes의 자동 재시도가 사용자 명령을 다시 실행하지 못하게 합니다.
+Job owner가 있는 Pod는 향후 EKS CNI 정책 적용을 위한 필수 조건입니다.
+현재 실제 환경은 k3s이며 EKS 정책 적용은 미래 클러스터에서 다시 검증해야 합니다.
 
-## 디스크와 메모리
+실행 Pod는 `sandbox` ServiceAccount를 사용하며 token을 mount하지 않습니다.
+운영 Secret·공급자 장기 키·Git token·hostPath도 전달하지 않습니다.
+namespace quota는 alpha 2개, 미래 EKS 32개의 Pod와 Job을 각각 제한합니다.
+`resources: false`인 k3s는 compute requests/limits를 생략하고 Pod/Job 수와 `emptyDir.sizeLimit`을 유지합니다.
+EKS는 CPU·메모리·ephemeral-storage requests/limits와 quota를 함께 선언합니다.
 
-Kubernetes 실행의 `/workspace`, `/control`, `/tmp`와 이미지 캐시는 전용 노드의 ephemeral 디스크를
-사용한다. EKS `WORKSPACE_DISK_MB=2048`에서는 Pod당 4608Mi를 예약·제한하며 namespace의
-32개 Pod 상한은 144Gi 예약량이다. 현재 Workspace NodeClass의 노드별 디스크는 160Gi다. 이미지·호스트
-로그는 이 Pod 예약량과 별개이므로 node-exporter 파일시스템과 kubelet 사용량을 함께 확인한다.
+## 네트워크
 
-파일과 native Session은 암호화한 체크포인트로 복원한다. Pod별 영구 PVC는 만들지 않으며,
-Pod 삭제·퇴거 시 마지막 체크포인트 이후의 파일은 복구되지 않는다. `emptyDir.sizeLimit`은
-즉시 쓰기를 막는 quota가 아니라 kubelet 퇴거 기준이다. EBS PVC는 이 보존 계약을 바꾸거나
-더 큰 작업 디스크가 필요할 때 별도로 설계한다. CNI의 커널 메모리 누수는 PVC로 해결되지 않는다.
+NetworkPolicy는 ingress/egress를 기본 거부합니다. 실행 Pod에는 다음 egress만 허용합니다.
 
-`workspace_storage`는 Kubernetes 실행 Pod가 아니라 보존된 DinD 복구용 PVC의 용량이다.
-EKS 실행 메모리는 2Gi로 설정하며 한도 초과는 cgroup OOM과 Workspace 중단으로 확인한다.
+- cluster DNS: EKS `172.20.0.10/32`, k3s `10.43.0.10/32`와 CoreDNS Pod
+- public IPv4 HTTP/HTTPS: private·loopback·link-local·metadata·multicast 대역 제외
+- 해당 Forge Service가 선택하는 Pod의 실제 HTTP 포트 `3103`
 
-EKS worker는 2 replicas이며 각각 native 작업 16개와 Chat 후속 실행 2개를 처리한다.
-체크포인트 저장·복원은 프로세스당 2개로 제한한다. EKS와 k3s는 `workspace_legacy_docker: false`로
-Kubernetes 실행기만 사용한다. 추가 ConfigMap 입력의 checksum으로 앱과 worker가 함께 새 설정을 읽는다.
-새 지표와 동시성 설정을 지원하는 Studio 이미지를 먼저 배포한 뒤 이 chart를 sync한다.
+Sandbox가 읽는 `FORGE_SANDBOX_API_URL`은 Service 포트를 사용합니다.
+NetworkPolicy는 DNAT 뒤의 Pod 포트를 사용하므로 두 값을 혼동하지 않습니다.
+native CLI는 이 주소의 인증된 모델 Gateway를 호출합니다. 같은 namespace의 다른 서비스나
+Kubernetes API, Studio·Memory·Librio·PostgreSQL·MinIO에는 직접 연결할 수 없습니다.
+폐쇄망은 `workspace_allow_public: false`, 추가 내부 목적지는 `workspace_extra_egress`에 정확히 선언합니다.
 
-## 승인 후 전환 순서
+앱 namespace ingress는 별도 정책입니다. Forge에 Studio와 Sandbox의 연결을 허용하고,
+Studio에 Forge의 정책 callback을 허용합니다. Forge controller의 외부 provider/Git 통신과
+Kubernetes API 접근은 Sandbox egress와 구분합니다.
 
-1. 각 Agent의 Workspace 도구를 꺼서 신규 접수를 막고 기존 Workspace를 정상 종료한다.
-   worker가 체크포인트를 저장하고 모든 Docker Workspace 컨테이너를 제거했는지 확인한다.
-   worker Pod를 먼저 내리거나 `agent_studio_maintenance`로 전체 writer를 중지하면 기존 DinD 작업을 잃을 수 있다.
-2. 새 Kubernetes 백엔드와 `workspace-migration-check.cjs`, `tini`, UID 검사를 포함하는 앱·Sandbox 이미지를
-   같은 릴리스로 게시한다. phase의 이미지 태그는 기존 GitOps 릴리스 절차로 갱신한다.
-3. EKS는 승인된 Terraform 변경으로 `5-eks` output → `6-eks-node`의 `workspaces` NodeClass/NodePool을 준비한다.
-   기존 EKS network policy controller와 metrics addon을 확인한다. k3s는 기본 network policy controller를 유지한다.
-4. 앱 chart를 sync한다. PreSync는 legacy Pod 목록과 Docker 컨테이너 목록을 조회한다.
-   컨테이너가 남아 있거나 daemon/API에 연결할 수 없으면 전환을 차단한다. 이 검사는 1번의 접수 차단을 대신하지 않는다.
-5. 앱·worker의 Kubernetes RBAC, task namespace의 ECR Secret, Pod 실행·취소·체크포인트·복원을 확인한 뒤
-   Workspace 도구를 다시 켠다. k3s의 새 namespace도 ESO ECR generator를 사용하며 기존 EC2 역할로 인증한다.
+## 이미지·디스크·복원
 
-Docker에서 처음 전환하는 설치는 기존 핸들의 조회·정리가 끝날 때까지
-`workspace_legacy_docker: true`를 사용한다. 이때 legacy daemon은 worker 수와 독립적으로
-1개만 실행하며, sync wave 1에서 기존 worker 교체 후 PVC를 연다.
+`app.image.tag`가 controller와 Sandbox의 유일한 버전 원천입니다.
+controller `<repository>:v0.1.0`이면 Sandbox는 `<repository>:sandbox-v0.1.0`입니다.
+ECR imagePullSecret은 실행 namespace의 generator가 갱신합니다.
+`agent-forge-sandbox` ConfigMap과 설정 checksum으로 새 controller가 바뀐 실행 설정을 읽습니다.
 
-기존 Docker 참조와 컨테이너가 없고 Kubernetes 실행·체크포인트 복원 검사가 통과하면,
-승인된 정리에서 `workspace_legacy_docker: false`로 전환한다. Service와 전용 NetworkPolicy는
-GitOps가 제거한다. 자동 prune을 막은 기존 daemon Deployment는 새 앱·worker가 Ready이고
-`WORKSPACE_LEGACY_DOCKER=false`를 읽는 것을 확인한 뒤 운영자가 삭제한다.
+EKS의 기본 Pod는 1 CPU·2Gi memory·4608Mi ephemeral storage를 예약합니다.
+`workspace_disk_mb=2048`에서 `/workspace`, `/control`, `/tmp`를 포함한 저장 예약이며,
+32개 Pod의 ephemeral 예약량은 144Gi입니다. 이미지 캐시와 호스트 로그는 별도입니다.
+`emptyDir.sizeLimit`은 동기식 쓰기 quota가 아니라 kubelet의 퇴거 기준입니다.
 
-복구용 PVC와 ECR generator/ExternalSecret은 `Prune=false,Delete=false`로 계속 보존한다.
-PVC·체크포인트의 데이터 삭제는 별도 승인이 필요하다. ECR 인증은 앱과 Kubernetes 실행 Pod도 사용한다.
+파일·native session은 Forge 전용 키로 암호화한 PostgreSQL checkpoint에서 복원합니다.
+Pod별 PVC는 만들지 않습니다. 마지막으로 확정된 checkpoint 뒤의 파일은 Pod 소실 시 복구되지 않습니다.
+수명·lease·output cursor·취소·unknown 상태는 Forge가 관리하며 Studio의 대화 재개와 분리합니다.
+
+## 기존 실행 자원 보존
+
+`agent-studio-workspace-docker` PVC와 `agent-studio-workspaces` namespace는
+`Prune=false,Delete=false`로 보존합니다. 이전 namespace에는 기본 거부 정책을 유지합니다.
+구 실행 Role/RoleBinding, Docker daemon/Service, Studio migration hook은 새 배포에 없습니다.
+이 보존 설정은 구 실행기 재활성화나 기존 데이터 변환 경로를 제공하지 않습니다.
+
+전환 전에 기존 Studio의 신규 접수를 막고 실행 종료·checkpoint를 확인합니다.
+새 chart를 동기화하면 이전 실행기의 접근 권한은 제거됩니다. 기존 작업을 자동으로
+새 Forge DB에 가져오지 않으므로 진행 중 실행을 남긴 채 전환하지 않습니다.
+namespace/PVC와 보관 데이터의 최종 삭제는 별도 운영 작업입니다.
 
 ## 검증
 
-`scripts/validate.py`와 pytest는 양쪽 플랫폼의 렌더·RBAC·quota·보존·drain gate를 확인한다.
-Agent Studio의 `test:workspace:kubernetes`에 이 chart의 k3s 렌더를 제공하면 일회용 로컬 k3s에서
-실제 exec, 제한된 계정, 통신 차단, DNS, quota, 디스크 퇴거와 체크포인트 복원을 검사한다.
+`python3 scripts/validate.py --all-charts`와 pytest는 alpha와 미래 EKS의 이미지 결합,
+RBAC, Pod/Job quota, IPv4 네트워크, Service/Pod 포트, 기존 PVC/namespace 보존을 검사합니다.
+이 결과는 CNI의 실제 패킷 차단이나 실행 성공을 보장하지 않습니다.
 
-배포 후에는 Pod `reason`과 이벤트, Workspace `interrupted` 상태, worker heartbeat와 고아 정리 로그를 확인한다.
-EKS Prometheus와 k3s Alloy/Grafana Cloud의 상태 지표·경보 구성은 `argocd-env-addons`가 소유한다.
-운영 노드 장애·디스크 압박 시험은 별도 승인으로 제한된 테스트 Workspace에만 수행한다.
+배포 후에는 제한된 테스트 Workspace에서 다음을 확인합니다.
+
+1. Job ownerReference와 저장된 Job·Pod UID가 일치하고 Sandbox에 운영 token/Secret이 없는지 확인합니다.
+2. 명령 접수→출력 cursor 조회→재연결에서 같은 명령이 중복 실행되지 않는지 확인합니다.
+3. DNS와 public HTTPS·Forge Gateway 연결, PostgreSQL·MinIO·metadata·다른 Workspace 차단을 함께 확인합니다.
+   차단 대상이 실제로 제공 중인지 양성 대조로 확인해야 합니다.
+4. 취소·lease handoff·checkpoint 저장→Pod 종료→복원·namespace quota를 확인합니다.
+5. 실행 Pod 이벤트와 Forge terminal/unknown/output_loss, 고아 자원 상태를 대조합니다.
+
+Pod 소실·디스크 압박 시험은 지정한 테스트 Workspace에만 수행합니다.
+실제 EKS가 생긴 뒤에는 controller-owned Pod에 CNI 정책이 적용되는지 다시 검증합니다.
+관측 지표·경보는 `argocd-env-addons`가 소유합니다.

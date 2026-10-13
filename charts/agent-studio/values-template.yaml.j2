@@ -14,25 +14,6 @@ app:
   imagePullSecrets:
     - name: ecr-registry
 {% endif %}
-{% if workspace_worker %}
-  additionalConfigmap:
-    enabled: true
-    names:
-      - agent-studio-workspace
-{% if workspace_backend | default("docker") == "docker" %}
-  extraVolumes:
-    - name: ecr-config
-      secret:
-        secretName: ecr-registry
-        items:
-          - key: .dockerconfigjson
-            path: config.json
-  extraVolumeMounts:
-    - name: ecr-config
-      mountPath: /home/app/.docker
-      readOnly: true
-{% endif %}
-{% endif %}
 {% if not resources %}
   resources: null
 {% endif %}
@@ -77,12 +58,18 @@ app:
 {% endif %}
       MAX_RUN_DURATION_MS: '600000'
       MAX_CONCURRENT_RUNS_PER_ACTOR: '60'
-      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
+      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local,agent-librio.svc.cluster.local,agent-forge.svc.cluster.local
+      FORGE_URL: http://agent-forge.agent-forge.svc.cluster.local:3103
+      FORGE_ISSUER: https://studio.agrt.dev
+      FORGE_OBSERVER_CONCURRENCY: '{{workspace_worker_concurrency | default(4)}}'
+      WORKSPACE_CONTINUATION_CONCURRENCY: '{{workspace_continuation_concurrency | default(2)}}'
+      MEMORY_URL: http://agent-memory.agent-memory.svc.cluster.local:3000
+      MEMORY_ISSUER: https://studio.agrt.dev
+      LIBRIO_URL: http://agent-librio.agent-librio.svc.cluster.local:3000
+      LIBRIO_ISSUER: https://studio.agrt.dev
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
 {% if workspace_worker %}
-      DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
-      WORKSPACE_NETWORK: {{workspace_network}}
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
 {% endif %}
@@ -137,7 +124,7 @@ app:
       name: GITHUB_TOKEN
     - key: /k8s/common/agent-studio/schedule-scan-token
       name: SCHEDULE_SCAN_TOKEN
-    - key: /k8s/{{cluster}}/agent-studio/database-url
+    - key: /k8s/{{cluster}}/agent-platform/database-url
       name: DATABASE_URL
 {% if env == 'k3s' %}
     - key: /k8s/{{cluster}}/agent-studio/minio-root-user
@@ -145,6 +132,41 @@ app:
     - key: /k8s/{{cluster}}/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 {% endif %}
+    - key: /k8s/{{cluster}}/agent-forge/organization-id
+      name: FORGE_ORGANIZATION_ID
+    - key: /k8s/{{cluster}}/agent-forge/delegation-secret
+      name: FORGE_DELEGATION_SECRET
+    - key: /k8s/{{cluster}}/agent-forge/policy-secret
+      name: FORGE_POLICY_SECRET
+    - key: /k8s/{{cluster}}/agent-memory/organization-id
+      name: MEMORY_ORGANIZATION_ID
+    - key: /k8s/{{cluster}}/agent-memory/delegation-secret
+      name: MEMORY_DELEGATION_SECRET
+    - key: /k8s/{{cluster}}/agent-librio/organization-id
+      name: LIBRIO_ORGANIZATION_ID
+    - key: /k8s/{{cluster}}/agent-librio/delegation-secret
+      name: LIBRIO_DELEGATION_SECRET
+    - key: /k8s/{{cluster}}/agent-librio/policy-secret
+      name: LIBRIO_POLICY_SECRET
+  ingressPeers:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{'kube-system' if env == 'k3s' else 'istio-system'}}
+{% if env == 'k3s' %}
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: traefik
+          app.kubernetes.io/instance: traefik-kube-system
+{% endif %}
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{'addon-alloy' if env == 'k3s' else 'addon-prometheus'}}
+  registry:
+    region: {{aws_region}}
+  legacyExecution:
+    preserve: true
+    size: {{workspace_storage | default('10Gi')}}
+    storageClass: {{workspace_storage_class | default('local-path')}}
   workloads:
     scheduleTicker:
       enabled: true
@@ -158,31 +180,7 @@ app:
 {% if workspace_worker %}
     workspaceWorker:
       enabled: true
-      backend: {{workspace_backend | default('docker')}}
-      legacyDocker:
-        enabled: {{workspace_legacy_docker | default(true)}}
-      kubernetes:
-        namespace: agent-studio-workspaces
-        nodePool: {{ 'workspaces' if env == 'eks' else '""' }}
-        maxPods: {{workspace_max_pods | default(8)}}
-        dnsCidrs:
-          - {{ '172.20.0.10/32' if env == 'eks' else '10.43.0.10/32' }}
-        allowPublic: {{workspace_allow_public | default(true)}}
-        extraEgress: {{workspace_extra_egress | default([]) | tojson}}
       replicas: {{0 if maintenance else workspace_worker_replicas | default(1)}}
-      dockerImage: {{workspace_docker_image}}
-      workerConcurrency: {{workspace_worker_concurrency}}
-      continuationConcurrency: {{workspace_continuation_concurrency | default([workspace_worker_concurrency, 2] | min)}}
-      checkpointHistory: {{workspace_checkpoint_history | default('retention')}}
-      memoryMb: {{workspace_memory_mb}}
-      diskMb: {{workspace_disk_mb}}
-      cpus: {{workspace_cpus}}
-      persistence:
-        size: {{workspace_storage | default('10Gi')}}
-        storageClass: {{workspace_storage_class | default('local-path')}}
-      registry:
-        enabled: {{env == 'eks'}}
-        region: {{aws_region}}
 {%- endif %}
 {%- endif %}
 

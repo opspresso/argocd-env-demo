@@ -8,13 +8,6 @@ app:
     repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-studio
 
 
-  additionalConfigmap:
-    enabled: true
-    names:
-      - agent-studio-workspace
-
-
-
   configmap:
     enabled: true
     data:
@@ -25,9 +18,9 @@ app:
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: ap-northeast-2
-      BETTER_AUTH_URL: https://agentops.demo.clush.net
-      BETTER_AUTH_ALLOWED_HOSTS: 'studio.opspresso.com,agentops.demo.clush.net'
-      # PUBLIC_BASE_URL: https://agentops.demo.clush.net
+      BETTER_AUTH_URL: https://studio.agrt.dev
+      BETTER_AUTH_ALLOWED_HOSTS: 'studio.agrt.dev'
+      # PUBLIC_BASE_URL: https://studio.agrt.dev
       S3_BUCKET_NAME: agent-studio-static
 
       ARTIFACT_ACCESS_MODE: proxied
@@ -50,19 +43,24 @@ app:
 
       MAX_RUN_DURATION_MS: '600000'
       MAX_CONCURRENT_RUNS_PER_ACTOR: '60'
-      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local
+      MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local,agent-librio.svc.cluster.local,agent-forge.svc.cluster.local
+      FORGE_URL: http://agent-forge.agent-forge.svc.cluster.local:3103
+      FORGE_ISSUER: https://studio.agrt.dev
+      FORGE_OBSERVER_CONCURRENCY: '16'
+      WORKSPACE_CONTINUATION_CONCURRENCY: '2'
+      MEMORY_URL: http://agent-memory.agent-memory.svc.cluster.local:3000
+      MEMORY_ISSUER: https://studio.agrt.dev
+      LIBRIO_URL: http://agent-librio.agent-librio.svc.cluster.local:3000
+      LIBRIO_ISSUER: https://studio.agrt.dev
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
 
-      DOCKER_HOST: tcp://agent-studio-workspace-docker.agent-studio.svc.cluster.local:2375
-      WORKSPACE_NETWORK: agent-studio-public
       GITHUB_API_URL: https://api.github.com
       GITHUB_WEB_URL: https://github.com
 
   routing:
     hosts:
-    - studio.opspresso.com
-    - agentops.demo.clush.net
+    - studio.agrt.dev
     httpRoute:
       enabled: true
 
@@ -71,7 +69,7 @@ app:
     sidecar.istio.io/inject: "true"
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://agentops.demo.clush.net
+    link.argocd.argoproj.io/external-link: https://studio.agrt.dev
 
   serviceMonitor:
     enabled: true
@@ -105,9 +103,39 @@ app:
       name: GITHUB_TOKEN
     - key: /k8s/common/agent-studio/schedule-scan-token
       name: SCHEDULE_SCAN_TOKEN
-    - key: /k8s/eks-demo/agent-studio/database-url
+    - key: /k8s/eks-demo/agent-platform/database-url
       name: DATABASE_URL
 
+    - key: /k8s/eks-demo/agent-forge/organization-id
+      name: FORGE_ORGANIZATION_ID
+    - key: /k8s/eks-demo/agent-forge/delegation-secret
+      name: FORGE_DELEGATION_SECRET
+    - key: /k8s/eks-demo/agent-forge/policy-secret
+      name: FORGE_POLICY_SECRET
+    - key: /k8s/eks-demo/agent-memory/organization-id
+      name: MEMORY_ORGANIZATION_ID
+    - key: /k8s/eks-demo/agent-memory/delegation-secret
+      name: MEMORY_DELEGATION_SECRET
+    - key: /k8s/eks-demo/agent-librio/organization-id
+      name: LIBRIO_ORGANIZATION_ID
+    - key: /k8s/eks-demo/agent-librio/delegation-secret
+      name: LIBRIO_DELEGATION_SECRET
+    - key: /k8s/eks-demo/agent-librio/policy-secret
+      name: LIBRIO_POLICY_SECRET
+  ingressPeers:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: addon-prometheus
+  registry:
+    region: ap-northeast-2
+  legacyExecution:
+    preserve: true
+    size: 48Gi
+    storageClass: gp3
   workloads:
     scheduleTicker:
       enabled: true
@@ -121,28 +149,4 @@ app:
 
     workspaceWorker:
       enabled: true
-      backend: kubernetes
-      legacyDocker:
-        enabled: False
-      kubernetes:
-        namespace: agent-studio-workspaces
-        nodePool: workspaces
-        maxPods: 32
-        dnsCidrs:
-          - 172.20.0.10/32
-        allowPublic: True
-        extraEgress: []
       replicas: 0
-      dockerImage: public.ecr.aws/docker/library/docker:27.5.1-dind
-      workerConcurrency: 16
-      continuationConcurrency: 2
-      checkpointHistory: retention
-      memoryMb: 2048
-      diskMb: 2048
-      cpus: 1
-      persistence:
-        size: 48Gi
-        storageClass: gp3
-      registry:
-        enabled: True
-        region: ap-northeast-2

@@ -1,5 +1,4 @@
 cluster: k3s-demo
-
 country: kr
 env: k3s
 metrics:
@@ -7,57 +6,52 @@ metrics:
 phase: alpha
 group: k3s-demo
 role: k3s
-
 replicas: 1
 autoscaling: false
 agent_studio_maintenance: false
 agent_memory_maintenance: false
 resources: false
-# Traefik is the sole HTTP proxy; only a single forwarded client address is trusted.
 trusted_proxy_cidrs: []
-# Grafana runs in EKS; k3s has only the Grafana Cloud collector.
 grafana_url: https://grafana.demo.opspresso.com
-
-aws_account_id: "396608815058"
+aws_account_id: '396608815058'
 aws_region: ap-northeast-2
-
 hostname:
   internal: demo-in.opsp.dev
   public: demo.opsp.dev
-
 agent_studio:
   service:
     key: agentops
-    name: 'Axleon AgentOps'
+    name: Axleon AgentOps
     logo: agentops
-  hostname: studio.opsp.dev
+  hostname: studio.agrt.dev
   allowed_hosts:
-    - studio.opsp.dev
-    - studio.agrt.dev
-
+  - studio.agrt.dev
 agent_memory:
-  hostname: memory.opsp.dev
+  hostname: memory.agrt.dev
   allowed_hosts:
-    - memory.opsp.dev
-    - memory.agrt.dev
-
+  - memory.agrt.dev
 audio_worker: true
 workspace_worker: true
-workspace_backend: kubernetes
-workspace_legacy_docker: false
 workspace_max_pods: 2
-workspace_docker_image: public.ecr.aws/docker/library/docker:27.5.1-dind
-workspace_network: agent-studio-public
 workspace_memory_mb: 1024
 workspace_disk_mb: 2048
 workspace_cpus: 1
 workspace_worker_concurrency: 1
-
 postgresql:
-  max_connections: 150
+  max_connections: 200
   storage: 5Gi
 minio:
   storage: 10Gi
 neo4j:
   offline_maintenance: false
   storage: 5Gi
+agent_librio:
+  hostname: librio.agrt.dev
+  allowed_hosts:
+  - librio.agrt.dev
+agent_forge:
+  hostname: forge.agrt.dev
+  allowed_hosts:
+  - forge.agrt.dev
+agent_librio_maintenance: false
+agent_forge_maintenance: false

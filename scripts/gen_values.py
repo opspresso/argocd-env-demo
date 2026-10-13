@@ -52,7 +52,7 @@ def gen_values(t, reponame, platform=PLATFORM):
                     raise ValueError("{} must declare a supported env".format(env_path))
                 if v.get("cluster") != os.path.splitext(env_file)[0]:
                     raise ValueError("{} cluster must match its filename".format(env_path))
-                for key in ("resources", "autoscaling", "agent_studio_maintenance", "agent_memory_maintenance"):
+                for key in ("resources", "autoscaling", "agent_studio_maintenance", "agent_memory_maintenance", "agent_librio_maintenance", "agent_forge_maintenance"):
                     if key in v and not isinstance(v[key], bool):
                         raise ValueError("{} {} must be a boolean".format(env_path, key))
                 proxies = v.get("trusted_proxy_cidrs", [])

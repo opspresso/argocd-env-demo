@@ -85,14 +85,14 @@ def test_data_charts_render_only_the_selected_clusters_secrets(chart, env_file, 
     assert policy_errors(result.stdout, context["env"]) == []
 
 
-@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory"])
+@pytest.mark.parametrize("chart", ["agent-studio", "agent-memory", "agent-librio", "agent-forge"])
 def test_application_secrets_follow_a_new_cluster_name(chart):
     context = yaml.safe_load((ROOT / "env/k3s-demo.yaml").read_text())
     context["cluster"] = "k3s-other"
     template = Environment(loader=FileSystemLoader(ROOT / "charts" / chart)).get_template("values-template.yaml.j2")
     generated = template.render(context)
     assert "/k8s/k3s-demo/" not in generated
-    assert f"/k8s/k3s-other/{chart}/database-url" in generated
+    assert "/k8s/k3s-other/agent-platform/database-url" in generated
 
 
 @pytest.mark.parametrize("cluster", ["eks-demo", "k3s-demo", "local-demo"])

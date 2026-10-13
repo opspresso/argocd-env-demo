@@ -1,0 +1,4 @@
+app:
+  fullnameOverride: agent-forge
+  raw:
+    enabled: False

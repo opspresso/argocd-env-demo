@@ -7,7 +7,7 @@ global:
   postgresql:
     auth:
       username: agent_studio
-      database: agent_studio
+      database: agent_platform
       existingSecret: postgresql-credentials
       secretKeys:
         adminPasswordKey: postgres-password
@@ -52,23 +52,23 @@ postgresql:
         value: '{{ include "postgresql.v1.database" . }}'
     customReadinessProbe:
       exec:
-        command: [sh, -ec, 'pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -h 127.0.0.1 -p 5432']
+        command: [sh, -ec, 'pg_isready -U "${POSTGRES_USER}" -d postgres -h 127.0.0.1 -p 5432']
       initialDelaySeconds: 5
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 6
     customLivenessProbe:
       exec:
-        command: [sh, -ec, 'pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -h 127.0.0.1 -p 5432']
+        command: [sh, -ec, 'pg_isready -U "${POSTGRES_USER}" -d postgres -h 127.0.0.1 -p 5432']
       initialDelaySeconds: 30
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 6
     initdb:
       scripts:
-        00-agent-memory.sql: |
-          SELECT 'CREATE DATABASE agent_memory OWNER agent_studio'
-          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'agent_memory')\gexec
+        00-agent-platform.sql: |
+          SELECT 'CREATE DATABASE agent_platform OWNER agent_studio'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'agent_platform')\gexec
 
     persistence:
       mountPath: /var/lib/postgresql
@@ -155,7 +155,9 @@ bootstrap:
                     - -ec
                     - |
                       until pg_isready -h postgres -U {{ .Values.global.postgresql.auth.username }} -d postgres; do sleep 2; done
-                      for database in agent_studio agent_memory; do
-                        psql -h postgres -U {{ .Values.global.postgresql.auth.username }} -d "${database}" -v ON_ERROR_STOP=1 \
-                          -c "CREATE EXTENSION IF NOT EXISTS vector;"
-                      done
+                      psql -h postgres -U {{ .Values.global.postgresql.auth.username }} -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+                      SELECT 'CREATE DATABASE agent_platform OWNER agent_studio'
+                      WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'agent_platform')\gexec
+                      SQL
+                      psql -h postgres -U {{ .Values.global.postgresql.auth.username }} -d agent_platform -v ON_ERROR_STOP=1 \
+                        -c "CREATE EXTENSION IF NOT EXISTS vector;"

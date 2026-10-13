@@ -1,0 +1,124 @@
+{% set maintenance = agent_librio_maintenance | default(false) -%}
+app:
+  fullnameOverride: agent-librio
+  raw:
+    enabled: {{agent_librio is defined}}
+{% if agent_librio is defined %}
+  replicaCount: {{0 if maintenance else replicas}}
+  autoscaling:
+    enabled: {{false if maintenance else autoscaling}}
+  image:
+    repository: {{aws_account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/agent-librio
+  imagePullSecrets:
+    - name: ecr-registry
+{% if not resources %}
+  resources: null
+{% endif %}
+  ingressPeers:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{'kube-system' if env == 'k3s' else 'istio-system'}}
+{% if env == 'k3s' %}
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: traefik
+          app.kubernetes.io/instance: traefik-kube-system
+{% endif %}
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{'addon-alloy' if env == 'k3s' else 'addon-prometheus'}}
+  registry:
+    region: {{aws_region}}
+  configmap:
+    enabled: true
+    data:
+      ADMIN_EMAILS: me@nalbam.com
+      AWS_REGION: {{aws_region}}
+      DATABASE_POOL_SIZE: '4'
+      DATABASE_QUEUE_POOL_SIZE: '2'
+      AI_ADMISSION_POOL_SIZE: '9'
+      BETTER_AUTH_URL: https://{{agent_librio.hostname}}
+      BETTER_AUTH_ALLOWED_HOSTS: '{{agent_librio.allowed_hosts | default([agent_librio.hostname]) | join(",")}}'
+      TRUSTED_PROXY_CIDRS: '{{trusted_proxy_cidrs | join(",")}}'
+      LIBRIO_DELEGATION_ISSUER: https://studio.agrt.dev
+      S3_REGION: {{aws_region}}
+{% if env == 'k3s' %}
+      S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
+      S3_BUCKET: agent-librio
+      S3_FORCE_PATH_STYLE: 'true'
+{% else %}
+      S3_BUCKET: agent-librio-static
+      S3_FORCE_PATH_STYLE: 'false'
+{% endif %}
+      EMBEDDING_BASE_URL: https://openrouter.ai/api/v1
+      EMBEDDING_MODEL: openai/text-embedding-3-small
+      EMBEDDING_MIN_SCORE: '0.2'
+      RERANKER_BASE_URL: https://openrouter.ai/api/v1
+      RERANKER_MODEL: cohere/rerank-v3.5
+      RERANKER_TIMEOUT_MS: '5000'
+      RERANKER_MIN_SCORE: '0.05'
+      DOCUMENT_WORKER_ENABLED: 'false'
+      AUDIO_WORKER_ENABLED: 'false'
+      KNOWLEDGE_EXTRACTION_BASE_URL: https://openrouter.ai/api/v1
+      KNOWLEDGE_EXTRACTION_MODEL: openai/gpt-6-luna
+      KNOWLEDGE_ENRICHMENT_CONCURRENCY: '{{1 if env == "k3s" else 4}}'
+      # Every replica uses the same PostgreSQL admission policy.
+      AI_PROVIDER_MAX_CONCURRENCY: '8'
+      AI_BATCH_MAX_CONCURRENCY: '4'
+  routing:
+    hosts:
+    - {{agent_librio.hostname}}
+    httpRoute:
+      enabled: true
+{% if env == 'k3s' %}
+      parentRefs:
+        - name: traefik-gateway
+          namespace: traefik-gateway
+{% endif %}
+{% if env != 'k3s' %}
+  podLabels:
+    sidecar.istio.io/inject: "true"
+{% endif %}
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://{{agent_librio.hostname}}
+  externalSecrets:
+    enabled: true
+    data:
+    - key: /k8s/{{cluster}}/agent-platform/database-url
+      name: DATABASE_URL
+    - key: /k8s/{{cluster}}/agent-librio/better-auth-secret
+      name: BETTER_AUTH_SECRET
+    # Explicitly shared OAuth application; Librio uses its own session secret.
+    - key: /k8s/common/agent-memory/google-client-id
+      name: GOOGLE_CLIENT_ID
+    - key: /k8s/common/agent-memory/google-client-secret
+      name: GOOGLE_CLIENT_SECRET
+    - key: /k8s/common/agent-memory/embedding-api-key
+      name: EMBEDDING_API_KEY
+    - key: /k8s/common/agent-memory/reranker-api-key
+      name: RERANKER_API_KEY
+    - key: /k8s/common/agent-memory/knowledge-extraction-api-key
+      name: KNOWLEDGE_EXTRACTION_API_KEY
+    - key: /k8s/{{cluster}}/agent-librio/delegation-secret
+      name: LIBRIO_DELEGATION_SECRET
+    - key: /k8s/{{cluster}}/agent-librio/issuer-policies
+      name: LIBRIO_ISSUER_POLICIES
+    - key: /k8s/{{cluster}}/agent-librio/audio-models
+      name: AUDIO_MODELS_JSON
+    - key: /k8s/{{cluster}}/agent-librio/metrics-bearer-token
+      name: METRICS_BEARER_TOKEN
+{% if env == 'k3s' %}
+    - key: /k8s/{{cluster}}/agent-studio/minio-root-user
+      name: S3_ACCESS_KEY_ID
+    - key: /k8s/{{cluster}}/agent-studio/minio-root-password
+      name: S3_SECRET_ACCESS_KEY
+{% endif %}
+  serviceMonitor:
+    enabled: {{ (metrics is defined and metrics.backend == 'prometheus') | lower }}
+    labels:
+      release: prometheus-{{cluster}}
+  workloads:
+    worker:
+      enabled: true
+      replicas: {{0 if maintenance else 1}}
+{% endif %}

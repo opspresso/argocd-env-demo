@@ -1,75 +1,69 @@
-# Production 용량 운영
+# 서비스 용량과 DB 연결 예산
 
-`eks-demo`는 production이다. 현재 용량 목표는 동시에 활성화된 Workspace Pod 32개다.
-실제 처리량은 모델 응답 시간·명령·파일 크기에 따라 달라지므로 이 수치를 사용자 수나 RPS로 해석하지 않는다.
+현재 실행 환경은 k3s alpha입니다. `eks-demo` prod는 미래 클러스터를 위한 선언이며
+현재 EKS 노드·서비스가 운영 중이라는 뜻이 아닙니다. k3s 노드는 `m6i.xlarge`, 메모리 16Gi이며
+현재 사용량은 배포 때 다시 확인합니다. k3s에는 compute requests/limits나 HPA를 선언하지 않습니다.
+PVC 용량과 Forge Pod/Job 수 제한은 유지합니다.
 
-EKS 배포 알림은 Argo CD의 공통 구독을 통해 `noti-eks-demo`로 전달한다.
-ApplicationSet에는 별도 Slack 구독 annotation을 추가하지 않는다. 토큰과 구독 설정은
-[`argocd-env-addons/charts/argo-cd`](https://github.com/opspresso/argocd-env-addons/tree/main/charts/argo-cd)가 소유한다.
+## 미래 EKS 선언
 
-## 예산과 확장
-
-| 워크로드 | requests CPU / memory | limits CPU / memory | 확장 |
+| 워크로드 | requests CPU / memory | memory limit | 확장 |
 | --- | --- | --- | --- |
-| Studio web | 100m / 512Mi | CPU ceiling 없음 / 2Gi | 2~6 replicas; 실행 부하 8/Pod 및 app CPU 70% |
-| Workspace worker | 200m / 512Mi | 1 / 2Gi | 2 replicas × native 16개; Chat 후속 실행은 각각 2개 |
-| Audio worker | 100m / 256Mi | 1 / 2Gi | 1 replica, 작업 큐·처리 지연 관찰 |
-| Memory web | 100m / 256Mi | CPU ceiling 없음 / 512Mi | 2~6 replicas; app CPU 70% |
-| Memory worker | 200m / 512Mi | CPU ceiling 없음 / 2Gi | 2 replicas; 웹 HPA와 분리 |
-| PostgreSQL | 250m / 768Mi | 2 / 2Gi | 350 connections, shared buffers 256MB |
-| Neo4j | 1 / 2Gi | 1 / 2Gi | heap 512Mi·page cache 512Mi; 쿼리 지연·GC 확인 |
-| MCP 4개 | 각 chart의 자원 예산 | 각 chart의 메모리 한도 | 현재 각 1 replica; 다중화 전 세션·재연결 동작 검증 |
-| sample-node | 100m / 128Mi | 100m / 256Mi | 2~12 replicas; app CPU 50% |
-| sample Redis | 25m / 64Mi | CPU ceiling 없음 / 256Mi | 단일 인스턴스 |
+| Studio web | 100m / 512Mi | 2Gi | 2~6, active Agent 실행 8/Pod·app CPU 70% |
+| Studio Workspace observer | 200m / 512Mi | 2Gi | 2, 프로세스당 원격 작업 관찰 16개·대화 재개 2개 |
+| Studio Audio observer | 100m / 256Mi | 2Gi | 1 |
+| Memory web | 100m / 256Mi | 512Mi | 2~6, app CPU 70% |
+| Librio web | 100m / 512Mi | 2Gi | 2, app CPU 70% |
+| Librio queue worker | 200m / 512Mi | 2Gi | 1, web과 분리 |
+| Forge controller/gateway/worker | 100m / 512Mi | 2Gi | 2, app CPU 70% |
+| PostgreSQL | 250m / 768Mi | 2Gi | 단일 StatefulSet, 400 connections |
+| Forge Sandbox | 1 / 2Gi | 2Gi | namespace에서 최대 Pod32·Job32 |
 
-Studio의 HPA는 `agent_studio_active_execution_requests`를 사용한다. 일반 Agent 실행과 native
-Workspace 모델 요청을 합한 값이다. 별도 app CPU 신호는 파일 처리·요청 파싱·콘솔 부하를 포함한다.
-Istio sidecar CPU를 앱 CPU에 합산하지 않는다. 종료 유예와 느린 scale-down은 진행 중인 실행을 보호한다.
+Studio의 active execution metric은 Studio Agent 실행을 나타냅니다. native 모델 요청은
+Forge가 별도 집계합니다. Istio sidecar CPU는 앱 CPU에 합산하지 않습니다.
+노드 수 계산은 sidecar·DaemonSet·rolling surge와 가장 큰 노드 한 대 손실까지 포함해야 합니다.
+낮은 유휴 CPU만으로 production 기준 노드를 줄이지 않습니다.
 
-노드 예산은 HPA 신호와 달리 Istio sidecar와 DaemonSet까지 포함한다. 현재 requests에 각 HPA의
-최대 replica 증가분을 더한 뒤, 가장 큰 노드 한 대의 allocatable을 제외한 용량과 비교한다.
-sidecar는 admission 때 추가되므로 Deployment 템플릿만으로 합산하지 말고 실제 Pod 예산을 확인한다.
-낮은 유휴 CPU만으로 production 기준 노드를 줄이지 않는다. 롤링 배포의 추가 Pod도 별도로 고려한다.
+## PostgreSQL
 
-DB 연결은 롤링 배포에서 구세대·신세대가 함께 살아 있는 상황까지 계산한다. Studio는 프로세스당
-일반 pool 4개, readiness 1개, content lock 4개를 허용한다. Memory의 웹·worker는 각각
-일반 pool 4개, pg-boss 2개, readiness 1개이며 worker마다 maintenance 전용 연결 1개를 추가한다.
-최대 replica의 두 세대는 278개, Workspace worker의 exec readiness는 최대 16개다.
-350개 중 56개가 운영·초기화 여유로 남는다. Alpha도 같은 연결 풀 상한을 적용하며,
-두 세대와 exec readiness를 합친 92개를 PostgreSQL의 150개 한도 안에서 처리한다.
-`test_production_capacity.py`는 두 환경 모두 최소 20개의 운영 여유를 요구한다.
-동시에 여러 세대의 배포를 누적하지 말고 이전 rollout의 종료를 확인한다.
-Kubernetes worker는 제어 호출 상한 120초보다 긴 180초 종료 유예를 사용하여 lease를 넘긴다.
+네 앱은 같은 `agent_platform` DB를 사용합니다. 풀은 생성 여부보다 실제 동시 접속 가능 상한으로
+계산합니다. 각 프로세스의 명시된 풀 크기는 다음과 같습니다.
 
-## Workspace 용량 변경
+| 프로세스 | ordinary | queue | readiness | content lock | AI admission | 합계 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Studio web | 4 | 0 | 1 | 4 | 0 | 9 |
+| Studio Workspace/Audio observer | 4 | 0 | 0 | 4 | 0 | 8 |
+| Memory web | 4 | 0 | 1 | 0 | 0 | 5 |
+| Librio web | 4 | 2 | 1 | 0 | 9 | 16 |
+| Librio worker | 4 | 2 | 0 | 0 | 9 | 15 |
+| Forge | 12 | 0 | 0 | 0 | 0 | 12 |
 
-1. `env/eks-demo.yaml`의 `workspace_max_pods`, `workspace_worker_replicas`,
-   `workspace_worker_concurrency`를 맞춘다. 현재 2 × 16 = 32다. 후속 Chat 동시성은
-   `workspace_continuation_concurrency`로 별도 제한한다.
-2. `terraform-env-demo/demo/6-eks-node`의 `workspace_max_pods`도 같은 값으로 계획한다.
-   현재 4-CPU 노드당 실행 Pod 3개와 교체 여유 1개를 계산하여 CPU 48·메모리 192Gi 상한을 둔다.
-   이 값은 예약 노드 수가 아니며 Auto Mode가 수요에 따라 노드를 만든다.
-3. DB 연결·worker 메모리·AWS vCPU quota·subnet IP·노드 디스크 여유를 검사한다.
-   기본 daemon, EKS의 관리형 NodeClass/NodePool을 별도 pool 대신 임의 변경하지 않는다.
-4. NodePool 용량을 먼저 적용하고, PostgreSQL readiness·실제 설정을 확인한 뒤 앱 용량을 적용한다.
-   PostgreSQL의 접속 수와 메모리 설정 변경은 재시작이 필요하다.
-5. namespace quota, worker replica·환경변수, HPA `ScalingActive`, 새 노드의 Ready와
-   Workspace 실행·취소·복원을 확인한다. production 노드 장애·디스크 압박 시험은 별도 승인으로 수행한다.
+Studio Workspace readiness는 별도 짧은 프로세스에서 1개 쿼리 연결을 사용합니다.
+heartbeat liveness는 DB를 열지 않습니다. Librio maintenance lock은 ordinary pool에서
+checkout하므로 추가 pool로 중복 계산하지 않습니다. worker health는 process-only입니다.
 
-Pod는 1 CPU·2Gi 메모리·4608Mi ephemeral storage를 예약한다. node의 이미지 캐시·시스템 로그·
-커널 메모리는 이 값 밖에 있으므로 호스트 메모리·파일시스템도 함께 감시한다.
-quota가 차면 작업은 원래 실행 기한 안에서 대기한다. CPU·메모리·디스크 상한을 없애지 않는다.
+Librio AI admission pool9는 요청용8+정리/정책제어1 연결입니다. 전체8·batch4 제한은
+공유 PostgreSQL에서 합산되며 interactive 용량을 남깁니다. pool을5로 줄이면 같은 프로세스의
+batch4가 local admission 슬롯을 모두 점유할 수 있으므로 총량·batch 정책과 함께 조정해야 합니다.
 
-두 환경 모두 기존 Docker 실행기를 비활성화한다. Workspace는 Kubernetes Pod에서 실행하며,
-보존된 Docker PVC는 복구용 캐시다. 사용하지 않는 daemon·Service·NetworkPolicy는 상시 실행하지 않는다.
+| 환경 | 정상 최대 세대 | 2세대 rollout | 운영 여유 최소 | PostgreSQL 한도 |
+| --- | ---: | ---: | ---: | ---: |
+| alpha | `Studio(9+8+8+probe1)+Memory5+Librio(16+15)+Forge12 = 74` | 148 | 20 | 200 |
+| 미래 EKS | `Studio(6×9+2×8+8+probe2)+Memory6×5+Librio(2×16+15)+Forge2×12 = 181` | 362 | 20 | 400 |
 
-## 저장과 가용성
+`test_production_capacity.py`는 실제 렌더의 HPA·worker replica·pool 값으로 이 상한을 계산합니다.
+새 프로세스, HPA 상한, pool 크기를 바꾸면 함께 갱신합니다. 이전 rollout이 끝나기 전에 다음
+rollout을 누적하지 않습니다. PostgreSQL `max_connections`·공유 메모리 설정 변경은 재시작이 필요합니다.
+현재 shared buffers는256MB, work_mem은4MB입니다. `max_connections`가 모든 query의 메모리
+상한을 보장하지는 않으므로 실제 쿼리 메모리·RSS·연결 대기 시간을 관찰합니다.
 
-Workspace 파일은 checkpoint로 복원하고 Pod 디스크는 일시적이다. `WORKSPACE_CHECKPOINT_HISTORY`
-기본값 `retention`은 이전 checkpoint를 보존 기간까지 유지한다. `latest`는 최신 참조를 확정한 뒤
-이전 checkpoint를 정리하며 기존 데이터 삭제 승인을 받은 뒤 선택한다. 최신 checkpoint 이후의
-파일은 Pod 소실 시 복구되지 않는다. 별도의 DB·object storage backup은 계속 필요하다.
+## 실행 용량과 보존
 
-PostgreSQL·Neo4j·Redis는 현재 단일 인스턴스다. 이 설정은 트래픽·실행 용량 확장이고 DB failover를
-제공하지 않는다. PVC 사용량·증가율과 query latency를 관찰하고, HA 전환은 복원 검증을 포함한
-별도 데이터 이전으로 진행한다. 관측성 addon의 예산은 `argocd-env-addons/docs/production-capacity.md`가 소유한다.
+`workspace_max_pods`는 Forge 실행 namespace의 Pod/Job 상한입니다. Studio observer 동시성은
+실행 자원 quota와 별개입니다. 실행 Pod는 일시적인 디스크를 사용하고 마지막 확정 checkpoint로 복원합니다.
+EKS Pod당 4608Mi ephemeral storage 예약에 더해 이미지·호스트 로그 디스크가 필요합니다.
+미래 Workspace NodePool은 taint `agent-forge/workspace`와 앱의 toleration을 맞춰야 합니다.
+
+기존 Studio DinD PVC는 보존하지만 daemon은 시작하지 않습니다. 기존 PostgreSQL·MinIO·Neo4j
+데이터를 새 서비스 namespace로 자동 복사하지 않습니다. DB·object storage는 단일 인스턴스이며
+이 배포가 failover나 backup을 제공하지는 않습니다. 백업 복원과 실제 CNI 격리는 별도 검증합니다.

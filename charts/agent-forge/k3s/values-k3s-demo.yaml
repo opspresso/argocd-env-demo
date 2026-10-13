@@ -1,0 +1,88 @@
+app:
+  fullnameOverride: agent-forge
+  raw:
+    enabled: True
+
+  replicaCount: 1
+  autoscaling:
+    enabled: False
+  image:
+    repository: 396608815058.dkr.ecr.ap-northeast-2.amazonaws.com/agent-forge
+  imagePullSecrets:
+    - name: ecr-registry
+
+  resources: null
+
+  ingressPeers:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: traefik
+          app.kubernetes.io/instance: traefik-kube-system
+
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: addon-alloy
+  registry:
+    region: ap-northeast-2
+  ssmPrefix: /k8s/k3s-demo
+  configmap:
+    enabled: true
+    data:
+      HOST: 0.0.0.0
+      PORT: '3103'
+      FORGE_ALLOWED_ORIGINS: https://forge.agrt.dev
+      FORGE_WORKER: 'true'
+      FORGE_SANDBOX_PROVIDER: kubernetes
+      FORGE_KUBE_IMAGE_PULL_SECRET: ecr-registry
+      FORGE_KUBE_NODE_POOL: ''
+      FORGE_GIT_ALLOWED_ORIGINS: https://github.com
+  sandbox:
+    namespace: agent-forge-workspaces
+    maxPods: 2
+    memoryMb: 1024
+    diskMb: 2048
+    cpus: 1
+    dnsCidrs:
+      - 10.43.0.10/32
+    allowPublic: True
+    extraEgress: []
+  routing:
+    hosts:
+    - forge.agrt.dev
+    httpRoute:
+      enabled: true
+
+      parentRefs:
+        - name: traefik-gateway
+          namespace: traefik-gateway
+
+
+  podAnnotations:
+    link.argocd.argoproj.io/external-link: https://forge.agrt.dev
+  externalSecrets:
+    enabled: true
+    data:
+    - key: /k8s/k3s-demo/agent-platform/database-url
+      name: DATABASE_URL
+    - key: /k8s/k3s-demo/agent-forge/credentials
+      name: FORGE_CREDENTIALS
+    - key: /k8s/k3s-demo/agent-forge/delegators
+      name: FORGE_DELEGATORS
+    - key: /k8s/k3s-demo/agent-forge/issuer-policies
+      name: FORGE_ISSUER_POLICIES
+    - key: /k8s/k3s-demo/agent-forge/checkpoint-secret
+      name: FORGE_CHECKPOINT_SECRET
+    - key: /k8s/k3s-demo/agent-forge/credential-secret
+      name: FORGE_CREDENTIAL_SECRET
+    - key: /k8s/k3s-demo/agent-forge/model-secret
+      name: FORGE_MODEL_SECRET
+    - key: /k8s/k3s-demo/agent-forge/model-channels
+      name: FORGE_MODEL_CHANNELS
+  serviceMonitor:
+    enabled: false
+    labels:
+      release: prometheus-k3s-demo

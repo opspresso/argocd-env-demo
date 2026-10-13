@@ -24,7 +24,7 @@ def render(chart, env, tmp_path):
 
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
 @pytest.mark.parametrize("maintenance", [False, True])
-def test_memory_web_and_worker_stop_together(platform, maintenance, tmp_path):
+def test_memory_maintenance_stops_only_memory_web(platform, maintenance, tmp_path):
     env = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())
     env["agent_memory_maintenance"] = maintenance
     docs = render("agent-memory", env, tmp_path)
@@ -33,7 +33,7 @@ def test_memory_web_and_worker_stop_together(platform, maintenance, tmp_path):
         assert deployments["agent-memory"]["spec"]["replicas"] == (0 if maintenance else env["replicas"])
     else:
         assert "replicas" not in deployments["agent-memory"]["spec"]
-    assert deployments["agent-memory-worker"]["spec"]["replicas"] == (0 if maintenance else env["agent_memory"].get("worker_replicas", 1))
+    assert set(deployments) == {"agent-memory"}
     assert any(doc["kind"] == "HorizontalPodAutoscaler" for doc in docs) == (env["autoscaling"] and not maintenance)
 
 

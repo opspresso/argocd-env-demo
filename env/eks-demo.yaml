@@ -1,5 +1,4 @@
 cluster: eks-demo
-
 country: kr
 env: eks
 metrics:
@@ -7,44 +6,35 @@ metrics:
 phase: prod
 group: eks-demo
 role: mgmt
-
 replicas: 1
 autoscaling: true
 agent_studio_maintenance: true
 agent_memory_maintenance: true
 resources: true
-trusted_proxy_cidrs: [10.10.0.0/16]
+trusted_proxy_cidrs:
+- 10.10.0.0/16
 grafana_url: http://grafana.addon-grafana.svc.cluster.local
-
-aws_account_id: "396608815058"
+aws_account_id: '396608815058'
 aws_region: ap-northeast-2
-
 hostname:
   internal: demo-in.opspresso.com
   public: demo.opspresso.com
   this: demo-0.opspresso.com
-
 agent_studio:
   service:
     key: agentops
-    name: 'Axleon AgentOps'
+    name: Axleon AgentOps
     logo: agentops
-  hostname: agentops.demo.clush.net
+  hostname: studio.agrt.dev
   allowed_hosts:
-    - studio.opspresso.com
-    - agentops.demo.clush.net
-
+  - studio.agrt.dev
 agent_memory:
-  hostname: memory.opspresso.com
-  worker_replicas: 2
-
+  hostname: memory.agrt.dev
+  allowed_hosts:
+  - memory.agrt.dev
 audio_worker: true
 workspace_worker: true
-workspace_backend: kubernetes
-workspace_legacy_docker: false
 workspace_max_pods: 32
-workspace_docker_image: public.ecr.aws/docker/library/docker:27.5.1-dind
-workspace_network: agent-studio-public
 workspace_memory_mb: 2048
 workspace_disk_mb: 2048
 workspace_cpus: 1
@@ -53,9 +43,8 @@ workspace_worker_concurrency: 16
 workspace_continuation_concurrency: 2
 workspace_storage: 48Gi
 workspace_storage_class: gp3
-
 postgresql:
-  max_connections: 350
+  max_connections: 400
   storage: 20Gi
   storageClass: gp3
 neo4j:
@@ -65,3 +54,13 @@ neo4j:
     server.memory.heap.initial_size: 512m
     server.memory.heap.max_size: 512m
     server.memory.pagecache.size: 512m
+agent_librio:
+  hostname: librio.agrt.dev
+  allowed_hosts:
+  - librio.agrt.dev
+agent_forge:
+  hostname: forge.agrt.dev
+  allowed_hosts:
+  - forge.agrt.dev
+agent_librio_maintenance: true
+agent_forge_maintenance: true

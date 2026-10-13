@@ -20,8 +20,7 @@ scripts/gitops.sh                  # GitOps 실행 래퍼
 scripts/chart.py                   # phase 탐색, values/versions 갱신
 scripts/validate.py                # ApplicationSet과 같은 조합으로 Helm 검증
 scripts/workload_policy.py         # 플랫폼별 workload 정책 검사
-scripts/bootstrap_agent_platform.py # EKS 연결 파라미터 준비
-scripts/check_*_network.py         # 에이전트·workspace 네트워크 검사
+scripts/bootstrap_agent_platform.py # 플랫폼 Secret 준비
 requirements/{runtime,dev}.txt     # Python 실행·테스트 의존성
 tests/                            # pytest
 docs/                             # 운영 문서
@@ -121,7 +120,8 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `app.autoscaling.enabled`의 원천이다. k3s·local은 각각 `1`, `false`를 사용한다.
 - `agent_studio_maintenance`는 Agent Studio만 위한 boolean이다. `true`이면 해당 클러스터의
   앱·오디오/Workspace worker와 ticker를 0개로 내리고 HPA를 끈다.
-  PostgreSQL과 Agent Memory는 건드리지 않는다. 기본값은 `false`다.
+  다른 앱과 PostgreSQL은 건드리지 않는다. 기본값은 `false`다.
+  Memory·Librio·Forge도 각각 `agent_<service>_maintenance`로 자기 프로세스만 정지한다.
 - `metrics.backend`는 수집 방식을 정한다. k3s는 Alloy가 직접 수집하는 `grafana-cloud`,
   EKS는 `prometheus`를 사용한다. ServiceMonitor는 `prometheus`에서만 생성한다.
 - `resources` 는 workload의 requests/limits 사용 여부를 제어하는 env 원천값이다.
@@ -135,7 +135,8 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
 
 ## apps/{eks,k3s,local}/<project>.yaml
 
-- `kind: ApplicationSet` + git files generator 로 플랫폼별 `env/*.yaml` 을 읽어 클러스터별로 fan-out 한다.
+- EKS는 `kind: ApplicationSet` + git files generator로 `env/*.yaml`을 읽는다. k3s는 현재 단일 클러스터의 `Application`을 사용한다.
+- 현재 실존 클러스터는 k3s alpha다. EKS는 미래 선언이며 렌더 검증을 실제 배포로 보고하지 않는다.
 - 배포할 클러스터는 `generators.git.files` 의 주석을 풀어 고른다.
 - Application 이름은 `<project>-{{cluster}}`.
 - label `opspresso.com/group: apps`, `opspresso.com/cluster: {{cluster}}` 를 유지한다.
