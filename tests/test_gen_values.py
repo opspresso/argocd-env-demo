@@ -73,3 +73,23 @@ def test_later_environment_error_does_not_write_earlier_output(project):
     with pytest.raises(UndefinedError):
         gen_values.gen_repos(args)
     assert not (chart / "eks/values-eks-demo.yaml").exists()
+
+
+@pytest.mark.parametrize('change', ['missing_writer', 'console_enabled', 'eks', 'string_flag'])
+def test_storage_gc_requires_all_writers_and_console_paused(project, change):
+    root, chart, args = project
+    context = {'env': 'k3s', 'cluster': 'k3s-demo', 'replicas': 1, 'storage_gc_maintenance': True,
+               'minio': {'console': False}, **{f'agent_{name}_maintenance': True
+                                            for name in ('studio', 'memory', 'librio', 'forge')}}
+    if change == 'missing_writer':
+        context['agent_librio_maintenance'] = False
+    elif change == 'console_enabled':
+        context['minio']['console'] = True
+    elif change == 'eks':
+        context['env'] = 'eks'
+    else:
+        context['storage_gc_maintenance'] = 'true'
+    (root / 'env/k3s-demo.yaml').write_text(yaml.safe_dump(context))
+    with pytest.raises(ValueError):
+        gen_values.gen_repos(args)
+    assert not (chart / 'eks/values-eks-demo.yaml').exists()
