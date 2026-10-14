@@ -1,7 +1,7 @@
 app:
   fullnameOverride: agent-studio
 
-  replicaCount: 1
+  replicaCount: 0
   autoscaling:
     enabled: False
   image:
@@ -153,14 +153,14 @@ app:
   workloads:
     scheduleTicker:
       enabled: true
-      replicas: 1
+      replicas: 0
 
 
     audioWorker:
       enabled: true
-      replicas: 1
+      replicas: 0
 
 
     workspaceWorker:
       enabled: true
-      replicas: 1
+      replicas: 0

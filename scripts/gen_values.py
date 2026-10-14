@@ -52,9 +52,14 @@ def gen_values(t, reponame, platform=PLATFORM):
                     raise ValueError("{} must declare a supported env".format(env_path))
                 if v.get("cluster") != os.path.splitext(env_file)[0]:
                     raise ValueError("{} cluster must match its filename".format(env_path))
-                for key in ("resources", "autoscaling", "agent_studio_maintenance", "agent_memory_maintenance", "agent_librio_maintenance", "agent_forge_maintenance"):
+                for key in ("resources", "autoscaling", "agent_studio_maintenance", "agent_memory_maintenance", "agent_librio_maintenance", "agent_forge_maintenance", "storage_gc_maintenance"):
                     if key in v and not isinstance(v[key], bool):
                         raise ValueError("{} {} must be a boolean".format(env_path, key))
+                if v.get("storage_gc_maintenance"):
+                    paused = all(v.get(f"agent_{service}_maintenance") is True
+                                 for service in ("studio", "memory", "librio", "forge"))
+                    if v.get("env") != "k3s" or not paused or v.get("minio", {}).get("console") is not False:
+                        raise ValueError("storage_gc_maintenance requires k3s, all Agent services paused and minio.console false")
                 proxies = v.get("trusted_proxy_cidrs", [])
                 if not isinstance(proxies, list):
                     raise ValueError("{} trusted_proxy_cidrs must be a list".format(env_path))

@@ -1,9 +1,13 @@
-{% if env == 'local' %}externalSecrets:
+{% set storage_gc = storage_gc_maintenance | default(false) %}{% if env == 'local' %}externalSecrets:
   enabled: false
 {% else %}global:
   ssmPrefix: /k8s/{{cluster}}
-{% endif %}{% if (minio is defined and (minio.buckets is defined or minio.storage is defined or minio.console is defined)) or not resources or not autoscaling %}
+{% endif %}{% if (minio is defined and (minio.buckets is defined or minio.storage is defined or minio.console is defined)) or not resources or not autoscaling or storage_gc %}
 minio:
+{% if storage_gc %}
+  networkPolicy:
+    enabled: false
+{% endif %}
 {% if minio is defined and minio.buckets is defined %}
   defaultBuckets: {{minio.buckets}}
 {% endif %}
@@ -37,4 +41,7 @@ minio:
         enabled: false
 {%- endif %}
 {%- endif %}
-{%- endif %}
+{%- endif %}{% if storage_gc %}
+storageGc:
+  enabled: true
+{% endif %}

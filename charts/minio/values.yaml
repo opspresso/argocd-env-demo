@@ -78,3 +78,23 @@ raw:
             - secretKey: root-password
               remoteRef:
                 key: {{ $ssmPrefix }}/agent-studio/minio-root-password
+
+storageGc:
+  enabled: false
+  templates:
+    - |
+        apiVersion: networking.k8s.io/v1
+        kind: NetworkPolicy
+        metadata:
+          name: minio
+          namespace: {{ .Release.Namespace }}
+        spec:
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: minio
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/component: minio
+              app.kubernetes.io/part-of: minio
+          policyTypes: [Ingress, Egress]
+          ingress: []
+          egress: [{}]

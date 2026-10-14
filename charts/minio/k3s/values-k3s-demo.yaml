@@ -3,6 +3,10 @@ global:
 
 minio:
 
+  networkPolicy:
+    enabled: false
+
+
 
   persistence:
     size: 10Gi
@@ -19,6 +23,8 @@ minio:
 
   console:
 
+    enabled: False
+
 
     resources: null
     resourcesPreset: none
@@ -29,3 +35,5 @@ minio:
         enabled: false
       hpa:
         enabled: false
+storageGc:
+  enabled: true
