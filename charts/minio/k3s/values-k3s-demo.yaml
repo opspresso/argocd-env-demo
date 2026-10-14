@@ -3,9 +3,6 @@ global:
 
 minio:
 
-  networkPolicy:
-    enabled: false
-
 
 
   persistence:
@@ -23,8 +20,6 @@ minio:
 
   console:
 
-    enabled: False
-
 
     resources: null
     resourcesPreset: none
@@ -35,5 +30,3 @@ minio:
         enabled: false
       hpa:
         enabled: false
-storageGc:
-  enabled: true
