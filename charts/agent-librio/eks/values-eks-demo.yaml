@@ -36,6 +36,7 @@ app:
       S3_REGION: ap-northeast-2
 
       S3_BUCKET: agent-librio-static
+      S3_BUCKET_NAME: agent-librio-static
       S3_FORCE_PATH_STYLE: 'false'
 
       EMBEDDING_BASE_URL: https://openrouter.ai/api/v1
@@ -89,6 +90,8 @@ app:
       name: LIBRIO_ISSUER_POLICIES
     - key: /k8s/eks-demo/agent-librio/audio-models
       name: AUDIO_MODELS_JSON
+    - key: /k8s/eks-demo/agent-librio/audio-models
+      name: AUDIO_MODEL_CHANNELS
     - key: /k8s/eks-demo/agent-librio/metrics-bearer-token
       name: METRICS_BEARER_TOKEN
 

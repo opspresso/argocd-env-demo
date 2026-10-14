@@ -49,7 +49,7 @@ def test_application_credentials_match_cluster_dependencies(chart, platform):
     if chart in {"agent-studio", "agent-librio"}:
         if platform == "eks":
             assert "S3_ENDPOINT" not in config and "S3_ACCESS_KEY_ID" not in refs
-            assert config.get("S3_BUCKET", config.get("S3_BUCKET_NAME")) == f"{chart}-static"
+            assert config["S3_BUCKET_NAME"] == f"{chart}-static"
         else:
             assert config["S3_ENDPOINT"] == "http://minio.agent-studio.svc.cluster.local:9000"
             assert refs["S3_ACCESS_KEY_ID"] == "/k8s/k3s-demo/agent-studio/minio-root-user"
@@ -148,7 +148,7 @@ def test_studio_observer_has_no_execution_or_cluster_authority(platform):
     assert config["FORGE_URL"] == "http://agent-forge.agent-forge.svc.cluster.local:3103"
     assert config["MEMORY_URL"] == "http://agent-memory.agent-memory.svc.cluster.local:3000"
     assert config["LIBRIO_URL"] == "http://agent-librio.agent-librio.svc.cluster.local:3000"
-    assert config["FORGE_ISSUER"] == config["MEMORY_ISSUER"] == config["LIBRIO_ISSUER"] == "https://studio.agrt.dev"
+    assert config["FORGE_DELEGATION_ISSUER"] == config["MEMORY_DELEGATION_ISSUER"] == config["LIBRIO_DELEGATION_ISSUER"] == "https://studio.agrt.dev"
     assert not any(doc["kind"] in {"Role", "RoleBinding", "Job"} for doc in manifests("agent-studio", platform))
     assert resource("agent-studio", platform, "Deployment", "agent-studio-ticker")["spec"]["replicas"] == 1
 
