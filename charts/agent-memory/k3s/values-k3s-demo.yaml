@@ -61,8 +61,7 @@ app:
       name: EMBEDDING_API_KEY
     - key: /k8s/common/agent-memory/reranker-api-key
       name: RERANKER_API_KEY
-    # The memory judge uses the same OpenRouter key as reranking.
-    - key: /k8s/common/agent-memory/reranker-api-key
+    - key: /k8s/common/agent-memory/decision-api-key
       name: DECISION_API_KEY
     - key: /k8s/k3s-demo/agent-platform/database-url
       name: DATABASE_URL
