@@ -46,7 +46,7 @@ def parameter_values(prefix, existing):
         secret(f"{service}/delegation-secret")
     for path in ("agent-librio/better-auth-secret", "agent-librio/policy-secret",
                  "agent-forge/policy-secret", "agent-forge/checkpoint-secret",
-                 "agent-forge/credential-secret", "agent-forge/model-secret"):
+                 "agent-forge/credential-secret", "agent-forge/model-secret", "agent-forge/session-secret"):
         secret(path)
     # Forge owns issuer-qualified principals; its organization is a configured namespace.
     # Memory/Librio organization IDs must instead come from their initialized installations.

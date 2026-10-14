@@ -48,6 +48,8 @@ agent_librio:
   - librio.agrt.dev
 agent_forge:
   hostname: forge.agrt.dev
+  sign_in_domains:
+  - nalbam.com
   allowed_hosts:
   - forge.agrt.dev
 agent_librio_maintenance: false

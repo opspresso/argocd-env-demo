@@ -79,6 +79,11 @@ Secret 환경변수를 변경한 뒤에는 소비자 Deployment를 새 설정으
 | `agent-forge/policy-secret`, `issuer-policies` | Studio callback / Forge |
 | `agent-forge/credentials`, `metrics-bearer-token` | Forge의 hash / 수집기의 bearer |
 | `agent-forge/checkpoint-secret`, `credential-secret`, `model-secret`, `model-channels` | Forge |
+| `agent-forge/session-secret` | Forge 콘솔 로그인 세션 쿠키 서명 |
+| `common/agent-memory/google-client-id`, `google-client-secret` | Memory와 Forge 콘솔 로그인(같은 Google client) |
+
+Forge 콘솔 로그인은 `env/<cluster>.yaml`의 `agent_forge.sign_in_domains`가 있을 때만 켜집니다.
+Google client의 redirect URI에 `https://<agent_forge.hostname>/api/auth/callback/google`이 등록돼 있어야 합니다.
 
 bootstrap은 Memory/Librio 조직 ID와 모델 JSON을 생성하지 않습니다. Memory/Librio 초기화가
 완료된 새 DB에서 실제 installation UUID를 읽어 `organization-id`에 기록해야 합니다.
