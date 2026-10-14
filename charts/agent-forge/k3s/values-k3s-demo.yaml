@@ -40,6 +40,11 @@ app:
       FORGE_KUBE_IMAGE_PULL_SECRET: ecr-registry
       FORGE_KUBE_NODE_POOL: ''
       FORGE_GIT_ALLOWED_ORIGINS: https://github.com
+      # Console sign-in shares the Agent Memory Google client; its redirect URIs include
+      # https://<hostname>/api/auth/callback/google.
+      FORGE_OIDC_ISSUER: https://accounts.google.com
+      FORGE_OIDC_PROVIDER_ID: google
+      FORGE_SIGN_IN_DOMAINS: 'nalbam.com'
   sandbox:
     namespace: agent-forge-workspaces
     maxPods: 2
@@ -82,6 +87,14 @@ app:
       name: FORGE_MODEL_SECRET
     - key: /k8s/k3s-demo/agent-forge/model-channels
       name: FORGE_MODEL_CHANNELS
+    - key: /k8s/common/agent-memory/google-client-id
+      name: FORGE_OIDC_CLIENT_ID
+    - key: /k8s/common/agent-memory/google-client-secret
+      name: FORGE_OIDC_CLIENT_SECRET
+    - key: /k8s/k3s-demo/agent-forge/organization-id
+      name: FORGE_ORGANIZATION_ID
+    - key: /k8s/k3s-demo/agent-forge/session-secret
+      name: FORGE_SESSION_SECRET
   serviceMonitor:
     enabled: false
     labels:

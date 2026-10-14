@@ -41,6 +41,13 @@ app:
       FORGE_KUBE_IMAGE_PULL_SECRET: ecr-registry
       FORGE_KUBE_NODE_POOL: '{{ "workspaces" if env == "eks" else "" }}'
       FORGE_GIT_ALLOWED_ORIGINS: https://github.com
+{%- if agent_forge.sign_in_domains is defined %}
+      # Console sign-in shares the Agent Memory Google client; its redirect URIs include
+      # https://<hostname>/api/auth/callback/google.
+      FORGE_OIDC_ISSUER: https://accounts.google.com
+      FORGE_OIDC_PROVIDER_ID: google
+      FORGE_SIGN_IN_DOMAINS: '{{ agent_forge.sign_in_domains | join(",") }}'
+{%- endif %}
   sandbox:
     namespace: agent-forge-workspaces
     maxPods: {{workspace_max_pods | default(2)}}
@@ -86,6 +93,16 @@ app:
       name: FORGE_MODEL_SECRET
     - key: /k8s/{{cluster}}/agent-forge/model-channels
       name: FORGE_MODEL_CHANNELS
+{%- if agent_forge.sign_in_domains is defined %}
+    - key: /k8s/common/agent-memory/google-client-id
+      name: FORGE_OIDC_CLIENT_ID
+    - key: /k8s/common/agent-memory/google-client-secret
+      name: FORGE_OIDC_CLIENT_SECRET
+    - key: /k8s/{{cluster}}/agent-forge/organization-id
+      name: FORGE_ORGANIZATION_ID
+    - key: /k8s/{{cluster}}/agent-forge/session-secret
+      name: FORGE_SESSION_SECRET
+{%- endif %}
   serviceMonitor:
     enabled: {{ (metrics is defined and metrics.backend == 'prometheus') | lower }}
     labels:
