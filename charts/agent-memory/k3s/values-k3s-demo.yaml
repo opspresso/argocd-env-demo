@@ -31,6 +31,9 @@ app:
       RERANKER_MODEL: cohere/rerank-v3.5
       RERANKER_TIMEOUT_MS: '5000'
       RERANKER_MIN_SCORE: '0.05'
+      DECISION_BASE_URL: https://openrouter.ai/api/alpha
+      DECISION_MODEL: typesafe/jev-1.13
+      DECISION_TIMEOUT_MS: '5000'
   routing:
     hosts:
     - memory.agrt.dev
@@ -58,6 +61,9 @@ app:
       name: EMBEDDING_API_KEY
     - key: /k8s/common/agent-memory/reranker-api-key
       name: RERANKER_API_KEY
+    # The memory judge uses the same OpenRouter key as reranking.
+    - key: /k8s/common/agent-memory/reranker-api-key
+      name: DECISION_API_KEY
     - key: /k8s/k3s-demo/agent-platform/database-url
       name: DATABASE_URL
     - key: /k8s/k3s-demo/agent-memory/delegation-secret
