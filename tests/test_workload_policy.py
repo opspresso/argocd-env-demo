@@ -23,10 +23,10 @@ class WorkloadPolicyTests(unittest.TestCase):
             resources = {"requests": {"cpu": "100m", "memory": memory}, "limits": {"memory": "256Mi"}}
             self.assertEqual(not policy_errors(manifest("Pod", {"containers": [{"resources": resources}]}), "eks"), valid)
 
-    def test_only_official_neo4j_minimum_requests_are_allowed(self):
+    def test_retired_neo4j_name_does_not_bypass_resource_policy(self):
         for platform in ("k3s", "local"):
             for name, container, collection, resources, allowed in [
-                ("memory-neo4j", "neo4j", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, True),
+                ("memory-neo4j", "neo4j", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),
                 ("other", "neo4j", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),
                 ("memory-neo4j", "sidecar", "containers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),
                 ("memory-neo4j", "neo4j", "initContainers", {"requests": {"cpu": "500m", "memory": "2Gi"}}, False),

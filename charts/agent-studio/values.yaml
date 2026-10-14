@@ -346,50 +346,6 @@ app:
                 kind: ECRAuthorizationToken
                 name: agent-studio-workspace-ecr
     - |
-      {{- if .Values.legacyExecution.preserve }}
-      apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: agent-studio-workspace-docker
-        annotations:
-          argocd.argoproj.io/sync-options: Prune=false,Delete=false
-          helm.sh/resource-policy: keep
-        labels:
-          app.kubernetes.io/name: agent-studio-workspace-worker
-          app.kubernetes.io/instance: {{ .Release.Name }}
-      spec:
-        accessModes: [ReadWriteOnce]
-        storageClassName: {{ .Values.legacyExecution.storageClass }}
-        resources:
-          requests:
-            storage: {{ .Values.legacyExecution.size }}
-      ---
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: agent-studio-workspaces
-        annotations:
-          argocd.argoproj.io/sync-wave: "-3"
-          argocd.argoproj.io/sync-options: Prune=false,Delete=false
-        labels:
-          pod-security.kubernetes.io/enforce: baseline
-          sidecar.istio.io/inject: "false"
-      ---
-      # Retired execution pods remain quarantined; no executor can create or exec them.
-      apiVersion: networking.k8s.io/v1
-      kind: NetworkPolicy
-      metadata:
-        name: sandbox-isolation
-        namespace: agent-studio-workspaces
-        annotations:
-          argocd.argoproj.io/sync-options: Prune=false,Delete=false
-      spec:
-        podSelector: {}
-        policyTypes: [Ingress, Egress]
-        ingress: []
-        egress: []
-      {{- end }}
-    - |
       apiVersion: networking.k8s.io/v1
       kind: NetworkPolicy
       metadata:
@@ -414,50 +370,9 @@ app:
             ports:
               - protocol: TCP
                 port: {{ .Values.service.targetPort }}
-    - |
-      {{- if .Values.legacyExecution.preserve }}
-      apiVersion: generators.external-secrets.io/v1alpha1
-      kind: ECRAuthorizationToken
-      metadata:
-        name: agent-studio-sandbox-ecr
-        namespace: agent-studio-workspaces
-        annotations:
-          argocd.argoproj.io/sync-wave: "-2"
-          argocd.argoproj.io/sync-options: Prune=false,Delete=false
-      spec:
-        region: {{ .Values.registry.region }}
-      ---
-      apiVersion: external-secrets.io/v1
-      kind: ExternalSecret
-      metadata:
-        name: ecr-registry
-        namespace: agent-studio-workspaces
-        annotations:
-          argocd.argoproj.io/sync-wave: "-1"
-          argocd.argoproj.io/sync-options: Prune=false,Delete=false
-      spec:
-        refreshInterval: 1h
-        target:
-          name: ecr-registry
-          template:
-            type: kubernetes.io/dockerconfigjson
-            data:
-              .dockerconfigjson: |
-                {"auths":{"{{`{{ .proxy_endpoint }}`}}":{"username":"{{`{{ .username }}`}}","password":"{{`{{ .password }}`}}","auth":"{{`{{ printf "%s:%s" .username .password | b64enc }}`}}"}}}
-        dataFrom:
-          - sourceRef:
-              generatorRef:
-                apiVersion: generators.external-secrets.io/v1alpha1
-                kind: ECRAuthorizationToken
-                name: agent-studio-sandbox-ecr
-      {{- end }}
   automountServiceAccountToken: false
   registry:
     region: ap-northeast-2
-  legacyExecution:
-    preserve: true
-    size: 10Gi
-    storageClass: local-path
   ingressPeers:
   - namespaceSelector:
       matchLabels:

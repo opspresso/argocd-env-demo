@@ -7,7 +7,7 @@
 | --- | --- |
 | `terraform-env-demo` | AWS 리소스, IAM, ECR, EKS Pod Identity, S3 |
 | `argocd-env-addons` | Argo CD, External Secrets, Gateway/TLS, CNI, 관측성 |
-| `argocd-env-demo` | 네 앱, worker, 실행 namespace/RBAC/NetworkPolicy, PostgreSQL·MinIO·보존 Neo4j |
+| `argocd-env-demo` | 네 앱, worker, 실행 namespace/RBAC/NetworkPolicy, PostgreSQL·MinIO |
 
 | 앱 | 공개 호스트 | 처리 책임 |
 | --- | --- | --- |
@@ -40,8 +40,9 @@ PostgreSQL readiness는 기존 DB와 새 DB 어느 쪽에도 의존하지 않는
 k3s MinIO는 기존 PVC와 `agent-studio-static`, `agent-memory` 버킷을 보존하고
 `agent-librio` 버킷을 추가합니다. Studio Artifact와 Librio 원본은 각 앱의 인증된 API로 접근합니다.
 Memory와 Forge에는 S3 자격 증명을 주입하지 않습니다.
-기존 `agent-memory/memory-neo4j` Application·PVC도 보존합니다. Librio는 기본 PostgreSQL graph를
-사용하므로 Neo4j 환경변수를 주입하지 않습니다. 기존 Neo4j 중지·삭제는 별도 운영 변경입니다.
+Librio 지식 그래프는 PostgreSQL을 사용하며 Neo4j 환경변수를 주입하지 않습니다.
+Neo4j 배포·Secret bootstrap은 제공하지 않습니다. 이전 리소스의 삭제 절차는
+[폐기된 실행·그래프 자원 정리](retired-agent-resources.md)를 따릅니다.
 
 미래 EKS의 S3 SDK는 Pod Identity를 사용합니다. MinIO endpoint와 정적 S3 키는 주입하지 않습니다.
 
@@ -140,7 +141,8 @@ Sandbox는 별도 기본 거부 정책으로 DNS·public HTTP/HTTPS·Forge Pod �
 
 `agent_<service>_maintenance: true`는 해당 서비스의 웹·worker/HPA만 정지합니다.
 Studio는 ticker도 정지합니다. 각 flag는 다른 앱·DB·storage를 삭제하지 않습니다.
-이전 Workspace PVC/namespace는 보존하며 구 실행기 재활성화 경로는 제공하지 않습니다.
+이전 Workspace PVC/namespace와 구 실행기는 더 이상 선언하지 않습니다.
+기존 실데이터 삭제는 [별도 운영 절차](retired-agent-resources.md)로 수행합니다.
 
 ## 검증
 

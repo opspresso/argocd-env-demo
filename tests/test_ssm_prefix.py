@@ -14,7 +14,7 @@ from workload_policy import policy_errors
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_CHARTS = ("minio", "postgresql", "neo4j")
+DATA_CHARTS = ("minio", "postgresql")
 ENV_FILES = sorted((ROOT / "env").glob("*.yaml"))
 
 

@@ -150,10 +150,6 @@ app:
           kubernetes.io/metadata.name: addon-alloy
   registry:
     region: ap-northeast-2
-  legacyExecution:
-    preserve: true
-    size: 10Gi
-    storageClass: local-path
   workloads:
     scheduleTicker:
       enabled: true

@@ -29,6 +29,7 @@ def test_check_reports_missing_without_writes_or_fabricated_installation_ids(cap
     assert f"{PREFIX}/agent-memory/organization-id" not in desired
     assert f"{PREFIX}/agent-librio/organization-id" not in desired
     assert f"{PREFIX}/agent-forge/model-channels" not in desired
+    assert not any("neo4j" in name for name in desired)
 
 
 def test_apply_preserves_db_password_and_derives_scoped_secrets_without_logging(capsys):

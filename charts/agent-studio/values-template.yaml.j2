@@ -163,10 +163,6 @@ app:
           kubernetes.io/metadata.name: {{'addon-alloy' if env == 'k3s' else 'addon-prometheus'}}
   registry:
     region: {{aws_region}}
-  legacyExecution:
-    preserve: true
-    size: {{workspace_storage | default('10Gi')}}
-    storageClass: {{workspace_storage_class | default('local-path')}}
   workloads:
     scheduleTicker:
       enabled: true

@@ -94,7 +94,7 @@ charts/<project>/
 - 애플리케이션 chart 는 `opspresso/helm-charts` 의 `app` chart 를 dependency 로 쓴다.
   `app` chart 버전을 올릴 때 wrapper `version` 도 함께 올린다.
 - wrapper에는 `templates/`를 두지 않는다. `app` → `cronjob` → incubator `raw` 순서로 선택하며,
-  필요한 공통 기능은 `helm-charts`에서 확장한다. PostgreSQL·MinIO·Neo4j는 공식 또는 주요
+  필요한 공통 기능은 `helm-charts`에서 확장한다. PostgreSQL·MinIO는 공식 또는 주요
   배포처의 전용 차트를 사용한다. Studio worker는 `app.workloads`, 추가 리소스는 `app.raw`로 관리한다.
 - 한 chart 를 두 번 쓰거나 이름을 바꿔 붙일 때는 `alias` 로 values 키를 정한다
   (예: postgresql 의 `raw` → `bootstrap`).
@@ -128,7 +128,6 @@ ApplicationSet 의 `helm.valueFiles` 순서 그대로다. 뒤가 앞을 덮는�
   `true`면 chart 기본 requests/limits를 유지하고, `false`면 템플릿이 resource block을
   제거한다. 공통 chart는 EKS 기본값이며 k3s·local은 반드시 `resources: false`를 사용한다.
   worker·초기화 컨테이너·CronJob에도 requests/limits를 두지 않고 HPA·VPA·KEDA를 생성하지 않는다.
-  단, 공식 Neo4j 차트가 강제하는 CPU `500m`·메모리 `2Gi` requests만 허용하며 limits는 두지 않는다.
   PVC의 storage 요청은 유지하고 `scripts/validate.py`의 렌더 결과 검사로 이 규칙을 검증한다.
 - `phase` 는 그 클러스터가 읽을 `values-<phase>.yaml` 을 정한다.
 - env 파일을 추가하면 `scripts/build.sh` 가 모든 chart 에 대해 렌더 결과를 새로 만든다.

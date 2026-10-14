@@ -47,20 +47,20 @@ def test_workers_keep_selectors_images_and_env_precedence(platform):
     assert not any(doc["kind"] == "Job" for doc in docs)
 
 
-def test_disabled_observers_preserve_legacy_storage():
+def test_disabled_observers_do_not_create_retired_storage():
     docs = render("agent-studio", "k3s", "app.workloads.audioWorker.enabled=false", "app.workloads.workspaceWorker.enabled=false")
     assert not any(doc["kind"] == "Deployment" and doc["metadata"]["name"].endswith("-worker") for doc in docs)
-    assert any(doc["kind"] == "PersistentVolumeClaim" and doc["metadata"]["name"] == "agent-studio-workspace-docker" for doc in docs)
+    assert not any(doc["kind"] in {"PersistentVolumeClaim", "Namespace"} for doc in docs)
 
 
 @pytest.mark.parametrize("backend", ["docker", "kubernetes"])
 def test_retired_settings_cannot_restore_a_studio_executor(backend):
     docs = render("agent-studio", "k3s", f"app.workloads.workspaceWorker.backend={backend}",
-                  "app.workloads.workspaceWorker.legacyDocker.enabled=true")
+                  "app.workloads.workspaceWorker.legacyDocker.enabled=true", "app.legacyExecution.preserve=true")
     containers = [container for doc in docs if doc["kind"] == "Deployment"
                   for container in doc["spec"]["template"]["spec"]["containers"]]
     assert not any(container["name"] == "docker" or container.get("securityContext", {}).get("privileged") for container in containers)
-    assert not any(doc["kind"] == "RoleBinding" for doc in docs)
+    assert not any(doc["kind"] in {"RoleBinding", "PersistentVolumeClaim", "Namespace"} for doc in docs)
 
 
 def test_config_changes_restart_both_workers():
