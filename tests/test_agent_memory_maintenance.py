@@ -1,4 +1,4 @@
-"""Maintenance must stop every Memory writer and permit an offline Neo4j copy."""
+"""Maintenance must stop every Memory writer without affecting other services."""
 from pathlib import Path
 import subprocess
 
@@ -35,16 +35,3 @@ def test_memory_maintenance_stops_only_memory_web(platform, maintenance, tmp_pat
         assert "replicas" not in deployments["agent-memory"]["spec"]
     assert set(deployments) == {"agent-memory"}
     assert any(doc["kind"] == "HorizontalPodAutoscaler" for doc in docs) == (env["autoscaling"] and not maintenance)
-
-
-@pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_offline_neo4j_keeps_the_data_volume_without_starting_the_database(platform, tmp_path):
-    env = yaml.safe_load((ROOT / "env" / f"{platform}-demo.yaml").read_text())
-    env["neo4j"]["offline_maintenance"] = True
-    docs = render("neo4j", env, tmp_path)
-    stateful = next(doc for doc in docs if doc["kind"] == "StatefulSet")
-    container = stateful["spec"]["template"]["spec"]["containers"][0]
-    assert "Neo4j is not running" in " ".join(container["command"])
-    assert "startupProbe" not in container
-    assert any(mount["mountPath"] == "/data" for mount in container["volumeMounts"])
-    assert stateful["spec"]["volumeClaimTemplates"]

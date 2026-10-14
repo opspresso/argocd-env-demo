@@ -132,10 +132,6 @@ app:
           kubernetes.io/metadata.name: addon-prometheus
   registry:
     region: ap-northeast-2
-  legacyExecution:
-    preserve: true
-    size: 48Gi
-    storageClass: gp3
   workloads:
     scheduleTicker:
       enabled: true

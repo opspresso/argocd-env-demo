@@ -42,9 +42,6 @@ postgresql:
   storage: 5Gi
 minio:
   storage: 10Gi
-neo4j:
-  offline_maintenance: false
-  storage: 5Gi
 agent_librio:
   hostname: librio.agrt.dev
   allowed_hosts:

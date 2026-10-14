@@ -50,22 +50,17 @@ EKS의 기본 Pod는 1 CPU·2Gi memory·4608Mi ephemeral storage를 예약합니
 Pod별 PVC는 만들지 않습니다. 마지막으로 확정된 checkpoint 뒤의 파일은 Pod 소실 시 복구되지 않습니다.
 수명·lease·output cursor·취소·unknown 상태는 Forge가 관리하며 Studio의 대화 재개와 분리합니다.
 
-## 기존 실행 자원 보존
+## 폐기된 실행 자원
 
-`agent-studio-workspace-docker` PVC와 `agent-studio-workspaces` namespace는
-`Prune=false,Delete=false`로 보존합니다. 이전 namespace에는 기본 거부 정책을 유지합니다.
-구 실행 Role/RoleBinding, Docker daemon/Service, Studio migration hook은 새 배포에 없습니다.
-이 보존 설정은 구 실행기 재활성화나 기존 데이터 변환 경로를 제공하지 않습니다.
-
-전환 전에 기존 Studio의 신규 접수를 막고 실행 종료·checkpoint를 확인합니다.
-새 chart를 동기화하면 이전 실행기의 접근 권한은 제거됩니다. 기존 작업을 자동으로
-새 Forge DB에 가져오지 않으므로 진행 중 실행을 남긴 채 전환하지 않습니다.
-namespace/PVC와 보관 데이터의 최종 삭제는 별도 운영 작업입니다.
+Studio의 Docker daemon·Service·PVC·실행 namespace·RBAC는 선언하지 않습니다.
+Studio worker는 Forge 작업을 관찰하는 control-plane이므로 유지합니다.
+예전 `app.legacyExecution` 값으로 구 실행기를 재활성화할 수 없습니다.
+기존 클러스터 자원의 삭제는 [소비자·내용 확인 절차](retired-agent-resources.md)를 따릅니다.
 
 ## 검증
 
 `python3 scripts/validate.py --all-charts`와 pytest는 alpha와 미래 EKS의 이미지 결합,
-RBAC, Pod/Job quota, IPv4 네트워크, Service/Pod 포트, 기존 PVC/namespace 보존을 검사합니다.
+RBAC, Pod/Job quota, IPv4 네트워크, Service/Pod 포트, 폐기된 Studio 실행 자원 부재를 검사합니다.
 이 결과는 CNI의 실제 패킷 차단이나 실행 성공을 보장하지 않습니다.
 
 배포 후에는 제한된 테스트 Workspace에서 다음을 확인합니다.

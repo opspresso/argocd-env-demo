@@ -38,8 +38,6 @@ def parameter_values(prefix, existing):
         return values[key]
 
     postgres = secret("agent-studio/postgres-password")
-    neo4j = secret("agent-memory/neo4j-password")
-    values[f"{prefix}/agent-memory/neo4j-auth"] = f"neo4j/{neo4j}"
     values[f"{prefix}/agent-platform/database-url"] = (
         f"postgresql://agent_studio:{quote(postgres, safe='')}"
         "@postgres.agent-studio.svc.cluster.local:5432/agent_platform")

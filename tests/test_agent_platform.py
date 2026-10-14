@@ -186,7 +186,7 @@ def test_namespace_registry_refresh_and_explicit_ingress(chart, platform):
     assert "agent-forge-workspaces" in peers if chart == "agent-forge" else "agent-forge-workspaces" not in peers
 
 
-@pytest.mark.parametrize("chart,name", [("postgresql", "postgres"), ("neo4j", "memory-neo4j")])
+@pytest.mark.parametrize("chart,name", [("postgresql", "postgres")])
 def test_eks_databases_keep_the_existing_persistent_storage(chart, name):
     application = yaml.safe_load((ROOT / "apps/eks" / f"{chart}.yaml").read_text())
     source = application["spec"]["template"]["spec"]["source"]

@@ -48,39 +48,7 @@ def test_local_platforms_follow_resource_and_autoscaling_policy(application):
     checked = list(containers(list(yaml.safe_load_all(result.stdout))))
     assert checked
     for container in checked:
-        if application.stem == "neo4j" and container["name"] == "neo4j":
-            assert container["resources"]["requests"] == {"cpu": "500m", "memory": "2Gi"}
-            assert not container["resources"].get("limits")
-        else:
-            assert not container.get("resources"), container["name"]
-
-
-def test_neo4j_default_resource_validation_is_preserved():
-    result = render("charts/neo4j", ["values.yaml"], ["--set", "global.ssmPrefix=/k8s/eks-demo"])
-    assert result.returncode == 0, result.stderr
-    workload = next(doc for doc in yaml.safe_load_all(result.stdout) if doc and doc["kind"] == "StatefulSet")
-    resources = workload["spec"]["template"]["spec"]["containers"][0]["resources"]
-    assert resources["requests"] == {"cpu": "1000m", "memory": "2Gi"}
-    assert resources["limits"] == resources["requests"]
-
-
-def test_retained_workspace_storage_has_no_live_writer():
-    result = render("charts/agent-studio", ["values.yaml", "values-alpha.yaml", "k3s/values-k3s-demo.yaml"])
-    assert result.returncode == 0, result.stderr
-    documents = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    pvc = next(doc for doc in documents if doc["kind"] == "PersistentVolumeClaim")
-    assert pvc["metadata"]["name"] == "agent-studio-workspace-docker"
-    for doc in documents:
-        if doc["kind"] == "Deployment":
-            assert not any(volume.get("persistentVolumeClaim", {}).get("claimName") == pvc["metadata"]["name"]
-                           for volume in doc["spec"]["template"]["spec"].get("volumes", []))
-
-
-@pytest.mark.parametrize("setting", ["cpu=100m", "memory=512Mi"])
-def test_neo4j_still_rejects_invalid_explicit_resources(setting):
-    result = render("charts/neo4j", ["values.yaml"], ["--set", "global.ssmPrefix=/k8s/eks-demo", "--set", f"neo4jdb.neo4j.resources.{setting}"])
-    assert result.returncode != 0
-    assert "less than minimum" in result.stderr
+        assert not container.get("resources"), container["name"]
 
 
 @pytest.mark.parametrize("chart", ["mcp-argocd", "mcp-cloudwatch", "mcp-grafana", "mcp-kubernetes"])
