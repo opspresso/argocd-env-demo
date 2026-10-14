@@ -35,7 +35,6 @@ app:
       HOST: 0.0.0.0
       PORT: '3103'
       FORGE_ALLOWED_ORIGINS: https://forge.agrt.dev
-      FORGE_WORKER: 'true'
       FORGE_WORKER_ENABLED: 'true'
       FORGE_SANDBOX_PROVIDER: kubernetes
       FORGE_KUBE_IMAGE_PULL_SECRET: ecr-registry
@@ -45,7 +44,6 @@ app:
       # https://<hostname>/api/auth/callback/google.
       FORGE_OIDC_ISSUER: https://accounts.google.com
       FORGE_OIDC_PROVIDER_ID: google
-      FORGE_SIGN_IN_DOMAINS: 'nalbam.com'
       FORGE_ALLOWED_EMAIL_DOMAINS: 'nalbam.com'
   sandbox:
     namespace: agent-forge-workspaces
@@ -83,8 +81,6 @@ app:
       name: FORGE_ISSUER_POLICIES
     - key: /k8s/k3s-demo/agent-forge/checkpoint-secret
       name: FORGE_CHECKPOINT_SECRET
-    - key: /k8s/k3s-demo/agent-forge/credential-secret
-      name: FORGE_CREDENTIAL_SECRET
     - key: /k8s/k3s-demo/agent-forge/credential-secret
       name: FORGE_GIT_CREDENTIAL_SECRET
     - key: /k8s/k3s-demo/agent-forge/model-secret
