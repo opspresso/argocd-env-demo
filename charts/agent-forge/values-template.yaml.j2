@@ -37,6 +37,7 @@ app:
       PORT: '3103'
       FORGE_ALLOWED_ORIGINS: https://{{agent_forge.hostname}}
       FORGE_WORKER: 'true'
+      FORGE_WORKER_ENABLED: 'true'
       FORGE_SANDBOX_PROVIDER: kubernetes
       FORGE_KUBE_IMAGE_PULL_SECRET: ecr-registry
       FORGE_KUBE_NODE_POOL: '{{ "workspaces" if env == "eks" else "" }}'
@@ -47,6 +48,7 @@ app:
       FORGE_OIDC_ISSUER: https://accounts.google.com
       FORGE_OIDC_PROVIDER_ID: google
       FORGE_SIGN_IN_DOMAINS: '{{ agent_forge.sign_in_domains | join(",") }}'
+      FORGE_ALLOWED_EMAIL_DOMAINS: '{{ agent_forge.sign_in_domains | join(",") }}'
 {%- endif %}
   sandbox:
     namespace: agent-forge-workspaces
@@ -89,6 +91,8 @@ app:
       name: FORGE_CHECKPOINT_SECRET
     - key: /k8s/{{cluster}}/agent-forge/credential-secret
       name: FORGE_CREDENTIAL_SECRET
+    - key: /k8s/{{cluster}}/agent-forge/credential-secret
+      name: FORGE_GIT_CREDENTIAL_SECRET
     - key: /k8s/{{cluster}}/agent-forge/model-secret
       name: FORGE_MODEL_SECRET
     - key: /k8s/{{cluster}}/agent-forge/model-channels

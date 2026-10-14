@@ -45,9 +45,11 @@ app:
 {% if env == 'k3s' %}
       S3_ENDPOINT: http://minio.agent-studio.svc.cluster.local:9000
       S3_BUCKET: agent-librio
+      S3_BUCKET_NAME: agent-librio
       S3_FORCE_PATH_STYLE: 'true'
 {% else %}
       S3_BUCKET: agent-librio-static
+      S3_BUCKET_NAME: agent-librio-static
       S3_FORCE_PATH_STYLE: 'false'
 {% endif %}
       EMBEDDING_BASE_URL: https://openrouter.ai/api/v1
@@ -105,6 +107,8 @@ app:
       name: LIBRIO_ISSUER_POLICIES
     - key: /k8s/{{cluster}}/agent-librio/audio-models
       name: AUDIO_MODELS_JSON
+    - key: /k8s/{{cluster}}/agent-librio/audio-models
+      name: AUDIO_MODEL_CHANNELS
     - key: /k8s/{{cluster}}/agent-librio/metrics-bearer-token
       name: METRICS_BEARER_TOKEN
 {% if env == 'k3s' %}
