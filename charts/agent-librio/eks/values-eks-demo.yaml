@@ -49,6 +49,11 @@ app:
       AUDIO_WORKER_ENABLED: 'false'
       KNOWLEDGE_EXTRACTION_BASE_URL: https://openrouter.ai/api/v1
       KNOWLEDGE_EXTRACTION_MODEL: openai/gpt-6-luna
+      # Audio models resolve id, label, wire ID and price from Librio's pinned catalog and use the
+      # shared OpenRouter endpoint: GPT-4o Transcribe for transcription, GPT-6.1 Sol for meeting notes.
+      # Admins can add or change models in Settings → AI models.
+      AUDIO_MODEL_BASE_URL: https://openrouter.ai/api/v1
+      AUDIO_MODEL_CHANNELS: '[{"kind":"transcription","catalogId":"openrouter/gpt-4o-transcribe"},{"kind":"summary","catalogId":"openrouter/gpt-6.1-sol"}]'
       KNOWLEDGE_ENRICHMENT_CONCURRENCY: '4'
       # Every replica uses the same PostgreSQL admission policy.
       AI_PROVIDER_MAX_CONCURRENCY: '8'
@@ -87,8 +92,9 @@ app:
       name: LIBRIO_DELEGATION_SECRET
     - key: /k8s/eks-demo/agent-librio/issuer-policies
       name: LIBRIO_ISSUER_POLICIES
-    - key: /k8s/eks-demo/agent-librio/audio-models
-      name: AUDIO_MODEL_CHANNELS
+    # The OpenRouter key that knowledge extraction already uses; sent only to AUDIO_MODEL_BASE_URL.
+    - key: /k8s/common/agent-memory/knowledge-extraction-api-key
+      name: AUDIO_MODEL_API_KEY
     - key: /k8s/eks-demo/agent-librio/metrics-bearer-token
       name: METRICS_BEARER_TOKEN
 
