@@ -178,8 +178,9 @@ CPU limit은 필수가 아니다. 실제 Helm 렌더의 자원 정책과 최대 
 pytest                                  # scripts/와 배포 구성 테스트
 ```
 
-`.github/workflows/validate.yml`은 PR에서 렌더 → Helm 검증 → pytest를 실행한다.
-`.github/workflows/push.yml`도 main에서 같은 검사를 수행한 뒤 생성 파일을 게시한다.
+`.github/workflows/push.yml`은 main push에서 렌더 → Helm 검증 → pytest를 실행한 뒤 생성 파일을 게시한다. Argo CD가 동기화하기 전의 유일한 자동 검사다.
+GitOps 배포 커밋처럼 `values-alpha.yaml`·`values-prod.yaml`·`versions-*.json`만 바뀐 push는 렌더 결과가 같으므로 build를 시작하지 않는다. 이 파일을 손으로 고쳤다면 병합 전에 로컬 `./scripts/build.sh`와 `scripts/validate.py`를 실행한다.
+`.github/workflows/validate.yml`은 같은 검사를 수동으로만 실행한다. Pull request는 CI를 시작하지 않는다.
 `--all-charts`는 `apps/`에 없는 chart(`sample-spring`, `sample-grpc`)와 미사용 클러스터 values도 검사한다.
 CI와 생성 파일 게시 workflow는 이 전체 검사를 사용한다. wrapper의 자체 템플릿은 검사에서 거부한다.
 
