@@ -43,6 +43,11 @@ app:
           value: https://sample-node.demo.opsp.dev/counter/
 
 redis:
+
+
+  enabled: False
+
+
   istio:
     sidecar:
       inject: true

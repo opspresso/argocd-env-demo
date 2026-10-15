@@ -40,6 +40,11 @@ app:
           value: https://sample-node.demo.opspresso.com/counter/
 
 redis:
+
+
+  enabled: True
+
+
   istio:
     sidecar:
       inject: true
