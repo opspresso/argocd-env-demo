@@ -22,15 +22,11 @@ def render(chart, platform):
     return [doc for doc in yaml.safe_load_all(result.stdout) if doc]
 
 
-@pytest.mark.parametrize('platform,chart,name', [
-    ('eks', 'agent-studio', 'agent-studio-ticker'),
-    ('k3s', 'agent-studio', 'agent-studio-ticker'),
-    ('eks', 'sample-node', 'sample-node-thumbs'),
-])
-def test_ticker_is_one_resident_unprivileged_deployment(platform, chart, name):
-    docs = render(chart, platform)
+@pytest.mark.parametrize('platform', ['eks', 'k3s'])
+def test_ticker_is_one_resident_unprivileged_deployment(platform):
+    docs = render('agent-studio', platform)
     assert not any(doc['kind'] == 'CronJob' for doc in docs)
-    deployment = next(doc for doc in docs if doc['kind'] == 'Deployment' and doc['metadata']['name'] == name)
+    deployment = next(doc for doc in docs if doc['kind'] == 'Deployment' and doc['metadata']['name'] == 'agent-studio-ticker')
     assert deployment['spec']['strategy']['type'] == 'Recreate'
     assert deployment['spec']['replicas'] == 1
     pod = deployment['spec']['template']
@@ -44,29 +40,25 @@ def test_ticker_is_one_resident_unprivileged_deployment(platform, chart, name):
     assert isinstance(security['runAsUser'], int) and security['runAsUser'] > 0
     assert security['runAsGroup'] > 0
     assert not container.get('livenessProbe')
-    if chart == 'agent-studio':
-        assert container['env'] == [{'name': 'SCHEDULE_SCAN_TOKEN', 'valueFrom': {
-            'secretKeyRef': {'name': 'agent-studio-external', 'key': 'SCHEDULE_SCAN_TOKEN'}}}]
-    else:
-        assert container['env'][0]['name'] == 'COUNTER_URL'
-        assert container['env'][0]['value'].startswith('https://sample-node.')
+    assert container['env'] == [{'name': 'SCHEDULE_SCAN_TOKEN', 'valueFrom': {
+        'secretKeyRef': {'name': 'agent-studio-external', 'key': 'SCHEDULE_SCAN_TOKEN'}}}]
 
 
 @pytest.mark.parametrize('platform', ['eks', 'k3s'])
-def test_sample_node_redis_and_consumers_follow_cluster_setting(platform):
+def test_sample_node_redis_uses_platform_storage_without_thumbs(platform):
     docs = render('sample-node', platform)
-    enabled = platform == 'eks'
-    redis = [doc for doc in docs if doc['metadata'].get('labels', {}).get('app.kubernetes.io/name') == 'redis']
-    assert bool(redis) is enabled
-    assert any(doc['kind'] == 'Deployment' and doc['metadata']['name'] == 'sample-node-thumbs'
-               for doc in docs) is enabled
-    assert any(doc['kind'] == 'ExternalSecret' for doc in docs) is enabled
+    redis = next(doc for doc in docs if doc['kind'] == 'StatefulSet' and doc['metadata']['name'] == 'redis-master')
+    volume = redis['spec']['volumeClaimTemplates'][0]['spec']
+    assert volume['storageClassName'] == ('gp3' if platform == 'eks' else 'local-path')
+    assert volume['resources']['requests']['storage'] == ('8Gi' if platform == 'eks' else '1Gi')
+    assert not any(doc['metadata']['name'] == 'sample-node-thumbs' for doc in docs)
+    assert any(doc['kind'] == 'ExternalSecret' for doc in docs)
     config = next(doc['data'] for doc in docs if doc['kind'] == 'ConfigMap' and doc['metadata']['name'] == 'sample-node')
-    assert config['REDIS_ENABLED'] == str(enabled).lower()
-    assert ('REDIS_HOST' in config) is enabled
+    assert config['REDIS_ENABLED'] == 'true'
+    assert config['REDIS_HOST'] == 'redis-master'
     deployment = next(doc for doc in docs if doc['kind'] == 'Deployment' and doc['metadata']['name'] == 'sample-node')
     refs = deployment['spec']['template']['spec']['containers'][0]['envFrom']
-    assert any('secretRef' in ref for ref in refs) is enabled
+    assert any('secretRef' in ref for ref in refs)
 
 
 @pytest.mark.parametrize('platform', ['eks', 'k3s'])

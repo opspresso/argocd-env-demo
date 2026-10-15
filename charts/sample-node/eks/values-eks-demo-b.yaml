@@ -39,15 +39,15 @@ app:
       name: REDIS_PASS
 
 
-  workloads:
-    thumbs:
-      enabled: true
-      env:
-        - name: COUNTER_URL
-          value: https://sample-node.demo.opspresso.com/counter/
-
 redis:
   enabled: true
+  global:
+    storageClass: gp3
   istio:
     sidecar:
       inject: true
+
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi

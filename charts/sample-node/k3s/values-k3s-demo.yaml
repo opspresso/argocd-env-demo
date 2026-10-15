@@ -12,7 +12,10 @@ app:
       MESSAGE: hello world
       PROFILE: 'k3s'
       PROTOCOL: http
-      REDIS_ENABLED: 'false'
+      REDIS_ENABLED: 'true'
+
+      REDIS_HOST: redis-master
+      REDIS_PORT: '6379'
 
   routing:
     hosts:
@@ -32,24 +35,26 @@ app:
     labels:
       release: prometheus-k3s-demo
   externalSecrets:
-    enabled: false
+    enabled: true
 
-    data: []
+    data:
+    - key: /k8s/common/sample-node/redis-password
+      name: REDIS_PASS
 
-
-  workloads:
-    thumbs:
-      enabled: false
-      env:
-        - name: COUNTER_URL
-          value: https://sample-node.demo.opsp.dev/counter/
 
 redis:
-  enabled: false
+  enabled: true
+  global:
+    storageClass: local-path
   istio:
     sidecar:
       inject: true
 
   resources: null
+
   master:
+    persistence:
+      enabled: true
+      size: 1Gi
+
     resources: null
