@@ -60,16 +60,12 @@ app:
       MAX_CONCURRENT_RUNS_PER_ACTOR: '60'
       MCP_INTERNAL_HOST_SUFFIXES: agent-mcps.svc.cluster.local,agent-memory.svc.cluster.local,agent-librio.svc.cluster.local,agent-forge.svc.cluster.local
       FORGE_URL: http://agent-forge.agent-forge.svc.cluster.local:3103
-      FORGE_ISSUER: https://studio.agrt.dev
       FORGE_DELEGATION_ISSUER: https://studio.agrt.dev
-      FORGE_OBSERVER_CONCURRENCY: '{{workspace_worker_concurrency | default(4)}}'
       WORKSPACE_OBSERVER_CONCURRENCY: '{{workspace_worker_concurrency | default(4)}}'
       WORKSPACE_CONTINUATION_CONCURRENCY: '{{workspace_continuation_concurrency | default(2)}}'
       MEMORY_URL: http://agent-memory.agent-memory.svc.cluster.local:3000
-      MEMORY_ISSUER: https://studio.agrt.dev
       MEMORY_DELEGATION_ISSUER: https://studio.agrt.dev
       LIBRIO_URL: http://agent-librio.agent-librio.svc.cluster.local:3000
-      LIBRIO_ISSUER: https://studio.agrt.dev
       LIBRIO_DELEGATION_ISSUER: https://studio.agrt.dev
       PLUGINS_REPO: opspresso/agent-plugins
       PLUGINS_REPO_BRANCH: main
@@ -124,8 +120,6 @@ app:
       name: LLM_PROVIDER_SELFHOSTED_API_KEY
     - key: /k8s/common/agent-studio/aes-encryption-key
       name: AES_ENCRYPTION_KEY
-    - key: /k8s/common/agent-studio/github-token
-      name: GITHUB_TOKEN
     - key: /k8s/common/agent-studio/github-token
       name: PLUGINS_REPO_TOKEN
     - key: /k8s/common/agent-studio/schedule-scan-token
