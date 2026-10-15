@@ -1,3 +1,4 @@
+{% set redis_enabled = sample_node.redis.enabled if sample_node is defined and sample_node.redis is defined else true -%}
 app:
   replicaCount: {{replicas}}
   autoscaling:
@@ -12,8 +13,11 @@ app:
       MESSAGE: hello world
       PROFILE: '{{env}}'
       PROTOCOL: http
+      REDIS_ENABLED: '{{ redis_enabled | lower }}'
+{% if redis_enabled %}
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
+{% endif %}
   routing:
     hosts:
     - sample-node.{{hostname.public}}
@@ -35,22 +39,24 @@ app:
     labels:
       release: prometheus-{{cluster}}
   externalSecrets:
+    enabled: {{ redis_enabled | lower }}
+{% if redis_enabled %}
     data:
     - key: /k8s/common/sample-node/redis-password
       name: REDIS_PASS
+{% else %}
+    data: []
+{% endif %}
 
   workloads:
     thumbs:
+      enabled: {{ redis_enabled | lower }}
       env:
         - name: COUNTER_URL
           value: https://sample-node.{{hostname.public}}/counter/
 
 redis:
-{% if sample_node is defined %}
-{% if sample_node.redis is defined %}
-  enabled: {{sample_node.redis.enabled}}
-{% endif %}
-{% endif %}
+  enabled: {{ redis_enabled | lower }}
   istio:
     sidecar:
       inject: true

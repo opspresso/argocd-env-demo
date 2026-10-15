@@ -10,8 +10,11 @@ app:
       MESSAGE: hello world
       PROFILE: 'eks'
       PROTOCOL: http
+      REDIS_ENABLED: 'true'
+
       REDIS_HOST: redis-master
       REDIS_PORT: '6379'
+
   routing:
     hosts:
     - sample-node.demo.opspresso.com
@@ -29,22 +32,22 @@ app:
     labels:
       release: prometheus-eks-demo
   externalSecrets:
+    enabled: true
+
     data:
     - key: /k8s/common/sample-node/redis-password
       name: REDIS_PASS
 
+
   workloads:
     thumbs:
+      enabled: true
       env:
         - name: COUNTER_URL
           value: https://sample-node.demo.opspresso.com/counter/
 
 redis:
-
-
-  enabled: True
-
-
+  enabled: true
   istio:
     sidecar:
       inject: true

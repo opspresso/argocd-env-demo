@@ -202,6 +202,7 @@ app:
         {{- end }}
 
 redis:
+  enabled: true
   fullnameOverride: redis
 
   image:
