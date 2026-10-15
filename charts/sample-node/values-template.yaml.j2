@@ -46,6 +46,9 @@ app:
           value: https://sample-node.{{hostname.public}}/counter/
 
 redis:
+{% if sample_node.redis is defined %}
+  enabled: {{sample_node.redis.enabled}}
+{% endif %}
   istio:
     sidecar:
       inject: true
