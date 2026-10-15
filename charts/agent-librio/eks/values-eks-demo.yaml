@@ -50,11 +50,10 @@ app:
       KNOWLEDGE_EXTRACTION_BASE_URL: https://openrouter.ai/api/v1
       KNOWLEDGE_EXTRACTION_MODEL: openai/gpt-6-luna
       # Audio models resolve id, label, wire ID and price from Librio's pinned catalog and use the
-      # shared OpenRouter endpoint. Transcription: MAI-Transcribe 2 (low cost, default), GPT-4o
-      # Transcribe (accuracy), Whisper Large v3 Turbo (lowest cost). Meeting notes: GPT-6.1 Sol
-      # (quality, default) and GPT-6 Luna (low cost). Admins can change them in Settings → AI models.
+      # shared OpenRouter endpoint: GPT-4o Transcribe for transcription, GPT-6.1 Sol for meeting notes.
+      # Admins can add or change models in Settings → AI models.
       AUDIO_MODEL_BASE_URL: https://openrouter.ai/api/v1
-      AUDIO_MODEL_CHANNELS: '[{"kind":"transcription","catalogId":"openrouter/mai-transcribe-2"},{"kind":"transcription","catalogId":"openrouter/gpt-4o-transcribe"},{"kind":"transcription","catalogId":"openrouter/whisper-large-v3-turbo"},{"kind":"summary","catalogId":"openrouter/gpt-6.1-sol"},{"kind":"summary","catalogId":"openrouter/gpt-6-luna"}]'
+      AUDIO_MODEL_CHANNELS: '[{"kind":"transcription","catalogId":"openrouter/gpt-4o-transcribe"},{"kind":"summary","catalogId":"openrouter/gpt-6.1-sol"}]'
       KNOWLEDGE_ENRICHMENT_CONCURRENCY: '4'
       # Every replica uses the same PostgreSQL admission policy.
       AI_PROVIDER_MAX_CONCURRENCY: '8'
