@@ -146,60 +146,6 @@ app:
       kind: ClusterSecretStore
       name: parameter-store
 
-  workloads:
-    thumbs:
-      enabled: true
-      fullnameOverride: sample-node-thumbs
-      containerName: ticker
-      controller:
-        strategy:
-          type: Recreate
-      service:
-        enabled: false
-      image:
-        repository: curlimages/curl
-        tag: 8.11.1
-      automountServiceAccountToken: false
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 100
-        runAsGroup: 101
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop: [ALL]
-      podAnnotations:
-        sidecar.istio.io/inject: 'false'
-      command:
-      - /bin/sh
-      - -c
-      - |
-        set -u
-        trap 'exit 0' INT TERM
-        while true; do
-          started=$(date +%s)
-          seq 45 | awk -v url="$COUNTER_URL" 'BEGIN{srand()}{print "-o"; print "/dev/null"; print url (rand() < 0.5 ? "up" : "down")}' \
-            | xargs timeout 50 curl -sS --connect-timeout 5 --max-time 10 --rate 1/s -X POST -w "%{http_code}\n" \
-            | awk '{c[$0]++} END{line="thumbs"; for (k in c) line=line " " k "x" c[k]; print line}'
-          delay=$((60 - ($(date +%s) - started)))
-          [ "$delay" -gt 0 ] || delay=1
-          sleep "$delay" &
-          wait "$!"
-        done
-      env:
-      - name: COUNTER_URL
-        value: http://sample-node/counter/
-      resources:
-        requests:
-          cpu: 10m
-          memory: 16Mi
-        limits:
-          cpu: 50m
-          memory: 32Mi
-      overrides: |
-        {{- if not .Values.resources }}
-        resources: null
-        {{- end }}
 
 redis:
   enabled: true
