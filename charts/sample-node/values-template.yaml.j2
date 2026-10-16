@@ -1,5 +1,6 @@
 {% set redis_config = sample_node.redis if sample_node is defined and sample_node.redis is defined else {} -%}
 {% set redis_enabled = redis_config.enabled | default(true) -%}
+{% set sample_hostname = sample_node.hostname if sample_node is defined and sample_node.hostname is defined else 'sample-node.' ~ hostname.public -%}
 app:
   replicaCount: {{replicas}}
   autoscaling:
@@ -21,7 +22,7 @@ app:
 {% endif %}
   routing:
     hosts:
-    - sample-node.{{hostname.public}}
+    - {{sample_hostname}}
     httpRoute:
       enabled: true
 {% if env == 'k3s' %}
@@ -34,7 +35,7 @@ app:
     sidecar.istio.io/inject: "true"
 {% endif %}
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://sample-node.{{hostname.public}}
+    link.argocd.argoproj.io/external-link: https://{{sample_hostname}}
   serviceMonitor:
     enabled: {{ (metrics is defined and metrics.backend == 'prometheus') | lower }}
     labels:
