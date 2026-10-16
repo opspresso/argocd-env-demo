@@ -55,6 +55,7 @@ agent_forge:
 agent_librio_maintenance: false
 agent_forge_maintenance: false
 sample_node:
+  hostname: sample-node.rovr.dev
   redis:
     enabled: true
     storageClass: local-path

@@ -19,7 +19,7 @@ app:
 
   routing:
     hosts:
-    - sample-node.demo.rovr.dev
+    - sample-node.rovr.dev
     httpRoute:
       enabled: true
 
@@ -29,7 +29,7 @@ app:
 
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://sample-node.demo.rovr.dev
+    link.argocd.argoproj.io/external-link: https://sample-node.rovr.dev
   serviceMonitor:
     enabled: false
     labels:
