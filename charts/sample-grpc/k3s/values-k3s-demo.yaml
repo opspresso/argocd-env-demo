@@ -12,7 +12,7 @@ app:
       PROFILE: 'k3s'
   routing:
     hosts:
-    - sample-grpc.demo.opsp.dev
+    - sample-grpc.demo.rovr.dev
     httpRoute:
       enabled: true
 
@@ -22,7 +22,7 @@ app:
 
 
   podAnnotations:
-    link.argocd.argoproj.io/external-link: https://sample-grpc.demo.opsp.dev
+    link.argocd.argoproj.io/external-link: https://sample-grpc.demo.rovr.dev
   serviceMonitor:
     enabled: false
     labels:
