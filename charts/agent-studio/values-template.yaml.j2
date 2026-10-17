@@ -135,18 +135,16 @@ app:
     - key: /k8s/{{cluster}}/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 {% endif %}
+    - key: /k8s/{{cluster}}/agent-studio/metrics-bearer-token
+      name: METRICS_BEARER_TOKEN
     - key: /k8s/{{cluster}}/agent-forge/organization-id
       name: FORGE_ORGANIZATION_ID
     - key: /k8s/{{cluster}}/agent-forge/delegation-secret
       name: FORGE_DELEGATION_SECRET
     - key: /k8s/{{cluster}}/agent-forge/policy-secret
       name: FORGE_POLICY_SECRET
-    - key: /k8s/{{cluster}}/agent-memory/organization-id
-      name: MEMORY_ORGANIZATION_ID
     - key: /k8s/{{cluster}}/agent-memory/delegation-secret
       name: MEMORY_DELEGATION_SECRET
-    - key: /k8s/{{cluster}}/agent-librio/organization-id
-      name: LIBRIO_ORGANIZATION_ID
     - key: /k8s/{{cluster}}/agent-librio/delegation-secret
       name: LIBRIO_DELEGATION_SECRET
     - key: /k8s/{{cluster}}/agent-librio/policy-secret

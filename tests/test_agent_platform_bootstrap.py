@@ -24,7 +24,8 @@ def test_check_reports_missing_without_writes_or_fabricated_installation_ids(cap
         assert bootstrap.bootstrap("k3s-demo", "ap-northeast-2") == 1
     assert all(call.args[2] == "get-parameters" for call in aws.call_args_list)
     output = capsys.readouterr().out
-    assert "agent-memory/organization-id" in output and "agent-librio/audio-models" in output
+    assert "agent-librio/audio-models" in output and "agent-forge/model-channels" in output
+    assert "organization-id" not in output.replace(f"{PREFIX}/agent-forge/organization-id", "")
     desired = bootstrap.parameter_values(PREFIX, {})
     assert f"{PREFIX}/agent-memory/organization-id" not in desired
     assert f"{PREFIX}/agent-librio/organization-id" not in desired

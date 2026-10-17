@@ -42,8 +42,9 @@ def parameter_values(prefix, existing):
         f"postgresql://agent_studio:{quote(postgres, safe='')}"
         "@postgres.agent-studio.svc.cluster.local:5432/agent_platform")
     for service in ("agent-memory", "agent-librio", "agent-forge"):
-        secret(f"{service}/metrics-bearer-token")
         secret(f"{service}/delegation-secret")
+    for service in ("agent-studio", "agent-memory", "agent-librio", "agent-forge"):
+        secret(f"{service}/metrics-bearer-token")
     for path in ("agent-librio/better-auth-secret", "agent-librio/policy-secret",
                  "agent-forge/policy-secret", "agent-forge/checkpoint-secret",
                  "agent-forge/credential-secret", "agent-forge/model-secret", "agent-forge/session-secret"):
@@ -107,8 +108,7 @@ def bootstrap(cluster, region, apply=False):
         print(f"{'Created' if apply else 'Missing'}: {name}")
     print(f"{len(existing)} existing, {len(missing)} {'created' if apply else 'missing'} parameters")
     # These are operator-validated service configuration, never random secret material.
-    for path in ("agent-memory/organization-id", "agent-librio/organization-id",
-                 "agent-forge/model-channels", "agent-librio/audio-models"):
+    for path in ("agent-forge/model-channels", "agent-librio/audio-models"):
         print(f"Prepare and validate separately: {prefix}/{path}")
     return 0 if apply or not missing else 1
 

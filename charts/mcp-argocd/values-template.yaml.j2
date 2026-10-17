@@ -25,13 +25,10 @@ app:
       # The bare origin is right — the client appends /api/v1/... itself.
       ARGOCD_BASE_URL: http://argocd-server.argocd.svc.cluster.local
 
-      # MCP_READ_ONLY is absent on purpose. Unset leaves the mutating tools
-      # (create/update/delete/sync_application, run_resource_action) listed;
-      # setting it to "true" drops them before they are ever listed.
-      #
-      # It is not the boundary, though — the token's Argo CD RBAC is. This flag
-      # only decides what the model is offered, so tightening `role:mcp` in
-      # argocd-env-addons is what actually stops a write.
+      # Lists only read tools: create/update/delete/sync_application and
+      # run_resource_action are not offered. The token's Argo CD RBAC
+      # (`role:mcp` in argocd-env-addons) is the boundary that stops a write.
+      MCP_READ_ONLY: "true"
 
 {%- if env == 'local' %}
   externalSecrets:
