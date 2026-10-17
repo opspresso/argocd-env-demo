@@ -21,8 +21,9 @@ hostname:
 agent_studio:
   service:
     key: agentops
-    name: Axleon AgentOps
-    logo: agentops
+    name: Agent Studio
+    logo: agent-studio
+    copyright: © OpsPresso. All rights reserved.
   hostname: studio.agrt.dev
   allowed_hosts:
   - studio.agrt.dev

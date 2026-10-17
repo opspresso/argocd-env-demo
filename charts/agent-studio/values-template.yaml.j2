@@ -24,6 +24,9 @@ app:
       DATABASE_POOL_SIZE: '4'
       SERVICE_NAME: '{{agent_studio.service.name}}'
       SERVICE_LOGO: '{{agent_studio.service.logo}}'
+{% if agent_studio.service.copyright is defined %}
+      SERVICE_COPYRIGHT: {{agent_studio.service.copyright | tojson}}
+{% endif %}
       ADMIN_EMAILS: me@nalbam.com
       # ALLOWED_EMAIL_DOMAINS: nalbam.com
       AWS_REGION: {{aws_region}}
