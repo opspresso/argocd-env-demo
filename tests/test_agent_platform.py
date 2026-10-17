@@ -263,3 +263,15 @@ def test_mcp_servers_are_read_only(platform):
 
     argocd = resource("mcp-argocd", platform, "ConfigMap", "mcp-argocd")
     assert argocd["data"]["MCP_READ_ONLY"] == "true"
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_studio_metrics_require_the_shared_bearer(platform):
+    secret = resource("agent-studio", platform, "ExternalSecret", "agent-studio-external")
+    refs = {entry["secretKey"]: entry["remoteRef"]["key"] for entry in secret["spec"]["data"]}
+    assert refs["METRICS_BEARER_TOKEN"] == f"/k8s/{platform}-demo/agent-studio/metrics-bearer-token"
+    assert "MEMORY_ORGANIZATION_ID" not in refs and "LIBRIO_ORGANIZATION_ID" not in refs
+    if platform == "eks":
+        monitor = resource("agent-studio", platform, "ServiceMonitor", "agent-studio")["spec"]
+        assert monitor["endpoints"][0]["authorization"]["credentials"] == {
+            "name": "agent-studio-external", "key": "METRICS_BEARER_TOKEN"}

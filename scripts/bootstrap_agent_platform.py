@@ -42,8 +42,9 @@ def parameter_values(prefix, existing):
         f"postgresql://agent_studio:{quote(postgres, safe='')}"
         "@postgres.agent-studio.svc.cluster.local:5432/agent_platform")
     for service in ("agent-memory", "agent-librio", "agent-forge"):
-        secret(f"{service}/metrics-bearer-token")
         secret(f"{service}/delegation-secret")
+    for service in ("agent-studio", "agent-memory", "agent-librio", "agent-forge"):
+        secret(f"{service}/metrics-bearer-token")
     for path in ("agent-librio/better-auth-secret", "agent-librio/policy-secret",
                  "agent-forge/policy-secret", "agent-forge/checkpoint-secret",
                  "agent-forge/credential-secret", "agent-forge/model-secret", "agent-forge/session-secret"):

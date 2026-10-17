@@ -135,6 +135,8 @@ app:
     - key: /k8s/{{cluster}}/agent-studio/minio-root-password
       name: S3_SECRET_ACCESS_KEY
 {% endif %}
+    - key: /k8s/{{cluster}}/agent-studio/metrics-bearer-token
+      name: METRICS_BEARER_TOKEN
     - key: /k8s/{{cluster}}/agent-forge/organization-id
       name: FORGE_ORGANIZATION_ID
     - key: /k8s/{{cluster}}/agent-forge/delegation-secret

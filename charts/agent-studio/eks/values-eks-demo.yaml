@@ -109,6 +109,8 @@ app:
     - key: /k8s/eks-demo/agent-platform/database-url
       name: DATABASE_URL
 
+    - key: /k8s/eks-demo/agent-studio/metrics-bearer-token
+      name: METRICS_BEARER_TOKEN
     - key: /k8s/eks-demo/agent-forge/organization-id
       name: FORGE_ORGANIZATION_ID
     - key: /k8s/eks-demo/agent-forge/delegation-secret

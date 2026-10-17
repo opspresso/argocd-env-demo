@@ -71,6 +71,7 @@ Secret 환경변수를 변경한 뒤에는 소비자 Deployment를 새 설정으
 | SSM 경로 (`/k8s/<cluster>/` 아래) | 소비자 |
 | --- | --- |
 | `agent-platform/database-url` | 네 서비스 |
+| `agent-studio/metrics-bearer-token` | Studio와 수집기의 bearer |
 | `agent-memory/delegation-secret` | Memory와 Studio |
 | `agent-librio/delegation-secret` | Librio와 Studio |
 | `agent-librio/policy-secret`, `issuer-policies` | Studio callback / Librio |
