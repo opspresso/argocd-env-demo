@@ -38,6 +38,9 @@ app:
     - "0.0.0.0:8000"
     - "--allowed-hosts"
     - "mcp-grafana.agent-mcps.svc.cluster.local,mcp-grafana.agent-mcps.svc,mcp-grafana.agent-mcps,mcp-grafana,localhost:8000,localhost"
+    # Lists only read tools. It also removes the raw SQL tools (query_sql,
+    # query_influxdb); `--enable-query` is not set because raw SQL can write.
+    - "--disable-write"
 
   service:
     name: http
@@ -88,3 +91,34 @@ app:
       loadBalancer:
         consistentHash:
           httpHeaderName: mcp-session-id
+
+networkPolicy:
+  enabled: true
+
+# Only Agent Studio processes that run Agents may call this server. The MCP has
+# no authentication, so this ingress rule is its access boundary.
+raw:
+  resources:
+    - apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: mcp-grafana
+      spec:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: mcp-grafana
+        policyTypes:
+          - Ingress
+        ingress:
+          - from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: agent-studio
+                podSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: [agent-studio, agent-studio-audio-worker, agent-studio-workspace-worker]
+            ports:
+              - protocol: TCP
+                port: 8000

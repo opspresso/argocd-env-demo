@@ -99,9 +99,15 @@ def test_metrics_auth_and_dependency_independent_liveness(chart, platform):
         assert not any(item["kind"] == "ServiceMonitor" for item in manifests(chart, platform))
 
 
+MCP_PORTS = {"mcp-argocd": 3000, "mcp-cloudwatch": 8000, "mcp-grafana": 8000, "mcp-kubernetes": 8080}
+
+
+@pytest.mark.parametrize("chart", sorted(MCP_PORTS))
 @pytest.mark.parametrize("platform", ["eks", "k3s"])
-def test_argocd_mcp_accepts_all_trusted_agent_execution_processes(platform):
-    policy = resource("mcp-argocd", platform, "NetworkPolicy", "mcp-argocd")["spec"]
+def test_mcp_accepts_only_trusted_agent_execution_processes(chart, platform):
+    policy = resource(chart, platform, "NetworkPolicy", chart)["spec"]
+    assert policy["podSelector"]["matchLabels"] == {"app.kubernetes.io/name": chart}
+    assert policy["ingress"][0]["ports"] == [{"protocol": "TCP", "port": MCP_PORTS[chart]}]
     source = policy["ingress"][0]["from"][0]
     assert source["namespaceSelector"]["matchLabels"] == {"kubernetes.io/metadata.name": "agent-studio"}
     expression = source["podSelector"]["matchExpressions"][0]
@@ -240,3 +246,20 @@ def test_agent_service_route_and_pod_share_the_same_port(chart, port, platform):
     if chart == "agent-studio":
         ticker = resource(chart, platform, "Deployment", "agent-studio-ticker")["spec"]["template"]["spec"]["containers"][0]
         assert "http://agent-studio:3000" in ticker["command"][-1]
+
+
+@pytest.mark.parametrize("platform", ["eks", "k3s"])
+def test_mcp_servers_are_read_only(platform):
+    kubernetes = resource("mcp-kubernetes", platform, "Deployment", "mcp-kubernetes")
+    assert "--read-only" in kubernetes["spec"]["template"]["spec"]["containers"][0]["args"]
+    roles = [doc for doc in manifests("mcp-kubernetes", platform) if doc["kind"] in ("ClusterRole", "Role")]
+    assert roles
+    verbs = {verb for role in roles for rule in role["rules"] for verb in rule["verbs"]}
+    assert verbs == {"get", "list", "watch"}
+
+    grafana = resource("mcp-grafana", platform, "Deployment", "mcp-grafana")
+    args = grafana["spec"]["template"]["spec"]["containers"][0]["args"]
+    assert "--disable-write" in args and "--enable-query" not in args
+
+    argocd = resource("mcp-argocd", platform, "ConfigMap", "mcp-argocd")
+    assert argocd["data"]["MCP_READ_ONLY"] == "true"
