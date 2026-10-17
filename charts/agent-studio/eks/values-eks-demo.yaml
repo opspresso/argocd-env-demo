@@ -115,12 +115,8 @@ app:
       name: FORGE_DELEGATION_SECRET
     - key: /k8s/eks-demo/agent-forge/policy-secret
       name: FORGE_POLICY_SECRET
-    - key: /k8s/eks-demo/agent-memory/organization-id
-      name: MEMORY_ORGANIZATION_ID
     - key: /k8s/eks-demo/agent-memory/delegation-secret
       name: MEMORY_DELEGATION_SECRET
-    - key: /k8s/eks-demo/agent-librio/organization-id
-      name: LIBRIO_ORGANIZATION_ID
     - key: /k8s/eks-demo/agent-librio/delegation-secret
       name: LIBRIO_DELEGATION_SECRET
     - key: /k8s/eks-demo/agent-librio/policy-secret

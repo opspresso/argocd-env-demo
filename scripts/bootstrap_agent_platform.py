@@ -107,8 +107,7 @@ def bootstrap(cluster, region, apply=False):
         print(f"{'Created' if apply else 'Missing'}: {name}")
     print(f"{len(existing)} existing, {len(missing)} {'created' if apply else 'missing'} parameters")
     # These are operator-validated service configuration, never random secret material.
-    for path in ("agent-memory/organization-id", "agent-librio/organization-id",
-                 "agent-forge/model-channels", "agent-librio/audio-models"):
+    for path in ("agent-forge/model-channels", "agent-librio/audio-models"):
         print(f"Prepare and validate separately: {prefix}/{path}")
     return 0 if apply or not missing else 1
 
