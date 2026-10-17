@@ -1,4 +1,4 @@
-# argocd-env-demo
+# argocd-env-apps
 
 현재 k3s alpha와 미래 EKS 선언의 자원·확장 상한은 [용량 운영](docs/production-capacity.md)을 따른다.
 
@@ -25,7 +25,7 @@ docs/             # 운영 문서
 > apps 를 등록 합니다.
 
 ```bash
-kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-demo/main/apps-k3s.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/opspresso/argocd-env-apps/main/apps-k3s.yaml
 ```
 
 현재 k3s는 `apps/k3s/`의 Application을 등록한다. 미래 EKS를 준비한 뒤에는
@@ -152,7 +152,7 @@ curl -sL -X POST \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -d "${PAYLOAD}" \
-  https://api.github.com/repos/opspresso/argocd-env-demo/dispatches
+  https://api.github.com/repos/opspresso/argocd-env-apps/dispatches
 ```
 
 ### 로컬 실행

@@ -18,7 +18,7 @@ spec:
     jsonPointers:
     - /spec/volumeClaimTemplates
   source:
-    repoURL: https://github.com/opspresso/argocd-env-demo
+    repoURL: https://github.com/opspresso/argocd-env-apps
     targetRevision: HEAD
     path: charts/postgresql
     helm:

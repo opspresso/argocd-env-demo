@@ -15,7 +15,7 @@ spec:
     name: in-cluster
     namespace: agent-studio
   source:
-    repoURL: https://github.com/opspresso/argocd-env-demo
+    repoURL: https://github.com/opspresso/argocd-env-apps
     targetRevision: HEAD
     path: charts/agent-studio
     helm:

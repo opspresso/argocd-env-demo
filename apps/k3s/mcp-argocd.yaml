@@ -15,7 +15,7 @@ spec:
     name: in-cluster
     namespace: agent-mcps
   source:
-    repoURL: https://github.com/opspresso/argocd-env-demo
+    repoURL: https://github.com/opspresso/argocd-env-apps
     targetRevision: HEAD
     path: charts/mcp-argocd
     helm:

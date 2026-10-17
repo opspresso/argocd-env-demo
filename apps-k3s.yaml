@@ -8,7 +8,7 @@ metadata:
 spec:
   project: apps
   source:
-    repoURL: https://github.com/opspresso/argocd-env-demo
+    repoURL: https://github.com/opspresso/argocd-env-apps
     targetRevision: HEAD
     path: apps/k3s
     directory:

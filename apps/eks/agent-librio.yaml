@@ -5,7 +5,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/opspresso/argocd-env-demo.git
+        repoURL: https://github.com/opspresso/argocd-env-apps.git
         revision: HEAD
         files:
           - path: "env/eks-demo.yaml"
@@ -23,7 +23,7 @@ spec:
         name: "{{cluster}}"
         namespace: agent-librio
       source:
-        repoURL: https://github.com/opspresso/argocd-env-demo
+        repoURL: https://github.com/opspresso/argocd-env-apps
         targetRevision: HEAD
         path: charts/agent-librio
         helm:

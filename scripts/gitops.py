@@ -25,7 +25,7 @@ import chart
 
 
 REPO_USERNAME = os.environ.get("REPO_USERNAME", "opspresso")
-REPO_NAME = os.environ.get("REPO_NAME", "argocd-env-demo")
+REPO_NAME = os.environ.get("REPO_NAME", "argocd-env-apps")
 MAIN_BRANCH = os.environ.get("MAIN_BRANCH", "main")
 
 GIT_USERNAME = "nalbam-bot"

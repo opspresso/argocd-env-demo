@@ -7,7 +7,7 @@
 | --- | --- |
 | `terraform-env-demo` | AWS 리소스, IAM, ECR, EKS Pod Identity, S3 |
 | `argocd-env-addons` | Argo CD, External Secrets, Gateway/TLS, CNI, 관측성 |
-| `argocd-env-demo` | 네 앱, worker, 실행 namespace/RBAC/NetworkPolicy, PostgreSQL·MinIO |
+| `argocd-env-apps` | 네 앱, worker, 실행 namespace/RBAC/NetworkPolicy, PostgreSQL·MinIO |
 
 | 앱 | 공개 호스트 | 처리 책임 |
 | --- | --- | --- |

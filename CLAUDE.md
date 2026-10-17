@@ -199,7 +199,7 @@ local 배포 manifest와 env는 제공하지 않는다. 남아 있는 local 템�
 
 같은 이름의 파일이 다른 의미를 가지므로 두 저장소를 오갈 때 주의한다.
 
-| | argocd-env-demo (여기) | argocd-env-addons |
+| | argocd-env-apps (여기) | argocd-env-addons |
 |---|---|---|
 | 배포 단위 | application | addon |
 | 템플릿 파일 | `values-template.yaml.j2` | 같음 |
