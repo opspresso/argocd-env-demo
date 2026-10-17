@@ -10,7 +10,7 @@ app:
   configmap:
     enabled: true
     data:
-      GRAFANA_URL: "https://grafana.demo.opspresso.com"
+      GRAFANA_URL: "http://grafana.addon-grafana.svc.cluster.local"
 
   destinationRule:
     enabled: false

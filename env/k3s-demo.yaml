@@ -12,7 +12,7 @@ agent_studio_maintenance: false
 agent_memory_maintenance: false
 resources: false
 trusted_proxy_cidrs: []
-grafana_url: https://grafana.demo.opspresso.com
+grafana_url: http://grafana.addon-grafana.svc.cluster.local
 aws_account_id: '396608815058'
 aws_region: ap-northeast-2
 hostname:
